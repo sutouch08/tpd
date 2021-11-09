@@ -4,26 +4,24 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Approver extends PS_Controller{
 	public $menu_code = 'APPROVER';
 	public $menu_group_code = 'ADMIN';
-	public $title = 'Approver';
+	public $title = 'Authorizer';
 
   public function __construct()
   {
     parent::__construct();
     $this->home = base_url().'approver';
 		$this->load->model('approver_model');
-		$this->load->helper('approve');
   }
 
 
 
   public function index()
   {
-		$this->title = "Approver - List";
+		$this->title = "Authorizer - List";
 
 		$filter = array(
 			'uname' => get_filter('uname', 'ap_uname', ''),
 			'emp_name' => get_filter('emp_name', 'ap_emp_name', ''),
-			'conditions' => get_filter('conditions', 'ap_conditions', 'all'),
 			'amount' => get_filter('amount', 'ap_amount', ''),
 			'status' => get_filter('status', 'ap_status', 'all')
 		);
@@ -55,7 +53,7 @@ class Approver extends PS_Controller{
 
 	public function add_new()
 	{
-		$this->title = "Approver - Add";
+		$this->title = "Authorizer - Add";
 
 		if($this->pm->can_add)
 		{
@@ -76,7 +74,6 @@ class Approver extends PS_Controller{
 			if($this->input->post('uname'))
 			{
 				$uname = trim($this->input->post('uname'));
-				$conditions = $this->input->post('conditions');
 				$amount = $this->input->post('amount');
 				$status = $this->input->post('status') == 1 ? 1 : 0;
 
@@ -91,7 +88,6 @@ class Approver extends PS_Controller{
 							'user_id' => $user->id,
 							'uname' => $user->uname,
 							'emp_name' => $user->emp_name,
-							'conditions' => $conditions,
 							'amount' => $amount,
 							'status' => $status,
 							'date_add' => now(),
@@ -134,7 +130,7 @@ class Approver extends PS_Controller{
 
 	public function edit($id)
 	{
-		$this->title = "Approver - Edit";
+		$this->title = "Authorizer - Edit";
 		if($this->pm->can_edit)
 		{
 			$rs = $this->approver_model->get($id);
@@ -166,12 +162,10 @@ class Approver extends PS_Controller{
 			if($this->input->post('id'))
 			{
 				$id = $this->input->post('id');
-				$conditions = $this->input->post('conditions');
 				$amount = $this->input->post('amount');
 				$status = $this->input->post('status') == 1 ? 1 : 0;
 
 				$arr = array(
-					'conditions' => $conditions,
 					'amount' => $amount,
 					'status' => $status,
 					'date_upd' => now(),
@@ -237,7 +231,6 @@ class Approver extends PS_Controller{
 			'ap_uname',
 			'ap_emp_name',
 			'ap_status',
-			'ap_conditions',
 			'ap_amount'
 		);
 

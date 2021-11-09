@@ -17,22 +17,13 @@
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
 <div class="row">
   <div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label>User name</label>
+    <label>Username</label>
     <input type="text" class="form-control input-sm text-center search-box" name="uname" value="<?php echo $uname; ?>" />
   </div>
 
 	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label>Employee</label>
     <input type="text" class="form-control input-sm text-center search-box" name="emp_name" value="<?php echo $emp_name; ?>" />
-  </div>
-
-
-	<div class="col-lg-1-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
-    <label>Conditions</label>
-    <select class="form-control input-sm" name="conditions" onchange="getSearch()">
-			<option value="all">All</option>
-			<?php echo select_conditions($conditions); ?>
-		</select>
   </div>
 
 	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
@@ -73,9 +64,8 @@
 					<th class="width-5 middle text-center">#</th>
 					<th class="width-15 middle">Username</th>
 					<th class="width-30 middle">Employee</th>
-					<th class="width-20 middle">Conditions</th>
-					<th class="width-10 middle">Amount</th>
-					<th class="width-10 middle">Status</th>
+					<th class="width-15 middle text-right">Max. Amount</th>
+					<th class="width-10 middle text-center">Status</th>
 					<th class="width-10 middle text-right"></th>
 				</tr>
 			</thead>
@@ -87,8 +77,7 @@
 						<td class="middle text-center no"><?php echo $no; ?></td>
 						<td class="middle"><?php echo $rs->uname; ?></td>
 						<td class="middle"><?php echo $rs->emp_name; ?></td>
-						<td class="middle"><?php echo $rs->conditions; ?></td>
-						<td class="middle text-center"><?php echo number($rs->amount,2); ?></td>
+						<td class="middle text-right"><?php echo number($rs->amount,2); ?></td>
 						<td class="middle text-center">
 							<?php echo is_active($rs->status); ?>
 						</td>

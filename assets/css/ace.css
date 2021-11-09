@@ -11562,6 +11562,7 @@ td .lbl:only-child {
 }
 /* popover */
 .popover {
+  min-width: 200px;
   border-radius: 0;
   padding: 0;
   border-color: #ccc;

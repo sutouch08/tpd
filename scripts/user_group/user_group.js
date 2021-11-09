@@ -135,12 +135,6 @@ function update() {
 
 
 
-function dismiss(name) {
-  $('#'+name).modal('hide');
-}
-
-
-
 function viewDetail(id) {
   $.ajax({
     url:HOME + 'get_detail/'+id,

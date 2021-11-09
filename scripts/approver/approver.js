@@ -1,6 +1,5 @@
 var HOME = BASE_URL + 'approver/';
 var uname_error = 1;
-var cond_error = 1;
 var amount_error = 1;
 
 function goBack() {
@@ -22,20 +21,18 @@ function saveAdd() {
 
   var arr = [
     {'el' : 'uname', 'label':'uname-error', 'error':'uname_error'},
-    {'el' : 'conditions', 'label' : 'conditions-error', 'error' : 'cond_error'},
     {'el' : 'amount', 'label' : 'amount-error', 'error' : 'amount_error'}
   ];
 
   arr.forEach(check_value);
 
-  var error = uname_error + cond_error + amount_error;
+  var error = uname_error + amount_error;
 
   if( error > 0) {
     return false;
   }
 
   let uname = $('#uname').val();
-  let conditions = $('#conditions').val();
   let amount = parseDefault(parseFloat($('#amount').val()), 0);
   let status = $('#status').is(':checked') ? 1 : 0;
 
@@ -54,7 +51,6 @@ function saveAdd() {
     cache:false,
     data:{
       'uname' : uname,
-      'conditions' : conditions,
       'amount' : amount,
       'status' : status
     },
@@ -97,20 +93,18 @@ function saveAdd() {
 function update() {
 
   var arr = [
-    {'el' : 'conditions', 'label' : 'conditions-error', 'error' : 'cond_error'},
     {'el' : 'amount', 'label' : 'amount-error', 'error' : 'amount_error'}
   ];
 
   arr.forEach(check_value);
 
-  var error = cond_error + amount_error;
+  var error = amount_error;
 
   if( error > 0) {
     return false;
   }
 
   let id = $('#id').val();
-  let conditions = $('#conditions').val();
   let amount = parseDefault(parseFloat($('#amount').val()), 0);
   let status = $('#status').is(':checked') ? 1 : 0;
 
@@ -129,7 +123,6 @@ function update() {
     cache:false,
     data:{
       'id' : id,
-      'conditions' : conditions,
       'amount' : amount,
       'status' : status
     },

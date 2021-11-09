@@ -345,3 +345,7 @@ function validInput(input, regex){
   var regex = regex === undefined ? /[^a-z0-9-_.]+/gi : regex;
   input.value = input.value.replace(regex, '');
 }
+
+function dismiss(name) {
+  $('#'+name).modal('hide');
+}

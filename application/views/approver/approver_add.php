@@ -28,26 +28,14 @@
     </div>
   </div>
 
-	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Condition</label>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-			<select class="form-control input-sm" name="conditions" id="conditions">
-				<option value="">Please select</option>
-				<?php echo select_conditions(); ?>
-			</select>
-    </div>
-		<div class="help-block col-xs-12 col-sm-reset inline red" id="conditions-error"></div>
-  </div>
 
 	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Approve Amount</label>
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Maximum Amount</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 			<input type="number" name="amount" id="amount" class="width-100" value="" />
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="amount-error"></div>
   </div>
-
-
 
 
 	<div class="form-group">

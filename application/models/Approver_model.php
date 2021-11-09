@@ -93,29 +93,10 @@ class Approver_model extends CI_Model
       $this->db->like('emp_name', $ds['emp_name']);
     }
 
-    if($ds['conditions'] != 'all' OR $ds['amount'] != "")
+
+    if($ds['amount'] != "")
     {
-      if($ds['conditions'] != 'all' && $ds['amount'] != "")
-      {
-        $sign = $this->get_condition_sign($ds['conditions']);
-
-        if($sign != "")
-        {
-          $this->db->where("amount {$sign}", $ds['amount']);
-        }
-      }
-      else
-      {
-        if($ds['conditions'] != 'all')
-        {
-          $this->db->where('conditions', $ds['conditions']);
-        }
-
-        if($ds['amount'] != "")
-        {
-          $this->db->like('amount', $ds['amount']);
-        }
-      }
+      $this->db->like('amount', $ds['amount']);
     }
 
     if($ds['status'] != 'all')
@@ -139,29 +120,9 @@ class Approver_model extends CI_Model
       $this->db->like('emp_name', $ds['emp_name']);
     }
 
-    if($ds['conditions'] != 'all' OR $ds['amount'] != "")
+    if($ds['amount'] != "")
     {
-      if($ds['conditions'] != 'all' && $ds['amount'] != "")
-      {
-        $sign = $this->get_condition_sign($ds['conditions']);
-
-        if($sign != "")
-        {
-          $this->db->where("amount {$sign}", $ds['amount']);
-        }
-      }
-      else
-      {
-        if($ds['conditions'] != 'all')
-        {
-          $this->db->where('conditions', $ds['conditions']);
-        }
-
-        if($ds['amount'] != "")
-        {
-          $this->db->like('amount', $ds['amount']);
-        }
-      }
+      $this->db->like('amount', $ds['amount']);
     }
 
     if($ds['status'] != 'all')
@@ -170,6 +131,20 @@ class Approver_model extends CI_Model
     }
 
     $rs = $this->db->order_by('date_add', 'DESC')->limit($limit, $offset)->get('approver');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+
+  public function get_all_active_approver()
+  {
+    $rs = $this->db->where('status', 1)->get('approver');
 
     if($rs->num_rows() > 0)
     {
