@@ -12,6 +12,7 @@ class Approve_rule extends PS_Controller{
     $this->home = base_url().'approve_rule';
 		$this->load->model('approve_rule_model');
 		$this->load->helper('approve');
+		$this->load->helper('sale_team');
   }
 
 
@@ -24,7 +25,7 @@ class Approve_rule extends PS_Controller{
 			'code' => get_filter('code', 'ar_code', ''),
 			'conditions' => get_filter('conditions', 'ar_conditions', 'all'),
 			'amount' => get_filter('amount', 'ar_amount', ''),
-			'order_type' => get_filter('order_type', 'ar_order_type', 'all'),
+			'sale_team' => get_filter('sale_team', 'ar_sale_team', 'all'),
 			'is_price_list' => get_filter('is_price_list', 'ar_is_price_list', 'all'),
 			'status' => get_filter('status', 'ar_status', 'all')
 		);
@@ -89,7 +90,7 @@ class Approve_rule extends PS_Controller{
 				$code = $this->get_new_code();
 				$conditions = $this->input->post('conditions');
 				$amount = $this->input->post('amount');
-				$order_type = $this->input->post('order_type');
+				$sale_team = $this->input->post('sale_team');
 				$is_price_list = $this->input->post('is_price_list') == 1 ? 1 : 0;
 				$status = $this->input->post('status') == 1 ? 1 : 0;
 				$approver = json_decode($this->input->post('approver'));
@@ -100,7 +101,7 @@ class Approve_rule extends PS_Controller{
 						'code' => $code,
 						'conditions' => $conditions,
 						'amount' => $amount,
-						'order_type' => $order_type,
+						'sale_team' => $sale_team,
 						'is_price_list' => $is_price_list,
 						'status' => $status,
 						'add_by' => $this->_user->id,
@@ -197,7 +198,7 @@ class Approve_rule extends PS_Controller{
 				$id = $this->input->post('rule_id');
 				$conditions = $this->input->post('conditions');
 				$amount = $this->input->post('amount');
-				$order_type = $this->input->post('order_type');
+				$sale_team = $this->input->post('sale_team');
 				$is_price_list = $this->input->post('is_price_list') == 1 ? 1 : 0;
 				$status = $this->input->post('status') == 1 ? 1 : 0;
 				$approver = json_decode($this->input->post('approver'));
@@ -207,7 +208,7 @@ class Approve_rule extends PS_Controller{
 					$arr = array(
 						'conditions' => $conditions,
 						'amount' => $amount,
-						'order_type' => $order_type,
+						'sale_team' => $sale_team,
 						'is_price_list' => $is_price_list,
 						'status' => $status,
 						'update_by' => $this->_user->id,
@@ -326,7 +327,7 @@ class Approve_rule extends PS_Controller{
 
 		echo count($ds) > 0 ? json_encode($ds) : NULL;
 	}
-	
+
 
 
 	public function get_new_code($date = NULL)
@@ -358,7 +359,7 @@ class Approve_rule extends PS_Controller{
 			'ar_conditions',
 			'ar_amount',
 			'ar_is_price_list',
-			'ar_order_type',
+			'ar_sale_team',
 			'ar_status'
 		);
 

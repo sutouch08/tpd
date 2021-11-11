@@ -22,7 +22,7 @@ class PS_Controller extends CI_Controller
     $this->uid = get_cookie('uid');
     $this->_user = $this->user_model->get_user_by_uid($this->uid);
     $this->_SuperAdmin = $this->_user->ugroup_id == -987654321 ? TRUE : FALSE;
-    $this->isGM = $this->_user->user_role === 'AGM' ? TRUE : FALSE;
+    $this->isGM = $this->_user->isGM == 1 ? TRUE : FALSE;
     //--- get permission for user
     $this->pm = get_permission($this->menu_code);
 

@@ -1,4 +1,4 @@
-var HOME = BASE_URL + "sales_team/";
+var HOME = BASE_URL + 'sale_team/';
 
 function goBack() {
   window.location.href = HOME;
@@ -10,267 +10,172 @@ function goAdd() {
 }
 
 
-function goEdit(code) {
-  window.location.href = HOME + 'edit/'+code;
+function goEdit(id) {
+  window.location.href = HOME + 'edit/'+id;
 }
 
 
+
 function saveAdd() {
-  var el_code = $('#code');
-  var code_label = $('#code-error');
-  var el_name = $('#name');
-  var name_label = $('#name-error')
-  var code = $.trim(el_code.val());
-  var name = $.trim(el_name.val());
-  var status = 'N';
+  var el = $('#name');
+  var label = $('#name-error');
+  var name = el.val();
 
-  if($('#status').is(':checked')) {
-    status = 'Y';
-  }
-  else {
-    status = 'N';
-  }
 
-  //--- check empty code
-  if(code.length === 0) {
-    set_error(el_code, code_label, "Required");
-    return false;
-  }
-  else {
-    clear_error(el_code, code_label);
-  }
-
-  //--- check empty name
   if(name.length === 0) {
-    set_error(el_name, name_label, "Required");
+    set_error(el, label, "Required");
     return false;
   }
   else {
-    clear_error(el_name, name_label);
+    clear_error(el, label);
   }
 
-  //--- check duplicate code
+  let customerGroup = [];
+
+  $('.chk').each(function() {
+    if($(this).is(':checked')) {
+      let cg = {"group_id" : $(this).val(), };
+      customerGroup.push(cg);
+    }
+  })
+
+  load_in();
+
   $.ajax({
-    url:HOME + 'is_exists_code',
+    url:HOME + 'add',
     type:'POST',
     cache:false,
     data:{
-      'code' : code
+      'name' : name,
+      'customer_group' : JSON.stringify(customerGroup)
     },
     success:function(rs) {
+      load_out();
       var rs = $.trim(rs);
       if(rs === 'success') {
-        //--- check duplicate name
-        $.ajax({
-          url:HOME + 'is_exists_name',
-          type:'POST',
-          cache:false,
-          data:{
-            'name' : name
-          },
-          success:function(ds) {
-            var ds = $.trim(ds);
-            if(ds === 'success') {
-              //---- insert data
-              $.ajax({
-                url:HOME + 'add',
-                type:'POST',
-                cache:false,
-                data:{
-                  'code' : code,
-                  'name' : name,
-                  'status' : status
-                },
-                success:function(cs) {
-                  var cs = $.trim(cs);
-                  if(cs === 'success') {
-                    swal({
-                      title:'Success',
-                      text:'เพิ่มรายการเรียบร้อยแล้ว',
-                      type:'success',
-                      timer:1000
-                    });
+        swal({
+          title:"Success",
+          type:"success",
+          timer:1000
+        });
 
-                    setTimeout(function(){
-                      goAdd();
-                    }, 1200);
-                  }
-                }
-              })
-            }
-            else {
-              set_error(el_name, name_label, ds);
-              return false;
-            }
-          }
-        })
+        setTimeout(function() {
+          goAdd();
+        }, 1200);
       }
       else {
-        set_error(el_code, code_label, rs);
-        return false;
+        swal({
+          title:"Error!",
+          text:rs,
+          type:"error"
+        });
       }
+    },
+    error:function(xhr) {
+      load_out();
+      swal({
+        title:"Error!",
+        text:"Error-"+xhr.responseText,
+        type:"error"
+      });
     }
   })
 }
 
 
-
 function update() {
-  var change = 0;
-  var el_code = $('#code');
-  var code_label = $('#code-error');
-  var el_name = $('#name');
-  var name_label = $('#name-error')
-  var code = $.trim(el_code.val());
-  var name = $.trim(el_name.val());
-  var status = 'N';
+  var id = $('#id').val();
+  var el = $('#name');
+  var label = $('#name-error');
+  var name = el.val();
 
-  var old_code = $('#old_code').val();
-  var old_name = $('#old_name').val();
-  var old_status = $('#old_status').val();
-
-  if($('#status').is(':checked')) {
-    status = 'Y';
-  }
-  else {
-    status = 'N';
-  }
-
-  //--- check empty code
-  if(code.length === 0) {
-    set_error(el_code, code_label, "Required");
+  if(id == "") {
+    swal("Error!", "Missing requierd parameter : id", "error");
     return false;
   }
-  else {
-    clear_error(el_code, code_label);
-  }
 
-  //--- check empty name
   if(name.length === 0) {
-    set_error(el_name, name_label, "Required");
+    set_error(el, label, "Required");
     return false;
   }
   else {
-    clear_error(el_name, name_label);
+    clear_error(el, label);
   }
 
-  if(status != old_status) {
-    change++;
-  }
+  let customerGroup = [];
 
-  if(code != old_code) {
-    change++;
-  }
+  $('.chk').each(function() {
+    if($(this).is(':checked')) {
+      let cg = {"group_id" : $(this).val(), };
+      customerGroup.push(cg);
+    }
+  })
 
-  if(name != old_name) {
-    change++;
-  }
 
-  if(change == 0) {
-    swal({
-      title:'Updated',
-      text:'Update รายการเรียบร้อยแล้ว',
-      type:'success',
-      timer:1000
-    });
+  load_in();
 
-    console.log('update');
-    return false;
-  }
-
-  //--- check duplicate code
   $.ajax({
-    url:HOME + 'is_exists_code',
+    url:HOME + 'update/'+id,
     type:'POST',
     cache:false,
     data:{
-      'code' : code,
-      'old_code' : old_code
+      'name' : name,
+      'customer_group' : JSON.stringify(customerGroup)
     },
     success:function(rs) {
+      load_out();
       var rs = $.trim(rs);
       if(rs === 'success') {
-        //--- check duplicate name
-        $.ajax({
-          url:HOME + 'is_exists_name',
-          type:'POST',
-          cache:false,
-          data:{
-            'name' : name,
-            'old_name' : old_name
-          },
-          success:function(ds) {
-            var ds = $.trim(ds);
-            if(ds === 'success') {
-              //---- insert data
-              $.ajax({
-                url:HOME + 'update',
-                type:'POST',
-                cache:false,
-                data:{
-                  'old_code' : old_code,
-                  'code' : code,
-                  'name' : name,
-                  'status' : status
-                },
-                success:function(cs) {
-                  var cs = $.trim(cs);
-                  if(cs === 'success') {
-                    swal({
-                      title:'Updated',
-                      text:'แก้ไขรายการเรียบร้อยแล้ว',
-                      type:'success',
-                      timer:1000
-                    });
+        swal({
+          title:"Success",
+          type:"success",
+          timer:1000
+        });
 
-                    setTimeout(function(){
-                      goEdit(code);
-                    }, 1200)
-                  }
-                }
-              })
-            }
-            else {
-              set_error(el_name, name_label, ds);
-              return false;
-            }
-          }
-        })
       }
       else {
-        set_error(el_code, code_label, rs);
-        return false;
+        swal({
+          title:"Error!",
+          text:rs,
+          type:"error"
+        });
       }
+    },
+    error:function(xhr) {
+      load_out();
+      swal({
+        title:"Error!",
+        text:"Error-"+xhr.responseText,
+        type:"error"
+      });
     }
-  });
+  })
+
 }
 
 
 
-function getDelete(code, name){
+function getDelete(id, name){
   swal({
     title:'Are sure ?',
-    text:'ต้องการลบ '+ name +' หรือไม่ ?',
+    text:'Do you really want to delete '+ name +' ? <br/> This process cannot be undone.',
     type:'warning',
     showCancelButton: true,
-		confirmButtonColor: '#FA5858',
-		confirmButtonText: 'ใช่, ฉันต้องการลบ',
-		cancelButtonText: 'ยกเลิก',
-		closeOnConfirm: false
+    confirmButtonColor: '#FA5858',
+    confirmButtonText: 'Delete',
+    cancelButtonText: 'Cancle',
+    closeOnConfirm: false,
+    html:true
   },function(){
     $.ajax({
-      url: HOME + 'delete',
+      url: HOME + 'delete/'+id,
       type:'POST',
-      cache:false,
-      data:{
-        'code' : code,
-        'name' : name
-      },
+      cache:false,      
       success:function(rs){
         if(rs == 'success'){
           swal({
             title:'Success',
-            text:'Sales Team has been deleted',
+            text:'Sales team has been deleted',
             type:'success',
             time: 1000
           });
@@ -291,3 +196,41 @@ function getDelete(code, name){
     })
   })
 }
+
+
+
+
+function viewMember(id) {
+  $.ajax({
+    url:HOME + 'get_member/'+id,
+    type:'GET',
+    cache:false,
+    success:function(rs) {
+      if(isJson(rs)) {
+        var ds = $.parseJSON(rs);
+        var source = $('#member-template').html();
+        var output = $('#result');
+
+        render(source, ds, output);
+
+        $('#UserGroupModal').modal('show');
+      }
+      else {
+        swal({
+          title:'Error!',
+          text:rs,
+          type:'error'
+        })
+      }
+    }
+  })
+}
+
+$('#chk-all').change(function(){
+  if($(this).is(':checked')) {
+    $('.chk').prop('checked', true);
+  }
+  else {
+    $('.chk').prop('checked', false);
+  }
+})

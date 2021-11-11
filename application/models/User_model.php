@@ -19,18 +19,6 @@ class User_model extends CI_Model
   }
 
 
-  public function get_user_customer_group($id)
-  {
-    $rs = $this->db->where('user_id', $id)->get('user_customer_group');
-
-    if($rs->num_rows() > 0)
-    {
-      return $rs->result();
-    }
-
-    return NULL;
-  }
-
 
 
   public function add(array $ds = array())
@@ -44,9 +32,9 @@ class User_model extends CI_Model
   }
 
 
-  public function add_user_customer_group(array $ds = array())
+  public function add_user_team(array $ds = array())
   {
-    return $this->db->insert('user_customer_group', $ds);
+    return $this->db->insert('user_team', $ds);
   }
 
 
@@ -69,19 +57,20 @@ class User_model extends CI_Model
   }
 
 
-  public function drop_user_customer_group($id)
+  public function drop_user_team($id)
   {
-    return $this->db->where('user_id', $id)->delete('user_customer_group');
+    return $this->db->where('user_id', $id)->delete('user_team');
   }
 
 
 
   function count_rows(array $ds = array())
   {
+    $this->user_in = $ds['sale_team'] !== "all" ? $this->user_in_team($ds['sale_team']) : "";
+
     $this->db
     ->from('user AS u')
     ->join('user_group AS g', 'u.ugroup_id = g.id', 'left')
-    ->join('user_role AS r', 'u.user_role = r.code', 'left')
     ->where('u.ugroup_id >', 0);
 
     if(!empty($ds['uname']))
@@ -104,9 +93,9 @@ class User_model extends CI_Model
       $this->db->where('u.ugroup_id', $ds['user_group']);
     }
 
-    if(!empty($ds['user_role']) && $ds['user_role'] !== 'all')
+    if(!empty($ds['sale_team']) && $ds['sale_team'] !== 'all')
     {
-      $this->db->where('u.user_role', $ds['user_role']);
+      $this->db->where_in('u.id', $this->user_in);
     }
 
     if($ds['status'] !== 'all')
@@ -124,10 +113,9 @@ class User_model extends CI_Model
   function get_list(array $ds = array(), $perpage = 20, $offset = 0)
   {
     $this->db
-    ->select('u.*, g.name AS group_name, r.name AS role_name')
+    ->select('u.*, g.name AS group_name')
     ->from('user AS u')
     ->join('user_group AS g', 'u.ugroup_id = g.id', 'left')
-    ->join('user_role AS r', 'u.user_role = r.code', 'left')
     ->where('u.ugroup_id >', 0);
 
     if(!empty($ds['uname']))
@@ -151,9 +139,9 @@ class User_model extends CI_Model
     }
 
 
-    if(!empty($ds['user_role']) && $ds['user_role'] !== 'all')
+    if(!empty($ds['sale_team']) && $ds['sale_team'] !== 'all')
     {
-      $this->db->where('u.user_role', $ds['user_role']);
+      $this->db->where_in('u.id', $this->user_in);
     }
 
     if($ds['status'] !== 'all')
@@ -173,6 +161,28 @@ class User_model extends CI_Model
     return NULL;
   }
 
+
+
+  private function user_in_team($team_id)
+  {
+    $sc = array();
+
+    $rs = $this->db->select('user_id')->where('team_id', $team_id)->get('user_team');
+
+    if($rs->num_rows() > 0)
+    {
+      foreach($rs->result() as $ts)
+      {
+        $sc[] = $ts->user_id;
+      }
+    }
+    else
+    {
+      $sc[] = "000";
+    }
+
+    return $sc;
+  }
 
 
   public function get_user_by_uid($uid)
@@ -223,9 +233,14 @@ class User_model extends CI_Model
   }
 
 
-  public function get_all_role()
+  public function get_user_team($user_id)
   {
-    $rs = $this->db->order_by('position', 'ASC')->get('user_role');
+    $rs = $this->db
+    ->select('ut.*, st.name AS team_name')
+    ->from('user_team AS ut')
+    ->join('sale_team AS st', 'ut.team_id = st.id', 'left')
+    ->where('ut.user_id', $user_id)
+    ->get();
 
     if($rs->num_rows() > 0)
     {

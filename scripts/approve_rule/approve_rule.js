@@ -19,7 +19,7 @@ function goEdit(id) {
 function saveAdd() {
   var conditions = $('#conditions').val();
   var amount = parseDefault(parseFloat($('#amount').val()),0);
-  var order_type = $('#order_type').val();
+  var sale_team = $('#sale_team').val();
   var is_price_list = $('#is_price_list').is(':checked') ? 1 : 0;
   var status = $('#status').is(':checked') ? 1 : 0;
   var approver = [];
@@ -32,6 +32,17 @@ function saveAdd() {
   else {
     $('#conditions').removeClass('has-error');
     $('#conditions-error').text('');
+  }
+
+
+  if(sale_team == "") {
+    $('#sale_team').addClass('has-error');
+    $('#sale_team-error').text('Required');
+    return false;
+  }
+  else {
+    $('#sale_team').removeClass('has-error');
+    $('#sale_team-error').text('');
   }
 
 
@@ -79,7 +90,7 @@ function saveAdd() {
 
   fd.append("conditions", conditions);
   fd.append("amount", amount);
-  fd.append("order_type", order_type);
+  fd.append("sale_team", sale_team);
   fd.append("is_price_list", is_price_list);
   fd.append("status" , status);
   fd.append("approver", JSON.stringify(approver));
@@ -135,7 +146,7 @@ function update() {
   var rule_id = $('#rule_id').val();
   var conditions = $('#conditions').val();
   var amount = parseDefault(parseFloat($('#amount').val()),0);
-  var order_type = $('#order_type').val();
+  var sale_team = $('#sale_team').val();
   var is_price_list = $('#is_price_list').is(':checked') ? 1 : 0;
   var status = $('#status').is(':checked') ? 1 : 0;
   var approver = [];
@@ -160,6 +171,16 @@ function update() {
   else {
     $('#amount').removeClass('has-error');
     $('#amount-error').text('');
+  }
+
+  if(sale_team == "") {
+    $('#sale_team').addClass('has-error');
+    $('#sale_team-error').text('Required');
+    return false;
+  }
+  else {
+    $('#sale_team').removeClass('has-error');
+    $('#sale_team-error').text('');
   }
 
 
@@ -196,7 +217,7 @@ function update() {
   fd.append("rule_id", rule_id);
   fd.append("conditions", conditions);
   fd.append("amount", amount);
-  fd.append("order_type", order_type);
+  fd.append("sale_team", sale_team);
   fd.append("is_price_list", is_price_list);
   fd.append("status" , status);
   fd.append("approver", JSON.stringify(approver));

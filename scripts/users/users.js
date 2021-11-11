@@ -4,7 +4,6 @@ var pwd_error = 1;
 var emp_error = 1;
 //var sale_error = 1;
 var ugroup_error = 1;
-var role_error = 1;
 
 
 function goBack() {
@@ -80,41 +79,38 @@ function saveAdd() {
   var arr = [
     {'el' : 'uname', 'label':'uname-error', 'error':'uname_error'},
     {'el' : 'emp', 'label' : 'emp-error', 'error' : 'emp_error'},
-    {'el' : 'ugroup', 'label' : 'ugroup-error', 'error' : 'ugroup_error'},
-    {'el' : 'role', 'label' : 'role-error', 'error' : 'role_error'}
+    {'el' : 'ugroup', 'label' : 'ugroup-error', 'error' : 'ugroup_error'}
   ];
 
   arr.forEach(check_value);
 
 
-  var error = uname_error + emp_error + pwd_error + ugroup_error + role_error;
+  var error = uname_error + emp_error + pwd_error + ugroup_error;
 
   if( error > 0) {
     return false;
   }
 
   let uname = $('#uname').val();
-  let emp_id = $('#emp_id').val();
-  let emp_name = $('#emp').val();
+  let emp_id = $('#emp').val();
+  let emp_name = $('#emp :selected').text();
   let sale_id = $('#saleman').val();
   let pwd = $('#pwd').val();
   let ugroup = $('#ugroup').val();
-  let role = $('#role').val();
+  let status = $('#status').is(':checked') ? 1 : 0;
+  let team = [];
 
-  let status = 0;
-
-  if($('#status').is(':checked')) {
-    status = 1;
-  }
-
-  let customerGroup = [];
-
-  $('.chk').each(function() {
-    if($(this).is(':checked')) {
-      let cg = {"group_id" : $(this).val(), };
-      customerGroup.push(cg);
+  $('.team-list').each(function() {
+    let team_list = {
+      "team_id" : $(this).val(),
+      "user_role" : $(this).data('role')
     }
-  })
+
+    team.push(team_list);
+  });
+
+
+
 
   load_in();
 
@@ -129,9 +125,8 @@ function saveAdd() {
       'sale_id' : sale_id,
       'pwd' : pwd,
       'ugroup' : ugroup,
-      'role' : role,
       'status' : status,
-      'customer_group' : JSON.stringify(customerGroup)
+      'user_team' : JSON.stringify(team)
     },
     success:function(rs) {
       load_out();
@@ -172,14 +167,13 @@ function saveAdd() {
 function update() {
   var arr = [
     {'el' : 'emp', 'label' : 'emp-error', 'error' : 'emp_error'},
-    {'el' : 'ugroup', 'label' : 'ugroup-error', 'error' : 'ugroup_error'},
-    {'el' : 'role', 'label' : 'role-error', 'error' : 'role_error'}
+    {'el' : 'ugroup', 'label' : 'ugroup-error', 'error' : 'ugroup_error'}
   ];
 
   arr.forEach(check_value);
 
 
-  var error = emp_error + ugroup_error + role_error;
+  var error = emp_error + ugroup_error;
 
   if( error > 0) {
     return false;
@@ -187,25 +181,20 @@ function update() {
 
   let id = $('#id').val();
   let emp_id = $('#emp_id').val();
-  let emp_name = $('#emp').val();
+  let emp_name = $('#emp option:selected').text();
   let sale_id = $('#saleman').val();
   let ugroup = $('#ugroup').val();
-  let role = $('#role').val();
+  let status = $('#status').is(':checked') ? 1 : 0;
+  let team = [];
 
-  let status = 0;
-
-  if($('#status').is(':checked')) {
-    status = 1;
-  }
-
-  let customerGroup = [];
-
-  $('.chk').each(function() {
-    if($(this).is(':checked')) {
-      let cg = {"group_id" : $(this).val(), };
-      customerGroup.push(cg);
+  $('.team-list').each(function() {
+    let team_list = {
+      "team_id" : $(this).val(),
+      "user_role" : $(this).data('role')
     }
-  })
+
+    team.push(team_list);
+  });
 
   load_in();
 
@@ -219,9 +208,8 @@ function update() {
       'emp_name' : emp_name,
       'sale_id' : sale_id,
       'ugroup' : ugroup,
-      'role' : role,
       'status' : status,
-      'customer_group' : JSON.stringify(customerGroup)
+      'user_team' : JSON.stringify(team)
     },
     success:function(rs) {
       load_out();
@@ -367,26 +355,6 @@ $('#cfpwd').focusout(function(){
 })
 
 
-$('#emp').autocomplete({
-  source:BASE_URL + 'auto_complete/get_employee',
-  autoFocus:true,
-  close:function() {
-    var rs = $(this).val();
-    var arr = rs.split(' | ');
-    if(arr.length === 2) {
-      var name = arr[1];
-      var id = arr[0];
-      $('#emp').val(name);
-      $('#emp_id').val(id);
-    }
-    else {
-      $('#emp').val('');
-      $('#emp_id').val('');
-    }
-  }
-});
-
-
 function validData(el, label, error) {
   if(el.val() == '') {
     set_error(el, label, "Required");
@@ -483,9 +451,6 @@ $('#ugroup').focusout(function() {
   validData($(this), $('#ugroup-error'), 'ugroup_error');
 })
 
-$('#role').focusout(function() {
-  validData($(this), $('#role-error'), 'role_error');
-})
 
 
 //----- focus next element when press enter
@@ -516,11 +481,47 @@ $('#status').keyup(function(e){
 
 
 
-$('#chk-all').change(function(){
-  if($(this).is(':checked')) {
-    $('.chk').prop('checked', true);
+
+function addTeam() {
+  let no = $('#no').val();
+  no = parseDefault(parseInt(no), 1);
+  let team_id = $('#sale_team').val();
+  let name = $('#sale_team option:selected').text();
+  let role = $('#role').val();
+
+
+  if(team_id == "") {
+    $('#sale_team').addClass('has-error');
+    return false;
   }
   else {
-    $('.chk').prop('checked', false);
+    $('#sale_team').removeClass('has-error');
   }
-})
+
+  let source = $('#tag-template').html();
+  let data = {
+    "no" : no,
+    "team_id" : team_id,
+    "name" : name,
+    "role" : role
+  };
+
+  let output = $('#user-team-list');
+
+  render_append(source, data, output);
+
+  $('#sale_team').val('');
+  $('#role').val('Sales');
+  $('#no').val(no+1);
+  $('#team-list').removeClass('hide');
+}
+
+
+
+function removeTag(id) {
+  $('#tag-'+id).remove();
+  $('#team-'+id).remove();
+  if($('.team-list').length == 0) {
+    $('#team-list').addClass('hide');
+  }
+}

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Nov 09, 2021 at 02:55 PM
+-- Generation Time: Nov 11, 2021 at 03:10 PM
 -- Server version: 10.1.35-MariaDB
 -- PHP Version: 7.2.9
 
@@ -46,8 +46,10 @@ CREATE TABLE `approver` (
 --
 
 INSERT INTO `approver` (`id`, `user_id`, `uname`, `emp_name`, `amount`, `status`, `date_add`, `add_by`, `date_upd`, `update_by`) VALUES
-(2, 3, 'Jutarat', 'จุฑามาศ วงศ์รัตน์', '300000.00', 1, '2021-11-08 12:45:38', -987654321, '2021-11-08 13:09:52', -987654321),
-(3, 1, 'sutouch', 'มัลลิกา อยู่เกื้อ', '500000.00', 1, '2021-11-08 13:17:33', -987654321, '2021-11-08 22:07:00', -987654321);
+(4, 5, 'Sales Manager - Retail Business', 'น้ำทิพย์ ศิวะพรพันธ์', '299999.00', 1, '2021-11-10 12:49:13', -987654321, '2021-11-10 12:49:13', NULL),
+(5, 6, 'AdminGM', 'วิรัญญา ตั้งอมรศิริ', '2000000.00', 1, '2021-11-10 13:13:48', -987654321, '2021-11-10 13:13:48', NULL),
+(6, 8, 'Sale Admin Supervisor', 'ดรุณี ฝ่ายขันธ์', '299999.00', 1, '2021-11-10 13:14:16', -987654321, '2021-11-10 13:14:16', NULL),
+(7, 10, 'Sales manager - overseas', 'ทวี อินอยู่', '299999.00', 1, '2021-11-10 13:14:47', -987654321, '2021-11-10 13:14:47', NULL);
 
 -- --------------------------------------------------------
 
@@ -60,7 +62,7 @@ CREATE TABLE `approve_rule` (
   `code` varchar(20) NOT NULL,
   `conditions` set('Less Than','Less or Equal','Greater Than','Greater or Equal') DEFAULT NULL,
   `amount` decimal(15,2) NOT NULL DEFAULT '0.00',
-  `order_type` set('local','oversea') NOT NULL DEFAULT 'local',
+  `sale_team` int(11) DEFAULT NULL,
   `is_price_list` tinyint(1) NOT NULL DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '1',
   `add_by` int(11) DEFAULT NULL,
@@ -73,9 +75,11 @@ CREATE TABLE `approve_rule` (
 -- Dumping data for table `approve_rule`
 --
 
-INSERT INTO `approve_rule` (`id`, `code`, `conditions`, `amount`, `order_type`, `is_price_list`, `status`, `add_by`, `date_add`, `update_by`, `date_upd`) VALUES
-(2, 'RL-21002', 'Greater or Equal', '100000.00', 'local', 1, 1, -987654321, '2021-11-09 19:02:05', -987654321, '2021-11-09 20:50:45'),
-(3, 'RL-21003', 'Greater Than', '3003.00', 'oversea', 1, 1, -987654321, '2021-11-09 20:50:19', NULL, '2021-11-09 20:50:19');
+INSERT INTO `approve_rule` (`id`, `code`, `conditions`, `amount`, `sale_team`, `is_price_list`, `status`, `add_by`, `date_add`, `update_by`, `date_upd`) VALUES
+(4, 'RL-21001', 'Greater or Equal', '300000.00', 1, 1, 1, -987654321, '2021-11-10 13:17:54', NULL, '2021-11-10 13:17:54'),
+(5, 'RL-21002', 'Less or Equal', '299999.00', 1, 1, 1, -987654321, '2021-11-10 13:19:29', -987654321, '2021-11-10 13:22:52'),
+(6, 'RL-21003', 'Greater Than', '1.00', 2, 0, 1, -987654321, '2021-11-10 13:23:21', -987654321, '2021-11-11 21:06:57'),
+(7, 'RL-21004', 'Greater or Equal', '1.00', 5, 0, 1, -987654321, '2021-11-11 21:08:31', NULL, '2021-11-11 21:08:31');
 
 -- --------------------------------------------------------
 
@@ -183,7 +187,104 @@ INSERT INTO `ci_sessions` (`id`, `ip_address`, `timestamp`, `data`) VALUES
 ('765d5c06a4dcf262a8ea627c75261898a805db8f', '::1', 1636465412, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363436353431323b),
 ('454489e26903a8b7a92355bd16c31843860e6ebb', '::1', 1636465726, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363436353732363b),
 ('7a7d9c2073edc26b7c6a39a8c2c1a088ed1ad034', '::1', 1636466028, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363436363032383b),
-('6a34fe1e1f43fd60426f6595506f830feae7f248', '::1', 1636466114, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363436363032383b);
+('6a34fe1e1f43fd60426f6595506f830feae7f248', '::1', 1636471169, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363437313136393b),
+('b9ef7e861baf147b03d5ff20d8f20cd94f9abf72', '::1', 1636474392, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363437343339323b),
+('be04cd40f482f9d62a60c9bc44a2e39b4a6e40a6', '::1', 1636474861, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363437343836313b),
+('f6debc9b0f9605ac104f78e6b0c7c98704e82132', '::1', 1636475251, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363437353235313b),
+('a06f1f4e7c4d3edc4c9c1f11760670aca281c756', '::1', 1636475574, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363437353537343b),
+('e449e222e33398b050ff3e32e7450230645101c0', '::1', 1636476821, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363437363832313b),
+('f23ef94fe1dcf8eb13c0384e634fbd826c5905ae', '::1', 1636477272, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363437373237323b),
+('2cdc5833e89ca1f06ab97bd58c550e909438252d', '::1', 1636477915, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363437373931353b),
+('4175772d46a063f16827e92236b57d796494fc22', '::1', 1636478223, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363437383232333b),
+('44b720e4ea168c32081e6661503a10a574d97ece', '::1', 1636480521, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363438303532313b),
+('3e37f13ae7a8d66af9ef20f8289b2cc11bc7a6f9', '::1', 1636480922, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363438303932323b),
+('850fa7b7b3a2fac8878d30110be32418d463b038', '::1', 1636481239, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363438313233393b),
+('8984d2cedc5ecc11bff7b33e0ccd7a6377b2edbe', '::1', 1636481569, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363438313536393b),
+('839ad47667defce84640d40720ef18037536922b', '::1', 1636481904, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363438313930343b),
+('e7da591b5c2a428c5bba9bdbce502954f4fddd4d', '::1', 1636482465, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363438323436353b),
+('e4d7cdb2387443eaa05624e4795fc12a1ad238f6', '::1', 1636482770, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363438323737303b),
+('33057741cc121d70cec1f0e2bc0ec22a6429d2c1', '::1', 1636482798, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363438323737303b),
+('d4c7f1069a2bc4565393e0d6b285773822e9a9fd', '::1', 1636516901, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363531363930313b),
+('01672b3ffdf66a95f1b1fbaf771fbc735b8b8d79', '::1', 1636517273, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363531373237333b),
+('4e4170623f7753585d44993a9ab7725747f26131', '::1', 1636517580, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363531373538303b),
+('b37d61097509c500324310b6483963c7011130c5', '::1', 1636517886, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363531373838363b),
+('496ff6c955373da0c981eafa7579e5bee4674833', '::1', 1636518191, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363531383139313b),
+('276b50faf7efcb62178d2951a7ea5ecfabca8912', '::1', 1636518750, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363531383735303b),
+('44ed93f2b571a8287626aa36b22efd3f41875a72', '::1', 1636519094, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363531393039343b),
+('c7a3442d1cdab3f584a24813ac74d990609a4305', '::1', 1636519423, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363531393432333b),
+('47e71d05d3ee91e36864633580086caab0905fe7', '::1', 1636519764, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363531393736343b),
+('6d42e1951f3e41a17ce555666f73096ae61c3767', '::1', 1636520077, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532303037373b),
+('695a8f4ed0f575c8380ef004e3ce590fe2ba597f', '::1', 1636520585, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532303538353b),
+('ac76bb9557ab53a337a3ceac6194f79041dd9f3a', '::1', 1636521838, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532313833383b),
+('d4ffcfd7a9734c822f7d72cd402bf047d85c53e0', '::1', 1636522311, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532323331313b),
+('db424944393972f92da23fe4083819a29ecd1845', '::1', 1636522751, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532323735313b),
+('579c86f7ace5c757bbc383bc7709d8aefb763d35', '::1', 1636523153, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532333135333b),
+('d07a86db40ba574e10475271cc4c03e132c53160', '::1', 1636524242, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532343234323b),
+('31843ad7418cd76856b1114f100d4632a54817d9', '::1', 1636524544, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532343534343b),
+('fb0c509ab3433cad4527f096644dfbb45924870c', '::1', 1636524857, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532343835373b),
+('c478ce0400d2fdc3b8d250f47bfc320a86728f2f', '::1', 1636525171, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532353137313b),
+('a3840093c1387f39212ceb44f363a4f0e3b29f8f', '::1', 1636525491, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532353439313b),
+('1e606a8ad5afb6d8dc86477e3220b24129bcc497', '::1', 1636525837, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532353833373b),
+('0bd8427f4ee7a02328d24db2394fb3495244821f', '::1', 1636526484, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532363438343b),
+('51e978ea9e6fd61ef84da3c1a3489a42b9995128', '::1', 1636526950, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532363935303b),
+('0226c00363667072799aa0339d3957e36fbf12bb', '::1', 1636527275, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532373237353b),
+('db7434cd94aca7c1b4b4bc317fad3cc0d02aa4bc', '::1', 1636527600, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363532373630303b),
+('a51c378d3eb0f16fc73051272407a71a72d24736', '::1', 1636534275, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533343237353b),
+('4e371128cb606dd65dd1d10943b0c624a7615806', '::1', 1636534943, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533343934333b),
+('4c3e246e551b0adb1dfe6a605b30ecb362b00b70', '::1', 1636535475, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533353437353b),
+('a16aa904c2ab131e38d657138eb092d077ce2ecb', '::1', 1636536203, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533363230333b),
+('e2d851b8cea4a5dc04b76d8750b9fc8c88d23f1f', '::1', 1636536939, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533363933393b),
+('286e292074ffbd38f7228a31303ba819d5a7e348', '::1', 1636537297, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533373239373b),
+('e833e12e8305599f7b7cf9dac83afdfe954cc1ac', '::1', 1636538654, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533383635343b),
+('5a548424c2ffc7f278dedbf707a826d56cb71aaa', '::1', 1636538977, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533383937373b),
+('7a1b78a8a43cd235c7339606c3d2de7cf854a33f', '::1', 1636539296, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533393239363b),
+('5bd6678e079c5f1fe36581b5c422516f65d4b19c', '::1', 1636539599, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533393539393b),
+('8e3f5823c1e1576cf5ca467345dabbd30caa6a3a', '::1', 1636539938, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363533393933383b),
+('f2ec3bf9241cc0427c51383bc91ba70c2a6321f6', '::1', 1636543083, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363534333038333b),
+('e502f024597730d307e1e2f91b998ecac3f70fb8', '::1', 1636543964, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363534333936343b),
+('c2f443cf460d188cd61fd012a4c0c25814e37efa', '::1', 1636547273, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363534373237333b),
+('cea42739a742ef7ecdb7a2e5e4698e0818244d25', '::1', 1636547684, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363534373638343b),
+('30ed2583cc5ed990726d000fa12538658891b34f', '::1', 1636548241, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363534383234313b),
+('b0788ac79708d864caeda2184f610794f6cdfabb', '::1', 1636549074, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363534393037343b),
+('dbfaad981adc034f17107f9f17ad9227d6d81032', '::1', 1636549424, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363534393432343b),
+('4657d6ac6e6a6c086214ca623b96bef37e52bfda', '::1', 1636549424, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363534393432343b),
+('98d15e9c77dabb4e87ab2a59ee75ed2a057c7065', '::1', 1636601367, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630313336373b),
+('50ce5a75a0b602a2bf9b7566a6fc73385c1c2b33', '::1', 1636602586, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630323538363b),
+('03be3fd51912c62829ec1300d06eba9eb3acc349', '::1', 1636603329, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630333332393b),
+('9eff854c9b5f5eea4e3412e4aab31013784e6f00', '::1', 1636603668, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630333636383b),
+('793e1c808163d4411db273f82e03cd3fb489529d', '::1', 1636604178, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630343137383b),
+('56a2d6af391c063afbe3c8432667dd917a3ffab6', '::1', 1636604818, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630343831383b),
+('a0cc60f020ca10a84985321d7c8ae15c21fd0b6d', '::1', 1636607019, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630373031393b),
+('674afd2104ebb5a02b3d5314d9261c006070dd8e', '::1', 1636608588, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630383538383b),
+('9fd50bdcd916a6c6421256a99bde6423b74e3e7f', '::1', 1636609003, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630393030333b),
+('70c3c228d81b6c27fe9e76938319ece13aad8c95', '::1', 1636609311, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630393331313b),
+('fc8fcf0f322f2eb8f878a73e9b5d57e57e95c9a0', '::1', 1636609783, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363630393738333b),
+('f8400d83e2100c110d7418d85657fae60fe3160e', '::1', 1636610094, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631303039343b),
+('f8763c22715b2409ff41a346b55a5081ab5919f9', '::1', 1636610402, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631303430323b),
+('5d728e2d829486e324e9feecaecf2abac409c415', '::1', 1636611033, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631313033333b),
+('cd32648f40e3139a0022e46d6250fed0d533e45b', '::1', 1636612817, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631323831373b),
+('b2b84b4e7b19d7a52e93cfdbad24e5650021847a', '::1', 1636613243, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631333234333b),
+('b40b9791b13850a033f989384c79639674f3c696', '::1', 1636613656, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631333635363b),
+('e3213bcae8f1ecd033d678d7c56fd26dc1bd35bd', '::1', 1636613993, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631333939333b),
+('a8716b8f44c256e306f10c1e782e97d37cf8eb0b', '::1', 1636614379, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631343337393b),
+('5f88fa19d4e95dace09cb84875ecaf948e6cf772', '::1', 1636614689, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631343638393b),
+('3f3c23364b0c07b1478e12d7c620e274ef99d2dc', '::1', 1636614735, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363631343638393b),
+('9624b6d8cb673039cd730f36e2e4f1b41d07dddc', '::1', 1636633317, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633333331373b),
+('e960b8b4a8557b56e301539968fb65370e0b5f9b', '::1', 1636633858, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633333835383b),
+('9fc49b5227510fece555a5d1cea03fb1d19ef56a', '::1', 1636634824, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633343832343b),
+('5f44c59f435b3232d82bb9d63686d5cf74f77a2c', '::1', 1636635215, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633353231353b),
+('21a61413b1ab747e3e013a798303ad055b1ad800', '::1', 1636635642, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633353634323b),
+('40265e907a6b8e558a1230a6caa354403abab90d', '::1', 1636635951, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633353935313b),
+('2dde6150adddb585eced53d027139dede035856d', '::1', 1636636284, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633363238343b),
+('330f09c536f02c03539c69ed367e2941909f9e95', '::1', 1636636657, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633363635373b),
+('efda8bded81d35d04cd311d7e43e7ce7c16306c8', '::1', 1636636992, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633363939323b),
+('c4e0a6fd14cf64f24d2f73af0f258244c4378135', '::1', 1636637662, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633373636323b),
+('eb88de8543db2bad632b95325e9602ee015dd7ee', '::1', 1636638396, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633383339363b),
+('1355f2a789a5d1918ea513b5208587ed106b02c3', '::1', 1636638703, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633383730333b),
+('f08b0c873f4cdaadf8c2488c15a01d690ea1a945', '::1', 1636639052, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633393035323b),
+('f85fda6652768b5833377b3c7810ec73ff6fcc87', '::1', 1636639452, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633393435323b),
+('2d96d71b8dbd875c31b6e90f3f55bd8a22cfcf8f', '::1', 1636639757, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633393735373b),
+('dac33a7c8e7c409ea382fda3682947d3b7c018da', '::1', 1636639775, 0x5f5f63695f6c6173745f726567656e65726174657c693a313633363633393735373b);
 
 -- --------------------------------------------------------
 
@@ -243,7 +344,7 @@ INSERT INTO `config` (`code`, `name`, `value`, `group_code`, `description`, `dat
 ('SALE_VAT_RATE', 'ภาษีขาย', '7.00', 'SAP', '', '2020-12-20 14:10:03'),
 ('SQ_MANUAL_EXPORT', 'ส่งเข้า temp เอง', '1', 'Document', '', '2021-09-07 11:31:28'),
 ('TEXT_PER_ROW', 'จำนวนตัวอักษรต่อบรรทัด', '39.5', 'PRINT', '', '2021-08-10 06:02:35'),
-('USE_STRONG_PWD', 'บังคับใช้การตั้งรหัสผ่านแบบเข้มงวด', '0', NULL, '', '2021-11-07 16:31:16');
+('USE_STRONG_PWD', 'บังคับใช้การตั้งรหัสผ่านแบบเข้มงวด', '0', NULL, '', '2021-11-10 05:35:56');
 
 -- --------------------------------------------------------
 
@@ -269,12 +370,14 @@ CREATE TABLE `menu` (
 INSERT INTO `menu` (`code`, `name`, `url`, `group_code`, `sub_group`, `active`, `position`, `valid`) VALUES
 ('APPROVER', 'Authorizers', 'approver', 'ADMIN', NULL, 1, 4, 1),
 ('APPROVE_RULE', 'Aproval Rule', 'approve_rule', 'ADMIN', NULL, 1, 5, 1),
+('APPROVE_STATUS', 'Aproval Status', 'report/approve_status', 'REPORT', NULL, 1, 3, 0),
 ('ORDERPRO', 'Order Promotion', 'order_promotion', 'ORDER', NULL, 1, 2, 1),
 ('ORDERS', 'Order', 'orders', 'ORDER', NULL, 1, 1, 1),
 ('PERMISSION', 'Permission', NULL, 'SPM', NULL, 1, 3, 1),
 ('PROMOTION', 'Promotions', 'promotion', 'ADMIN', NULL, 1, 6, 1),
 ('PWDRESET', 'Reset User Password', NULL, 'SPM', NULL, 1, 1, 1),
-('USER', 'Users', 'users', 'ADMIN', NULL, 1, 1, 1),
+('SALE_TEAM', 'Sales Team', 'sale_team', 'ADMIN', NULL, 1, 1, 1),
+('USER', 'Users', 'users', 'ADMIN', NULL, 1, 3, 1),
 ('USERGROUP', 'Users Group', 'user_group', 'ADMIN', NULL, 1, 2, 1);
 
 -- --------------------------------------------------------
@@ -366,6 +469,41 @@ INSERT INTO `permission` (`id`, `menu`, `ugroup_id`, `can_view`, `can_add`, `can
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `promotion`
+--
+
+CREATE TABLE `promotion` (
+  `id` int(11) NOT NULL,
+  `code` varchar(20) NOT NULL,
+  `name` varchar(254) NOT NULL,
+  `start_date` date DEFAULT NULL,
+  `end_date` date DEFAULT NULL,
+  `status` tinyint(1) NOT NULL DEFAULT '1',
+  `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `add_by` int(11) DEFAULT NULL,
+  `date_upd` datetime DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP,
+  `update_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `promotion_detail`
+--
+
+CREATE TABLE `promotion_detail` (
+  `id` int(11) NOT NULL,
+  `promotion_id` int(11) NOT NULL,
+  `ItemCode` varchar(50) DEFAULT NULL,
+  `ItemName` varchar(100) DEFAULT NULL,
+  `Qty` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `SellPrice` decimal(19,2) NOT NULL DEFAULT '0.00',
+  `UomCode` varchar(20) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `rule_approver`
 --
 
@@ -373,6 +511,7 @@ CREATE TABLE `rule_approver` (
   `id` int(11) NOT NULL,
   `rule_id` int(11) NOT NULL,
   `user_id` int(11) NOT NULL,
+  `team_id` int(11) DEFAULT NULL,
   `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -380,10 +519,95 @@ CREATE TABLE `rule_approver` (
 -- Dumping data for table `rule_approver`
 --
 
-INSERT INTO `rule_approver` (`id`, `rule_id`, `user_id`, `date_add`) VALUES
-(15, 3, 1, '2021-11-09 20:50:19'),
-(18, 2, 1, '2021-11-09 20:50:45'),
-(19, 2, 3, '2021-11-09 20:50:45');
+INSERT INTO `rule_approver` (`id`, `rule_id`, `user_id`, `team_id`, `date_add`) VALUES
+(20, 4, 6, NULL, '2021-11-10 13:17:54'),
+(21, 4, 8, NULL, '2021-11-10 13:17:54'),
+(24, 5, 6, NULL, '2021-11-10 13:22:52'),
+(25, 5, 8, NULL, '2021-11-10 13:22:52'),
+(26, 5, 5, NULL, '2021-11-10 13:22:52'),
+(29, 6, 10, NULL, '2021-11-11 21:06:57'),
+(30, 6, 6, NULL, '2021-11-11 21:06:57'),
+(31, 7, 8, NULL, '2021-11-11 21:08:31');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `sale_team`
+--
+
+CREATE TABLE `sale_team` (
+  `id` int(11) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `add_by` int(11) DEFAULT NULL,
+  `date_upd` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `update_by` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `sale_team`
+--
+
+INSERT INTO `sale_team` (`id`, `name`, `date_add`, `add_by`, `date_upd`, `update_by`) VALUES
+(1, 'Retail Bussiness', '2021-11-11 10:52:06', 0, '2021-11-11 11:29:07', 0),
+(2, 'Overseas', '2021-11-11 10:52:25', 0, '2021-11-11 11:04:38', 0),
+(4, 'Admin - Oversea', '2021-11-11 12:29:46', -987654321, '2021-11-11 12:29:46', NULL),
+(5, 'Admin - Retail Bussiness', '2021-11-11 12:30:04', -987654321, '2021-11-11 12:30:04', NULL),
+(6, 'Sales Admin', '2021-11-11 20:18:10', -987654321, '2021-11-11 20:18:10', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `team_customer_group`
+--
+
+CREATE TABLE `team_customer_group` (
+  `id` int(11) NOT NULL,
+  `team_id` int(11) NOT NULL,
+  `group_id` int(2) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `team_customer_group`
+--
+
+INSERT INTO `team_customer_group` (`id`, `team_id`, `group_id`) VALUES
+(2, 1, 5),
+(3, 1, 6),
+(4, 1, 7),
+(5, 1, 8),
+(6, 1, 9),
+(7, 1, 10),
+(8, 1, 11),
+(9, 1, 12),
+(10, 1, 13),
+(11, 1, 14),
+(12, 1, 16),
+(1, 2, 15),
+(14, 4, 15),
+(15, 5, 5),
+(16, 5, 6),
+(17, 5, 7),
+(18, 5, 8),
+(19, 5, 9),
+(20, 5, 10),
+(21, 5, 11),
+(22, 5, 12),
+(23, 5, 13),
+(24, 5, 14),
+(25, 5, 16),
+(26, 6, 5),
+(27, 6, 6),
+(28, 6, 7),
+(29, 6, 8),
+(30, 6, 9),
+(31, 6, 10),
+(32, 6, 11),
+(33, 6, 12),
+(34, 6, 13),
+(35, 6, 14),
+(36, 6, 15),
+(37, 6, 16);
 
 -- --------------------------------------------------------
 
@@ -400,10 +624,12 @@ CREATE TABLE `user` (
   `emp_id` int(11) DEFAULT NULL,
   `sale_id` int(11) DEFAULT NULL,
   `ugroup_id` int(11) NOT NULL,
-  `user_role` varchar(10) DEFAULT NULL,
+  `isGM` tinyint(4) NOT NULL DEFAULT '0',
   `status` tinyint(1) NOT NULL DEFAULT '1' COMMENT '1 = active, 0 = disactive	',
   `date_add` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `date_upd` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `add_by` int(11) DEFAULT NULL,
+  `update_by` int(11) DEFAULT NULL,
   `bi_link` tinyint(1) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -411,11 +637,18 @@ CREATE TABLE `user` (
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `uname`, `pwd`, `uid`, `emp_name`, `emp_id`, `sale_id`, `ugroup_id`, `user_role`, `status`, `date_add`, `date_upd`, `bi_link`) VALUES
-(-987654321, 'superadmin', '$2y$10$vZKJB2k7bAPWNcHLqizIne1b3NsjV2Vm6cwEnZ4BHMWgTauKLS0W6', '1f0b6f95139c887a30c726d7dabbed3a', 'SuperAdmin', NULL, NULL, -987654321, 'AGM', 1, '2021-11-04 10:26:14', '2021-11-09 13:01:01', 1),
-(1, 'sutouch', '$2y$10$IFrFIC8AtkIOi8Fo72V3W.Mi/bolpkIR5YfTqdaZZF3Z4sH.BQEkW', 'eef48b86c4fc8586682f3ccda22138d1', 'มัลลิกา อยู่เกื้อ', 29, 5, 1, 'AGM', 1, '2021-11-06 23:18:08', '2021-11-09 13:01:11', 1),
-(2, 'Apichat', '$2y$10$nU6GcJUfjsVdb3mdPKIeoeFt4Xo4NNnJ7xBbR7VuBMOhUkakwsy66', 'a16aa78bb2f3b533a07d44c64537463f', 'อภิชาติ พิบูลย์', 70, 24, 3, 'SRD', 1, '2021-11-08 12:29:35', '2021-11-08 12:29:35', 0),
-(3, 'Jutarat', '$2y$10$LpWQVzmmMuK0511497nHp.SQDUWvNg1FHN2WtfBzuBDy.tIHMlntC', '6a8a3e440641d7843436393b7b251c2a', 'จุฑามาศ วงศ์รัตน์', 51, 5, 2, 'SMR', 1, '2021-11-08 12:44:29', '2021-11-08 12:44:29', 0);
+INSERT INTO `user` (`id`, `uname`, `pwd`, `uid`, `emp_name`, `emp_id`, `sale_id`, `ugroup_id`, `isGM`, `status`, `date_add`, `date_upd`, `add_by`, `update_by`, `bi_link`) VALUES
+(-987654321, 'superadmin', '$2y$10$vZKJB2k7bAPWNcHLqizIne1b3NsjV2Vm6cwEnZ4BHMWgTauKLS0W6', '1f0b6f95139c887a30c726d7dabbed3a', 'SuperAdmin', NULL, NULL, -987654321, 1, 1, '2021-11-04 10:26:14', '2021-11-11 10:27:53', NULL, NULL, 1),
+(2, 'Apichat', '$2y$10$nU6GcJUfjsVdb3mdPKIeoeFt4Xo4NNnJ7xBbR7VuBMOhUkakwsy66', 'a16aa78bb2f3b533a07d44c64537463f', 'อภิชาติ พิบูลย์', 70, 24, 3, 0, 1, '2021-11-08 12:29:35', '2021-11-08 12:29:35', NULL, NULL, 0),
+(3, 'Jutarat', '$2y$10$LpWQVzmmMuK0511497nHp.SQDUWvNg1FHN2WtfBzuBDy.tIHMlntC', '6a8a3e440641d7843436393b7b251c2a', 'จุฑามาศ วงศ์รัตน์', NULL, 5, 2, 0, 1, '2021-11-08 12:44:29', '2021-11-11 19:57:02', NULL, -987654321, 0),
+(4, 'smu.walaiporn', '$2y$10$3A0PDn3080nMc1BQ0tK0Rem3HdnC6lz.rVKQDvMTbI0hxDqfpiKqi', '861d6529a66bb787ccedaa6ded96119c', 'วลัยพร ยับ', 64, 18, 3, 0, 1, '2021-11-10 12:39:10', '2021-11-10 12:39:10', NULL, NULL, 0),
+(5, 'Sales Manager - Retail Business', '$2y$10$/anB9AQHQD3esbTRyo3/QumDIiA3o5Q2B/hwA9KXQ1k0h9qfNrddu', '121605faa4409d0764c13283aa6f7d36', 'น้ำทิพย์ ศิวะพรพันธ์', 56, 10, 2, 0, 1, '2021-11-10 12:48:18', '2021-11-10 12:48:18', NULL, NULL, 0),
+(6, 'AdminGM', '$2y$10$yhLZ5x.w00scECeVUf8cuuQHJEFjuskMk1WtrUaOtc/FH3RNGRUfi', '3d20d05935661c484fccefd2e348e9fd', 'วิรัญญา ตั้งอมรศิริ', 30, NULL, 1, 1, 1, '2021-11-10 13:05:28', '2021-11-11 10:27:59', NULL, NULL, 0),
+(7, 'Sales Representative', '$2y$10$1pmlwdtzHXfGt.Ku2jZI3.JTi53stTvA1N4xOUnBT/1pYn480Mwpe', '86d1b98bb3a246f0140f3a69c14d7ff2', 'สุดา กิมเรือง', 66, 20, 3, 0, 1, '2021-11-10 13:09:03', '2021-11-10 13:09:03', NULL, NULL, 0),
+(8, 'Sale Admin Supervisor', '$2y$10$28zbwpWnfIiA27sSooQBdOLKPIBRO3TR638uiRuFtnLVITCryQnS2', 'af9650390e101dde6e82cea654eb5a73', 'ดรุณี ฝ่ายขันธ์', NULL, NULL, 2, 0, 1, '2021-11-10 13:09:56', '2021-11-11 20:18:46', NULL, -987654321, 0),
+(9, 'Sales Admid', '$2y$10$2CPejXHGJZavuuyp586SAewdZ8uuvUQMLbXXhg8VdwxY36.x4nqvK', '0c4ae33a9243badfb5a96f3ed551ca2d', 'สำอางค์ โสพันลิ', NULL, NULL, 2, 0, 1, '2021-11-10 13:11:21', '2021-11-11 20:18:31', NULL, -987654321, 0),
+(10, 'Sales manager - overseas', '$2y$10$zkHvxu3aE7sHEUIcSqdgpOynjNlaA0Jf36BgfOGmvAwsWbkKlr20O', '5b0db125639c445e14992ec2c7e9a6da', 'ทวี อินอยู่', NULL, NULL, 2, 0, 1, '2021-11-10 13:12:31', '2021-11-11 20:16:05', NULL, -987654321, 0),
+(11, 'user1', '$2y$10$9xhaNDObt2olV5x7AFOV7eoIdlg.mIaJPJ/sA5oDFYu55Pn5cOVNi', '9119a733a39f65bd6bdb4aa39a096025', 'มัลลิกา อยู่เกื้อ', NULL, 41, 1, 0, 0, '2021-11-11 19:33:39', '2021-11-11 20:20:03', -987654321, -987654321, 0);
 
 -- --------------------------------------------------------
 
@@ -439,7 +672,50 @@ INSERT INTO `user_customer_group` (`id`, `user_id`, `group_id`) VALUES
 (13, 2, 5),
 (14, 2, 6),
 (15, 2, 7),
-(16, 2, 8);
+(16, 2, 8),
+(17, 4, 5),
+(18, 4, 6),
+(19, 4, 7),
+(20, 4, 8),
+(21, 5, 5),
+(22, 5, 6),
+(23, 5, 16),
+(24, 7, 5),
+(25, 7, 6),
+(26, 7, 7),
+(27, 7, 8),
+(28, 7, 9),
+(29, 7, 10),
+(30, 7, 11),
+(31, 7, 12),
+(32, 7, 13),
+(33, 7, 14),
+(34, 7, 16),
+(35, 8, 5),
+(36, 8, 6),
+(37, 8, 7),
+(38, 8, 8),
+(39, 8, 9),
+(40, 8, 10),
+(41, 8, 11),
+(42, 8, 12),
+(43, 8, 13),
+(44, 8, 14),
+(45, 8, 16),
+(46, 9, 5),
+(47, 9, 6),
+(48, 9, 7),
+(49, 9, 8),
+(50, 9, 9),
+(51, 9, 10),
+(52, 9, 11),
+(53, 9, 12),
+(54, 9, 13),
+(55, 9, 14),
+(56, 9, 16),
+(57, 10, 15),
+(60, 11, 5),
+(61, 11, 6);
 
 -- --------------------------------------------------------
 
@@ -464,7 +740,8 @@ INSERT INTO `user_group` (`id`, `name`, `date_add`, `add_by`, `date_upd`, `updat
 (-987654321, 'SuperAdmin', '2021-11-04 13:22:19', NULL, NULL, NULL),
 (1, 'Administrator', '2021-11-04 21:49:06', 'superadmin', '2021-11-06 13:02:26', 'superadmin'),
 (2, 'Manager', '2021-11-04 21:50:17', 'superadmin', '2021-11-06 13:02:52', 'superadmin'),
-(3, 'User', '2021-11-04 21:50:32', 'superadmin', '2021-11-06 13:02:58', NULL);
+(3, 'User', '2021-11-04 21:50:32', 'superadmin', '2021-11-06 13:02:58', NULL),
+(4, 'SuperVisor', '2021-11-10 17:08:30', 'superadmin', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -490,6 +767,32 @@ INSERT INTO `user_role` (`code`, `name`, `position`) VALUES
 ('SRD', 'Sales Representative', 1),
 ('SRO', 'Sales Representative - Overseas', 4);
 
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `user_team`
+--
+
+CREATE TABLE `user_team` (
+  `id` int(11) NOT NULL,
+  `user_id` int(11) NOT NULL,
+  `team_id` int(11) NOT NULL,
+  `user_role` set('GM','Manager','Lead','Sales') NOT NULL DEFAULT 'Sales'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `user_team`
+--
+
+INSERT INTO `user_team` (`id`, `user_id`, `team_id`, `user_role`) VALUES
+(6, 3, 4, 'Lead'),
+(7, 3, 5, 'Lead'),
+(8, 10, 4, 'Lead'),
+(9, 10, 5, 'Sales'),
+(10, 9, 6, 'Lead'),
+(11, 8, 6, 'Lead'),
+(12, 11, 1, 'Sales');
+
 --
 -- Indexes for dumped tables
 --
@@ -512,9 +815,9 @@ ALTER TABLE `approve_rule`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `code` (`code`),
   ADD KEY `conditions` (`conditions`),
-  ADD KEY `order_type` (`order_type`),
   ADD KEY `is_price_list` (`is_price_list`),
-  ADD KEY `status` (`status`);
+  ADD KEY `status` (`status`),
+  ADD KEY `sale_team` (`sale_team`);
 
 --
 -- Indexes for table `ci_sessions`
@@ -567,13 +870,50 @@ ALTER TABLE `permission`
   ADD UNIQUE KEY `menu` (`menu`,`ugroup_id`);
 
 --
+-- Indexes for table `promotion`
+--
+ALTER TABLE `promotion`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `code` (`code`),
+  ADD KEY `name` (`name`),
+  ADD KEY `status` (`status`),
+  ADD KEY `start_date` (`start_date`),
+  ADD KEY `end_date` (`end_date`);
+
+--
+-- Indexes for table `promotion_detail`
+--
+ALTER TABLE `promotion_detail`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `ItemCode` (`ItemCode`),
+  ADD KEY `ItemName` (`ItemName`),
+  ADD KEY `id_promotion` (`promotion_id`);
+
+--
 -- Indexes for table `rule_approver`
 --
 ALTER TABLE `rule_approver`
   ADD PRIMARY KEY (`id`),
   ADD UNIQUE KEY `rule_id_2` (`rule_id`,`user_id`),
   ADD KEY `rule_id` (`rule_id`),
-  ADD KEY `user_id` (`user_id`);
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `team_id` (`team_id`);
+
+--
+-- Indexes for table `sale_team`
+--
+ALTER TABLE `sale_team`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `name` (`name`);
+
+--
+-- Indexes for table `team_customer_group`
+--
+ALTER TABLE `team_customer_group`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_id_2` (`team_id`,`group_id`),
+  ADD KEY `user_id` (`team_id`),
+  ADD KEY `group_id` (`group_id`);
 
 --
 -- Indexes for table `user`
@@ -587,8 +927,8 @@ ALTER TABLE `user`
   ADD KEY `sale_id` (`sale_id`),
   ADD KEY `ugroup_id` (`ugroup_id`),
   ADD KEY `status` (`status`),
-  ADD KEY `user_role` (`user_role`),
-  ADD KEY `emp_name` (`emp_name`);
+  ADD KEY `emp_name` (`emp_name`),
+  ADD KEY `isGM` (`isGM`);
 
 --
 -- Indexes for table `user_customer_group`
@@ -614,6 +954,16 @@ ALTER TABLE `user_role`
   ADD KEY `position` (`position`);
 
 --
+-- Indexes for table `user_team`
+--
+ALTER TABLE `user_team`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `user_id_2` (`user_id`,`team_id`),
+  ADD KEY `user_id` (`user_id`),
+  ADD KEY `team_id` (`team_id`),
+  ADD KEY `user_role` (`user_role`);
+
+--
 -- AUTO_INCREMENT for dumped tables
 --
 
@@ -621,13 +971,13 @@ ALTER TABLE `user_role`
 -- AUTO_INCREMENT for table `approver`
 --
 ALTER TABLE `approver`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `approve_rule`
 --
 ALTER TABLE `approve_rule`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `permission`
@@ -636,28 +986,58 @@ ALTER TABLE `permission`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=25;
 
 --
+-- AUTO_INCREMENT for table `promotion`
+--
+ALTER TABLE `promotion`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT for table `promotion_detail`
+--
+ALTER TABLE `promotion_detail`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
+
+--
 -- AUTO_INCREMENT for table `rule_approver`
 --
 ALTER TABLE `rule_approver`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=20;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=32;
+
+--
+-- AUTO_INCREMENT for table `sale_team`
+--
+ALTER TABLE `sale_team`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+
+--
+-- AUTO_INCREMENT for table `team_customer_group`
+--
+ALTER TABLE `team_customer_group`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=38;
 
 --
 -- AUTO_INCREMENT for table `user`
 --
 ALTER TABLE `user`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=4;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `user_customer_group`
 --
 ALTER TABLE `user_customer_group`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=62;
 
 --
 -- AUTO_INCREMENT for table `user_group`
 --
 ALTER TABLE `user_group`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=5;
+
+--
+-- AUTO_INCREMENT for table `user_team`
+--
+ALTER TABLE `user_team`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=13;
 
 --
 -- Constraints for dumped tables
@@ -676,6 +1056,18 @@ ALTER TABLE `approver`
 ALTER TABLE `menu`
   ADD CONSTRAINT `fk_menu_group` FOREIGN KEY (`group_code`) REFERENCES `menu_group` (`code`) ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_menu_sub_group` FOREIGN KEY (`sub_group`) REFERENCES `menu_sub_group` (`code`) ON UPDATE CASCADE;
+
+--
+-- Constraints for table `promotion_detail`
+--
+ALTER TABLE `promotion_detail`
+  ADD CONSTRAINT `fk_promotion_id` FOREIGN KEY (`promotion_id`) REFERENCES `promotion` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
+-- Constraints for table `team_customer_group`
+--
+ALTER TABLE `team_customer_group`
+  ADD CONSTRAINT `fk_team_user_group_id` FOREIGN KEY (`team_id`) REFERENCES `sale_team` (`id`) ON UPDATE CASCADE;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

@@ -992,7 +992,7 @@ hr.padding-5 {
 }
 
 
-@media (min-width: 480px) and (max-width: 767px){
+@media (min-width: 200px) and (max-width: 767px){
 
   .col-xs-1-harf {
   	width: 12.5%;

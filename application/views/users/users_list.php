@@ -29,7 +29,7 @@
 
 	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
     <label>Sale empl.</label>
-		<select class="form-control input-sm" name="sale_id" onchange="getSearch()">
+		<select class="width-100" name="sale_id" onchange="getSearch()">
     <option value="all">All</option>
 			<?php echo select_saleman($sale_id); ?>
 		</select>
@@ -44,10 +44,10 @@
   </div>
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label>Role</label>
-    <select class="form-control input-sm" name="user_role" onchange="getSearch()">
+    <label>Team</label>
+    <select class="form-control input-sm" name="sale_team" onchange="getSearch()">
 			<option value="all">All</option>
-			<?php echo select_user_role($user_role); ?>
+			<?php echo select_sale_team($sale_team); ?>
 		</select>
   </div>
 
@@ -77,14 +77,14 @@
 
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-hover">
+		<table class="table table-striped table-hover border-1">
 			<thead>
 				<tr>
 					<th class="width-5 middle text-center">#</th>
 					<th class="width-15 middle">Username</th>
 					<th class="width-15 middle">Empl.</th>
-					<th class="width-15 middle">Sale empl.</th>
-					<th class="width-20 middle">Role</th>
+					<th class="width-15 middle">Sales empl.</th>
+					<th class="width-20 middle">Sales Team</th>
 					<th class="width-10 middle">Group</th>
 					<th class="width-5 middle text-center">Status</th>
 					<th class="width-15 middle text-right"></th>
@@ -99,7 +99,7 @@
 						<td class="middle"><?php echo $rs->uname; ?></td>
 						<td class="middle"><?php echo $rs->emp_name; ?></td>
 						<td class="middle"><?php echo get_sale_name($rs->sale_id); ?></td>
-						<td class="middle"><?php echo $rs->role_name; ?></td>
+						<td class="middle"><?php echo $rs->team_name; ?></td>
 						<td class="middle"><?php echo $rs->group_name; ?></td>
 						<td class="middle text-center">
 							<?php echo is_active($rs->status); ?>
@@ -130,6 +130,11 @@
 		</table>
 	</div>
 </div>
+
+<script>
+
+	$('#sale_id').select2();
+</script>
 
 <script src="<?php echo base_url(); ?>scripts/users/users.js"></script>
 

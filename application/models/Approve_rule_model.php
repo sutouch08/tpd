@@ -166,9 +166,9 @@ class Approve_rule_model extends CI_Model
     }
 
 
-    if($ds['order_type'] != "all")
+    if($ds['sale_team'] != "all")
     {
-      $this->db->where('order_type', $ds['order_type']);
+      $this->db->where('sale_team', $ds['sale_team']);
     }
 
 
@@ -188,6 +188,12 @@ class Approve_rule_model extends CI_Model
 
   public function get_list(array $ds = array(), $limit = 20, $offset = 0)
   {
+    $this->db
+    ->select('approve_rule.*')
+    ->select('sale_team.name AS team_name')
+    ->from('approve_rule')
+    ->join('sale_team', 'approve_rule.sale_team = sale_team.id', 'left');
+
     if($ds['code'] != "")
     {
       $this->db->like('code', $ds['code']);
@@ -218,9 +224,9 @@ class Approve_rule_model extends CI_Model
     }
 
 
-    if($ds['order_type'] != "all")
+    if($ds['sale_team'] != "all")
     {
-      $this->db->where('order_type', $ds['order_type']);
+      $this->db->where('sale_team', $ds['sale_team']);
     }
 
 
@@ -234,7 +240,7 @@ class Approve_rule_model extends CI_Model
       $this->db->where('status', $ds['status']);
     }
 
-    $rs = $this->db->order_by('date_add', 'DESC')->limit($limit, $offset)->get('approve_rule');
+    $rs = $this->db->order_by('date_add', 'DESC')->limit($limit, $offset)->get();
 
     if($rs->num_rows() > 0)
     {

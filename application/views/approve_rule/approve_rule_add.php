@@ -34,7 +34,7 @@
 
 
 	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Maximum Amount</label>
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Amount</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
 			<input type="number" name="amount" id="amount" class="width-100" value="" />
     </div>
@@ -43,14 +43,14 @@
 
 
 	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Order Type</label>
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Sale Team</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-			<select class="form-control input-sm" name="order_type" id="order_type">
-				<option value="local">Local</option>
-				<option value="oversea">Overseas</option>
+			<select class="form-control input-sm" name="sale_team" id="sale_team">
+				<option value="">Please Select</option>
+				<?php echo select_sale_team(); ?>
 			</select>
     </div>
-		<div class="help-block col-xs-12 col-sm-reset inline red" id="order_type-error"></div>
+		<div class="help-block col-xs-12 col-sm-reset inline red" id="sale_team-error"></div>
   </div>
 
 
@@ -86,7 +86,7 @@
 				<?php echo select_approver(); ?>
 			</select>
     </div>
-		<div class="col-lg-1 col-md-2 col-sm-2 col-xs-4">
+		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-4">
 			<button type="button" class="btn btn-primary btn-xs btn-block" onclick="addApprover()"><i class="fa fa-plus"></i> Add to list</button>
 		</div>
 		<div class="help-block col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 red" id="approver-error"></div>
@@ -94,7 +94,7 @@
 
 	<div class="form-group hide" id="authorizer-list">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" id="approver-list">
+    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12" id="approver-list">
     </div>
   </div>
 

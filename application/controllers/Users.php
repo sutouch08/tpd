@@ -16,13 +16,14 @@ class Users extends PS_Controller{
 
   public function index()
   {
+		$this->load->helper('sale_team');
 
 		$filter = array(
 			'uname' => get_filter('uname', 'username', ''),
 			'emp_name' => get_filter('emp_name', 'emp_name', ''),
 			'sale_id' => get_filter('sale_id', 'sale_id', 'all'),
 			'user_group' => get_filter('user_group', 'user_group', 'all'),
-			'user_role' => get_filter('user_role', 'user_role', 'all'),
+			'sale_team' => get_filter('sale_team', 'sale_team', 'all'),
 			'status' => get_filter('status', 'user_status', 'all')
 		);
 
@@ -41,6 +42,15 @@ class Users extends PS_Controller{
 		$init	= pagination_config($this->home.'/index/', $rows, $perpage, $segment);
 
 		$rs = $this->user_model->get_list($filter, $perpage, $this->uri->segment($segment));
+
+		if(!empty($rs))
+		{
+			foreach($rs as $ds)
+			{
+				$ds->team_name = user_team_label($ds->id);
+			}
+		}
+
 		$filter['data'] = $rs;
 
 		$this->pagination->initialize($init);
@@ -55,8 +65,11 @@ class Users extends PS_Controller{
 		$this->title = "Users - Add";
 		if($this->pm->can_add)
 		{
+			$this->load->helper('sale_team');
+
 			$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
-			$ds['customer_group'] = $this->user_model->get_customer_group_list();
+			$ds['emp_list'] = $this->user_model->get_all_employee();
+			$ds['sale_list'] = $this->user_model->get_all_slp();
 
 			$this->load->view('users/user_add', $ds);
 		}
@@ -76,7 +89,6 @@ class Users extends PS_Controller{
 			$uname = trim($this->input->post('uname'));
 			$emp_name = trim($this->input->post('emp_name'));
 			$ugroup_id = $this->input->post('ugroup');
-			$user_role = $this->input->post('role');
 
 			if($uname != "" && $uname !== NULL)
 			{
@@ -92,11 +104,6 @@ class Users extends PS_Controller{
 					$this->error = "Missing required parameter: User Group";
 				}
 
-				if(empty($user_role))
-				{
-					$sc = FALSE;
-					$this->error = "Missing required parameter: User role";
-				}
 
 				if($sc === TRUE)
 				{
@@ -117,8 +124,9 @@ class Users extends PS_Controller{
 						'emp_id' => get_null(trim($this->input->post('emp_id'))),
 						'sale_id' => get_null(trim($this->input->post('sale_id'))),
 						'ugroup_id' => $ugroup_id,
-						'user_role' => $user_role,
-						'status' => $this->input->post('status') == 1 ? 1 : 0
+						'status' => $this->input->post('status') == 1 ? 1 : 0,
+						'date_add' => now(),
+						'add_by' => $this->_user->id
 					);
 
 					$user_id = $this->user_model->add($arr);
@@ -126,20 +134,21 @@ class Users extends PS_Controller{
 					if($user_id !== FALSE)
 					{
 						//--- insert user_customer_group
-						if(!empty($this->input->post('customer_group')))
+						if(!empty($this->input->post('user_team')))
 						{
-							$customer_group = json_decode($this->input->post('customer_group'));
+							$user_team = json_decode($this->input->post('user_team'));
 
-							if(!empty($customer_group))
+							if(!empty($user_team))
 							{
-								foreach($customer_group as $rs)
+								foreach($user_team as $rs)
 								{
 									$arr = array(
 										'user_id' => $user_id,
-										'group_id' => $rs->group_id
+										'team_id' => $rs->team_id,
+										'user_role' => $rs->user_role
 									);
 
-									$this->user_model->add_user_customer_group($arr);
+									$this->user_model->add_user_team($arr);
 								}
 							}
 						}
@@ -188,27 +197,21 @@ class Users extends PS_Controller{
 	public function edit($id)
 	{
 		$this->title = "Users - Edit";
+
 		if($this->pm->can_edit)
 		{
+			$this->load->helper('sale_team');
+
 			$rs = $this->user_model->get($id);
 
 			if(!empty($rs))
 			{
-				$user_customer_group = $this->user_model->get_user_customer_group($id);
-				$ugroup = array();
-				if(!empty($user_customer_group))
-				{
-					foreach($user_customer_group as $cg)
-					{
-						$ugroup[$cg->group_id] =  $cg->group_id;
-					}
-				}
-
-				$rs->ugroup = $ugroup;
+				$rs->user_team = $this->user_model->get_user_team($id);
 
 				$ds['user'] = $rs;
 				$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
-				$ds['customer_group'] = $this->user_model->get_customer_group_list();
+				$ds['emp_list'] = $this->user_model->get_all_employee();
+				$ds['sale_list'] = $this->user_model->get_all_slp();
 
 				$this->load->view('users/user_edit', $ds);
 			}
@@ -237,7 +240,7 @@ class Users extends PS_Controller{
 				$id = $this->input->post('user_id');
 				$emp_name = trim($this->input->post('emp_name'));
 				$ugroup_id = $this->input->post('ugroup');
-				$user_role = $this->input->post('role');
+
 
 				if(empty($emp_name))
 				{
@@ -251,12 +254,6 @@ class Users extends PS_Controller{
 					$this->error = "Missing required parameter: User Group";
 				}
 
-				if(empty($user_role))
-				{
-					$sc = FALSE;
-					$this->error = "Missing required parameter: User role";
-				}
-
 				if($sc === TRUE)
 				{
 					$arr = array(
@@ -264,8 +261,8 @@ class Users extends PS_Controller{
 						'emp_id' => get_null(trim($this->input->post('emp_id'))),
 						'sale_id' => get_null(trim($this->input->post('sale_id'))),
 						'ugroup_id' => $ugroup_id,
-						'user_role' => $user_role,
-						'status' => $this->input->post('status') == 1 ? 1 : 0
+						'status' => $this->input->post('status') == 1 ? 1 : 0,
+						'update_by' => $this->_user->id
 					);
 
 					if(!$this->user_model->update($id, $arr))
@@ -275,24 +272,25 @@ class Users extends PS_Controller{
 					}
 					else
 					{
-						//--- drop exists user_customer_group
-						$this->user_model->drop_user_customer_group($id);
+						//--- drop exists user_team
+						$this->user_model->drop_user_team($id);
 
-						//--- insert user_customer_group
-						if(!empty($this->input->post('customer_group')))
+						//--- insert new user_team
+						if(!empty($this->input->post('user_team')))
 						{
-							$customer_group = json_decode($this->input->post('customer_group'));
+							$user_team = json_decode($this->input->post('user_team'));
 
-							if(!empty($customer_group))
+							if(!empty($user_team))
 							{
-								foreach($customer_group as $rs)
+								foreach($user_team as $rs)
 								{
 									$arr = array(
 										'user_id' => $id,
-										'group_id' => $rs->group_id
+										'team_id' => $rs->team_id,
+										'user_role' => $rs->user_role
 									);
 
-									$this->user_model->add_user_customer_group($arr);
+									$this->user_model->add_user_team($arr);
 								}
 							}
 						}
@@ -325,45 +323,46 @@ class Users extends PS_Controller{
 			$sc = FALSE;
 			$this->error = "รอทำระบบให้เสร็จก่อน";
 
-			$id = $this->input->post('id');
+			// $id = $this->input->post('id');
+			//
+			// $user = $this->user_model->get($id);
 
-			$user = $this->user_model->get($id);
-			if(!empty($user))
-			{
-				//--- check transection
-				if($this->user_model->isApprover($user->uname))
-				{
-					$sc = FALSE;
-					$this->error = "Delete Failed : User is approver";
-				}
-
-				if($sc === TRUE && $this->user_model->has_quotation_transection($user->id))
-				{
-					$sc = FALSE;
-					$this->error = "Delete Failed : User has Quotation transections";
-				}
-
-				if($sc === TRUE && $this->user_model->has_customer_transection($user->id))
-				{
-					$sc = FALSE;
-					$this->error = "Delete Failed : User has Customer transection";
-				}
-
-				if($sc === TRUE)
-				{
-					if(! $this->user_model->delete($user->id))
-					{
-						$sc = FALSE;
-						$this->error = "Delete Failed";
-					}
-				}
-
-			}
-			else
-			{
-				$sc = FALSE;
-				$this->error = "Invalid User ID";
-			}
+			// if(!empty($user))
+			// {
+			// 	//--- check transection
+			// 	if($this->user_model->isApprover($user->uname))
+			// 	{
+			// 		$sc = FALSE;
+			// 		$this->error = "Delete Failed : User is approver";
+			// 	}
+			//
+			// 	if($sc === TRUE && $this->user_model->has_quotation_transection($user->id))
+			// 	{
+			// 		$sc = FALSE;
+			// 		$this->error = "Delete Failed : User has Quotation transections";
+			// 	}
+			//
+			// 	if($sc === TRUE && $this->user_model->has_customer_transection($user->id))
+			// 	{
+			// 		$sc = FALSE;
+			// 		$this->error = "Delete Failed : User has Customer transection";
+			// 	}
+			//
+			// 	if($sc === TRUE)
+			// 	{
+			// 		if(! $this->user_model->delete($user->id))
+			// 		{
+			// 			$sc = FALSE;
+			// 			$this->error = "Delete Failed";
+			// 		}
+			// 	}
+			//
+			// }
+			// else
+			// {
+			// 	$sc = FALSE;
+			// 	$this->error = "Invalid User ID";
+			// }
 		}
 		else
 		{
@@ -458,6 +457,8 @@ class Users extends PS_Controller{
 		$name = $this->user_model->get_saleman_name($id);
 		return $name;
 	}
+
+
 
 	public function clear_filter()
 	{

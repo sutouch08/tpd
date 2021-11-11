@@ -79,23 +79,25 @@ function select_user_group($id = NULL)
 }
 
 
-function select_user_role($code = NULL)
+function user_team_label($user_id)
 {
   $ds = "";
-  $ci =& get_instance();
-  $qs = $ci->user_model->get_all_role();
 
-  if(!empty($qs))
+  $ci =& get_instance();
+  $team = $ci->user_model->get_user_team($user_id);
+
+  if(!empty($team))
   {
-    foreach($qs as $rs)
+    $i = 1;
+    foreach($team as $rs)
     {
-      $ds .= '<option value="'.$rs->code.'" '.is_selected($rs->code, $code).'>'.$rs->name.'</option>';
+      $ds .= $i == 1 ? $rs->team_name : ", {$rs->team_name}";
+      $i++;
     }
   }
 
   return $ds;
 }
-
 
 
 function select_saleman($sale_id = '')

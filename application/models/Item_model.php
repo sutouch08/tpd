@@ -39,18 +39,15 @@ class Item_model extends CI_Model
 
 
 
-  public function get_item_list($group = NULL)
+  public function get_item_list()
   {
-    $this->ms->select('ItemCode AS code, ItemName AS name, SalUnitMsr AS UoM');
-
-    if(!empty($group) && is_array($group))
-    {
-      $this->ms->where_in('ItmsGrpCod', $group);
-    }
-
-    $this->ms->order_by('ItemCode', 'ASC');
-
-    $rs = $this->ms->get('OITM');
+    $rs = $this->ms
+    ->select('ItemCode AS code, ItemName AS name, SalUnitMsr AS UoM')
+    ->where('ItemType', 'I')
+    ->where('SellItem', 'Y')
+    ->where('validFor', 'Y')
+    ->order_by('ItemName', 'ASC')
+    ->get('OITM');
 
     if($rs->num_rows() > 0)
     {
