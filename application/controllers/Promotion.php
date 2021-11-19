@@ -75,29 +75,61 @@ class Promotion extends PS_Controller
 	{
 		$sc = TRUE;
 		$name = trim($this->input->post('name'));
+		$start_date = $this->input->post('start_date');
+		$end_date = $this->input->post('end_date');
+		$status = $this->input->post('status') == 1 ? 1 : 0;
+		$items = json_decode($this->input->post('items'));
 
-		if(!empty($name))
+		if(!empty($name) && !empty($start_date) && !empty($end_date) && !empty($items))
 		{
 			if($this->pm->can_add)
 			{
-				//--- check duplicate name
-				if(! $this->promotion_model->is_exists_name($name))
+				//--- gen new code
+				$code = $this->get_new_code();
+
+				if(!empty($code))
 				{
 					$arr = array(
+						'code' => $code,
 						'name' => $name,
-						'add_by' => $this->_user->uname
+						'start_date' => db_date($start_date),
+						'end_date' => db_date($end_date),
+						'status' => $status,
+						'add_by' => $this->_user->id
 					);
 
-					if(!$this->promotion_model->add($arr))
+
+					$id = $this->promotion_model->add($arr);
+
+					if(!$id)
 					{
 						$sc = FALSE;
 						$this->error = "Insert data failed";
+					}
+					else
+					{
+						if(!empty($items))
+						{
+							foreach($items as $rs)
+							{
+								$arr = array(
+									'promotion_id' => $id,
+									'ItemCode' => $rs->itemCode,
+									'ItemName' => $rs->itemName,
+									'Qty' => $rs->qty,
+									'SellPrice' => $rs->price,
+									'UomCode' => get_null($rs->uom)
+								);
+
+								$this->promotion_model->add_detail($arr);
+							}
+						}
 					}
 				}
 				else
 				{
 					$sc = FALSE;
-					$this->error = "Duplicated Group name. Please user another name";
+					$this->error = "Error Cannot generate new Promotion code";
 				}
 
 			}
@@ -110,7 +142,7 @@ class Promotion extends PS_Controller
 		else
 		{
 			$sc = FALSE;
-			$this->error = "Missing required parameter : Group Name";
+			$this->error = "Missing required parameter";
 		}
 
 
@@ -120,7 +152,7 @@ class Promotion extends PS_Controller
 
 	public function edit($id)
 	{
-		$this->title = "Users Group - Edit";
+		$this->title = "Promotion - Edit";
 
 		if($this->pm->can_edit)
 		{
@@ -128,8 +160,10 @@ class Promotion extends PS_Controller
 
 			if(!empty($rs))
 			{
-				$data['data'] = $rs;
-				$this->load->view('user_group/user_group_edit', $data);
+				$data['doc'] = $rs;
+				$data['details'] = $this->promotion_model->get_details($id);
+				$data['items'] = $this->item_model->get_item_list();
+				$this->load->view('promotion/promotion_edit', $data);
 			}
 			else
 			{
@@ -140,6 +174,194 @@ class Promotion extends PS_Controller
 		{
 			$this->deny_page();
 		}
+	}
+
+
+
+
+	public function update($id)
+	{
+		$sc = TRUE;
+		$name = trim($this->input->post('name'));
+		$start_date = $this->input->post('start_date');
+		$end_date = $this->input->post('end_date');
+		$status = $this->input->post('status') == 1 ? 1 : 0;
+		$items = json_decode($this->input->post('items'));
+
+		if(!empty($name) && !empty($start_date) && !empty($end_date) && !empty($items))
+		{
+			if($this->pm->can_edit)
+			{
+				if(!empty($id))
+				{
+					$this->db->trans_begin();
+
+					$arr = array(
+						'name' => $name,
+						'start_date' => db_date($start_date),
+						'end_date' => db_date($end_date),
+						'status' => $status,
+						'update_by' => $this->_user->id
+					);
+
+
+
+
+					if(! $this->promotion_model->update($id, $arr))
+					{
+						$sc = FALSE;
+						$this->error = "Update data failed";
+					}
+					else
+					{
+						if(!empty($items))
+						{
+							//--- drop current details
+							if($this->promotion_model->delete_details($id))
+							{
+								foreach($items as $rs)
+								{
+									$arr = array(
+										'promotion_id' => $id,
+										'ItemCode' => $rs->itemCode,
+										'ItemName' => $rs->itemName,
+										'Qty' => $rs->qty,
+										'SellPrice' => $rs->price,
+										'UomCode' => get_null($rs->uom)
+									);
+
+									$this->promotion_model->add_detail($arr);
+								}
+							}
+							else
+							{
+								$sc = FALSE;
+								$this->error = "Update failed : Delete current promotion details failed";
+							}
+						}
+					}
+
+					if($sc === TRUE)
+					{
+						$this->db->trans_commit();
+					}
+					else
+					{
+						$this->db->trans_rollback();
+					}
+				}
+				else
+				{
+					$sc = FALSE;
+					$this->error = "Invalid Promotion id";
+				}
+
+			}
+			else
+			{
+				$sc = FALSE;
+				$this->error = "Missing permission";
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = "Missing required parameter";
+		}
+
+
+		$this->_response($sc);
+	}
+
+
+
+
+	public function preview($id)
+	{
+		$sc = TRUE;
+
+		$ds = array();
+
+		$doc = $this->promotion_model->get($id);
+
+		if(!empty($doc))
+		{
+			$ds['code'] = $doc->code;
+			$ds['name'] = $doc->name;
+			$ds['start_date'] = thai_date($doc->start_date, FALSE, '.');
+			$ds['end_date'] = thai_date($doc->end_date, FALSE, '.');
+			$ds['status'] = $doc->status == 1 ? 'Active' : 'Disactive';
+			$ds['items'] = array();
+
+			$details = $this->promotion_model->get_details($id);
+			if(!empty($details))
+			{
+				$no = 1;
+				foreach($details as $rs)
+				{
+					$arr = array(
+						'no' => $no,
+						'ItemName' => $rs->ItemName,
+						'Qty' => $rs->Qty,
+						'Price' => $rs->SellPrice
+					);
+
+					array_push($ds['items'], $arr);
+					$no++;
+				}
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = "Invalid Promotion Id";
+		}
+
+
+		echo $sc === TRUE ? json_encode($ds) : $this->error;
+	}
+
+
+
+	public function delete()
+	{
+		$sc = TRUE;
+		$id = $this->input->post('id');
+
+		if(!empty($id))
+		{
+			$this->db->trans_begin();
+			//--- delete details
+			if(! $this->promotion_model->delete_details($id))
+			{
+				$sc = FALSE;
+				$this->error = "Delete details failed";
+			}
+			else
+			{
+				if(! $this->promotion_model->delete($id))
+				{
+					$sc = FALSE;
+					$this->erro = "Delete Promotion failed";
+				}
+			}
+
+			if($sc === TRUE)
+			{
+				$this->db->trans_commit();
+			}
+			else
+			{
+				$this->db->trans_rollback();
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = "Delete failed";
+		}
+
+		$this->_response($sc);
 	}
 
 

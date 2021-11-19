@@ -98,7 +98,19 @@ function saveAdd() {
   let pwd = $('#pwd').val();
   let ugroup = $('#ugroup').val();
   let status = $('#status').is(':checked') ? 1 : 0;
+  let bi = $('#bi').is(':checked') ? 1 : 0;
+  let isGM = $('#isGM').is(':checked') ? 1 : 0;
+  let isAdmin = $('#isAdmin').is(':checked') ? 1 : 0;
   let team = [];
+
+  let priceList = [];
+
+  $('.chk').each(function() {
+    if($(this).is(':checked')) {
+      let pl = {"id" : $(this).val(), "name" : $(this).data('name')};
+      priceList.push(pl);
+    }
+  })
 
   $('.team-list').each(function() {
     let team_list = {
@@ -126,7 +138,11 @@ function saveAdd() {
       'pwd' : pwd,
       'ugroup' : ugroup,
       'status' : status,
-      'user_team' : JSON.stringify(team)
+      'bi' : bi,
+      'isGM' : isGM,
+      'isAdmin' : isAdmin,
+      'user_team' : JSON.stringify(team),
+      'price_list' : JSON.stringify(priceList)
     },
     success:function(rs) {
       load_out();
@@ -180,12 +196,24 @@ function update() {
   }
 
   let id = $('#id').val();
-  let emp_id = $('#emp_id').val();
+  let emp_id = $('#emp').val();
   let emp_name = $('#emp option:selected').text();
   let sale_id = $('#saleman').val();
   let ugroup = $('#ugroup').val();
   let status = $('#status').is(':checked') ? 1 : 0;
+  let bi = $('#bi').is(':checked') ? 1 : 0;
+  let isGM = $('#isGM').is(':checked') ? 1 : 0;
+  let isAdmin = $('#isAdmin').is(':checked') ? 1 : 0;
   let team = [];
+
+  let priceList = [];
+
+  $('.chk').each(function() {
+    if($(this).is(':checked')) {
+      let pl = {"id" : $(this).val(), "name" : $(this).data('name')};
+      priceList.push(pl);
+    }
+  })
 
   $('.team-list').each(function() {
     let team_list = {
@@ -209,7 +237,11 @@ function update() {
       'sale_id' : sale_id,
       'ugroup' : ugroup,
       'status' : status,
-      'user_team' : JSON.stringify(team)
+      'bi' : bi,
+      'user_team' : JSON.stringify(team),
+      'price_list' : JSON.stringify(priceList),
+      'isGM' : isGM,
+      'isAdmin' : isAdmin
     },
     success:function(rs) {
       load_out();
@@ -525,3 +557,12 @@ function removeTag(id) {
     $('#team-list').addClass('hide');
   }
 }
+
+$('#chk-all').change(function(){
+  if($(this).is(':checked')) {
+    $('.chk').prop('checked', true);
+  }
+  else {
+    $('.chk').prop('checked', false);
+  }
+})

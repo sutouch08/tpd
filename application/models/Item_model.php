@@ -1,9 +1,6 @@
 <?php
 class Item_model extends CI_Model
 {
-  public $price_list = 12;
-  public $cost_list = 11;
-  public $clear_price_list = 10;
 
   public function __construct()
   {
@@ -13,20 +10,18 @@ class Item_model extends CI_Model
 
   public function get($code, $priceList = NULL)
   {
-    $priceList = empty($priceList) ? $this->$price_list : $priceList;
+    if($priceList !== NULL)
 
     $rs = $this->ms
     ->select('OITM.ItemCode AS code, OITM.ItemName AS name')
     ->select('OITM.SalUnitMsr AS uom, ITM1.Price AS price')
-    ->select('OITM.VatGourpSa AS taxCode, OITM.UserText AS detail')
-    ->select('OVTG.Rate AS taxRate')
-    ->select('OITM.DfltWH AS dfWhsCode, OITM.WarrntTmpl')
-    ->select('OITM.LastPurPrc AS last_price')
+    ->select('OITM.DfltWH AS dfWhsCode, OVTG.Code AS VatCode, OVTG.Rate')
     ->from('OITM')
     ->join('ITM1', 'ITM1.ItemCode = OITM.ItemCode', 'left')
     ->join('OVTG', 'OVTG.Code = OITM.VatGourpSa', 'left')
     ->where('OITM.ItemCode', $code)
     ->where('ITM1.PriceList', $priceList)
+    ->where('ITM1.Price >', 0)
     ->get();
 
     if($rs->num_rows() === 1)

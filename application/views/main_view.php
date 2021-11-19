@@ -25,18 +25,21 @@
 <script>
 
   function newOrder() {
-    window.location.href = BASE_URL + 'order/add_new';
+    window.location.href = BASE_URL + 'orders/add_new';
   }
 
 
   function newOrderPromotion() {
-    window.location.href = BASE_URL + 'order_promotion/add_new';
+    window.location.href = BASE_URL + 'orders_promotion/add_new';
   }
 
 
 
+
   function goPowerBi() {
-    window.location.href = BASE_URL + 'power_bi';
+    var target = window.location.href = BASE_URL + 'bi';
+    var prop = "width=800, height=900, left="+center+", scrollbars=yes";
+    window.open(target, '_blank', prop);
   }
 
 

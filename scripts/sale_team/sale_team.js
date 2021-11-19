@@ -170,7 +170,7 @@ function getDelete(id, name){
     $.ajax({
       url: HOME + 'delete/'+id,
       type:'POST',
-      cache:false,      
+      cache:false,
       success:function(rs){
         if(rs == 'success'){
           swal({
@@ -213,7 +213,7 @@ function viewMember(id) {
 
         render(source, ds, output);
 
-        $('#UserGroupModal').modal('show');
+        $('#memberModal').modal('show');
       }
       else {
         swal({

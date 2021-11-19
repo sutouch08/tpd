@@ -149,7 +149,7 @@ class Sale_team_model extends CI_Model
   public function get_members($team_id)
   {
     $rs = $this->db
-    ->select('user.emp_name, user_team.user_role')
+    ->select('user.uname, user.emp_name, user_team.user_role')
     ->from('user_team')
     ->join('user', 'user_team.user_id = user.id', 'left')
     ->where('user_team.team_id', $team_id)

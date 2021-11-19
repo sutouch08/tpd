@@ -27,7 +27,7 @@
 		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Employee</label>
 		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
 			<select class="width-100" name="emp" id="emp">
-				<option value=""></option>
+				<option value="">Please select</option>
 				<?php if(!empty($emp_list)) : ?>
 					<?php foreach($emp_list as $emp) : ?>
 						<option value="<?php echo $emp->empID; ?>" <?php echo is_selected($user->emp_id, $emp->empID); ?>><?php echo $emp->firstName.' '.$emp->lastName; ?></option>
@@ -42,7 +42,7 @@
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Sales Employee</label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
 			<select class="width-100" name="saleman" id="saleman">
-				<option value=""></option>
+				<option value="">Please Select</option>
 				<?php if(!empty($sale_list)) : ?>
 					<?php foreach($sale_list as $sale) : ?>
 						<option value="<?php echo $sale->id; ?>" <?php echo is_selected($user->sale_id, $sale->id); ?>><?php echo $sale->name; ?></option>
@@ -64,6 +64,19 @@
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="ugroup-error"></div>
   </div>
 
+
+	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">User Role</label>
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+			<select class="width-100" name="role" id="role">
+				<option value="sales" <?php echo is_selected($user->role, "sales"); ?>>Sales</option>
+				<option value="salesAdmin" <?php echo is_selected($user->role, "salesAdmin"); ?> >Sales Admin</option>
+				<option value="GM" <?php echo is_selected($user->role, "GM"); ?>>GM</option>
+			</select>
+    </div>
+		<div class="help-block col-xs-12 col-sm-reset inline grey"></div>
+  </div>
+
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
@@ -74,7 +87,63 @@
     </div>
   </div>
 
+	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+			<label>
+				<input type="checkbox" class="ace" name="bi" id="bi" value="1" <?php echo is_checked(1, $user->bi_link); ?>/>
+				<span class="lbl">&nbsp; &nbsp;Power BI Access</span>
+			</label>
+    </div>
+  </div>
+
 	<div class="divider"></div>
+
+	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Payment Term</label>
+    <div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 table-responsive">
+			<table class="table table-striped table-bordered border-1">
+				<thead>
+					<tr>
+						<th class="width-10 text-center">#</th>
+						<th>Select Payment Term</th>
+						<th class="width-10 text-center">
+							<label>
+								<input type="checkbox" class="ace" id="chk-all">
+								<span class="lbl"></span>
+							</label>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php if(!empty($price_list)) : ?>
+						<?php $no = 1; ?>
+						<?php foreach($price_list as $ps)  : ?>
+							<?php $is_checked = isset($user->priceList[$ps->id]) ? TRUE : FALSE; ?>
+							<tr>
+								<td class="text-center"><?php echo $no; ?></td>
+								<td><?php echo $ps->name; ?></td>
+								<td class="text-center">
+									<label>
+										<input type="checkbox"
+										class="ace chk"
+										name="priceList[<?php echo $ps->id; ?>]"
+										id="priceList-<?php echo $ps->id; ?>"
+										value="<?php echo $ps->id; ?>" data-name="<?php echo $ps->name; ?>" <?php echo ($is_checked === TRUE ? "checked" : ""); ?> >
+										<span class="lbl"></span>
+									</label>
+								</td>
+							</tr>
+							<?php $no++; ?>
+						<?php endforeach; ?>
+					<?php endif; ?>
+				</tbody>
+			</table>
+    </div>
+  </div>
+
+	<div class="divider"></div>
+
 	<div class="form-group">
 		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-8 control-label no-padding-right">Team</label>
 		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-8">

@@ -72,7 +72,7 @@
 
 								<span class="user-info">
 									<small>Welcome</small>
-									<?php echo $this->_user->emp_name; ?>
+									<?php echo $this->_user->uname; ?>
 								</span>
 
 								<i class="ace-icon fa fa-caret-down"></i>

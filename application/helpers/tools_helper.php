@@ -1,4 +1,33 @@
 <?php
+
+function get_condition_sign($condition)
+{
+	$sign = "";
+
+	switch($condition)
+	{
+		case "Less Than" :
+			$sign = "<";
+			break;
+		case "Less or Equal" :
+			$sign = "<=";
+			break;
+		case "Greater Than" :
+			$sign = ">";
+			break;
+		case "Greater or Equal" :
+			$sign = ">=";
+			break;
+		default :
+			$sign = "";
+			break;
+	}
+
+	return $sign;
+}
+
+
+
 function setToken($token)
 {
 	$CI =& get_instance();

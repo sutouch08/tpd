@@ -90,10 +90,9 @@
                   <table class="table table-bordered border-1" style="margin-bottom:0px;">
 										<thead>
 											<tr>
-												<th class="width-10 text-center">#</th>
-												<th class="width-30">User</th>
-												<th class="width-30">Sales emmployee</th>
-												<th class="width-30">Role(team)</th>
+												<th class="width-40">Username</th>
+												<th class="width-40">Emmployee</th>
+												<th class="width-20">Role(team)</th>
 											</tr>
 										</thead>
                     <tbody id="result">
@@ -104,19 +103,18 @@
               </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-primary" onClick="dismiss('UserGroupModal')" >Close</button>
+                <button type="button" class="btn btn-sm btn-primary" onClick="dismiss('memberModal')" >Close</button>
             </div>
         </div>
     </div>
 </div>
 
 <script id="member-template" type="text/x-handlebarsTemplate">
-  {{#each permission}}
+  {{#each this}}
 		<tr>
-		<td class="middle text-center">{{no}}</td>
-		<td class="middle">{{name}}</td>
-		<td class="middle ">{{sale_name}}</td>
-		<td class="middle">{{rolw}}</td>
+		<td class="middle">{{uname}}</td>
+		<td class="middle ">{{emp_name}}</td>
+		<td class="middle">{{role}}</td>
 	</tr>
   {{/each}}
 </script>

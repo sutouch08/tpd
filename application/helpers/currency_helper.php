@@ -1,26 +1,13 @@
 <?php
 
-function select_currency($code = NULL)
+function select_currency($code = 'THB')
 {
-  $sc = '';
-  $CI =& get_instance();
-  $CI->load->model('tool_model');
-  $options = $CI->tool_model->get_currency();
+  $sc = "";
+  $arr = array("THB", "AUB", "EUB", "GBS", "GBB", "USB", "USS");
 
-  if(!empty($options))
+  foreach($arr as $rs)
   {
-    $df = getConfig('CURRENCY');
-    foreach($options as $rs)
-    {
-      if($code === NULL)
-      {
-        $sc .= '<option value="'.$rs->code.'" '.is_selected($df, $rs->code).'>'.$rs->code.'</option>';
-      }
-      else
-      {
-        $sc .= '<option value="'.$rs->code.'" '.is_selected($code, $rs->code).'>'.$rs->code.'</option>';
-      }
-    }
+    $sc .= '<option value="'.$rs.'" '.is_selected($code, $rs).'>'.$rs.'</option>';
   }
 
   return $sc;

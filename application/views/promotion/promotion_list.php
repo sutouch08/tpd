@@ -34,7 +34,7 @@
   </div>
 
 	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label>Start Date</label>
+    <label>End Date</label>
 		<div class="input-group width-100">
     <input type="text" class="form-control input-sm text-center" name="end_date" id="end_date" value="<?php echo $end_date; ?>" />
 		<span class="input-group-addon"><i class="fa fa-calendar"></i></span>
@@ -72,8 +72,8 @@
 					<th class="width-5 middle text-center">#</th>
 					<th class="width-15 middle">Code</th>
 					<th class="width-30 middle">name</th>
-					<th class="width-15 middle">Start Date</th>
-					<th class="width-15 middle">End Date</th>
+					<th class="width-12 middle">Start Date</th>
+					<th class="width-12 middle">End Date</th>
 					<th class="width-8 middle text-center">Status</th>
 					<th class="middle text-right">Actions</th>
 				</tr>
@@ -112,35 +112,58 @@
 </div>
 
 <div class="modal fade" id="preview-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="max-width:400px;">
+    <div class="modal-dialog" style="max-width:800px;">
         <div class="modal-content">
             <div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;" ></h4>
+                <h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;" >Promotion Preview</h4>
             </div>
             <div class="modal-body">
               <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-									<table class="table table-striped border-1">
-										<thead>
-											<tr>
-												<th class="width-40">Username</th>
-												<th class="width-60">Employee</th>
-											</tr>
-										</thead>
-										<tbody id="result">
+                <div class="col-md-12 col-sm-12 col-xs-12" id="result">
 
-										</tbody>
-									</table>
                 </div>
               </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-primary" onClick="dismiss('approver-modal')" >Close</button>
+                <button type="button" class="btn btn-sm btn-primary" onClick="dismiss('preview-modal')" >Close</button>
             </div>
         </div>
     </div>
 </div>
+
+
+<script id="preview-template" type="text/x-handlebarsTemplate">
+<table class="table table-striped table-bordered border-1" style="margin-bottom:0px;">
+	<tr><td class="width-30">Code</td><td>{{code}}</td></tr>
+	<tr><td>Name</td><td>{{name}}</td></tr>
+	<tr><td>Date</td><td>{{statr_date}} - {{end_date}}</td></tr>
+	<tr><td>Status</td><td>{{status}}</td></tr>
+</table>
+
+<table class="table table-striped table-bordered border-1" style="margin-bottom:0px;">
+	<thead>
+		<tr>
+			<th class="width-10 text-center">#</th>
+			<th class="width-60">Items</th>
+			<th class="width-15 text-center">Qty.</th>
+			<th class="width-15 text-center">Price</th>
+		</tr>
+	</thead>
+	<tbody>
+		{{#each items}}
+			<tr>
+				<td class="middle text-center">{{no}}</td>
+				<td class="middle">{{ItemName}}</td>
+				<td class="middle text-center">{{Qty}}</td>
+				<td class="middle text-center">{{Price}}</td>
+			</tr>
+		{{/each}}
+	</tbody>
+</table>
+</script>
+
+
 
 <script src="<?php echo base_url(); ?>scripts/promotion/promotion.js"></script>
 

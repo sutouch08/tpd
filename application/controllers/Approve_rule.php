@@ -85,7 +85,7 @@ class Approve_rule extends PS_Controller{
 		$sc = TRUE;
 		if($this->pm->can_add)
 		{
-			if($this->input->post('conditions') && $this->input->post('amount'))
+			if($this->input->post('conditions'))
 			{
 				$code = $this->get_new_code();
 				$conditions = $this->input->post('conditions');
@@ -193,7 +193,7 @@ class Approve_rule extends PS_Controller{
 		$sc = TRUE;
 		if($this->pm->can_edit)
 		{
-			if($this->input->post('rule_id') && $this->input->post('conditions') && $this->input->post('amount'))
+			if($this->input->post('rule_id') && $this->input->post('conditions'))
 			{
 				$id = $this->input->post('rule_id');
 				$conditions = $this->input->post('conditions');

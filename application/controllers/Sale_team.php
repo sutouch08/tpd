@@ -268,9 +268,9 @@ class Sale_team extends PS_Controller
 			foreach($members as $rs)
 			{
 				$arr = array(
-					'name' => $rs->emp_name,
-					'role' => $rs->user_role,
-					'sale_name' => $this->user_model->get_saleman_name($rs->sale_id)
+					'uname' => $rs->uname,
+					'emp_name' => $rs->emp_name,
+					'role' => $rs->user_role
 				);
 
 				array_push($ds, $arr);

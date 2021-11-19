@@ -32,10 +32,6 @@ class User_model extends CI_Model
   }
 
 
-  public function add_user_team(array $ds = array())
-  {
-    return $this->db->insert('user_team', $ds);
-  }
 
 
   public function update($id, array $ds = array())
@@ -98,6 +94,12 @@ class User_model extends CI_Model
       $this->db->where_in('u.id', $this->user_in);
     }
 
+    if($ds['role'] != 'all')
+    {
+      $this->db->where('u.role', $ds['role']);
+    }
+
+
     if($ds['status'] !== 'all')
     {
       $this->db->where('u.status', $ds['status']);
@@ -144,6 +146,11 @@ class User_model extends CI_Model
       $this->db->where_in('u.id', $this->user_in);
     }
 
+    if($ds['role'] != 'all')
+    {
+      $this->db->where('u.role', $ds['role']);
+    }
+
     if($ds['status'] !== 'all')
     {
       $this->db->where('u.status', $ds['status']);
@@ -163,11 +170,19 @@ class User_model extends CI_Model
 
 
 
-  private function user_in_team($team_id)
+
+    public function add_user_team(array $ds = array())
+    {
+      return $this->db->insert('user_team', $ds);
+    }
+
+
+  public function user_in_team($team_id)
   {
     $sc = array();
 
-    $rs = $this->db->select('user_id')->where('team_id', $team_id)->get('user_team');
+    $qr = "SELECT user_id FROM user_team WHERE team_id = {$team_id}";
+    $rs = $this->db->query($qr);
 
     if($rs->num_rows() > 0)
     {
@@ -233,15 +248,89 @@ class User_model extends CI_Model
   }
 
 
+
+
+  public function add_user_price_list(array $ds = array())
+  {
+    return $this->db->insert('user_price_list', $ds);
+  }
+
+
+
+  public function get_all_price_list()
+  {
+    $rs = $this->ms
+    ->select('ListNum AS id, ListName AS name')
+    ->where('ListNum >=', 11)
+    ->where('ListNum <=', 15)
+    ->get('OPLN');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+
+  public function get_user_price_list($user_id)
+  {
+    $rs = $this->db->where('user_id', $user_id)->get('user_price_list');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function drop_user_price_list($user_id)
+  {
+    return $this->db->where('user_id', $user_id)->delete('user_price_list');
+  }
+
+
+
   public function get_user_team($user_id)
   {
-    $rs = $this->db
-    ->select('ut.*, st.name AS team_name')
-    ->from('user_team AS ut')
-    ->join('sale_team AS st', 'ut.team_id = st.id', 'left')
-    ->where('ut.user_id', $user_id)
-    ->get();
+    $qr  = "SELECT ut.*, st.name AS team_name ";
+    $qr .= "FROM user_team AS ut ";
+    $qr .= "LEFT JOIN sale_team AS st ON ut.team_id = st.id ";
+    $qr .= "WHERE ut.user_id = ".$user_id;
 
+    $rs = $this->db->query($qr);
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+
+  public function get_team_by_customer_group($group_id)
+  {
+    $rs = $this->db->where('group_id', $group_id)->get('team_customer_group');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function get_team_customer_group($team_id)
+  {
+    $qr = "SELECT * FROM team_customer_group WHERE team_id = {$team_id}";
+    $rs = $this->db->query($qr);
     if($rs->num_rows() > 0)
     {
       return $rs->result();
@@ -429,38 +518,6 @@ class User_model extends CI_Model
     return NULL;
   }
 
-  public function has_quotation_transection($user_id)
-  {
-    $rs = $this->db->where('user_id', $user_id)->count_all_results('quotation');
-    if($rs > 0 )
-    {
-      return TRUE;
-    }
-
-    return FALSE;
-  }
-
-  public function has_customer_transection($user_id)
-  {
-    $rs = $this->db->where('user_id', $user_id)->count_all_results('customer');
-    if($rs > 0)
-    {
-      return TRUE;
-    }
-
-    return FALSE;
-  }
-
-  public function isApprover($uname)
-  {
-    $rs = $this->db->where('uname', $uname)->count_all_results('quotation_approver');
-    if($rs > 0)
-    {
-      return TRUE;
-    }
-
-    return FALSE;
-  }
 
 
   public function get_sale_in()

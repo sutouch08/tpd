@@ -85,6 +85,18 @@
   </div>
 
 	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">User Role</label>
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+			<select class="width-100" name="role" id="role">
+				<option value="sales">Sales</option>
+				<option value="salesAdmin">Sales Admin</option>
+				<option value="GM">GM</option>
+			</select>
+    </div>
+		<div class="help-block col-xs-12 col-sm-reset inline grey"></div>
+  </div>
+
+	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
 			<label>
@@ -93,6 +105,61 @@
 			</label>
     </div>
   </div>
+
+	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
+    <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+			<label>
+				<input type="checkbox" class="ace" name="bi" id="bi" value="1"/>
+				<span class="lbl">&nbsp; &nbsp;Power BI Access</span>
+			</label>
+    </div>
+  </div>
+
+	<div class="divider"></div>
+
+	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Payment Term</label>
+    <div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 table-responsive">
+			<table class="table table-striped table-bordered border-1">
+				<thead>
+					<tr>
+						<th class="width-10 text-center">#</th>
+						<th>Select Payment Term</th>
+						<th class="width-10 text-center">
+							<label>
+								<input type="checkbox" class="ace" id="chk-all">
+								<span class="lbl"></span>
+							</label>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php if(!empty($price_list)) : ?>
+						<?php $no = 1; ?>
+						<?php foreach($price_list as $ps)  : ?>
+							<tr>
+								<td class="text-center"><?php echo $no; ?></td>
+								<td><?php echo $ps->name; ?></td>
+								<td class="text-center">
+									<label>
+										<input type="checkbox"
+										class="ace chk"
+										name="priceList[<?php echo $ps->id; ?>]"
+										id="priceList-<?php echo $ps->id; ?>"
+										value="<?php echo $ps->id; ?>" data-name="<?php echo $ps->name; ?>">
+										<span class="lbl"></span>
+									</label>
+								</td>
+							</tr>
+							<?php $no++; ?>
+						<?php endforeach; ?>
+					<?php endif; ?>
+				</tbody>
+			</table>
+    </div>
+  </div>
+
 
 	<div class="divider"></div>
 	<div class="form-group">

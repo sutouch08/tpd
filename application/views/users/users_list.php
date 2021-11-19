@@ -17,17 +17,17 @@
 <hr class="padding-5"/>
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
 <div class="row">
-  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
     <label>Username</label>
     <input type="text" class="form-control input-sm text-center search-box" name="uname" value="<?php echo $uname; ?>" />
   </div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
     <label>Employee</label>
     <input type="text" class="form-control input-sm text-center search-box" name="emp_name" value="<?php echo $emp_name; ?>" />
   </div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
     <label>Sale empl.</label>
 		<select class="width-100" name="sale_id" onchange="getSearch()">
     <option value="all">All</option>
@@ -40,6 +40,16 @@
     <select class="form-control input-sm" name="user_group" onchange="getSearch()">
 			<option value="all">All</option>
 			<?php echo select_user_group($user_group); ?>
+		</select>
+  </div>
+
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+    <label>Role</label>
+    <select class="form-control input-sm" name="role" onchange="getSearch()">
+			<option value="all">All</option>
+			<option value="sales" <?php echo is_selected($role, "sales"); ?>>Sales</option>
+			<option value="salesAdmin" <?php echo is_selected($role, "salesAdmin"); ?> >Sales Admin</option>
+			<option value="GM" <?php echo is_selected($role, "GM"); ?>>GM</option>
 		</select>
   </div>
 
@@ -81,11 +91,12 @@
 			<thead>
 				<tr>
 					<th class="width-5 middle text-center">#</th>
-					<th class="width-15 middle">Username</th>
-					<th class="width-15 middle">Empl.</th>
-					<th class="width-15 middle">Sales empl.</th>
-					<th class="width-20 middle">Sales Team</th>
-					<th class="width-10 middle">Group</th>
+					<th class="width-10 middle">Username</th>
+					<th class="width-12 middle">Empl.</th>
+					<th class="width-12 middle">Sales empl.</th>
+					<th class="width-15 middle">Sales Team</th>
+					<th class="width-10 middle text-center">Group</th>
+					<th class="width-10 middle text-center">Role</th>
 					<th class="width-5 middle text-center">Status</th>
 					<th class="width-15 middle text-right"></th>
 				</tr>
@@ -96,14 +107,18 @@
 				<?php foreach($data as $rs) : ?>
 					<tr>
 						<td class="middle text-center no"><?php echo $no; ?></td>
-						<td class="middle"><?php echo $rs->uname; ?></td>
+						<td class="middle">
+							<?php echo $rs->uname; ?>
+						</td>
 						<td class="middle"><?php echo $rs->emp_name; ?></td>
 						<td class="middle"><?php echo get_sale_name($rs->sale_id); ?></td>
 						<td class="middle"><?php echo $rs->team_name; ?></td>
 						<td class="middle"><?php echo $rs->group_name; ?></td>
+						<td class="middle text-center"><?php echo $rs->role; ?></td>
 						<td class="middle text-center">
 							<?php echo is_active($rs->status); ?>
 						</td>
+
 						<td class="text-right">
 							<?php if($pm->can_add OR $pm->can_edit OR $pm->can_delete) : ?>
 								<button type="button" class="btn btn-xs btn-info" title="Reset password" onclick="goReset(<?php echo $rs->id; ?>)">

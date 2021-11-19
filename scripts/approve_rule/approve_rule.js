@@ -46,7 +46,7 @@ function saveAdd() {
   }
 
 
-  if(amount <= 0) {
+  if(amount < 0) {
     $('#amount').addClass('has-error');
     $('#amount-error').text('Amount must Greater than 0');
     $('#amount').focus();
@@ -162,7 +162,7 @@ function update() {
   }
 
 
-  if(amount <= 0) {
+  if(amount < 0) {
     $('#amount').addClass('has-error');
     $('#amount-error').text('Amount must Greater than 0');
     $('#amount').focus();

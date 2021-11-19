@@ -24,6 +24,7 @@ class Users extends PS_Controller{
 			'sale_id' => get_filter('sale_id', 'sale_id', 'all'),
 			'user_group' => get_filter('user_group', 'user_group', 'all'),
 			'sale_team' => get_filter('sale_team', 'sale_team', 'all'),
+			'role' => get_filter('role', 'role', 'all'),
 			'status' => get_filter('status', 'user_status', 'all')
 		);
 
@@ -70,6 +71,7 @@ class Users extends PS_Controller{
 			$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
 			$ds['emp_list'] = $this->user_model->get_all_employee();
 			$ds['sale_list'] = $this->user_model->get_all_slp();
+			$ds['price_list'] = $this->user_model->get_all_price_list();
 
 			$this->load->view('users/user_add', $ds);
 		}
@@ -124,7 +126,10 @@ class Users extends PS_Controller{
 						'emp_id' => get_null(trim($this->input->post('emp_id'))),
 						'sale_id' => get_null(trim($this->input->post('sale_id'))),
 						'ugroup_id' => $ugroup_id,
+						'isGM' => $this->input->post('isGM') == 1 ? 1 : 0,
+						'isAdmin' => $this->input->post('isAdmin') == 1 ? 1 : 0,
 						'status' => $this->input->post('status') == 1 ? 1 : 0,
+						'bi_link' => $this->input->post('bi') == 1 ? 1 : 0,
 						'date_add' => now(),
 						'add_by' => $this->_user->id
 					);
@@ -149,6 +154,25 @@ class Users extends PS_Controller{
 									);
 
 									$this->user_model->add_user_team($arr);
+								}
+							}
+						}
+
+						if(!empty($this->input->post('price_list')))
+						{
+							$priceList = json_decode($this->input->post('price_list'));
+
+							if(!empty($priceList))
+							{
+								foreach($priceList as $pl)
+								{
+									$arr = array(
+										'user_id' => $user_id,
+										'list_id' => $pl->id,
+										'list_name' => $pl->name
+									);
+
+									$this->user_model->add_user_price_list($arr);
 								}
 							}
 						}
@@ -207,11 +231,22 @@ class Users extends PS_Controller{
 			if(!empty($rs))
 			{
 				$rs->user_team = $this->user_model->get_user_team($id);
+				$user_price_list = $this->user_model->get_user_price_list($id);
+				$pl = array();
+				if(!empty($user_price_list))
+				{
+					foreach($user_price_list as $ps)
+					{
+						$pl[$ps->list_id] = $ps->list_id;
+					}
+				}
 
+				$rs->priceList = $pl;
 				$ds['user'] = $rs;
 				$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
 				$ds['emp_list'] = $this->user_model->get_all_employee();
 				$ds['sale_list'] = $this->user_model->get_all_slp();
+				$ds['price_list'] = $this->user_model->get_all_price_list();
 
 				$this->load->view('users/user_edit', $ds);
 			}
@@ -262,6 +297,9 @@ class Users extends PS_Controller{
 						'sale_id' => get_null(trim($this->input->post('sale_id'))),
 						'ugroup_id' => $ugroup_id,
 						'status' => $this->input->post('status') == 1 ? 1 : 0,
+						'bi_link' => $this->input->post('bi') == 1 ? 1 : 0,
+						'isGM' => $this->input->post('isGM') == 1 ? 1 : 0,
+						'isAdmin' => $this->input->post('isAdmin') == 1 ? 1 : 0,
 						'update_by' => $this->_user->id
 					);
 
@@ -291,6 +329,27 @@ class Users extends PS_Controller{
 									);
 
 									$this->user_model->add_user_team($arr);
+								}
+							}
+						}
+
+						$this->user_model->drop_user_price_list($id);
+
+						if(!empty($this->input->post('price_list')))
+						{
+							$priceList = json_decode($this->input->post('price_list'));
+
+							if(!empty($priceList))
+							{
+								foreach($priceList as $pl)
+								{
+									$arr = array(
+										'user_id' => $id,
+										'list_id' => $pl->id,
+										'list_name' => $pl->name
+									);
+
+									$this->user_model->add_user_price_list($arr);
 								}
 							}
 						}
@@ -470,8 +529,7 @@ class Users extends PS_Controller{
 			'sale_team',
 			'user_group',
 			'user_status',
-			'user_order_by',
-			'user_sort_by'
+			'role'
 		);
 
 		clear_filter($filter);

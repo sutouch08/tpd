@@ -20,6 +20,21 @@ class Approver_model extends CI_Model
   }
 
 
+  public function get_by_user_id($user_id)
+  {
+    $rs = $this->db->where('user_id', $user_id)->get('approver');
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row();
+    }
+
+    return NULL;
+  }
+
+
+
+
   public function get_by_uname($uname)
   {
     $rs = $this->db->where('uname', $uname)->get('approver');
