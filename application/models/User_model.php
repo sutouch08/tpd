@@ -274,6 +274,30 @@ class User_model extends CI_Model
   }
 
 
+  public function get_all_price_list_array()
+  {
+    $rs = $this->ms
+    ->select('ListNum AS id, ListName AS name')
+    ->where('ListNum >=', 11)
+    ->where('ListNum <=', 15)
+    ->get('OPLN');
+
+    if($rs->num_rows() > 0)
+    {
+      $result = array();
+
+      foreach($rs->result() as $arr)
+      {
+        $result[$arr->id] = $arr->name;
+      }
+
+      return $result;
+    }
+
+    return NULL;
+  }
+
+
 
   public function get_user_price_list($user_id)
   {
@@ -297,9 +321,10 @@ class User_model extends CI_Model
 
   public function get_user_team($user_id)
   {
-    $qr  = "SELECT ut.*, st.name AS team_name ";
+    $qr  = "SELECT ut.*, st.name AS team_name, sp.name AS sale_person ";
     $qr .= "FROM user_team AS ut ";
     $qr .= "LEFT JOIN sale_team AS st ON ut.team_id = st.id ";
+    $qr .= "LEFT JOIN sale_person AS sp ON st.sale_person_id = sp.id ";
     $qr .= "WHERE ut.user_id = ".$user_id;
 
     $rs = $this->db->query($qr);
@@ -314,13 +339,26 @@ class User_model extends CI_Model
 
 
 
-  public function get_team_by_customer_group($group_id)
+  public function get_team_by_customer_group($group_id, $sale_person_id)
   {
-    $rs = $this->db->where('group_id', $group_id)->get('team_customer_group');
+    $rs = $this->db->where('group_id', $group_id)->where('sale_person_id', $sale_person_id)->get('team_customer_group');
 
     if($rs->num_rows() > 0)
     {
       return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function get_team_id_by_customer_group($group_id, $sale_person_id)
+  {
+    $rs = $this->db->where('group_id', $group_id)->where('sale_person_id', $sale_person_id)->get('team_customer_group');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->row()->team_id;
     }
 
     return NULL;
@@ -352,6 +390,22 @@ class User_model extends CI_Model
     if($rs->num_rows() > 0)
     {
       return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function get_customer_group_name($group_id)
+  {
+    $rs = $this->ms
+    ->select('GroupName')
+    ->where('GroupCode', $group_id)
+    ->get('OCQG');
+
+    if($rs->num_rows() == 1)
+    {
+      return $rs->row()->GroupName;
     }
 
     return NULL;
@@ -563,6 +617,19 @@ class User_model extends CI_Model
     return NULL;
   }
 
+
+
+  public function get_gm()
+  {
+    $rs = $this->db->where('role', 'GM')->get('user');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
 
 } //---- End class
 

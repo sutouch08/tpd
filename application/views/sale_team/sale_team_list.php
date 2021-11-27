@@ -22,6 +22,15 @@
     <input type="text" class="form-control input-sm text-center search-box" name="name" value="<?php echo $name; ?>" />
   </div>
 
+	<div class="col-md-3 col-sm-3 col-xs-6 padding-5">
+    <label>Sale Person</label>
+		<select class="form-control input-sm" name="sale_person" id="sale_person">
+			<option value="all">ทั้งหมด</option>
+			<?php echo select_sale_person($sale_person); ?>
+		</select>
+  </div>
+
+
   <div class="col-md-2 col-sm-2 col-xs-3 padding-5">
     <label class="display-block not-show">buton</label>
     <button type="submit" class="btn btn-xs btn-primary btn-block"><i class="fa fa-search"></i> Search</button>
@@ -41,9 +50,12 @@
 			<thead>
 				<tr>
 					<th class="width-5 middle text-center">#</th>
-					<th class="middle">Name</th>
-					<th class="width-10 middle text-center">Member</th>
-					<th class="width-20 middle text-right"></th>
+					<th class="width-15 middle">Name</th>
+					<th class="width-10 middle">Sale Person</th>
+					<th class="width-15 middle">Authorizer</th>
+					<th class="width-30 middle">Customer Group</th>
+					<th class="width-5 middle text-center">Member</th>
+					<th class="width-15 middle text-right"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -53,9 +65,12 @@
 					<tr>
 						<td class="middle text-center no"><?php echo $no; ?></td>
 						<td class="middle"><?php echo $rs->name; ?></td>
+						<td class="middle"><?php echo sale_person_name($rs->sale_person_id); ?></td>
+						<th class="middle"><?php echo $rs->approver_list; ?></th>
+						<td class="middle"><?php echo $rs->customerGroup; ?></td>
 						<td class="middle text-center"><?php echo number($rs->member); ?></td>
 						</td>
-						<td class="text-right">
+						<td class="middle text-right">
 							<button type="button" class="btn btn-xs btn-info" onclick="viewMember(<?php echo $rs->id; ?>)">
 								Member
 							</button>

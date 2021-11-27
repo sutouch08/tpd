@@ -8,7 +8,7 @@
   <div class="col-lg-6 col-md-6 col-sm-6 col-xs-4 padding-5">
     	<p class="pull-right top-p">
       <?php if($this->pm->can_add) : ?>
-        <button type="button" class="btn btn-sm btn-success" onclick="goAdd()"><i class="fa fa-plus"></i> New Approver</button>
+        <button type="button" class="btn btn-sm btn-success" onclick="goAdd()"><i class="fa fa-plus"></i> New </button>
       <?php endif; ?>
       </p>
   </div>
@@ -85,7 +85,6 @@
 					<th class="middle text-center">Team</th>
 					<th class="width-8 middle text-center">Price List</th>
 					<th class="width-8 middle text-center">Status</th>
-					<th class="width-8 middle text-center">Authorizer</th>
 					<th class="width-10 middle text-right">Actions</th>
 				</tr>
 			</thead>
@@ -102,11 +101,6 @@
 						<td class="middle text-center"><?php echo is_active($rs->is_price_list); ?></td>
 						<td class="middle text-center">
 							<?php echo is_active($rs->status); ?>
-						</td>
-						<td class="middle text-center">
-							<?php if(!empty($rs->approver)) : ?>
-								<button type="button" class="btn btn-xs btn-info" onclick="showApprover(<?php echo $rs->id; ?>, '<?php echo $rs->code; ?>')">Authorizer</button>
-							<?php endif; ?>
 						</td>
 						<td class="middle text-right">
 							<?php if($this->pm->can_edit) : ?>
@@ -129,44 +123,6 @@
 	</div>
 </div>
 
-<div class="modal fade" id="approver-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="max-width:400px;">
-        <div class="modal-content">
-            <div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;" ></h4>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-									<table class="table table-striped border-1">
-										<thead>
-											<tr>
-												<th class="width-40">Username</th>
-												<th class="width-60">Employee</th>
-											</tr>
-										</thead>
-										<tbody id="result">
-
-										</tbody>
-									</table>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-primary" onClick="dismiss('approver-modal')" >Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<script id="approver-template" type="text/x-handlebarsTemplate">
-{{#each this}}
-	<tr>
-		<td>{{uname}}</td><td>{{emp_name}}
-	</tr>
-{{/each}}
-</script>
 
 <script src="<?php echo base_url(); ?>scripts/approve_rule/approve_rule.js"></script>
 

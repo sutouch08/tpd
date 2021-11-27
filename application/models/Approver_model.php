@@ -170,6 +170,20 @@ class Approver_model extends CI_Model
   }
 
 
+
+  public function get_all_approver()
+  {
+    $rs = $this->db->get('approver');
+
+    if($rs->num_rows(0 > 0))
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
   public function get_condition_sign($condition)
   {
     $sign = "";

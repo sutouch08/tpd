@@ -11,17 +11,39 @@ class Item_model extends CI_Model
   public function get($code, $priceList = NULL)
   {
     if($priceList !== NULL)
+    {
+      $rs = $this->ms
+      ->select('OITM.ItemCode AS code, OITM.ItemName AS name')
+      ->select('OITM.SalUnitMsr AS uom, ITM1.Price AS price')
+      ->select('OITM.DfltWH AS dfWhsCode, OVTG.Code AS VatCode, OVTG.Rate')
+      ->from('OITM')
+      ->join('ITM1', 'ITM1.ItemCode = OITM.ItemCode', 'left')
+      ->join('OVTG', 'OVTG.Code = OITM.VatGourpSa', 'left')
+      ->where('OITM.ItemCode', $code)
+      ->where('ITM1.PriceList', $priceList)
+      ->where('ITM1.Price >', 0)
+      ->get();
 
+      if($rs->num_rows() === 1)
+      {
+        return $rs->row();
+      }
+    }
+
+    return NULL;
+  }
+
+
+
+  public function get_item($code)
+  {
     $rs = $this->ms
     ->select('OITM.ItemCode AS code, OITM.ItemName AS name')
-    ->select('OITM.SalUnitMsr AS uom, ITM1.Price AS price')
-    ->select('OITM.DfltWH AS dfWhsCode, OVTG.Code AS VatCode, OVTG.Rate')
+    ->select('OITM.SalUnitMsr AS uom, OITM.DfltWH AS dfWhsCode')
+    ->select('OVTG.Code AS VatCode, OVTG.Rate')
     ->from('OITM')
-    ->join('ITM1', 'ITM1.ItemCode = OITM.ItemCode', 'left')
     ->join('OVTG', 'OVTG.Code = OITM.VatGourpSa', 'left')
     ->where('OITM.ItemCode', $code)
-    ->where('ITM1.PriceList', $priceList)
-    ->where('ITM1.Price >', 0)
     ->get();
 
     if($rs->num_rows() === 1)

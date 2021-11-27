@@ -68,7 +68,7 @@
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">User Role</label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-			<select class="width-100" name="role" id="role">
+			<select class="width-100" name="u_role" id="u_role">
 				<option value="sales" <?php echo is_selected($user->role, "sales"); ?>>Sales</option>
 				<option value="salesAdmin" <?php echo is_selected($user->role, "salesAdmin"); ?> >Sales Admin</option>
 				<option value="GM" <?php echo is_selected($user->role, "GM"); ?>>GM</option>

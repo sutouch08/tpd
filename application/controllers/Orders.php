@@ -14,6 +14,7 @@ class Orders extends PS_Controller
 		$this->load->model('orders_model');
 		$this->load->model('item_model');
 		$this->load->model('customer_model');
+		$this->load->model('sale_team_model');
 		$this->load->helper('orders');
 		$this->load->helper('sale_team');
   }
@@ -23,6 +24,7 @@ class Orders extends PS_Controller
 	public function index()
   {
 		$filter = array(
+			'is_promotion' => get_filter('is_promotion', 'so_is_promotion', 'all'),
 			'WebCode' => get_filter('WebCode', 'so_WebCode', ''),
 			'DocNum' => get_filter('DocNum', 'so_DocNum', ''),
 			'DeliveryNo' => get_filter('DeliveryNo', 'so_DeliveryNo', ''),
@@ -77,6 +79,7 @@ class Orders extends PS_Controller
 			else
 			{
 				$customer_group = array();
+				$sale_person = array();
 
 				$sale_team = $this->user_model->get_user_team($this->_user->id);
 
@@ -96,10 +99,15 @@ class Orders extends PS_Controller
 								}
 							}
 						}
+
+						if(!empty($rs->sale_person))
+						{
+							$sale_person[] = $rs->sale_person;
+						}
 					}
 				}
 
-				$ds['customer'] = $this->customer_model->get_user_customer_list($this->_user->sale_id, "V", $customer_group);
+				$ds['customer'] = $this->customer_model->get_user_customer_list($this->_user->sale_id, "V", $customer_group, $sale_person);
 			}
 
 			$ds['priceList'] = $this->user_model->get_user_price_list($this->_user->id);
@@ -158,10 +166,15 @@ class Orders extends PS_Controller
 							}
 						}
 					}
+
+					if(!empty($rs->sale_person))
+					{
+						$sale_person[] = $rs->sale_person;
+					}
 				}
 			}
 
-			$list = $this->customer_model->get_user_customer_list($this->_user->sale_id, $type, $customer_group);
+			$list = $this->customer_model->get_user_customer_list($this->_user->sale_id, $type, $customer_group, $sale_person);
 		}
 
 		if(!empty($list))
@@ -460,19 +473,15 @@ class Orders extends PS_Controller
 		{
 			if(!empty($details))
 			{
-					$priceEdit = FALSE; //--- หากมีการแก้ไขราคา ตำกว่า stdPrice ตรงนี้จะเป็น TRUE;
-					$code = $this->get_new_code();
-					$customer = $this->customer_model->get($header->CardCode);
-					$group_id = $this->get_group_id($customer);
+				$this->load->model('sale_person_model');
 
-					if($this->isAdmin)
-					{
-						$sale_team = $this->user_model->get_team_by_customer_group($group_id);
-					}
-					else
-					{
-						$sale_team = $this->user_model->get_user_team($this->_user->id);
-					}
+				$priceEdit = FALSE; //--- หากมีการแก้ไขราคา ตำกว่า stdPrice ตรงนี้จะเป็น TRUE;
+				$code = $this->get_new_code();
+				$customer = $this->customer_model->get($header->CardCode);
+				$group_id = $this->get_group_id($customer);
+				$sale_id = get_null($customer->SlpCode);
+				$sale_person_id = $this->sale_person_model->get_id($customer->U_SALE_PERSON);
+				$team_id = $this->user_model->get_team_id_by_customer_group($group_id, $sale_person_id);
 
 					// เวลาส่งไปที่ SAP ให้ส่งค่าไปที่ ORDR.GroupNum
 					// 1. OPLN.ListNum ลำดับ 11 ส่งไปที่ ORDR.GroupNum ลำดับ 3
@@ -480,44 +489,45 @@ class Orders extends PS_Controller
 					// 3. OPLN.ListNum ลำดับ 13 ส่งไปที่ ORDR.GroupNum ลำดับ 7
 					// 4. OPLN.ListNum ลำดับ 14 ไม่ต้องส่งค่า ORDR.GroupNum ให้อ่านตามที่ Default ไว้ใน SAP
 					// 5. OPLN.ListNum ลำดับ 15 ไม่ต้องส่งค่า ORDR.GroupNum ให้อ่านตามที่ Default ไว้ใน SAP
-					$PL = array(
-						"11" => 3,
-						"12" => 6,
-						"13" => 7
-					);
+				$PL = array(
+					"11" => 3,
+					"12" => 6,
+					"13" => 7
+				);
 
-					$groupNum = isset($PL[$header->PriceList]) ? $PL[$header->PriceList] : $customer->GroupNum;
+				$groupNum = isset($PL[$header->PriceList]) ? $PL[$header->PriceList] : $customer->GroupNum;
 
 
-					$arr = array(
-						'code' => $code,
-						'CardCode' => $customer->CardCode,
-						'CardName' => $customer->CardName,
-						'CardGroup' => $group_id,
-						'VatGroup' => $customer->ECVatGroup,
-						'SlpCode' => get_null($customer->SlpCode),
-						'GroupNum' => $groupNum,
-						'Pricelist' => $header->PriceList,
-						'NumAtCard' => get_null($header->NumAtCard),
-						'DocCur' => $header->DocCur,
-						'DocRate' => $header->DocRate,
-						'DocTotal' => $header->docTotal,
-						'VatSum' => $header->totalVat,
-						'PayToCode' => $header->PayToCode,
-						'ShipToCode' => $header->ShipToCode,
-						'Address' => $header->BillTo,
-						'Address2' => $header->ShipTo,
-						'Address3' => get_null($header->exShipTo),
-						'DocDate' => db_date($header->DocDate),
-						'DocDueDate' => db_date($header->DocDueDate),
-						'OwnerCode' => get_null($this->_user->emp_id),
-						'Comments' => get_null($header->comments),
-						'BillDate' => $header->billOption == 'Y' ? 1 : 0,
-						'requireSQ' => $header->requireSQ == 'Y' ? 1 : 0,
-						'date_add' => now(),
-						'user_id' => $this->_user->id,
-						'uname' => $this->_user->uname
-					);
+				$arr = array(
+					'code' => $code,
+					'CardCode' => $customer->CardCode,
+					'CardName' => $customer->CardName,
+					'CardGroup' => $group_id,
+					'CardTeam' => $team_id,
+					'VatGroup' => $customer->ECVatGroup,
+					'SlpCode' => get_null($customer->SlpCode),
+					'GroupNum' => $groupNum,
+					'Pricelist' => $header->PriceList,
+					'NumAtCard' => get_null($header->NumAtCard),
+					'DocCur' => $header->DocCur,
+					'DocRate' => $header->DocRate,
+					'DocTotal' => $header->docTotal,
+					'VatSum' => $header->totalVat,
+					'PayToCode' => $header->PayToCode,
+					'ShipToCode' => $header->ShipToCode,
+					'Address' => $header->BillTo,
+					'Address2' => $header->ShipTo,
+					'Address3' => get_null($header->exShipTo),
+					'DocDate' => db_date($header->DocDate),
+					'DocDueDate' => db_date($header->DocDueDate),
+					'OwnerCode' => get_null($this->_user->emp_id),
+					'Comments' => get_null($header->comments),
+					'BillDate' => $header->billOption == 'Y' ? 1 : 0,
+					'requireSQ' => $header->requireSQ == 'Y' ? 1 : 0,
+					'date_add' => now(),
+					'user_id' => $this->_user->id,
+					'uname' => $this->_user->uname
+				);
 
 					if($this->orders_model->add($arr))
 					{
@@ -574,6 +584,7 @@ class Orders extends PS_Controller
 										'VatRate' => $rs->VatRate,
 										'VatAmount' => 0.00,
 										'LineTotal' => 0.00,
+										'WhsCode' => get_null($rs->WhsCode),
 										'lineText' => NULL,
 										'free_item' => 1,
 										'link_id' => $id
@@ -598,20 +609,11 @@ class Orders extends PS_Controller
 						} //--- end foreach details
 
 
-						//---- check order approval by rule
-						if($this->must_approve($sale_team, $header->docTotal, $priceEdit))
+						//---- check order approval exception by rule
+						if(! $this->must_approve($team_id, $header->docTotal, $priceEdit))
 						{
 							$arr = array(
-								"must_approve" => 1,
-								"priceEdit" => $priceEdit === TRUE ? 1 : 0,
-								"approve_rule" => $this->get_approve_rule_in($sale_team, $header->docTotal, $priceEdit)
-							);
-
-							$this->orders_model->update($code, $arr);
-						}
-						else
-						{
-							$arr = array(
+								"must_approve" => 0,
 								'priceEdit' => $priceEdit === TRUE ? 1 : 0,
 								'Approved' => 'A',
 								'Approver' => 'System',
@@ -622,6 +624,15 @@ class Orders extends PS_Controller
 							$this->orders_model->approve_details($code);
 
 							$this->doExport($code);
+						}
+						else
+						{
+
+							$arr = array(
+								"priceEdit" => $priceEdit === TRUE ? 1 : 0
+							);
+
+							$this->orders_model->update($code, $arr);
 						}
 					}
 					else
@@ -675,115 +686,69 @@ class Orders extends PS_Controller
 	}
 
 
-
 	public function test($amount)
 	{
 		$this->load->model('approve_rule_model');
-		$pricelist = FALSE;
-		$sale_team = $this->user_model->get_user_team($this->_user->id);
+		$team_id = 1;
+		$priceEdit = FALSE;
+		$sc = $this->approve_rule_model->get_exception_rule($team_id, $amount, $priceEdit);
 
-		echo $this->get_approve_rule_in($sale_team, $amount, $pricelist);
+		if(!empty($sc))
+		{
+			print_r($sc);
+		}
+		else
+		{
+			echo "Must Approve";
+		}
 	}
 
 
-
-
-	public function must_approve($sale_team, $docTotal, $pricelist = FALSE)
+	public function must_approve($team_id, $docTotal, $pricelist = FALSE)
 	{
 		$this->load->model('approve_rule_model');
 
-		$rule = $this->approve_rule_model->get_approve_rule($sale_team, $docTotal, $pricelist);
-
+		$rule = $this->approve_rule_model->get_exception_rule($team_id, $docTotal, $pricelist);
+		//---- order must approve by default
+		//--- if exception rule exists order no need to approve
 		if(!empty($rule))
 		{
-			return TRUE;
+			return FALSE;
 		}
 
-		return FALSE;
+		return TRUE;
 	}
-
-
-	public function get_approve_rule_in($sale_team, $docTotal, $pricelist = FALSE)
-	{
-		$this->load->model('approve_rule_model');
-
-		$rule = $this->approve_rule_model->get_approve_rule($sale_team, $docTotal, $pricelist);
-
-		if(!empty($rule))
-		{
-			$rule_id_in = "";
-			$i = 1;
-
-			foreach($rule as $rs)
-			{
-				$rule_id_in .= $i === 1 ? $rs->id : ",".$rs->id;
-				$i++;
-			}
-
-			return $rule_id_in;
-		}
-
-		return NULL;
-	}
-
 
 
 
 	public function check_approve()
 	{
-		$sc = TRUE; //-- true == pass ,  false = 'must approve'
-		$message = "";
+		$this->load->model('sale_person_model');
 
+		$message = "pass";
 		$docTotal = $this->input->get('docTotal');
 		$priceEdit = $this->input->get('priceEdit') == 0 ? FALSE : TRUE;
 		$customer_code = $this->input->get('customerCode');
+		$customer = $this->customer_model->get($customer_code);
+		$group_id = $this->get_group_id($customer);
+		$sale_person_id = $this->sale_person_model->get_id($customer->U_SALE_PERSON);
 
-		if($this->isAdmin)
-		{
-			$customer = $this->customer_model->get($customer_code);
-			$group_id = $this->get_group_id($customer);
-			$sale_team = $this->user_model->get_team_by_customer_group($group_id);
-		}
-		else
-		{
-			$sale_team = $this->user_model->get_user_team($this->_user->id);
-		}
+		$team_id = $this->user_model->get_team_id_by_customer_group($group_id, $sale_person_id);
 
 		$this->load->model('approve_rule_model');
 
-		$rule = $this->approve_rule_model->get_approve_rule($sale_team, $docTotal, $priceEdit);
+		$rule = $this->approve_rule_model->get_exception_rule($team_id, $docTotal, $priceEdit);
 
-		if(!empty($rule))
+		if(empty($rule))
 		{
-			foreach($rule as $rs)
+			if($priceEdit)
 			{
-				if($rs->is_price_list == 1 && $priceEdit == TRUE)
-				{
-					$sc = FALSE;
-					$message = "ในกรณีราคาต่ำกว่าปกติต้องผ่านการอนุมัติ";
-					break;
-				}
-
-				if($priceEdit == FALSE && ($rs->conditions == "Greater or Equal" && $rs->amount <= $docTotal))
-				{
-					$sc = FALSE;
-					$message = "ในกรณีจำนวนเงินสูกกว่าที่กำหนดต้องผ่านการอนุมัติ";
-					break;
-				}
-
-				if($priceEdit == FALSE && ($rs->conditions == "Greater Than" && $rs->amount < $docTotal))
-				{
-					$sc = FALSE;
-					$message = "ในกรณีจำนวนเงินสูกกว่าที่กำหนดต้องผ่านการอนุมัติ";
-					break;
-				}
-
-
+				$message = "ในกรณีราคาต่ำกว่า Price list ต้องผ่านการอนุมัติ";
 			}
-		}
-		else
-		{
-			$message = "pass";
+			else
+			{
+				$message = "ในกรณีจำนวนเงินสูงกว่าที่กำหนดต้องผ่านการอนุมัติ";
+			}
 		}
 
 		echo $message;
@@ -849,6 +814,12 @@ class Orders extends PS_Controller
 					{
 						if($rs->free_item == 0)
 						{
+							$open_qty = (!empty($doc->DocNum) ? $this->orders_model->get_open_qty($doc->code, $rs->ItemCode) : ($rs->freeQty + $rs->Qty));
+							$DoNo = (!empty($doc->DocNum) ? $this->orders_model->get_do_no($doc->code, $rs->ItemCode) : NULL);
+							$Inv = (!empty($doc->DocNum) ? $this->orders->model->get_inv_no_and_date($doc->code, $rs->ItemCode) : NULL);
+							$InvNo = (empty($Inv) ? NULL : $Inv->DocNum);
+							$InvDate = (empty($Inv) ? NULL : thai_date($Inv->DocDate, FALSE));
+
 							$arr = array(
 								'id' => $rs->id,
 								'itemName' => $rs->ItemName,
@@ -858,6 +829,11 @@ class Orders extends PS_Controller
 								'stdPrice' => number($rs->stdPrice, 2),
 								'sellPrice' => number($rs->SellPrice, 2),
 								'amount' => number($rs->LineTotal, 2),
+								'lineText' => $rs->LineText,
+								'openQty' => $open_qty,
+								'DoNo' => $DoNo,
+								'InvNo' => $InvNo,
+								'InvDate' => $InvDate,
 								'checkbox' => get_checkbox($rs->id, $rs->status, $can_approve, $no) //--- orders_helper
 							);
 
@@ -903,45 +879,14 @@ class Orders extends PS_Controller
 		$this->load->model('approve_rule_model');
 		$this->load->model('approver_model');
 
-
 		//---- อยู่ในรายชื่อที่มีสิทธิ์ อนุมัติมั้ย
-		$approver = $this->approver_model->get_by_user_id($this->_user->id);
+		$approver = $this->sale_team_model->get_approver($order->CardTeam, $this->_user->id);
 
 		if(!empty($approver))
 		{
-			//---
-			if($this->isAdmin)
+			if($approver->amount >= $order->DocTotal)
 			{
-				$sale_team = $this->user_model->get_team_by_customer_group($order->CardGroup);
-			}
-			else
-			{
-				$sale_team = $this->user_model->get_user_team($this->_user->id);
-			}
-
-
-			//--- get rule id
-			$rule = $this->approve_rule_model->get_approve_rule($sale_team, $order->DocTotal, is_true($order->priceEdit));
-
-			if(!empty($rule))
-			{
-				$arr = array();
-
-				foreach($rule as $rs)
-				{
-					$arr[] = $rs->id;
-				}
-
-				$rs = $this->approve_rule_model->get_rule_approver_list($this->_user->id, $arr);
-
-				if(!empty($rs))
-				{
-					//--- check amount
-					if($approver->amount >= $order->DocTotal)
-					{
-						return  TRUE;
-					}
-				}
+				return  TRUE;
 			}
 		}
 
@@ -960,6 +905,7 @@ class Orders extends PS_Controller
 		if(!empty($code))
 		{
 			$order = $this->orders_model->get($code);
+			$approval_status = 'F'; //--- F = full, P = partial
 
 			if(!empty($order))
 			{
@@ -982,6 +928,7 @@ class Orders extends PS_Controller
 								if($item->status == "R")
 								{
 									$this->orders_model->reject_detail($item->id);
+									$approval_status = 'P';
 								}
 							}
 
@@ -989,7 +936,8 @@ class Orders extends PS_Controller
 							$arr = array(
 								'Approved' => 'A',
 								'Approver' => $this->_user->uname,
-								'ApproveDate' => now()
+								'ApproveDate' => now(),
+								'Approval_status' => $approval_status
 							);
 
 							if($this->orders_model->update($code, $arr))
@@ -1055,7 +1003,8 @@ class Orders extends PS_Controller
 						$arr = array(
 							'Approved' => 'R',
 							'Approver' => $this->_user->uname,
-							'ApproveDate' => now()
+							'ApproveDate' => now(),
+							'Approval_status' => 'R'
 						);
 
 						$this->orders_model->update($code, $arr);
@@ -1099,37 +1048,48 @@ class Orders extends PS_Controller
 		if(!empty($code))
 		{
 			$doc = $this->orders_model->get($code);
+			$team_id = $doc->CardTeam;
 
 			if(!empty($doc))
 			{
-				//--- get teamname from user_id
-				$qr  = "SELECT DISTINCT u.uname, u.emp_name ";
-				$qr .= "FROM rule_approver AS ra ";
-				$qr .= "LEFT JOIN user AS u ON ra.user_id = u.id ";
-				$qr .= "LEFT JOIN approver AS ap ON u.id = ap.user_id ";
-				$qr .= "WHERE ra.rule_id IN({$doc->approve_rule}) ";
-				$qr .= "AND ap.status = 1";
+				$approver = $this->sale_team_model->get_team_approver($team_id);
 
-				$rs = $this->db->query($qr);
-
-				if($rs->num_rows() > 0)
+				if(!empty($approver))
 				{
-					foreach($rs->result() as $ra)
+					foreach($approver as $rs)
 					{
-						$arr = array(
-							'uname' => $ra->uname,
-							'emp_name' => $ra->emp_name
-						);
+						if($rs->amount >= $doc->DocTotal)
+						{
+							$arr = array(
+								'uname' => $rs->uname,
+								'emp_name' => $rs->emp_name
+							);
 
-						array_push($ds, $arr);
+							array_push($ds, $arr);
+						}
+					}
+
+					if(empty($ds))
+					{
+						$gm = $this->user_model->get_gm();
+
+						if(!empty($gm))
+						{
+							foreach($gm as $g)
+							{
+								$arr = array(
+									'uname' => $g->uname,
+									'emp_name' => $g->emp_name
+								);
+
+								array_push($ds, $arr);
+							}
+						}
 					}
 				}
 				else
 				{
-					$arr = array(
-						"nodata" => "nodata"
-					);
-
+					$arr = array('nodata' => 'nodata');
 					array_push($ds, $arr);
 				}
 			}
@@ -1198,7 +1158,7 @@ class Orders extends PS_Controller
 		      {
 		        foreach($temp as $rows)
 		        {
-		          if(! $this->orders_model->drop_temp_exists_data($row->DocEntry))
+		          if(! $this->orders_model->drop_temp_exists_data($rows->DocEntry))
 		          {
 		            $sc = FALSE;
 		            $this->error = "ลบรายการที่ค้างใน Temp ไม่สำเร็จ";
@@ -1234,7 +1194,9 @@ class Orders extends PS_Controller
 							'U_SQ_BILLDATE' => $order->BillDate == 1 ? 'Y' : 'N',
 							'U_SQ_REQ_SQ' => $order->requireSQ == 1 ? 'Y' : 'N',
 							'U_SQ_Shipto' => $order->Address3,
-							'U_BEX_WEBORDERREMARK' => $order->Comments
+							'U_BEX_WEBORDERREMARK' => $order->Comments,
+							'F_Web' => 'A',
+							'F_WebDate' => now()
 						);
 
 						//--- start transection
@@ -1398,7 +1360,7 @@ class Orders extends PS_Controller
 	public function remove_temp()
   {
     $sc = TRUE;
-    $code = $this->input->post('U_WEB_ORNO');
+    $code = $this->input->post('code');
     $temp = $this->orders_model->get_temp_status($code);
 
     if(empty($temp))
@@ -1414,7 +1376,7 @@ class Orders extends PS_Controller
 
     if($sc === TRUE)
     {
-      if(! $this->orders_model->drop_temp_exists_data($code))
+      if(! $this->orders_model->drop_temp_exists_data($temp->DocEntry))
       {
         $sc = FALSE;
         $this->error = "Delete Failed : Delete Temp Failed";
@@ -1438,6 +1400,28 @@ class Orders extends PS_Controller
   }
 
 
+
+	public function sendToSAP()
+	{
+		$sc = TRUE;
+
+		$code = $this->input->post('code');
+
+		if(!empty($code))
+		{
+			$rs = $this->doExport($code);
+
+			if(!$rs)
+			{
+				$sc = FALSE;
+			}
+		}
+
+		$this->_response($sc);
+	}
+
+
+
   public function clear_filter()
 	{
 		$filter = array(
@@ -1451,7 +1435,8 @@ class Orders extends PS_Controller
 			'so_Approved',
 			'so_Status',
 			'so_fromDate',
-			'so_toDate'
+			'so_toDate',
+			'so_is_promotion'
 		);
 
 		clear_filter($filter);

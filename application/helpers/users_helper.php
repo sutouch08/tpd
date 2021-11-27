@@ -119,8 +119,10 @@ function select_saleman($sale_id = '')
 
 function get_sale_name($sale_id)
 {
-  $CI =& get_instance();
-  return $CI->get_sale_name($sale_id);
+  $ci =& get_instance();
+
+  return $ci->user_model->get_saleman_name($sale_id);
+
 }
 
 

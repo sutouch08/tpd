@@ -252,69 +252,39 @@ class Approve_rule_model extends CI_Model
 
 
 
-  public function get_approve_rule($sale_team, $docTotal, $pricelist = FALSE)
-	{
-		if(!empty($sale_team))
-		{
-			$team_in = "";
-			$i = 1;
-			foreach($sale_team as $team)
-			{
-				$team_in .= $i === 1 ? $team->team_id : ", ".$team->team_id;
-				$i++;
-			}
 
-			//--- get_rule
-			$qr  = "SELECT * FROM approve_rule ";
-			$qr .= "WHERE ";
-			$qr .= "sale_team IN({$team_in}) ";
-			$qr .= "AND status = 1 ";
-
-      if($pricelist === TRUE)
-      {
-        $qr .= "AND ((conditions = 'Less Than' AND amount > {$docTotal} AND (is_price_list = 1 OR is_price_list = 0))
-                    OR (conditions = 'Less or Equal' AND amount >= {$docTotal} AND (is_price_list = 1 OR is_price_list = 0))
-                    OR (conditions = 'Greater Than' AND amount < {$docTotal} AND (is_price_list = 1 OR is_price_list = 0))
-                    OR (conditions = 'Greater or Equal' AND amount <= {$docTotal} AND (is_price_list = 1 OR is_price_list = 0))
-                )";
-      }
-      else
-      {
-        $qr .= "AND ((conditions = 'Less Than' AND amount > {$docTotal} AND is_price_list = 0)
-                    OR (conditions = 'Less or Equal' AND amount >= {$docTotal} AND is_price_list = 0)
-                    OR (conditions = 'Greater Than' AND amount < {$docTotal} AND is_price_list = 0)
-                    OR (conditions = 'Greater or Equal' AND amount <= {$docTotal} AND is_price_list = 0)
-                )";
-      }
-
-			$rs = $this->db->query($qr);
-
-			if($rs->num_rows() > 0)
-			{
-				return $rs->result();
-			}
-		}
-
-		return NULL;
-	}
-
-
-
-  public function get_rule_approver_list($user_id, array $rule = array())
+  public function get_exception_rule($team_id, $docTotal, $priceEdit = FALSE)
   {
-    if(!empty($rule))
-    {
-      $rs = $this->db->where('user_id', $user_id)->where_in('rule_id', $rule)->get('rule_approver');
+    $qr  = "SELECT * FROM approve_rule ";
+    $qr .= "WHERE sale_team = {$team_id} ";
+    $qr .= "AND status = 1 ";
 
-      if($rs->num_rows() > 0)
-      {
-        return $rs->result();
-      }
+    if($priceEdit === TRUE)
+    {
+      $qr .= "AND ((conditions = 'Less Than' AND amount > {$docTotal} AND is_price_list = 1)
+                  OR (conditions = 'Less or Equal' AND amount >= {$docTotal} AND is_price_list = 1)
+                  OR (conditions = 'Greater Than' AND amount < {$docTotal} AND is_price_list = 1)
+                  OR (conditions = 'Greater or Equal' AND amount <= {$docTotal} AND is_price_list = 1)
+              )";
+    }
+    else
+    {
+      $qr .= "AND ((conditions = 'Less Than' AND amount > {$docTotal} AND is_price_list = 0)
+                  OR (conditions = 'Less or Equal' AND amount >= {$docTotal} AND is_price_list = 0)
+                  OR (conditions = 'Greater Than' AND amount < {$docTotal} AND is_price_list = 0)
+                  OR (conditions = 'Greater or Equal' AND amount <= {$docTotal} AND is_price_list = 0)
+              )";
+    }
+
+    $rs = $this->db->query($qr);
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
     }
 
     return NULL;
   }
-
 
 
 

@@ -95,12 +95,12 @@ function saveAdd() {
   let emp_id = $('#emp').val();
   let emp_name = $('#emp :selected').text();
   let sale_id = $('#saleman').val();
+  let sale_name = $('#saleman option:selected').text();
   let pwd = $('#pwd').val();
   let ugroup = $('#ugroup').val();
   let status = $('#status').is(':checked') ? 1 : 0;
   let bi = $('#bi').is(':checked') ? 1 : 0;
-  let isGM = $('#isGM').is(':checked') ? 1 : 0;
-  let isAdmin = $('#isAdmin').is(':checked') ? 1 : 0;
+  let role = $('#u_role').val();
   let team = [];
 
   let priceList = [];
@@ -135,12 +135,12 @@ function saveAdd() {
       'emp_id' : emp_id,
       'emp_name' : emp_name,
       'sale_id' : sale_id,
+      'sale_name' : sale_name,
       'pwd' : pwd,
       'ugroup' : ugroup,
       'status' : status,
       'bi' : bi,
-      'isGM' : isGM,
-      'isAdmin' : isAdmin,
+      'role' : role,
       'user_team' : JSON.stringify(team),
       'price_list' : JSON.stringify(priceList)
     },
@@ -199,11 +199,11 @@ function update() {
   let emp_id = $('#emp').val();
   let emp_name = $('#emp option:selected').text();
   let sale_id = $('#saleman').val();
+  let sale_name = $('#saleman option:selected').text();
   let ugroup = $('#ugroup').val();
   let status = $('#status').is(':checked') ? 1 : 0;
   let bi = $('#bi').is(':checked') ? 1 : 0;
-  let isGM = $('#isGM').is(':checked') ? 1 : 0;
-  let isAdmin = $('#isAdmin').is(':checked') ? 1 : 0;
+  let role = $('#u_role').val();
   let team = [];
 
   let priceList = [];
@@ -235,13 +235,13 @@ function update() {
       'emp_id' : emp_id,
       'emp_name' : emp_name,
       'sale_id' : sale_id,
+      'sale_name' : sale_name,
       'ugroup' : ugroup,
       'status' : status,
       'bi' : bi,
       'user_team' : JSON.stringify(team),
       'price_list' : JSON.stringify(priceList),
-      'isGM' : isGM,
-      'isAdmin' : isAdmin
+      'role' : role
     },
     success:function(rs) {
       load_out();

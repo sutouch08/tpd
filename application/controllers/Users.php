@@ -90,6 +90,8 @@ class Users extends PS_Controller{
 		{
 			$uname = trim($this->input->post('uname'));
 			$emp_name = trim($this->input->post('emp_name'));
+			$sale_id = $this->input->post('sale_id');
+			$sale_name = empty($sale_id) ? NULL : $this->input->post('sale_name');
 			$ugroup_id = $this->input->post('ugroup');
 
 			if($uname != "" && $uname !== NULL)
@@ -124,10 +126,10 @@ class Users extends PS_Controller{
 						'uid' => md5(uniqid()),
 						'emp_name' => $emp_name,
 						'emp_id' => get_null(trim($this->input->post('emp_id'))),
-						'sale_id' => get_null(trim($this->input->post('sale_id'))),
+						'sale_id' => get_null($sale_id),
+						'sale_name' => get_null($sale_name),
 						'ugroup_id' => $ugroup_id,
-						'isGM' => $this->input->post('isGM') == 1 ? 1 : 0,
-						'isAdmin' => $this->input->post('isAdmin') == 1 ? 1 : 0,
+						'role' => $this->input->post('role'),
 						'status' => $this->input->post('status') == 1 ? 1 : 0,
 						'bi_link' => $this->input->post('bi') == 1 ? 1 : 0,
 						'date_add' => now(),
@@ -274,6 +276,8 @@ class Users extends PS_Controller{
 			{
 				$id = $this->input->post('user_id');
 				$emp_name = trim($this->input->post('emp_name'));
+				$sale_id = $this->input->post('sale_id');
+				$sale_name = empty($sale_id) ? NULL : $this->input->post('sale_name');
 				$ugroup_id = $this->input->post('ugroup');
 
 
@@ -294,12 +298,12 @@ class Users extends PS_Controller{
 					$arr = array(
 						'emp_name' => $emp_name,
 						'emp_id' => get_null(trim($this->input->post('emp_id'))),
-						'sale_id' => get_null(trim($this->input->post('sale_id'))),
+						'sale_id' => get_null($sale_id),
+						'sale_name' => get_null($sale_name),
 						'ugroup_id' => $ugroup_id,
 						'status' => $this->input->post('status') == 1 ? 1 : 0,
 						'bi_link' => $this->input->post('bi') == 1 ? 1 : 0,
-						'isGM' => $this->input->post('isGM') == 1 ? 1 : 0,
-						'isAdmin' => $this->input->post('isAdmin') == 1 ? 1 : 0,
+						'role' => $this->input->post('role'),
 						'update_by' => $this->_user->id
 					);
 

@@ -36,6 +36,22 @@ class Promotion_model extends CI_Model
   }
 
 
+  public function get_detail_by_item($promotion_id, $item_code)
+  {
+    $rs = $this->db
+    ->where('promotion_id', $promotion_id)
+    ->where('ItemCode', $item_code)
+    ->get($this->td);
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row();
+    }
+
+    return NULL;
+  }
+
+
 
   public function get_details($promotion_id)
   {
@@ -198,6 +214,28 @@ class Promotion_model extends CI_Model
 
     return $this->db->count_all_results($this->tb);
   }
+
+
+
+
+  public function get_all_active_promotion()
+  {
+    $today = date('Y-m-d');
+
+    $rs = $this->db
+    ->where('status', 1)
+    ->where('start_date <=', $today)
+    ->where('end_date >=', $today)
+    ->get('promotion');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
 
 
 

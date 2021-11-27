@@ -41,12 +41,10 @@ function getAddress() {
 	let code = $('#customer').val();
 	let vatCode = $('#customer option:selected').data('vat');
 	let vatRate = $('#customer option:selected').data('rate');
-
 	$('#VatGroup').val(vatCode);
 	$('#vatRate').val(vatRate);
-
+	recalVat();
 	get_address_ship_to_code(code);
-
 	//---- create Address bill to
 	get_address_bill_to_code(code);
 }
@@ -312,14 +310,23 @@ function get_vat_amount(amount, vat) {
 		return re_vat;
 	}
 
-	return amount;
+
+	return 0;
+}
+
+
+function recalVat() {
+	$('.item-code').each(function(){
+		let no = $(this).data('no');
+		recalAmount(no);
+	});
 }
 
 
 function recalAmount(no) {
 	let vatRate = parseDefault(parseFloat($('#vatRate').val()), 0);
 
-	if($('#VatGroup').val() == "") {
+	if($('#VatGroup').val() === "") {
 		vatRate = parseDefault(parseFloat($('#itemVatRate-'+no).val()), 0);
 	}
 
@@ -342,6 +349,8 @@ function recalAmount(no) {
 
 	recalTotal();
 }
+
+
 
 function recalTotal() {
 	var totalAmount = 0.00; //--- price before vat

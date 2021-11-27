@@ -137,7 +137,7 @@
 <table class="table table-striped table-bordered border-1" style="margin-bottom:0px;">
 	<tr><td class="width-30">Code</td><td>{{code}}</td></tr>
 	<tr><td>Name</td><td>{{name}}</td></tr>
-	<tr><td>Date</td><td>{{statr_date}} - {{end_date}}</td></tr>
+	<tr><td>Date</td><td>{{start_date}} - {{end_date}}</td></tr>
 	<tr><td>Status</td><td>{{status}}</td></tr>
 </table>
 

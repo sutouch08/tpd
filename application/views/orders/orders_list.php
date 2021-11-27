@@ -28,7 +28,7 @@
   </div>
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="search-label">Customer</label>
+    <label class="search-label">ลูกค้า</label>
     <input type="text" class="form-control input-sm text-center search-box" name="CardCode" value="<?php echo $CardCode; ?>" placeholder="Code OR Name" />
   </div>
 
@@ -58,12 +58,21 @@
   </div>
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="search-label">Order Status</label>
+    <label class="search-label">การอนุมัติ</label>
     <select class="form-control input-sm" name="Approved" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
 			<option value="P" <?php echo is_selected('P', $Approved); ?>>รออนุมัติ</option>
 			<option value="A" <?php echo is_selected('A', $Approved); ?>>อนุมมัติ</option>
 			<option value="R" <?php echo is_selected('R', $Approved); ?>>ไม่อนุมัติ</option>
+		</select>
+  </div>
+
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+    <label class="search-label">Promotion</label>
+    <select class="form-control input-sm" name="is_promotion" onchange="getSearch()">
+			<option value="all">ทั้งหมด</option>
+			<option value="1" <?php echo is_selected('1', $is_promotion); ?>>โปรโมชั่น</option>
+			<option value="0" <?php echo is_selected('0', $is_promotion); ?>>ไม่ใช่โปรโมชั่น</option>
 		</select>
   </div>
 
@@ -80,7 +89,7 @@
   </div>
 
 	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
-		<label class="search-label">Posting Date</label>
+		<label class="search-label">วันที่</label>
 		<div class="input-daterange input-group">
 			<input type="text" class="form-control input-sm width-50 from-date text-center" id="fromDate" name="fromDate" value="<?php echo $fromDate; ?>" placeholder="From" readonly/>
 			<input type="text" class="form-control input-sm width-50 to-date text-center" id="toDate" name="toDate" value="<?php echo $toDate; ?>" placeholder="To" readonly />
@@ -111,12 +120,13 @@
 					<th class="width-10">เลขที่</th>
 					<th class="width-20">ลูกค้า</th>
 					<th class="width-8">ใบสั่งซื้อ</th>
+					<th class="width-8 text-right">มูลค่า</th>
 					<th class="width-5 text-center">Preview</th>
 					<th class="width-5 text-center">การอนุมัติ</th>
 					<th class="width-5 text-center">สถานะ</th>
-					<th class="width-10 text-center">SO No.</th>
 					<th class="width-10 text-center">ผู้มีสิทธิ์อนุมัติ</th>
 					<th class="width-10">ผู้อนุมัติ</th>
+					<th class="width-10 text-center">SO No.</th>
 					<th class="width-5 text-center">Do No.</th>
 					<th class="width-5 text-center">Invoice No.</th>
 				</tr>
@@ -133,6 +143,7 @@
 						<td class="middle"><?php echo $rs->code; ?></td>
 						<td class="middle"><?php echo $rs->CardName; ?></td>
 						<td class="middle"><?php echo $rs->NumAtCard; ?></td>
+						<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
 						<td class="middle text-center"><button class="btn btn-xs btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</button></td>
 						<td class="middle text-center">
 							<?php if($rs->must_approve == 1 && $rs->Approved == 'A') : ?>
@@ -155,17 +166,17 @@
 							<?php if($rs->Status == 1) : ?>
 								<button type="button" class="btn btn-xs btn-warning btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</button>
 							<?php endif; ?>
-
+							<?php if($rs->Status == 0) : ?>
+								<span class="label label-xlg label-danger">Not Export</span>
+							<?php endif; ?>
 						</td>
-
-						<td class="middle"><?php echo $rs->DocNum; ?></td>
 						<td class="middle text-center">
-							<?php if($rs->must_approve == 1 && !empty($rs->approve_rule)) : ?>
+							<?php if($rs->must_approve == 1) : ?>
 								<button class="btn btn-xs btn-primary" onclick="showAuthorize('<?php echo $rs->code; ?>')">Authorizer</button>
 							<?php endif; ?>
 						</td>
 						<td class="middle"><?php echo $rs->Approver; ?></td>
-
+						<td class="middle"><?php echo $rs->DocNum; ?></td>
 						<td class="middle"><?php echo $rs->DeliveryNo; ?></td>
 						<td class="middle"><?php echo $rs->InvoiceNo; ?></td>
 					</tr>
@@ -202,6 +213,7 @@
             <div class="modal-footer">
 							<button type="button" class="btn btn-sm btn-success pull-left hide" id="btn-approve" onclick="doApprove()">อนุมัติ</button>
 							<button type="button" class="btn btn-sm btn-danger pull-left hide" id="btn-reject" onclick="doReject()">ไม่อนุมัติ</button>
+							<button type="button" class="btn btn-sm btn-primary pull-left hide" id="btn-temp" onclick="sendToSAP()">Send To Temp</button>
               <button type="button" class="btn btn-sm btn-danger pull-right" id="btn-close" onClick="dismiss('previewModal')" >Close</button>
             </div>
         </div>
@@ -223,8 +235,6 @@
 	<tr><td class="th">วันที่สั่งสินค้า</td><td>{{docDate}}</td></tr>
 	<tr><td class="th">วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
 	<tr><td class="th">Sales Order No.</td><td>{{SONO}}</td></tr>
-	<tr><td class="th">Delivery Order No.</td><td>{{DONO}}</td></tr>
-	<tr><td class="th">Invoice No.</th><td>{{INVNO}}</td></tr>
 	<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}</td></tr>
 	<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
 	<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
@@ -234,14 +244,19 @@
 <table class="table table-bordered border-1" style="min-width:100%;">
 	<thead>
 		<tr>
-			<th class="width-5 middle text-center">#</th>
-			<th class="width-30 middle">รายการสินค้า</th>
-			<th class="width-10 middle text-right">จำนวน</th>
-			<th class="width-10 middle text-right">แถม</th>
-			<th class="width-10 middle text-center">หน่วย</th>
-			<th class="width-10 middle text-right">ราคา/หน่วย (Term)</th>
-			<th class="width-10 middle text-right">ราคา(พิเศษ)/หน่วย</th>
-			<th class="width-15 middle text-right">มูลค่า</th>
+			<th class="middle text-center">#</th>
+			<th class="width-20 middle">รายการสินค้า</th>
+			<th class="width-8 middle text-right">จำนวน</th>
+			<th class="width-8 middle text-right">แถม</th>
+			<th class="width-8 middle text-center">หน่วย</th>
+			<th class="width-8 middle text-right">ราคา/หน่วย (Term)</th>
+			<th class="width-8 middle text-right">ราคา(พิเศษ)/หน่วย</th>
+			<th class="width-8 middle text-right">มูลค่า</th>
+			<th class="width-8 middle text-right">หมายเหตุ</th>
+			<th class="width-8 middle text-right">จำนวนค้างส่ง</th>
+			<th class="width-8 middle text-right">เลขที่ DO</th>
+			<th class="width-8 middle text-right">เลขที่ใบแจ้งหนี้</th>
+			<th class="width-8 middle text-right">วันที่ใบแจ้งหนี้</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -250,6 +265,7 @@
 				<tr>
 					<td colspan="7" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
 					<td class="middle text-right">{{totalAmount}}</td>
+					<td></td><td></td><td></td><td></td>
 				</tr>
 			{{else}}
 				<tr>
@@ -263,6 +279,11 @@
 					<td class="middle text-right">{{stdPrice}}</td>
 					<td class="middle text-right">{{sellPrice}}</td>
 					<td class="middle text-right">{{amount}}</td>
+					<td class="middle">{{LineText}}</td>
+					<td class="middle text-right">{{openQty}}</td>
+					<td class="middle text-center">{{DoNo}}</td>
+					<td class="middle text-center">{{InvNo}}</td>
+					<td class="middle text-center">{{InvDate}}</td>
 				</tr>
 			{{/if}}
 		{{/each}}
@@ -344,7 +365,7 @@
 </div>
 
 <script id="temp-template" type="text/x-handlebarsTemplate">
-  <input type="hidden" id="U_WEBORDER" value="{{U_WEBORDER}}"/>
+  <input type="hidden" id="U_WEB_ORNO" value="{{U_WEB_ORNO}}"/>
   <table class="table table-bordered" style="margin-bottom:0px;">
     <tbody style="font-size:16px;">
       <tr><td class="width-30">Web Order</td><td class="width-70">{{U_WEB_ORNO}}</td></tr>

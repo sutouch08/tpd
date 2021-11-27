@@ -12,6 +12,8 @@ class Sale_team extends PS_Controller
     parent::__construct();
     $this->home = base_url().'sale_team';
 		$this->load->model('sale_team_model');
+		$this->load->helper('sale_team');
+		$this->load->helper('approve');
   }
 
 
@@ -45,6 +47,36 @@ class Sale_team extends PS_Controller
 			foreach($result as $rs)
 			{
 				$rs->member = $this->sale_team_model->count_members($rs->id);
+				$customerGroup = $this->sale_team_model->get_team_customer_group($rs->id);
+				$cg = "";
+				$apv = "";
+
+				if(!empty($customerGroup))
+				{
+					$i = 1;
+					foreach($customerGroup as $group)
+					{
+						$name = $this->user_model->get_customer_group_name($group->group_id);
+						$cg .= $i === 1 ? $name : ", ".$name;
+						$i++;
+					}
+				}
+
+				$rs->customerGroup = $cg;
+
+				$approver = $this->sale_team_model->get_team_approver($rs->id);
+
+				if(!empty($approver))
+				{
+					$i = 1;
+					foreach($approver as $ap)
+					{
+						$apv .= $i === 1 ? $ap->emp_name : ", ".$ap->emp_name;
+						$i++;
+					}
+				}
+
+				$rs->approver_list = $apv;
 			}
 		}
 
@@ -77,6 +109,8 @@ class Sale_team extends PS_Controller
 	{
 		$sc = TRUE;
 		$name = trim($this->input->post('name'));
+		$sale_person_id = $this->input->post('sale_person');
+		$customer_team_id = $this->input->post('customer_team');
 
 		if(!empty($name))
 		{
@@ -87,6 +121,8 @@ class Sale_team extends PS_Controller
 				{
 					$arr = array(
 						'name' => $name,
+						'sale_person_id' => $sale_person_id,
+						'customer_team_id' => $customer_team_id,
 						'add_by' => $this->_user->id
 					);
 
@@ -105,10 +141,31 @@ class Sale_team extends PS_Controller
 								{
 									$arr = array(
 										'team_id' => $team_id,
-										'group_id' => $rs->group_id
+										'group_id' => $rs->group_id,
+										'sale_person_id' => $sale_person_id
 									);
 
 									$this->sale_team_model->add_team_customer_group($arr);
+								}
+							}
+						}
+
+
+						//--- insert user_customer_group
+						if(!empty($this->input->post('approver')))
+						{
+							$approver = json_decode($this->input->post('approver'));
+
+							if(!empty($approver))
+							{
+								foreach($approver as $user_id)
+								{
+									$arr = array(
+										'team_id' => $team_id,
+										'user_id' => $user_id
+									);
+
+									$this->sale_team_model->add_team_approver($arr);
 								}
 							}
 						}
@@ -118,13 +175,11 @@ class Sale_team extends PS_Controller
 						$sc = FALSE;
 						$this->error = "Insert data failed";
 					}
-
-
 				}
 				else
 				{
 					$sc = FALSE;
-					$this->error = "Duplicated Group name. Please user another name";
+					$this->error = "Duplicated Team Name. Please user another name";
 				}
 
 			}
@@ -137,7 +192,7 @@ class Sale_team extends PS_Controller
 		else
 		{
 			$sc = FALSE;
-			$this->error = "Missing required parameter : Group Name";
+			$this->error = "Missing required parameter : Team Name";
 		}
 
 
@@ -167,6 +222,8 @@ class Sale_team extends PS_Controller
 				}
 
 				$rs->tgroup = $tgroup;
+				$rs->approver = $this->sale_team_model->get_team_approver($id);
+
 				$data['data'] = $rs;
 				$data['customer_group'] = $this->user_model->get_customer_group_list();
 
@@ -192,6 +249,8 @@ class Sale_team extends PS_Controller
 		if($this->pm->can_edit)
 		{
 			$name = trim($this->input->post('name'));
+			$sale_person_id = $this->input->post('sale_person');
+			$customer_team_id = $this->input->post('customer_team');
 
 			if(!empty($name))
 			{
@@ -200,12 +259,13 @@ class Sale_team extends PS_Controller
 				{
 					$arr = array(
 						'name' => $name,
+						'sale_person_id' => $sale_person_id,
+						'customer_team_id' => $customer_team_id,
 						'update_by' => $this->_user->id
 					);
 
 					if($this->sale_team_model->update($id, $arr))
 					{
-
 						//--- droup current team customer group
 						$this->sale_team_model->drop_team_customer_group($id);
 
@@ -220,10 +280,33 @@ class Sale_team extends PS_Controller
 								{
 									$arr = array(
 										'team_id' => $id,
-										'group_id' => $rs->group_id
+										'group_id' => $rs->group_id,
+										'sale_person_id' => $sale_person_id
 									);
 
 									$this->sale_team_model->add_team_customer_group($arr);
+								}
+							}
+						}
+
+
+						$this->sale_team_model->drop_team_approver($id);
+
+						//--- insert user_customer_group
+						if(!empty($this->input->post('approver')))
+						{
+							$approver = json_decode($this->input->post('approver'));
+
+							if(!empty($approver))
+							{
+								foreach($approver as $user_id)
+								{
+									$arr = array(
+										'team_id' => $id,
+										'user_id' => $user_id
+									);
+
+									$this->sale_team_model->add_team_approver($arr);
 								}
 							}
 						}
@@ -301,6 +384,14 @@ class Sale_team extends PS_Controller
 				$this->error = "Delete team customer group failed";
 			}
 
+
+			//--- delete team approver
+			if(! $this->sale_team_model->drop_team_approver($id))
+			{
+				$sc = FALSE;
+				$this->error = "Delete team approver failed";
+			}
+
 			//--- delete team_user
 			if(! $this->sale_team_model->drop_user_team($id))
 			{
@@ -344,7 +435,7 @@ class Sale_team extends PS_Controller
   public function clear_filter()
 	{
 		$filter = array(
-			'ugroup_name'
+			'team_name'
 		);
 
 		clear_filter($filter);

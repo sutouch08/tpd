@@ -53,30 +53,23 @@ function approver_name_list($ds)
 
 
 
-function get_condition_sign($condition)
+function select_customer_team($id = NULL)
 {
-  $sign = "";
+  $sc = "";
+  $ci =& get_instance();
+  $ci->load->model('customer_team_model');
 
-  switch($condition)
+  $list = $ci->customer_team_model->get_all();
+
+  if(!empty($list))
   {
-    case "Less Than" :
-      $sign = "<";
-      break;
-    case "Less or Equal" :
-      $sign = "<=";
-      break;
-    case "Greater Than" :
-      $sign = ">";
-      break;
-    case "Greater or Equal" :
-      $sign = ">=";
-      break;
-    default :
-      $sign = "";
-      break;
+    foreach($list as $rs)
+    {
+      $sc .= '<option value="'.$rs->id.'" '.is_selected($rs->id, $id).'>'.$rs->name.'</option>';
+    }
   }
 
-  return $sign;
+  return $sc;
 }
 
 

@@ -141,6 +141,11 @@ class Orders_model extends CI_Model
 
   function count_rows(array $ds = array())
   {
+    if(isset($ds['is_promotion']) && $ds['is_promotion'] !== 'all')
+    {
+      $this->db->where('is_promotion', $ds['is_promotion']);
+    }
+
 
     if(!empty($ds['WebCode']))
     {
@@ -277,6 +282,11 @@ class Orders_model extends CI_Model
 
   function get_list(array $ds = array(), $perpage = 20, $offset = 0)
   {
+
+    if(isset($ds['is_promotion']) && $ds['is_promotion'] !== 'all')
+    {
+      $this->db->where('is_promotion', $ds['is_promotion']);
+    }
 
     if(!empty($ds['WebCode']))
     {
@@ -474,14 +484,15 @@ class Orders_model extends CI_Model
   public function get_sap_order($code)
   {
     $rs = $this->ms
-    ->select('DocEntry, DocStatus')
+    ->select('DocEntry, DocNum, DocStatus')
     ->where('U_WEB_ORNO', $code)
     ->where('CANCELED', 'N')
+    ->order_by('DocEntry', 'DESC')
     ->get('ORDR');
 
     if($rs->num_rows() > 0)
     {
-      return $rs->result();
+      return $rs->row();
     }
 
     return NULL;
@@ -559,7 +570,8 @@ class Orders_model extends CI_Model
 
   public function get_temp_status($code)
   {
-    $rs = $this->mc->select('F_Sap, F_SapDate, Message')->where('U_WEB_ORNO', $code)->order_by('DocEntry', 'DESC')->get('ORDR');
+    $rs = $this->mc->select('DocEntry, F_Sap, F_SapDate, Message')->where('U_WEB_ORNO', $code)->order_by('DocEntry', 'DESC')->get('ORDR');
+
     if($rs->num_rows() > 0)
     {
       return $rs->row();
@@ -569,6 +581,74 @@ class Orders_model extends CI_Model
   }
 
 
+
+
+  public function get_open_qty($code, $item_code)
+  {
+    $rs = $this->ms
+    ->select_sum('RDR1.OpenQty')
+    ->from('RDR1')
+    ->join('ORDR', 'RDR1.DocEntry = ORDR.DocEntry', 'left')
+    ->where('ORDR.U_WEB_ORNO', $code)
+    ->where('ItemCode', $item_code)
+    ->get();
+
+    if($rs->num_rows() == 1)
+    {
+      return $rs->row()->OpenQty;
+    }
+
+    return 0.00;
+  }
+
+
+  public function ge_do_no($code, $item_code)
+  {
+    $docNum = "";
+
+    $rs = $this->ms
+    ->select('ODLN.DocNum')
+    ->from('RDR1')
+    ->join('ORDR', 'RDR1.DocEntry = ORDR.DocEntry', 'left')
+    ->join('ODLN', 'RDR1.TrgetEntry = ODLN.DocEntry', 'left')
+    ->where('ORDR.U_WEB_ORNO', $code)
+    ->where('RDR1.ItemCode', $item_code)
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      $i = 1;
+      foreach($rs->result() as $ra)
+      {
+        $docNum .= $i == 1 ? $ra->DocNum : ", {$ra->DocNum}";
+      }
+    }
+
+    return $docNum;
+  }
+
+
+  public function get_inv_no_and_date($code, $item_code)
+  {
+    $rs = $this->ms
+    ->distinct()
+    ->select('OINV.DocNum, OINV.DocDate')
+    ->from('RDR1')
+    ->join('ORDR', 'RDR1.DocEntry = ORDR.DocEntry', 'left')
+    ->join('ODLN', 'RDR1.TrgetEntry = ODLN.DocEntry', 'left')
+    ->join('DLN1', 'ODLN.DocEntry = DLN1.DocEntry', 'left')
+    ->join('OINV', 'DLN1.TrgetEntry = OINV.DocEntry', 'left')
+    ->where('ORDR.U_WEB_ORNO', $code)
+    ->where('RDR1.ItemCode', $item_code)
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->row();
+    }
+
+    return NULL;
+  }
 
 
   public function get_max_code($pre)
@@ -582,6 +662,100 @@ class Orders_model extends CI_Model
     return $rs->row()->code;
   }
 
-}
+
+  public function get_non_so_code($limit = 100)
+  {
+    $rs = $this->db
+    ->select('code')
+    ->where_in('Status', array(1,3))
+    ->where('DocNum IS NULL', NULL, FALSE)
+    ->where('Approved', 'A')
+    ->limit($limit)
+    ->get($this->tb);
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+
+  public function get_non_do_code($limit = 100)
+  {
+    $rs = $this->db
+    ->select('code')
+    ->where('Status', 1)
+    ->where('DocNum IS NOT NULL', NULL, FALSE)
+    ->where('Approved', 'A')
+    ->where('DeliveryNo IS NULL', NULL, FALSE)
+    ->limit($limit)
+    ->get($this->tb);
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function get_delivery_order($code)
+  {
+    $rs = $this->ms
+    ->select('DocNum')
+    ->where('U_WEB_ORNO', $code)
+    ->get('ODLN');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NUL;
+  }
+
+
+  public function get_non_inv_code($limit = 100)
+  {
+    $rs = $this->db
+    ->select('code')
+    ->where('Status', 1)
+    ->where('DocNum IS NOT NULL', NULL, FALSE)
+    ->where('Approved', 'A')
+    ->where('DeliveryNo IS NOT NULL', NULL, FALSE)
+    ->where('InvoiceNo IS NULL', NULL, FALSE)
+    ->limit($limit)
+    ->get($this->tb);
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+
+  public function get_invoice_order($code)
+  {
+    $rs = $this->ms
+    ->select('DocNum')
+    ->where('U_WEB_ORNO', $code)
+    ->get('OINV');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+} //--- end class
 
  ?>

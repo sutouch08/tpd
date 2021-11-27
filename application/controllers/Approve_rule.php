@@ -46,14 +46,6 @@ class Approve_rule extends PS_Controller{
 
 		$rs = $this->approve_rule_model->get_list($filter, $perpage, $this->uri->segment($segment));
 
-		if(!empty($rs))
-		{
-			foreach($rs as $ra)
-			{
-				$ra->approver = $this->approve_rule_model->get_rule_approver($ra->id);
-			}
-		}
-
 		$filter['data'] = $rs;
 
 		$this->pagination->initialize($init);
@@ -93,52 +85,25 @@ class Approve_rule extends PS_Controller{
 				$sale_team = $this->input->post('sale_team');
 				$is_price_list = $this->input->post('is_price_list') == 1 ? 1 : 0;
 				$status = $this->input->post('status') == 1 ? 1 : 0;
-				$approver = json_decode($this->input->post('approver'));
 
-				if(!empty($approver))
-				{
-					$arr = array(
-						'code' => $code,
-						'conditions' => $conditions,
-						'amount' => $amount,
-						'sale_team' => $sale_team,
-						'is_price_list' => $is_price_list,
-						'status' => $status,
-						'add_by' => $this->_user->id,
-						'date_add' => now()
-					);
+				$arr = array(
+					'code' => $code,
+					'conditions' => $conditions,
+					'amount' => $amount,
+					'sale_team' => $sale_team,
+					'is_price_list' => $is_price_list,
+					'status' => $status,
+					'add_by' => $this->_user->id,
+					'date_add' => now()
+				);
 
-					$id = $this->approve_rule_model->add($arr);
-					if($id === FALSE)
-					{
-						$sc = FALSE;
-						$this->error = "Insert approve rule failed";
-					}
-					else
-					{
-						if(!empty($approver))
-						{
-							foreach($approver as $user_id)
-							{
-								$arr = array(
-									'rule_id' => $id,
-									'user_id' => $user_id
-								);
 
-								if(! $this->approve_rule_model->is_exists_approver($id, $user_id))
-								{
-									$this->approve_rule_model->add_rule_approver($arr);
-								}
-							}
-						}
-					}
-
-				}
-				else
+				if(!$this->approve_rule_model->add($arr))
 				{
 					$sc = FALSE;
-					$this->error = "Required at least 1 Authorizer(s)";
+					$this->error = "Insert approve rule failed";
 				}
+
 			}
 			else
 			{
@@ -165,11 +130,6 @@ class Approve_rule extends PS_Controller{
 
 			if(!empty($rs))
 			{
-				if(!empty($rs))
-				{
-					$rs->approver = $this->approve_rule_model->get_rule_approver($id);
-				}
-
 				$ds['data'] = $rs;
 				$this->load->view('approve_rule/approve_rule_edit', $ds);
 			}
@@ -201,61 +161,21 @@ class Approve_rule extends PS_Controller{
 				$sale_team = $this->input->post('sale_team');
 				$is_price_list = $this->input->post('is_price_list') == 1 ? 1 : 0;
 				$status = $this->input->post('status') == 1 ? 1 : 0;
-				$approver = json_decode($this->input->post('approver'));
 
-				if(!empty($approver))
-				{
-					$arr = array(
-						'conditions' => $conditions,
-						'amount' => $amount,
-						'sale_team' => $sale_team,
-						'is_price_list' => $is_price_list,
-						'status' => $status,
-						'update_by' => $this->_user->id,
-						'date_upd' => now()
-					);
+				$arr = array(
+					'conditions' => $conditions,
+					'amount' => $amount,
+					'sale_team' => $sale_team,
+					'is_price_list' => $is_price_list,
+					'status' => $status,
+					'update_by' => $this->_user->id,
+					'date_upd' => now()
+				);
 
-					$rs = $this->approve_rule_model->update($id, $arr);
-
-					if($rs === FALSE)
-					{
-						$sc = FALSE;
-						$this->error = "Update failed";
-					}
-					else
-					{
-						if(!empty($approver))
-						{
-							//--- drop current approver
-							if(! $this->approve_rule_model->drop_rule_approver($id))
-							{
-								$sc = FALSE;
-								$this->error = "Update Authorizer failed : Drop current authorizer failed";
-							}
-							else
-							{
-								foreach($approver as $user_id)
-								{
-									$arr = array(
-										'rule_id' => $id,
-										'user_id' => $user_id
-									);
-
-									if(! $this->approve_rule_model->is_exists_approver($id, $user_id))
-									{
-										$this->approve_rule_model->add_rule_approver($arr);
-									}
-								}
-							}
-
-						}
-					}
-
-				}
-				else
+				if(!$this->approve_rule_model->update($id, $arr))
 				{
 					$sc = FALSE;
-					$this->error = "Required at least 1 Authorizer(s)";
+					$this->error = "Update failed";
 				}
 			}
 			else

@@ -21,12 +21,13 @@ class Customer_model extends CI_Model
   }
 
 
-  public function get_user_customer_list($sale_id, $type = "V", $group_ids = array())
+  public function get_user_customer_list($sale_id, $type = "V", $group_ids = array(), $sale_person = array())
   {
     //--- V = vat Q = non vat
     if(!empty($sale_id))
     {
       $qry = "";
+      $sps = "";
 
       if(!empty($group_ids))
       {
@@ -38,17 +39,42 @@ class Customer_model extends CI_Model
         }
       }
 
+      if(!empty($group_id))
+      {
+        $count = 17;
+        $c = 5;
+        while($c < $count)
+        {
+          $qry .= $c == 1 ? "OCRD.QryGroup{$c} = 'Y' " : "OR OCRD.QryGroup{$c} = 'Y' ";
+          $c++;
+        }
+      }
+
+
+      if(!empty($sale_person))
+      {
+        $in = "";
+        $i = 1;
+        foreach($sale_person as $sp)
+        {
+          $in .= $i === 1 ? "'{$sp}'" : ", '{$sp}'";
+          $i++;
+        }
+
+        $sps = "AND U_SALE_PERSON IN({$in}) ";
+      }
+
+
       $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OVTG.Rate ";
       $qr .= "FROM OCRD LEFT JOIN OVTG ON OCRD.ECVatGroup = OVTG.Code ";
       $qr .= "WHERE OCRD.CardType = 'C' ";
       $qr .= "AND OCRD.validFor = 'Y' ";
       $qr .= "AND OCRD.SlpCode = {$sale_id} ";
-      if(!empty($group_ids))
-      {
-        $qr .= "AND ({$qry})";
-      }
+      $qr .= "AND ({$qry}) ";
       $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
+      $qr .= $sps;
       $qr .= "ORDER BY OCRD.CardCode ASC";
+
 
       $rs = $this->ms->query($qr);
 
@@ -65,13 +91,22 @@ class Customer_model extends CI_Model
 
   public function get_all_user_customer_list($type = "V")
   {
+    $qry = "";
+    $count = 64;
+    $c = 1;
+    while($c < $count)
+    {
+      $qry .= $c == 1 ? "OCRD.QryGroup{$c} = 'Y' " : "OR OCRD.QryGroup{$c} = 'Y' ";
+      $c++;
+    }
+
     $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OVTG.Rate ";
     $qr .= "FROM OCRD LEFT JOIN OVTG ON OCRD.ECVatGroup = OVTG.Code ";
     $qr .= "WHERE OCRD.CardType = 'C' ";
     $qr .= "AND OCRD.validFor = 'Y' ";
+    $qr .= "AND ({$qry})";
     $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
     $qr .= "ORDER BY OCRD.CardCode ASC";
-
     $rs = $this->ms->query($qr);
 
     if($rs->num_rows() > 0)

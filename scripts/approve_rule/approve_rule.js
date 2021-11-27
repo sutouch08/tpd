@@ -22,7 +22,7 @@ function saveAdd() {
   var sale_team = $('#sale_team').val();
   var is_price_list = $('#is_price_list').is(':checked') ? 1 : 0;
   var status = $('#status').is(':checked') ? 1 : 0;
-  var approver = [];
+
 
   if(conditions == "") {
     $('#conditions').addClass('has-error');
@@ -58,34 +58,6 @@ function saveAdd() {
   }
 
 
-  if($('.approver-list').length === 0) {
-    $('#approver').addClass('has-error');
-    $('#approver-error').text('Required at least 1 authorizer(s)');
-    return false;
-  }
-  else {
-    $('#approver').removeClass('has-error');
-    $('#approver-error').text('');
-
-    $('.approver-list').each(function() {
-      let user_id = $(this).val();
-
-      approver.push(user_id);
-    })
-  }
-
-
-  if(approver.length === 0) {
-    $('#approver').addClass('has-error');
-    $('#approver-error').text('Required at least 1 authorizer(s)');
-    return false;
-  }
-  else {
-    $('#approver').removeClass('has-error');
-    $('#approver-error').text('');
-  }
-
-
   var fd = new FormData();
 
   fd.append("conditions", conditions);
@@ -93,7 +65,6 @@ function saveAdd() {
   fd.append("sale_team", sale_team);
   fd.append("is_price_list", is_price_list);
   fd.append("status" , status);
-  fd.append("approver", JSON.stringify(approver));
 
   load_in();
 
@@ -149,7 +120,6 @@ function update() {
   var sale_team = $('#sale_team').val();
   var is_price_list = $('#is_price_list').is(':checked') ? 1 : 0;
   var status = $('#status').is(':checked') ? 1 : 0;
-  var approver = [];
 
   if(conditions == "") {
     $('#conditions').addClass('has-error');
@@ -184,34 +154,6 @@ function update() {
   }
 
 
-  if($('.approver-list').length === 0) {
-    $('#approver').addClass('has-error');
-    $('#approver-error').text('Required at least 1 authorizer(s)');
-    return false;
-  }
-  else {
-    $('#approver').removeClass('has-error');
-    $('#approver-error').text('');
-
-    $('.approver-list').each(function() {
-      let user_id = $(this).val();
-
-      approver.push(user_id);
-    })
-  }
-
-
-  if(approver.length === 0) {
-    $('#approver').addClass('has-error');
-    $('#approver-error').text('Required at least 1 authorizer(s)');
-    return false;
-  }
-  else {
-    $('#approver').removeClass('has-error');
-    $('#approver-error').text('');
-  }
-
-
   var fd = new FormData();
 
   fd.append("rule_id", rule_id);
@@ -220,7 +162,6 @@ function update() {
   fd.append("sale_team", sale_team);
   fd.append("is_price_list", is_price_list);
   fd.append("status" , status);
-  fd.append("approver", JSON.stringify(approver));
 
   load_in();
 
@@ -266,70 +207,6 @@ function update() {
 
 }
 
-
-
-function addApprover() {
-  let no = $('#no').val();
-  no = parseDefault(parseInt(no), 1);
-  let user_id = $('#approver').val();
-  let name = $('#approver option:selected').text();
-
-  if(user_id == "") {
-    $('#approver').addClass('has-error');
-    return false;
-  }
-  else {
-    $('#approver').removeClass('has-error');
-  }
-
-  let source = $('#tag-template').html();
-  let data = {
-    "no" : no,
-    "user_id" : user_id,
-    "name" : name
-  };
-
-  let output = $('#approver-list');
-
-  render_append(source, data, output);
-
-  $('#approver').val('');
-  $('#no').val(no+1);
-  $('#authorizer-list').removeClass('hide');
-}
-
-
-
-function removeTag(id) {
-  $('#tag-'+id).remove();
-  $('#approver-'+id).remove();
-  if($('.approver-list').length == 0) {
-    $('#authorizer-list').addClass('hide');
-  }
-}
-
-
-	function showApprover(id, code) {
-
-    $.ajax({
-      url:HOME + 'get_rule_approver_list/'+id,
-      type:"GET",
-      cache:false,
-      success:function(rs) {
-        if(isJson(rs)) {
-          var data = $.parseJSON(rs);
-          var source = $('#approver-template').html();
-          var output = $('#result');
-
-          render(source, data, output);
-        }
-      }
-    })
-
-		$('#modal-title').text(code);
-
-		$('#approver-modal').modal('show');
-	}
 
 
 

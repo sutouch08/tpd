@@ -48,6 +48,65 @@ class Sale_team_model extends CI_Model
   }
 
 
+
+  public function get_team_approver($id)
+  {
+    $rs = $this->db
+    ->select('ta.*')
+    ->select('ap.uname, ap.emp_name, ap.amount')
+    ->from('team_approver AS ta')
+    ->join('approver AS ap', 'ta.user_id = ap.user_id', 'left')
+    ->where('ta.team_id', $id)
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+
+  public function add_team_approver(array $ds = array())
+  {
+    if(!empty($ds))
+    {
+      return $this->db->insert('team_approver', $ds);
+    }
+
+    return FALSE;
+  }
+
+
+
+  public function drop_team_approver($team_id)
+  {
+    return $this->db->where('team_id', $team_id)->delete('team_approver');
+  }
+
+
+  public function get_approver($team_id, $user_id)
+  {
+    $rs = $this->db
+    ->select('ta.*, ap.amount')
+    ->from('team_approver AS ta')
+    ->join('approver AS ap', 'ta.user_id = ap.user_id', 'left')
+    ->where('ta.team_id', $team_id)
+    ->where('ta.user_id', $user_id)
+    ->where('ap.status', 1)
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->row();
+    }
+
+    return NULL;
+  }
+
+
   public function add(array $ds = array())
   {
     if(!empty($ds))
@@ -168,7 +227,7 @@ class Sale_team_model extends CI_Model
   {
     $this->db->select('id')->where('name', $name);
 
-    if(!empty($id))
+    if($id !== NULL)
     {
       $this->db->where('id !=', $id);
     }

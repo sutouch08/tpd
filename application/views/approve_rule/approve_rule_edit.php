@@ -78,44 +78,6 @@
   </div>
 
 
-
-	<div class="divider"></div>
-	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Authorizer</label>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-8">
-			<select class="form-control input-sm" name="approver" id="approver">
-				<option value="">Please Select</option>
-				<?php echo select_approver(); ?>
-			</select>
-    </div>
-		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-4">
-			<button type="button" class="btn btn-primary btn-xs btn-block" onclick="addApprover()"><i class="fa fa-plus"></i> Add to list</button>
-		</div>
-		<div class="help-block col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 red" id="approver-error"></div>
-  </div>
-
-	<div class="form-group" id="authorizer-list">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
-    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12" id="approver-list">
-			<?php if(!empty($data->approver)) : ?>
-				<?php foreach($data->approver as $rs) : ?>
-					<label class="btn-block"  style="padding:10px; border:solid 1px #81a87b;" id="tag-<?php echo $no; ?>">
-						<?php echo $rs->uname .' | '.$rs->emp_name; ?>
-				    <a class="pointer bold pull-right red" onclick="removeTag(<?php echo $no; ?>)" style="margin-left:15px;">
-				      <i class="fa fa-times"></i>
-				    </a>
-				  </label>
-				  <input type="hidden" class="approver-list" name="approver-list" id="approver-<?php echo $no; ?>" value="<?php echo $rs->user_id; ?>"/>
-					<?php $no++; ?>
-				<?php endforeach; ?>
-			<?php endif; ?>
-    </div>
-  </div>
-
-	<div class="divider"></div>
-
-	<div class="divider-hidden"></div>
-
   <div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
     <div class="col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2 col-sm-offset-2 col-xs-12">
@@ -123,18 +85,7 @@
     </div>
   </div>
 
-	<input type="hidden" id="no" value="<?php echo $no; ?>">
-	<input type="hidden" id="rule_id" value="<?php echo $data->id; ?>" />
-
-	<script id="tag-template" type="text/x-handlebarsTemplate">
-	  <label class="btn-block"  style="padding:10px; border:solid 1px #81a87b;" id="tag-{{no}}">
-	    {{name}}
-	    <a class="pointer bold pull-right red" onclick="removeTag({{no}})" style="margin-left:15px;">
-	      <i class="fa fa-times"></i>
-	    </a>
-	  </label>
-	  <input type="hidden" class="approver-list" name="approver-list" id="approver-{{no}}" value="{{user_id}}"/>
-	</script>
+	<input type="hidden" id="rule_id" value="<?php echo $data->id; ?>" />	
 </form>
 
 

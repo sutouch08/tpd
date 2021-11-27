@@ -94,9 +94,9 @@
 					<th class="width-10 middle">Username</th>
 					<th class="width-12 middle">Empl.</th>
 					<th class="width-12 middle">Sales empl.</th>
-					<th class="width-15 middle">Sales Team</th>
-					<th class="width-10 middle text-center">Group</th>
-					<th class="width-10 middle text-center">Role</th>
+					<th class="width-2 middle">Sales Team</th>
+					<th class="width-5 middle">Group</th>
+					<th class="width-5 middle">Role</th>
 					<th class="width-5 middle text-center">Status</th>
 					<th class="width-15 middle text-right"></th>
 				</tr>
@@ -111,10 +111,10 @@
 							<?php echo $rs->uname; ?>
 						</td>
 						<td class="middle"><?php echo $rs->emp_name; ?></td>
-						<td class="middle"><?php echo get_sale_name($rs->sale_id); ?></td>
+						<td class="middle"><?php echo $rs->sale_name; ?></td>
 						<td class="middle"><?php echo $rs->team_name; ?></td>
 						<td class="middle"><?php echo $rs->group_name; ?></td>
-						<td class="middle text-center"><?php echo $rs->role; ?></td>
+						<td class="middle"><?php echo $rs->role; ?></td>
 						<td class="middle text-center">
 							<?php echo is_active($rs->status); ?>
 						</td>

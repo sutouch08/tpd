@@ -34,39 +34,6 @@ function doApprove() {
 }
 
 
-function unApprove() {
-  var code = $('#code').val();
-  $.ajax({
-    url:HOME + 'unapprove',
-    type:'POST',
-    cache:false,
-    data:{
-      'code' : code
-    },
-    success:function(rs) {
-      var rs = $.trim(rs);
-      if(rs === 'success') {
-        swal({
-          title:'Success',
-          type:'success',
-          timer:1000
-        });
-
-        setTimeout(function(){
-          goEdit(code);
-        }, 1200);
-      }
-      else {
-        swal({
-          title:'Error',
-          text:rs,
-          type:'error'
-        })
-      }
-    }
-  })
-}
-
 
 function doReject() {
   var code = $('#code').val();
@@ -104,7 +71,7 @@ function doReject() {
 
 
 function sendToSAP() {
-  var code = $('#code').val();
+  var code = $('#OrderCode').val();
   load_in();
   $.ajax({
     url:HOME + 'sendToSAP',
@@ -204,10 +171,16 @@ function preview(code, status) {
             $('#btn-approve').addClass('hide');
             $('#btn-reject').addClass('hide');
           }
+
+          $('#btn-temp').addClass('hide');
         }
         else {
           $('#btn-approve').addClass('hide');
           $('#btn-reject').addClass('hide');
+
+          if(data.Approved == 'A') {
+            $('#btn-temp').removeClass('hide');
+          }
         }
 
         render(source, data, output);
@@ -473,12 +446,14 @@ function viewDetail(code) {
 
 function removeTemp() {
   $('#tempModal').modal('hide');
-  var U_WEBORDER = $('#U_WEBORDER').val();
+
+  var code = $('#U_WEB_ORNO').val();
+
   $.ajax({
     url:HOME + 'remove_temp',
     type:'POST',
     data:{
-      'U_WEBORDER' : U_WEBORDER
+      'code' : code
     },
     success:function(rs) {
       var rs = $.trim(rs);

@@ -85,10 +85,10 @@
 		</th>
 		<td>{{customerName}}</td>
 	</tr>
+	<tr><th>เลขที่ใบสั่งสินค้า</th><td>{{orderCode}}</td></tr>
 	<tr><th>ที่อยู่ตามใบกำกับภาษี</th><td>{{billToCode}}  {{billToAddress}}</td></tr>
 	<tr><th>สถานที่ส่งของ</th><td>{{shipToCode}}  {{shipToAddress}}</td></tr>
-	<tr><th>สถานที่จัดส่งเพิ่มเติม</th><td>{{exShipTo}}</td></tr>
-	<tr><th>เลขที่ใบสั่งสินค้า</th><td>{{orderCode}}</td></tr>	
+	<tr><th>สถานที่จัดส่งเพิ่มเติม</th><td>{{exShipTo}}</td></tr>		
 	<tr><th>Currency</th><td>{{currency}} | Rate: {{currencyRate}} </td></tr>
 	<tr><th>วันที่สั่งสินค้า</th><td>{{docDate}}</td></tr>
 	<tr><th>วันที่จัดส่ง</th><td>{{dueDate}}</td></tr>

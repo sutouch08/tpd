@@ -50,7 +50,7 @@
 				<?php echo select_sale_team(); ?>
 			</select>
     </div>
-		<div class="help-block col-xs-12 col-sm-reset inline red" id="sale_team-error"></div>
+		<div class="help-block col-xs-12 col-sm-reset inline red" id="sale-team-error"></div>
   </div>
 
 
@@ -75,31 +75,6 @@
     </div>
   </div>
 
-
-
-	<div class="divider"></div>
-	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Authorizer</label>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-8">
-			<select class="form-control input-sm" name="approver" id="approver">
-				<option value="">Please Select</option>
-				<?php echo select_approver(); ?>
-			</select>
-    </div>
-		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-4">
-			<button type="button" class="btn btn-primary btn-xs btn-block" onclick="addApprover()"><i class="fa fa-plus"></i> Add to list</button>
-		</div>
-		<div class="help-block col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 red" id="approver-error"></div>
-  </div>
-
-	<div class="form-group hide" id="authorizer-list">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
-    <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12" id="approver-list">
-    </div>
-  </div>
-
-	<div class="divider"></div>
-
 	<div class="divider-hidden"></div>
 
   <div class="form-group">
@@ -108,18 +83,6 @@
     <button type="button" class="btn btn-sm btn-success btn-block" id="btn-save" onclick="saveAdd()"><i class="fa fa-save"></i> Add</button>
     </div>
   </div>
-
-	<input type="hidden" id="no" value="1">
-
-	<script id="tag-template" type="text/x-handlebarsTemplate">
-	  <label class="btn-block"  style="padding:10px; border:solid 1px #81a87b;" id="tag-{{no}}">
-	    {{name}}
-	    <a class="pointer bold pull-right red" onclick="removeTag({{no}})" style="margin-left:15px;">
-	      <i class="fa fa-times"></i>
-	    </a>
-	  </label>
-	  <input type="hidden" class="approver-list" name="approver-list" id="approver-{{no}}" value="{{user_id}}"/>
-	</script>
 </form>
 
 
