@@ -35,6 +35,32 @@ class Customer_team_model extends CI_Model
   }
 
 
+  public function get_id($name)
+  {
+    $rs = $this->db->where('name', $name)->get($this->table);
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->id;
+    }
+
+    return NULL;
+  }
+
+
+  public function get_name($id)
+  {
+    $rs = $this->db->where('id', $id)->get($this->table);
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->name;
+    }
+
+    return NULL;
+  }
+
+
 
   public function add(array $ds = array())
   {

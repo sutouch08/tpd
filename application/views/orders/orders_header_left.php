@@ -63,6 +63,16 @@
         <input type="number" class="form-control input-sm" id="currencyRate" value="1.00" disabled>
       </div>
     </div>
+
+    <?php if($this->isAdmin) : ?>
+    <div class="form-group">
+      <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Sale Employee</label>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12">
+        <input type="text" class="width-100" id="slpName" disabled />
+      </div>
+    </div>
+    <?php endif; ?>
+
   </div>
 </div>
 

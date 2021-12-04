@@ -25,6 +25,14 @@ class PS_Controller extends CI_Controller
     $this->_SuperAdmin = $this->_user->ugroup_id == -987654321 ? TRUE : FALSE;
     $this->isGM = $this->_user->role == 'GM' ? TRUE : FALSE;
     $this->isAdmin = $this->_user->role == 'salesAdmin' ? TRUE : FALSE;
+
+    $this->close_system   = getConfig('CLOSE_SYSTEM'); //--- ปิดระบบทั้งหมดหรือไม่
+
+    if($this->close_system == 1 && $this->_SuperAdmin === FALSE)
+    {
+      redirect(base_url().'maintenance');
+    }
+
     //--- get permission for user
     $this->pm = get_permission($this->menu_code);
 

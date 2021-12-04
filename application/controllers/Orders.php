@@ -15,6 +15,7 @@ class Orders extends PS_Controller
 		$this->load->model('item_model');
 		$this->load->model('customer_model');
 		$this->load->model('sale_team_model');
+		$this->load->model('customer_team_model');
 		$this->load->helper('orders');
 		$this->load->helper('sale_team');
   }
@@ -481,7 +482,8 @@ class Orders extends PS_Controller
 				$group_id = $this->get_group_id($customer);
 				$sale_id = get_null($customer->SlpCode);
 				$sale_person_id = $this->sale_person_model->get_id($customer->U_SALE_PERSON);
-				$team_id = $this->user_model->get_team_id_by_customer_group($group_id, $sale_person_id);
+				$cust_team_id = $this->customer_team_model->get_id($customer->U_CUST_TEAM);
+				$team_id = $this->user_model->get_team_id_by_customer_group($group_id, $sale_person_id, $cust_team_id);
 
 					// เวลาส่งไปที่ SAP ให้ส่งค่าไปที่ ORDR.GroupNum
 					// 1. OPLN.ListNum ลำดับ 11 ส่งไปที่ ORDR.GroupNum ลำดับ 3
@@ -708,7 +710,7 @@ class Orders extends PS_Controller
 	{
 		$this->load->model('approve_rule_model');
 
-		$rule = $this->approve_rule_model->get_exception_rule($team_id, $docTotal, $pricelist);
+		$rule = empty($team_id) ? NULL : $this->approve_rule_model->get_exception_rule($team_id, $docTotal, $pricelist);
 		//---- order must approve by default
 		//--- if exception rule exists order no need to approve
 		if(!empty($rule))
@@ -732,18 +734,23 @@ class Orders extends PS_Controller
 		$customer = $this->customer_model->get($customer_code);
 		$group_id = $this->get_group_id($customer);
 		$sale_person_id = $this->sale_person_model->get_id($customer->U_SALE_PERSON);
+		$cust_team_id = $this->customer_team_model->get_id($customer->U_CUST_TEAM);
 
-		$team_id = $this->user_model->get_team_id_by_customer_group($group_id, $sale_person_id);
+		$team_id = $this->user_model->get_team_id_by_customer_group($group_id, $sale_person_id, $cust_team_id);
 
 		$this->load->model('approve_rule_model');
 
-		$rule = $this->approve_rule_model->get_exception_rule($team_id, $docTotal, $priceEdit);
+		$rule = empty($team_id) ? NULL : $this->approve_rule_model->get_exception_rule($team_id, $docTotal, $priceEdit);
 
 		if(empty($rule))
 		{
 			if($priceEdit)
 			{
 				$message = "ในกรณีราคาต่ำกว่า Price list ต้องผ่านการอนุมัติ";
+			}
+			else if(empty($team_id))
+			{
+				$message = "ในกรณีเป็นลูกค้าต่างประเทศ ต้องผ่านการอนุมัติ";
 			}
 			else
 			{
@@ -1109,6 +1116,18 @@ class Orders extends PS_Controller
 	}
 
 
+
+	public function get_sale_name_by_customer()
+	{
+		$cardCode = trim($this->input->get('CardCode'));
+
+		if(!empty($cardCode))
+		{
+			$saleName = $this->customer_model->get_sale_name_by_customer($cardCode);
+
+			echo $saleName;
+		}
+	}
 
 	public function get_new_code($date = NULL)
   {

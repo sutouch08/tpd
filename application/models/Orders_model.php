@@ -687,7 +687,7 @@ class Orders_model extends CI_Model
   {
     $rs = $this->db
     ->select('code')
-    ->where('Status', 1)
+    ->where('Status', 2)
     ->where('DocNum IS NOT NULL', NULL, FALSE)
     ->where('Approved', 'A')
     ->where('DeliveryNo IS NULL', NULL, FALSE)
@@ -723,7 +723,7 @@ class Orders_model extends CI_Model
   {
     $rs = $this->db
     ->select('code')
-    ->where('Status', 1)
+    ->where('Status', 2)
     ->where('DocNum IS NOT NULL', NULL, FALSE)
     ->where('Approved', 'A')
     ->where('DeliveryNo IS NOT NULL', NULL, FALSE)

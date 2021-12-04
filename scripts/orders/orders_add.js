@@ -23,6 +23,7 @@ function changeCustomerList() {
 				$('#ShipTo').val('');
 				$('#billToCode option').remove();
 				$('#BillTo').val('');
+				$('#slpName').val('');
 			}
 			else {
 				swal({
@@ -47,6 +48,28 @@ function getAddress() {
 	get_address_ship_to_code(code);
 	//---- create Address bill to
 	get_address_bill_to_code(code);
+
+	if($('#slpName').length) {
+		get_sale_name_by_customer(code);
+	}
+}
+
+
+
+function get_sale_name_by_customer(code) {
+	if(code.length) {
+		$.ajax({
+			url:HOME + 'get_sale_name_by_customer',
+			type:'GET',
+			cache:false,
+			data: {
+				"CardCode" : code
+			},
+			success:function(rs) {
+				$('#slpName').val(rs);
+			}
+		})
+	}
 }
 
 

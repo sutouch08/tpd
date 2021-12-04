@@ -55,4 +55,12 @@ function sale_person_name($id)
   return NULL;
 }
 
+
+function customer_team_name($id)
+{
+  $ci =& get_instance();
+  $ci->load->model('customer_team_model');
+  return $ci->customer_team_model->get_name($id);
+}
+
 ?>

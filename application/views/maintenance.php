@@ -22,20 +22,12 @@
 					<p style="float:right;"><button style="padding:15px;" onclick="openSystem()">OPEN SYSTEM</button></p>
 					<script>
 						function openSystem(){
-							$.get(BASE_URL + 'setting/maintenance/open_system',function(rs){
+							$.get(BASE_URL + 'maintenance/open_system',function(rs){
 								if(rs == 'success'){
 									window.location.href = BASE_URL;
 								}
 							});
 						}
-
-						setInterval(function(){
-							$.get(BASE_URL + 'setting/maintenance/check_open_system', function(rs){
-								if(rs == 'open'){
-									window.location.href = BASE_URL;
-								}
-							});
-						}, 3000);
 					</script>
 				<?php endif; ?>
     </div>
@@ -44,3 +36,12 @@
 <article>
 
 </article>
+<script>
+setInterval(function(){
+	$.get(BASE_URL + 'maintenance/check_open_system', function(rs){
+		if(rs == 'open'){
+			window.location.href = BASE_URL;
+		}
+	});
+}, 10000);
+</script>

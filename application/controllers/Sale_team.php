@@ -142,7 +142,8 @@ class Sale_team extends PS_Controller
 									$arr = array(
 										'team_id' => $team_id,
 										'group_id' => $rs->group_id,
-										'sale_person_id' => $sale_person_id
+										'sale_person_id' => $sale_person_id,
+										'customer_team_id' => $customer_team_id
 									);
 
 									$this->sale_team_model->add_team_customer_group($arr);
@@ -281,7 +282,8 @@ class Sale_team extends PS_Controller
 									$arr = array(
 										'team_id' => $id,
 										'group_id' => $rs->group_id,
-										'sale_person_id' => $sale_person_id
+										'sale_person_id' => $sale_person_id,
+										'customer_team_id' => $customer_team_id
 									);
 
 									$this->sale_team_model->add_team_customer_group($arr);

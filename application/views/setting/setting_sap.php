@@ -2,88 +2,45 @@
 <div class="tab-pane fade" id="SAP">
 	<form id="sapForm" method="post" action="<?php echo $this->home; ?>/update_config">
   	<div class="row">
-    	<div class="col-sm-4">
-        <span class="form-control left-label">Default Currency</span>
-      </div>
-      <div class="col-sm-8">
-        <input type="text" class="form-control input-sm input-small" name="CURRENCY"  value="<?php echo $CURRENCY; ?>" />
-      </div>
-      <div class="divider-hidden"></div>
 
-      <div class="col-sm-4">
-        <span class="form-control left-label">Purchase VAT code (รหัสภาษีซื้อ)</span>
+      <div class="col-lg-3 col-md-4 col-sm-5 col-xs-8 padding-5">
+        <span class="form-control left-label">รหัสภาษีซื้อ</span>
       </div>
-      <div class="col-sm-8">
+      <div class="col-lg-9 col-md-8 col-sm-7 col-xs-4 padding-5">
         <input type="text" class="form-control input-sm input-small" name="PURCHASE_VAT_CODE" value="<?php echo $PURCHASE_VAT_CODE; ?>" />
       </div>
       <div class="divider-hidden"></div>
 
-      <div class="col-sm-4">
-        <span class="form-control left-label">Purchase VAT rate (อัตราภาษีซื้อ)</span>
+      <div class="col-lg-3 col-md-4 col-sm-5 col-xs-8 padding-5">
+        <span class="form-control left-label">อัตราภาษีซื้อ</span>
       </div>
-      <div class="col-sm-8">
+      <div class="col-lg-9 col-md-8 col-sm-7 col-xs-4 padding-5">
         <input type="text" class="form-control input-sm input-small" name="PURCHASE_VAT_RATE" value="<?php echo $PURCHASE_VAT_RATE; ?>" />
       </div>
       <div class="divider-hidden"></div>
 
-			<div class="col-sm-4">
-        <span class="form-control left-label">Sell VAT code (รหัสภาษีขาย)</span>
+			<div class="col-lg-3 col-md-4 col-sm-5 col-xs-8 padding-5">
+        <span class="form-control left-label">รหัสภาษีขาย</span>
       </div>
-      <div class="col-sm-8">
+      <div class="col-lg-9 col-md-8 col-sm-7 col-xs-4 padding-5">
         <input type="text" class="form-control input-sm input-small" name="SALE_VAT_CODE" value="<?php echo $SALE_VAT_CODE; ?>" />
       </div>
       <div class="divider-hidden"></div>
 
-      <div class="col-sm-4">
-        <span class="form-control left-label">Sell VAT rate (อัตราภาษีขาย)</span>
+      <div class="col-lg-3 col-md-4 col-sm-5 col-xs-8 padding-5">
+        <span class="form-control left-label">อัตราภาษีขาย</span>
       </div>
-      <div class="col-sm-8">
+      <div class="col-lg-9 col-md-8 col-sm-7 col-xs-4 padding-5">
         <input type="text" class="form-control input-sm input-small" name="SALE_VAT_RATE" value="<?php echo $SALE_VAT_RATE; ?>" />
       </div>
       <div class="divider-hidden"></div>
 
-			<div class="col-sm-4">
-        <span class="form-control left-label">Default Quotation Series</span>
-      </div>
-      <div class="col-sm-8">
-        <input type="text" class="form-control input-sm input-small" name="DEFAULT_QUOTATION_SERIES" value="<?php echo $DEFAULT_QUOTATION_SERIES; ?>" />
-      </div>
-      <div class="divider-hidden"></div>
-
-			<div class="col-sm-4">
-        <span class="form-control left-label">Default Warehouse</span>
-      </div>
-      <div class="col-sm-8">
-        <input type="text" class="form-control input-sm input-small" name="DEFAULT_WAREHOUSE" value="<?php echo $DEFAULT_WAREHOUSE; ?>" />
-      </div>
-      <div class="divider-hidden"></div>
-
-			<div class="col-sm-4">
-        <span class="form-control left-label">Default CUSTOMER</span>
-      </div>
-      <div class="col-sm-8">
-        <input type="text" class="form-control input-sm input-small" name="DEFAULT_CUSTOMER_CODE" value="<?php echo $DEFAULT_CUSTOMER_CODE; ?>" />
-      </div>
-      <div class="divider-hidden"></div>
-			<div class="col-sm-4">
-        <span class="form-control left-label">ยืนราคาเริ่มต้น (วัน)</span>
-      </div>
-      <div class="col-sm-8">
-        <input type="text" class="form-control input-sm input-small" name="DEFAULT_DUE_PRICE" value="<?php echo $DEFAULT_DUE_PRICE; ?>" />
-      </div>
-      <div class="divider-hidden"></div>
-			<div class="col-sm-4">
-        <span class="form-control left-label">กำหนดส่งสินค้าเริ่มต้น (วัน)</span>
-      </div>
-      <div class="col-sm-8">
-        <input type="text" class="form-control input-sm input-small" name="DEFAULT_DUE_DELIVERY" value="<?php echo $DEFAULT_DUE_DELIVERY; ?>" />
-      </div>
       <div class="divider-hidden"></div>
 
 
 
-      <div class="col-sm-8 col-sm-offset-4">
-				<?php if($this->isAdmin) : ?>
+      <div class="col-lg-9 col-lg-offset-3 col-md-8 col-md-offset-4 col-sm-7 col-sm-offset-5 col-xs-6 col-xs-offset-6">
+				<?php if($this->pm->can_edit OR $this->_SuperAdmin) : ?>
         <button type="button" class="btn btn-sm btn-success input-small" onClick="updateConfig('sapForm')">
           <i class="fa fa-save"></i> บันทึก
         </button>

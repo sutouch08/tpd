@@ -50,8 +50,9 @@
 			<thead>
 				<tr>
 					<th class="width-5 middle text-center">#</th>
-					<th class="width-15 middle">Name</th>
+					<th class="width-15 middle">Sale Team</th>
 					<th class="width-10 middle">Sale Person</th>
+					<th class="width-10 middle">Cust Team</th>
 					<th class="width-15 middle">Authorizer</th>
 					<th class="width-30 middle">Customer Group</th>
 					<th class="width-5 middle text-center">Member</th>
@@ -66,6 +67,7 @@
 						<td class="middle text-center no"><?php echo $no; ?></td>
 						<td class="middle"><?php echo $rs->name; ?></td>
 						<td class="middle"><?php echo sale_person_name($rs->sale_person_id); ?></td>
+						<td class="middle"><?php echo customer_team_name($rs->customer_team_id); ?></td>
 						<th class="middle"><?php echo $rs->approver_list; ?></th>
 						<td class="middle"><?php echo $rs->customerGroup; ?></td>
 						<td class="middle text-center"><?php echo number($rs->member); ?></td>

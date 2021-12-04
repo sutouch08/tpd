@@ -31,8 +31,6 @@ class Main extends PS_Controller
 			$ds['sumApproved'] = round($this->order_report_model->get_sum_approved($sale_id, $fromDate, $toDate), 2);
 			$ds['sumRejected'] = round($this->order_report_model->get_sum_rejected($sale_id, $fromDate, $toDate), 2);
 		}
-
-
 		$this->load->view('main_view', $ds);
 	}
 

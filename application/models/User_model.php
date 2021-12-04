@@ -352,9 +352,13 @@ class User_model extends CI_Model
   }
 
 
-  public function get_team_id_by_customer_group($group_id, $sale_person_id)
+  public function get_team_id_by_customer_group($group_id, $sale_person_id, $customer_team_id)
   {
-    $rs = $this->db->where('group_id', $group_id)->where('sale_person_id', $sale_person_id)->get('team_customer_group');
+    $rs = $this->db
+    ->where('group_id', $group_id)
+    ->where('sale_person_id', get_zero($sale_person_id))
+    ->where('customer_team_id', get_zero($customer_team_id))
+    ->get('team_customer_group');
 
     if($rs->num_rows() > 0)
     {

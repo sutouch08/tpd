@@ -60,29 +60,7 @@
 .i-red { background-color: #DA4453;}
 .c-red { background-color: #ED5565;}
 </style>
-<!--
-<div class="row">
-  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 text-center">
-    <h1>Hello!</h1>
-    <h5>Good to see you here</h5>
-  </div>
-  <div class="divider"></div>
-  <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12 padding-5 text-center">
-    <?php if($od->can_add) : ?>
-    <button type="button" class="btn btn-white btn-primary btn-lg margin-bottom-15" onclick="newOrder()"><i class="fa fa-plus"></i>&nbsp; New order</button>
-    <?php endif; ?>
-    <?php if($op->can_add) : ?>
-    <button type="button" class="btn btn-white btn-primary btn-lg margin-bottom-15" onclick="newOrderPromotion()"><i class="fa fa-plus"></i>&nbsp; New order promotion</button>
-    <?php endif; ?>
 
-    <?php if($this->_user->bi_link == 1) : ?>
-      <button type="button" class="btn btn-white btn-success btn-lg margin-bottom-15" onclick="goPowerBi()"><i class="fa fa-barchart"></i>&nbsp; Power BI</button>
-    <?php endif; ?>
-  </div>
-
-  <div class="divider"></div>
-</div>
--->
 <?php if(!empty($this->_user->sale_id)) : ?>
 <div class="row">
   <div class="col-lg-2 col-md-2-harf col-sm-3 col-xs-6 padding-5">
@@ -136,8 +114,6 @@
 		</div>
   </div>
 </div>
-
-<?php endif; ?>
 
 <script id="summary-template" type="text/x-handlebarsTemplate">
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
@@ -335,7 +311,29 @@
 		})
 	}
 
+</script>
+<?php else : ?>
 
+	<div class="row">
+	  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 text-center">
+	    <h1>Hello!</h1>
+	    <h5>Good to see you here</h5>
+	  </div>
+	  <div class="divider-hidden"></div>
+	  <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12 padding-5 text-center">
+	    <?php if($this->_user->bi_link == 1) : ?>
+	      <button type="button" class="btn btn-white btn-success btn-lg margin-bottom-15" onclick="goPowerBi()"><i class="fa fa-barchart"></i>&nbsp; Power BI</button>
+	    <?php endif; ?>
+	  </div>
+
+	</div>
+
+<?php endif; ?>
+
+
+
+
+<script>
   function newOrder() {
     window.location.href = BASE_URL + 'orders/add_new';
   }
@@ -350,11 +348,6 @@
     var prop = "width=800, height=900, left="+center+", scrollbars=yes";
     window.open(target, '_blank', prop);
   }
-
-
-
-
-
 
 </script>
 

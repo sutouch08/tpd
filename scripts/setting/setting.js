@@ -24,50 +24,30 @@ function updateConfig(formName)
 	});
 }
 
+function togglePWD(option) {
+	$('#pwd').val(option);
 
-
-$('#default-warehouse').autocomplete({
-	source: BASE_URL + 'auto_complete/get_warehouse_by_role/1',
-	autoFocus:true,
-	close:function(){
-		let rs = $(this).val();
-		let arr = rs.split(' | ');
-
-		if(arr[0] === 'not found'){
-			$(this).val('');
-		}else{
-			$(this).val(arr[0]);
-		}
+	if(option == 1) {
+		$('#btn-pwd-on').addClass('btn-primary');
+		$('#btn-pwd-off').removeClass('btn-primary');
+		return;
 	}
-})
-
-$('#lend-warehouse').autocomplete({
-	source: BASE_URL + 'auto_complete/get_warehouse_by_role/8',
-	autoFocus:true,
-	close:function(){
-		let rs = $(this).val();
-		let arr = rs.split(' | ');
-
-		if(arr[0] === 'not found'){
-			$(this).val('');
-		}else{
-			$(this).val(arr[0]);
-		}
+	else
+	{
+		$('#btn-pwd-on').removeClass('btn-primary');
+		$('#btn-pwd-off').addClass('btn-primary');
 	}
-})
+}
 
 
-$('#transform-warehouse').autocomplete({
-	source: BASE_URL + 'auto_complete/get_warehouse_by_role/7',
-	autoFocus:true,
-	close:function(){
-		let rs = $(this).val();
-		let arr = rs.split(' | ');
+function openSystem() {
+	$('#closed').val(0);
+	$('#btn-close').removeClass('btn-danger');
+	$('#btn-open').addClass('btn-success');
+}
 
-		if(arr[0] === 'not found'){
-			$(this).val('');
-		}else{
-			$(this).val(arr[0]);
-		}
-	}
-})
+function closeSystem() {
+	$('#closed').val(1);
+	$('#btn-open').removeClass('btn-success');
+	$('#btn-close').addClass('btn-danger');
+}

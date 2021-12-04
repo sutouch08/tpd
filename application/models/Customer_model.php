@@ -72,6 +72,7 @@ class Customer_model extends CI_Model
       $qr .= "AND OCRD.SlpCode = {$sale_id} ";
       $qr .= "AND ({$qry}) ";
       $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
+      $qr .= "AND OCRD.U_SALE_PERSON IS NOT NULL ";
       $qr .= $sps;
       $qr .= "ORDER BY OCRD.CardCode ASC";
 
@@ -106,6 +107,7 @@ class Customer_model extends CI_Model
     $qr .= "AND OCRD.validFor = 'Y' ";
     $qr .= "AND ({$qry})";
     $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
+    $qr .= "AND OCRD.U_SALE_PERSON IS NOT NULL ";
     $qr .= "ORDER BY OCRD.CardCode ASC";
     $rs = $this->ms->query($qr);
 
@@ -187,6 +189,24 @@ class Customer_model extends CI_Model
     if($rs->num_rows() > 0)
     {
       return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function get_sale_name_by_customer($CardCode)
+  {
+    $rs = $this->ms
+    ->select('OSLP.SlpName')
+    ->from('OCRD')
+    ->join('OSLP', 'OCRD.SlpCode = OSLP.SlpCode', 'left')
+    ->where('OCRD.CardCode', $CardCode)
+    ->get();
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->SlpName;
     }
 
     return NULL;

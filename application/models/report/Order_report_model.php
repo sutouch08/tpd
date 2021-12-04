@@ -158,6 +158,7 @@ class Order_report_model extends CI_Model
     ->where('orders.DocDate >=', from_date($from_date))
     ->where('orders.DocDate <=', to_date($to_date))
     ->where('order_detail.status', 'A')
+    ->where_in('orders.status', array(1, 2))
     ->get();
 
 

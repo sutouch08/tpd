@@ -16,6 +16,7 @@ class Order_promotion extends PS_Controller
 		$this->load->model('customer_model');
     $this->load->model('promotion_model');
 		$this->load->model('sale_team_model');
+		$this->load->model('customer_team_model');
 		$this->load->helper('orders');
 		$this->load->helper('sale_team');
 
@@ -492,7 +493,8 @@ class Order_promotion extends PS_Controller
 					$customer = $this->customer_model->get($header->CardCode);
 					$group_id = $this->get_group_id($customer);
 					$sale_person_id = $this->sale_person_model->get_id($customer->U_SALE_PERSON);
-					$team_id = $this->user_model->get_team_id_by_customer_group($group_id, $sale_person_id);
+					$cust_team_id = $this->customer_team_model->get_id($customer->U_CUST_TEAM);
+					$team_id = $this->user_model->get_team_id_by_customer_group($group_id, $sale_person_id, $cust_team_id);
 
 					$groupNum = $customer->GroupNum;
 

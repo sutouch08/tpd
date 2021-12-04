@@ -3,7 +3,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Setting extends PS_Controller{
 	public $menu_code = 'SETTING';
-	public $menu_group_code = 'SC'; //--- System security
+	public $menu_group_code = 'ADMIN'; //--- System security
 	public $title = 'Setting';
 
   public function __construct()
@@ -17,32 +17,23 @@ class Setting extends PS_Controller{
 
   public function index()
   {
-		if($this->isAdmin)
+		$groups = array('Company', 'Document', 'SAP', 'System');
+
+		$ds = array();
+		foreach($groups as $rs)
 		{
+			 $group = $this->config_model->get_config_by_group($rs);
 
-			$groups = array('Company', 'Document', 'SAP', 'PRINT');
-
-	    $ds = array();
-	    foreach($groups as $rs)
-	    {
-	       $group = $this->config_model->get_config_by_group($rs);
-
-	       if(!empty($group))
-	       {
-	         foreach($group as $rd)
-	         {
-	           $ds[$rd->code] = $this->config_model->get($rd->code);
-	         }
-	       }
-	    }
-
-	    $this->load->view('setting/configs', $ds);
-
+			 if(!empty($group))
+			 {
+				 foreach($group as $rd)
+				 {
+					 $ds[$rd->code] = $this->config_model->get($rd->code);
+				 }
+			 }
 		}
-		else
-		{
-			$this->deny_page();
-		}
+
+		$this->load->view('setting/configs', $ds);
 
   }
 
@@ -71,7 +62,7 @@ class Setting extends PS_Controller{
       $this->error = "Form content not found";
     }
 
-  	$this->response($sc);
+  	$this->_response($sc);
   }
 
 
