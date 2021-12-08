@@ -10,7 +10,7 @@ function get_checkbox($id, $status = 'P', $can_approve = FALSE, $no = "")
     if($can_approve)
     {
       $sc = '<label>
-        <input type="checkbox" class="check-item" id="check-item-'.$id.'" value="'.$id.'" onchange="toggleApprove()" checked>
+        <input type="checkbox" class="check-item" id="check-item-'.$id.'" value="'.$id.'" onchange="toggleApprove()">
         <span class="lbl"></span>
       </label>';
     }

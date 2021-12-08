@@ -39,15 +39,7 @@
       <span class="help-block">เมื่อเปิดใช้งาน การตั้งรหัสผ่านจะต้องมีความซับซ้อน โดยรหัสผ่านจะต้องมีความยาวไม่น้อยกว่า 8 ตัวอักษรและต้องประกอบด้วย ตัวอัษรพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และสัญลักษณ์พิเศษ อย่างน้อยอย่างละ 1 ตัว</span>
     </div>
     <div class="divider-hidden"></div>
-
-    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"><span class="form-control left-label">BI Link</span></div>
-    <div class="col-lg-5 col-md-6 col-sm-7 col-xs-12">
-      <input type="text" class="width-100" name="BI_LINK" value="<?php echo $BI_LINK; ?>" />
-    </div>
-    <div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
-      <span class="help-block">ระบุ Url Link ของหน้า Power BI </span>
-    </div>
-    <div class="divider-hidden"></div>
+    
 
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"><span class="form-control left-label">Sync logs</span></div>
     <div class="col-lg-1-harf col-md-2 col-sm-2-harf col-xs-8">

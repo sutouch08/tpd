@@ -63,6 +63,7 @@
 			<option value="all">ทั้งหมด</option>
 			<option value="P" <?php echo is_selected('P', $Approved); ?>>รออนุมัติ</option>
 			<option value="A" <?php echo is_selected('A', $Approved); ?>>อนุมมัติ</option>
+			<option value="AP" <?php echo is_selected('AP', $Approved); ?>>อนุมมัติบางส่วน</option>
 			<option value="R" <?php echo is_selected('R', $Approved); ?>>ไม่อนุมัติ</option>
 		</select>
   </div>
@@ -134,7 +135,7 @@
 			<tbody>
 
 			<?php if(!empty($data)) : ?>
-				<?php $no = $this->uri->segment(4) + 1; ?>
+				<?php $no = $this->uri->segment(3) + 1; ?>
 				<?php foreach($data as $rs) : ?>
 					<tr >
 						<td class="middle text-center no"><?php echo $no; ?></td>
@@ -147,7 +148,11 @@
 						<td class="middle text-center"><button class="btn btn-xs btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</button></td>
 						<td class="middle text-center">
 							<?php if($rs->must_approve == 1 && $rs->Approved == 'A') : ?>
-								<span class="label label-xlg label-success btn-block">อนุมัติ</span>
+								<?php if($rs->Approval_status === 'P') : ?>
+									<span class="label label-xlg label-success btn-block">อนุมัติบางส่วน</span>
+								<?php else : ?>
+									<span class="label label-xlg label-success btn-block">อนุมัติ</span>
+								<?php endif; ?>
 							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'P') : ?>
 								<span class="label label-xlg label-warning btn-block">รออนุมัติ</span>
 							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'R') : ?>
@@ -203,7 +208,7 @@
                 <h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;" >Preview Order</h4>
             </div>
             <div class="modal-body">
-              <div class="row">
+              <div class="row" id="result">
                 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive" id="result">
 
                 </div>
@@ -211,8 +216,8 @@
             </div>
 
             <div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-success pull-left hide" id="btn-approve" onclick="doApprove()">อนุมัติ</button>
-							<button type="button" class="btn btn-sm btn-danger pull-left hide" id="btn-reject" onclick="doReject()">ไม่อนุมัติ</button>
+							<button type="button" class="btn btn-sm btn-success pull-left hide" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
+							<button type="button" class="btn btn-sm btn-danger pull-left hide" style="margin-left:25%;" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>
 							<button type="button" class="btn btn-sm btn-primary pull-left hide" id="btn-temp" onclick="sendToSAP()">Send To Temp</button>
               <button type="button" class="btn btn-sm btn-danger pull-right" id="btn-close" onClick="dismiss('previewModal')" >Close</button>
             </div>
@@ -224,6 +229,7 @@
 
 
 <script id="preview-template" type="text/x-handlebarsTemplate">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 <table class="table table-striped table-bordered border-1" style="margin-bottom:10px;">
 	<tbody>
 	<tr><td class="th">เลขที่ใบสั่งสินค้า</td><td>{{orderCode}}</td></tr>
@@ -241,6 +247,8 @@
 	<tr><td class="th">Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>
 	</tbody>
 </table>
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
 <table class="table table-bordered border-1" style="min-width:100%;">
 	<thead>
 		<tr>
@@ -289,6 +297,7 @@
 		{{/each}}
 	</tbody>
 </table>
+</div>
 
 {{#if ApproveBy}} {{ApproveBy}} {{/if}}
 </script>

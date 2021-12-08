@@ -1,6 +1,4 @@
 <?php $this->load->view('include/header'); ?>
-<?php $bi_link = getConfig('BI_LINK'); ?>
-<?php $op = get_permission('ORDERPRO'); ?>
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5">
     <?php if(!empty($bi_link) && !empty($this->_user->bi_link)) : ?>

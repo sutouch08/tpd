@@ -30,7 +30,10 @@ class Main extends PS_Controller
 			$ds['sumPending'] = round($this->order_report_model->get_sum_pending($sale_id, $fromDate, $toDate), 2);
 			$ds['sumApproved'] = round($this->order_report_model->get_sum_approved($sale_id, $fromDate, $toDate), 2);
 			$ds['sumRejected'] = round($this->order_report_model->get_sum_rejected($sale_id, $fromDate, $toDate), 2);
+			$ds['bi_link'] = $this->_user->bi_link == 1 ? $this->user_model->get_bi_link($this->_user->sale_id) : NULL;
 		}
+
+
 		$this->load->view('main_view', $ds);
 	}
 

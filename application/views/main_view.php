@@ -61,7 +61,7 @@
 .c-red { background-color: #ED5565;}
 </style>
 
-<?php if(!empty($this->_user->sale_id)) : ?>
+<?php if(!empty($this->_user->sale_id) && !$this->isGM) : ?>
 <div class="row">
   <div class="col-lg-2 col-md-2-harf col-sm-3 col-xs-6 padding-5">
     <label>วันที่</label>
@@ -89,6 +89,14 @@
     <label class="display-block not-show">btn</label>
     <button type="button" class="btn btn-xs btn-info btn-block" onclick="getDetails()">Details</button>
   </div>
+	<?php if($this->_user->bi_link == 1) : ?>
+		<?php if(!empty($bi_link)) : ?>
+	<div class="col-lg-2 col-md-2-harf col-sm-2 col-xs-6 padding-5">
+		<label class="display-block not-show">btn</label>
+		<button type="button" class="btn btn-xs btn-success btn-block" onclick="goPowerBi()"><i class="fa fa-barchart"></i>&nbsp; Power BI</button>
+	</div>
+		<?php endif; ?>
+	<?php endif; ?>
 </div>
 <hr class="margin-top-30 margin-bottom-30 padding-5"/>
 
@@ -320,9 +328,12 @@
 	    <h5>Good to see you here</h5>
 	  </div>
 	  <div class="divider-hidden"></div>
+		<div class="divider"></div>
 	  <div class="col-lg-4 col-lg-offset-4 col-md-6 col-md-offset-3 col-sm-8 col-sm-offset-2 col-xs-12 padding-5 text-center">
 	    <?php if($this->_user->bi_link == 1) : ?>
+				<?php if(!empty($bi_link)) : ?>
 	      <button type="button" class="btn btn-white btn-success btn-lg margin-bottom-15" onclick="goPowerBi()"><i class="fa fa-barchart"></i>&nbsp; Power BI</button>
+				<?php endif; ?>
 	    <?php endif; ?>
 	  </div>
 

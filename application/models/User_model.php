@@ -635,6 +635,19 @@ class User_model extends CI_Model
     return NULL;
   }
 
+
+  public function get_bi_link($sale_id)
+  {
+    $rs = $this->ms->select('U_TPD_BILink')->where('SlpCode', $sale_id)->get('OSLP');
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->U_TPD_BILink;
+    }
+
+    return NULL;
+  }
+
 } //---- End class
 
  ?>

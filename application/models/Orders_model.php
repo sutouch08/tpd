@@ -201,7 +201,21 @@ class Orders_model extends CI_Model
 
     if($ds['Approved'] !== 'all')
     {
-      $this->db->where('Approved', $ds['Approved']);
+      if($ds['Approved'] === 'AP')
+      {
+        $this->db->where('Approved', 'A')->where('Approval_status', 'P');
+      }
+      else
+      {
+        if($ds['Approved'] === 'A')
+        {
+          $this->db->where('Approved', 'A')->where('Approval_status', 'F');
+        }
+        else
+        {
+          $this->db->where('Approved', $ds['Approved']);
+        }
+      }
     }
 
 
@@ -342,7 +356,21 @@ class Orders_model extends CI_Model
 
     if($ds['Approved'] !== 'all')
     {
-      $this->db->where('Approved', $ds['Approved']);
+      if($ds['Approved'] === 'AP')
+      {
+        $this->db->where('Approved', 'A')->where('Approval_status', 'P');
+      }
+      else
+      {
+        if($ds['Approved'] === 'A')
+        {
+          $this->db->where('Approved', 'A')->where('Approval_status', 'F');
+        }
+        else
+        {
+          $this->db->where('Approved', $ds['Approved']);
+        }
+      }
     }
 
 
