@@ -18,7 +18,7 @@
           <option value="">Select Customer</option>
           <?php if(!empty($customer)) : ?>
             <?php foreach($customer as $cs) : ?>
-              <option value="<?php echo $cs->CardCode; ?>" data-sale="<?php echo $cs->SlpCode; ?>" data-vat="<?php echo $cs->ECVatGroup; ?>" data-rate="<?php echo $cs->Rate; ?>"><?php echo $cs->CardCode . " ".$cs->CardName; ?></option>
+              <option value="<?php echo $cs->CardCode; ?>" data-currency="<?php echo $cs->Currency; ?>" data-sale="<?php echo $cs->SlpCode; ?>" data-vat="<?php echo $cs->ECVatGroup; ?>" data-rate="<?php echo $cs->Rate; ?>"><?php echo $cs->CardCode . " ".$cs->CardName; ?></option>
             <?php endforeach; ?>
           <?php endif; ?>
         </select>
@@ -55,8 +55,8 @@
       </div>
       <label class="col-lg-2 col-md-2 col-sm-2 col-xs-12 control-label no-padding-right">Currency</label>
       <div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-6">
-        <select class="width-100" id="currency" onchange="getRate()">
-          <?php echo select_currency("THB"); ?>
+        <select class="form-control input-sm width-100" id="currency" onchange="getRate()" disabled>
+          <?php echo select_currency(); ?>
         </select>
       </div>
       <div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-left-0">

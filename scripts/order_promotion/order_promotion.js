@@ -148,7 +148,7 @@ function preview(code, status) {
   $('#OrderCode').val(code);
 
   $.ajax({
-    url:HOME + 'get_detail',
+    url:BASE_URL + 'orders/get_detail',
     type:'GET',
     cache:false,
     data:{

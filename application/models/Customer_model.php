@@ -65,12 +65,17 @@ class Customer_model extends CI_Model
       }
 
 
-      $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OVTG.Rate ";
+      $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OCRD.Currency, OVTG.Rate ";
       $qr .= "FROM OCRD LEFT JOIN OVTG ON OCRD.ECVatGroup = OVTG.Code ";
       $qr .= "WHERE OCRD.CardType = 'C' ";
       $qr .= "AND OCRD.validFor = 'Y' ";
       $qr .= "AND OCRD.SlpCode = {$sale_id} ";
-      $qr .= "AND ({$qry}) ";
+
+      if(!empty($qry))
+      {
+        $qr .= "AND ({$qry}) ";
+      }
+
       $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
       $qr .= "AND OCRD.U_SALE_PERSON IS NOT NULL ";
       $qr .= $sps;
@@ -101,11 +106,14 @@ class Customer_model extends CI_Model
       $c++;
     }
 
-    $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OVTG.Rate ";
+    $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OCRD.Currency, OVTG.Rate ";
     $qr .= "FROM OCRD LEFT JOIN OVTG ON OCRD.ECVatGroup = OVTG.Code ";
     $qr .= "WHERE OCRD.CardType = 'C' ";
     $qr .= "AND OCRD.validFor = 'Y' ";
-    $qr .= "AND ({$qry})";
+    if(!empty($qry))
+    {
+      $qr .= "AND ({$qry}) ";
+    }
     $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
     $qr .= "AND OCRD.U_SALE_PERSON IS NOT NULL ";
     $qr .= "ORDER BY OCRD.CardCode ASC";

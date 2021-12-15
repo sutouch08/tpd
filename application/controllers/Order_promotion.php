@@ -191,6 +191,7 @@ class Order_promotion extends PS_Controller
 				$arr = array(
 					'CardCode' => $rs->CardCode,
 					'CardName' => $rs->CardName,
+					'Currency' => $rs->Currency,
 					'ECVatGroup' => $rs->ECVatGroup,
 					'Rate' => $rs->Rate
 				);
@@ -674,123 +675,6 @@ class Order_promotion extends PS_Controller
 
 
 
-	public function get_detail()
-	{
-		$sc = TRUE;
-
-		$code = $this->input->get('code');
-
-		if(!empty($code))
-		{
-			$doc = $this->orders_model->get($code);
-
-			if(!empty($doc))
-			{
-
-				$ds = array(
-					'orderCode' => $doc->code,
-					'SONO' => $doc->DocNum,
-					'DONO' => $doc->DeliveryNo,
-					'INVNO' => $doc->InvoiceNo,
-					'customerName' => $doc->CardCode.' | '.$doc->CardName,
-					'billToCode' => $doc->PayToCode,
-					'billToAddress' => $doc->Address,
-					'shipToCode' => $doc->ShipToCode,
-					'shipToAddress' => $doc->Address2,
-					'exShipTo' => $doc->Address3,
-					'currency' => $doc->DocCur,
-					'currencyRate' => $doc->DocRate,
-					'docDate' => thai_date($doc->DocDate, FALSE),
-					'dueDate' => thai_date($doc->DocDueDate, FALSE),
-					'PoNo' => $doc->NumAtCard,
-					'billOption' => $doc->BillDate == 1 ? 'Y' : 'N',
-					'requiredSQ' => $doc->requireSQ == 1 ? 'Y' : 'N',
-					'remark' => $doc->Comments,
-					'Approved' => $doc->Approved,
-					'CanApprove' => FALSE,
-					'promotionCode' => $doc->promotion_code,
-					'promotionName' => "",
-					'items' => array()
-				);
-
-				if($doc->Approved == 'A')
-				{
-					$ds['ApproveBy'] = "Approved by  {$doc->Approver}  @ ".thai_date($doc->ApproveDate, TRUE);
-				}
-				else if($doc->Approved == 'R')
-				{
-					$ds['ApproveBy'] = "Rejected By  {$doc->Approver}  @ ".thai_date($doc->ApproveDate, TRUE);
-				}
-
-				if($doc->promotion_id)
-				{
-					$pro = $this->promotion_model->get($doc->promotion_id);
-
-					$ds['promotionName'] = $pro->name;
-				}
-
-
-				$details = $this->orders_model->get_details($code);
-
-				if(!empty($details))
-				{
-					$no = 1;
-					foreach($details as $rs)
-					{
-						if($rs->free_item == 0)
-						{
-							$open_qty = (!empty($doc->DocNum) ? $this->orders_model->get_open_qty($doc->code, $rs->ItemCode) : ($rs->freeQty + $rs->Qty));
-							$DoNo = (!empty($doc->DocNum) ? $this->orders_model->get_do_no($doc->code, $rs->ItemCode) : NULL);
-							$Inv = (!empty($doc->DocNum) ? $this->orders->model->get_inv_no_and_date($doc->code, $rs->ItemCode) : NULL);
-							$InvNo = (empty($Inv) ? NULL : $Inv->DocNum);
-							$InvDate = (empty($Inv) ? NULL : thai_date($Inv->DocDate, FALSE));
-
-							$arr = array(
-								'id' => $rs->id,
-								'itemName' => $rs->ItemName,
-								'qty' => number($rs->Qty, 2),
-								'free' => number($rs->freeQty, 2),
-								'uom' => $rs->UomCode,
-								'stdPrice' => number($rs->stdPrice, 2),
-								'sellPrice' => number($rs->SellPrice, 2),
-								'amount' => number($rs->LineTotal, 2),
-								'lineText' => $rs->LineText,
-								'openQty' => $open_qty,
-								'DoNo' => $DoNo,
-								'InvNo' => $InvNo,
-								'InvDate' => $InvDate,
-								'checkbox' => get_checkbox($rs->id, $rs->status, FALSE, $no) //--- orders_helper
-							);
-
-							array_push($ds['items'], $arr);
-						}
-
-						$no++;
-					}
-
-					$arr = array(
-						'totalAmount' => number($doc->DocTotal, 2)
-					);
-
-					array_push($ds['items'], $arr);
-				}
-
-			}
-			else
-			{
-				$sc = FALSE;
-				$this->error = "Invalid Order Code : {$code}";
-			}
-		}
-		else
-		{
-			$sc = FALSE;
-			$this->error = "Missing required parameter : Code";
-		}
-
-		echo $sc === TRUE ? json_encode($ds) : $this->error;
-	}
-
 
 
 	public function get_new_code($date = NULL)
@@ -838,168 +722,16 @@ class Order_promotion extends PS_Controller
 
 
 
-
-
 	public function doExport($code)
 	{
 		$sc = TRUE;
 
-		$order = $this->orders_model->get($code);
+		$this->load->library('export');
 
-		if(!empty($order))
-		{
-			$details = $this->orders_model->get_details($code);
-
-			if(!empty($details))
-			{
-
-				$is_exists = $this->orders_model->is_exists_sap_order($code);
-
-				if(! $is_exists)
-				{
-					$temp = $this->orders_model->get_temp_order($code);
-
-		      if(!empty($temp))
-		      {
-		        foreach($temp as $rows)
-		        {
-		          if(! $this->orders_model->drop_temp_exists_data($rows->DocEntry))
-		          {
-		            $sc = FALSE;
-		            $this->error = "ลบรายการที่ค้างใน Temp ไม่สำเร็จ";
-		          }
-		        }
-		      }
-
-
-					if($sc === TRUE)
-					{
-						//--- header data
-						$arr = array(
-							'U_WEB_ORNO' => $order->code,
-							'DocType' => 'I',
-							'CANCELED' => 'N',
-							'DocDate' => sap_date($order->DocDate, TRUE),
-							'DocDueDate' => sap_date($order->DocDueDate, TRUE),
-							'CardCode' => $order->CardCode,
-							'CardName' => $order->CardName,
-							'PayToCode' => $order->PayToCode,
-							'Address' => $order->Address,
-							'ShipToCode' => $order->ShipToCode,
-							'Address2' => $order->Address2,
-							'NumAtCard' => get_null($order->NumAtCard),
-							'DocCur' => $order->DocCur,
-							'DocRate' => $order->DocRate,
-							'DocTotal' => $order->DocTotal,
-							'VatSum' => $order->VatSum,
-							'GroupNum' => $order->GroupNum,
-							'SlpCode' => $order->SlpCode,
-							'OwnerCode' => $order->OwnerCode,
-							'U_BEX_TYPE' => $order->CardType,
-							'U_SQ_BILLDATE' => $order->BillDate == 1 ? 'Y' : 'N',
-							'U_SQ_REQ_SQ' => $order->requireSQ == 1 ? 'Y' : 'N',
-							'U_SQ_Shipto' => $order->Address3,
-							'U_BEX_WEBORDERREMARK' => $order->Comments,
-							'F_Web' => 'A',
-							'F_WebDate' => now()
-						);
-
-						//--- start transection
-						$this->mc->trans_begin();
-
-						$docEntry = $this->orders_model->add_temp_order($arr);
-
-						if($docEntry)
-						{
-							$LineNum = 0;
-
-							foreach($details as $rs)
-							{
-								if($sc === FALSE)
-								{
-									break;
-								}
-
-								if($rs->status == 'A')
-								{
-									$arr = array(
-										'DocEntry' => $docEntry,
-										'LineNum' => $LineNum,
-										'ItemCode' => $rs->ItemCode,
-										'Dscription' => $rs->ItemName,
-										'Quantity' => $rs->Qty,
-										'UnitMsr' => $rs->UomCode,
-										'PriceBefDi' => remove_vat($rs->stdPrice, $rs->VatRate),
-										'LineTotal' => remove_vat($rs->LineTotal, $rs->VatRate),
-										'Currency' => $order->DocCur,
-										'Rate' => $order->DocRate,
-										'DiscPrcnt' => $rs->DiscPrcnt,
-										'Price' => remove_vat($rs->SellPrice, $rs->VatRate),
-										'VatPrcnt' => $rs->VatRate,
-										'VatGroup' => $rs->VatGroup,
-										'PriceAfVAT' => $rs->SellPrice,
-										'GTotal' => $rs->LineTotal,
-										'VatSum' => $rs->VatAmount,
-										'WhsCode' => $rs->WhsCode,
-										'OwnerCode' => $order->OwnerCode,
-										'U_WEB_ORNO' => $order->code,
-										'U_BEX_WEBREMARK' => $rs->LineText
-									);
-
-									if(!$this->orders_model->add_temp_detail($arr))
-									{
-										$sc = FALSE;
-										$this->error = "Insert Temp detail failed : {{$rs->ItemCode}}";
-									}
-
-									$LineNum++;
-								}
-							}
-
-
-							if($sc === TRUE)
-							{
-								$this->mc->trans_commit();
-							}
-							else
-							{
-								$this->mc->trans_rollback();
-							}
-
-
-							if($sc === TRUE)
-							{
-								$arr = array(
-									'Status' => 1,
-									'temp_date' => now()
-								);
-
-								$this->orders_model->update($code, $arr);
-							}
-						}
-						else
-						{
-							$sc = FALSE;
-							$this->error = "Insert Document Failed";
-						}
-					}
-				}
-				else
-				{
-					$sc = FALSE;
-					$this->error = "Document Already in SAP";
-				}
-			}
-			else
-			{
-				$sc = FALSE;
-				$this->error = "No Items in Order";
-			}
-		}
-		else
+		if(!$this->export->export_order($code))
 		{
 			$sc = FALSE;
-			$this->error = "Order not found : {$code}";
+			$this->error = $this->export->error;
 		}
 
 		return $sc;

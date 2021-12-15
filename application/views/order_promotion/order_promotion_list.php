@@ -111,14 +111,15 @@
 					<th class="width-10">เลขที่</th>
 					<th class="width-20">ลูกค้า</th>
 					<th class="width-8">ใบสั่งซื้อ</th>
+					<th class="width-8 text-right">มูลค่า</th>
 					<th class="width-5 text-center">Preview</th>
 					<th class="width-5 text-center">การอนุมัติ</th>
 					<th class="width-5 text-center">สถานะ</th>
 					<th class="width-10 text-center">ผู้มีสิทธิ์อนุมัติ</th>
 					<th class="width-10">ผู้อนุมัติ</th>
-						<th class="width-10 text-center">SO No.</th>
-					<th class="width-5 text-center">Do No.</th>
-					<th class="width-5 text-center">Invoice No.</th>
+					<th class="width-10 text-center">SO No.</th>
+					<th class="width-5 text-center">Do Status</th>
+					<th class="width-5 text-center">Invoice Status</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -133,7 +134,10 @@
 						<td class="middle"><?php echo $rs->code; ?></td>
 						<td class="middle"><?php echo $rs->CardName; ?></td>
 						<td class="middle"><?php echo $rs->NumAtCard; ?></td>
-						<td class="middle text-center"><button class="btn btn-xs btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</button></td>
+						<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
+						<td class="middle text-center">
+							<button class="btn btn-xs btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</button>
+						</td>
 						<td class="middle text-center">
 							<?php if($rs->must_approve == 1 && $rs->Approved == 'A') : ?>
 								<span class="label label-xlg label-success btn-block">อนุมัติ</span>
@@ -167,8 +171,8 @@
 						</td>
 						<td class="middle"><?php echo $rs->Approver; ?></td>
 						<td class="middle"><?php echo $rs->DocNum; ?></td>
-						<td class="middle"><?php echo $rs->DeliveryNo; ?></td>
-						<td class="middle"><?php echo $rs->InvoiceNo; ?></td>
+						<td class="middle"><?php echo $rs->DO_Status == 'P' ? 'Partial' : ($rs->DO_Status == 'F' ? 'Full' : '') ; ?></td>
+						<td class="middle"><?php echo $rs->INV_Status == 'P' ? 'Partial' : ($rs->INV_Status == 'F' ? 'Full' : ''); ?></td>
 					</tr>
 					<?php $no++; ?>
 				<?php endforeach; ?>
@@ -193,17 +197,15 @@
                 <h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;" >Preview Order</h4>
             </div>
             <div class="modal-body">
-              <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive" id="result">
+              <div class="row" id="result">
 
-                </div>
               </div>
             </div>
 
             <div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-success pull-left hide" id="btn-approve" onclick="doApprove()">อนุมัติ</button>
-							<button type="button" class="btn btn-sm btn-danger pull-left hide" id="btn-reject" onclick="doReject()">ไม่อนุมัติ</button>
-							<button type="button" class="btn btn-sm btn-primary pull-left hide" id="btn-temp" onclick="sendToSAP()">Send to Temp</option>
+							<button type="button" class="btn btn-sm btn-success pull-left hide" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
+							<button type="button" class="btn btn-sm btn-danger pull-left hide" style="margin-left:25%;" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>
+							<button type="button" class="btn btn-sm btn-primary pull-left hide" id="btn-temp" onclick="sendToSAP()">Send To Temp</button>
               <button type="button" class="btn btn-sm btn-danger pull-right" id="btn-close" onClick="dismiss('previewModal')" >Close</button>
             </div>
         </div>
@@ -214,6 +216,7 @@
 
 
 <script id="preview-template" type="text/x-handlebarsTemplate">
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 <table class="table table-striped table-bordered border-1" style="margin-bottom:10px;">
 	<tbody>
 	<tr><td class="th">เลขที่ใบสั่งสินค้า</td><td>{{orderCode}}</td></tr>
@@ -232,19 +235,21 @@
 	<tr><td class="th">Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>
 	</tbody>
 </table>
-<table class="table table-bordered border-1" style="min-width:100%;">
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
+<table class="table table-bordered border-1" style="min-width:1200px;">
 	<thead>
 		<tr>
 			<th class="middle text-center">#</th>
 			<th class="width-20 middle">รายการสินค้า</th>
-			<th class="width-8 middle text-right">จำนวน</th>
-			<th class="width-8 middle text-right">แถม</th>
+			<th class="width-5 middle text-right">จำนวน</th>
+			<th class="width-5 middle text-right">แถม</th>
 			<th class="width-8 middle text-center">หน่วย</th>
 			<th class="width-8 middle text-right">ราคา/หน่วย (Term)</th>
 			<th class="width-8 middle text-right">ราคา(พิเศษ)/หน่วย</th>
 			<th class="width-8 middle text-right">มูลค่า</th>
 			<th class="width-8 middle text-right">หมายเหตุ</th>
-			<th class="width-8 middle text-right">จำนวนค้างส่ง</th>
+			<th class="width-5 middle text-right">จำนวนค้างส่ง</th>
 			<th class="width-8 middle text-right">เลขที่ DO</th>
 			<th class="width-8 middle text-right">เลขที่ใบแจ้งหนี้</th>
 			<th class="width-8 middle text-right">วันที่ใบแจ้งหนี้</th>
@@ -270,18 +275,20 @@
 					<td class="middle text-right">{{stdPrice}}</td>
 					<td class="middle text-right">{{sellPrice}}</td>
 					<td class="middle text-right">{{amount}}</td>
-					<td class="middle">{{LineText}}</td>
+					<td class="middle">{{lineText}}</td>
 					<td class="middle text-right">{{openQty}}</td>
-					<td class="middle text-center">{{DoNo}}</td>
-					<td class="middle text-center">{{InvNo}}</td>
-					<td class="middle text-center">{{InvDate}}</td>
+					<td class="middle text-center">{{{DoNo}}}</td>
+					<td class="middle text-center">{{{InvNo}}}</td>
+					<td class="middle text-center">{{{InvDate}}}</td>
 				</tr>
 			{{/if}}
 		{{/each}}
 	</tbody>
 </table>
-
-{{#if ApproveBy}} {{ApproveBy}} {{/if}}
+</div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+	{{#if ApproveBy}} {{ApproveBy}} {{/if}}
+</div>
 </script>
 
 

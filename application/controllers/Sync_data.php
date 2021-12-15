@@ -277,14 +277,35 @@ class Sync_data extends CI_Controller
         {
           $doNo = "";
           $i = 1;
+          $ra = array();
+
           foreach($do as $ds)
           {
-            $doNo .= $i === 1 ? $ds->DocNum : ", ".$ds->DocNum;
+            if(!isset($ra[$ds->DocNum]))
+            {
+              $ra[$ds->DocNum] = $ds->DocNum;
+              $doNo .= $i === 1 ? $ds->DocNum : "<br/> ".$ds->DocNum;
+              $i++;
+            }
           }
 
           $arr = array(
             'DeliveryNo' => limitText($doNo, 97)
           );
+
+          $so = $this->orders_model->get_sap_order($rs->code);
+
+          if(!empty($so))
+          {
+            if($so->DocStatus === 'C')
+            {
+              $arr['DO_Status'] = 'F';
+            }
+            else
+            {
+              $arr['DO_Status'] = $this->orders_model->get_do_status_by_so($so->DocEntry);
+            }
+          }
 
           $this->orders_model->update($rs->code, $arr);
 
@@ -335,27 +356,57 @@ class Sync_data extends CI_Controller
     {
       foreach($ds as $rs)
       {
-        $do = $this->orders_model->get_invoice_order($rs->code);
+        $iv = $this->orders_model->get_invoice_order($rs->code);
 
-        if(!empty($do))
+        if(!empty($iv))
         {
-          $doNo = "";
+          $ivNo = "";
+          $ra = array();
           $i = 1;
-          foreach($do as $ds)
+          foreach($iv as $ds)
           {
-            $doNo .= $i === 1 ? $ds->DocNum : ", ".$ds->DocNum;
+            if(!isset($ra[$ds->DocNum]))
+            {
+              $ra[$ds->DocNum] = $ds->DocNum;
+              $ivNo .= $i === 1 ? $ds->DocNum : "<br/>".$ds->DocNum;
+              $i++;
+            }
           }
+          
 
           $arr = array(
-            'InvoiceNo' => limitText($doNo, 97)
+            'InvoiceNo' => limitText($ivNo, 97)
           );
+
+          $so = $this->orders_model->get_sap_order($rs->code);
+
+          if(!empty($so))
+          {
+            if($so->DocStatus === 'C')
+            {
+              $openDo = $this->orders_model->count_do_open_staus($rs->code);
+
+              if($openDo > 0)
+              {
+                $arr['INV_Status'] = 'P';
+              }
+              else
+              {
+                $arr['INV_Status'] = 'F';
+              }
+            }
+            else
+            {
+                $arr['INV_Status'] = 'P';
+            }
+          }
 
           $this->orders_model->update($rs->code, $arr);
 
           $logs = array(
             'code' => $rs->code,
             'sync_code' => 'INV',
-            'get_code' => limitText($doNo, 97),
+            'get_code' => limitText($ivNo, 97),
             'status' => 1
           );
 

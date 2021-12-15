@@ -1,13 +1,21 @@
 <?php
 
-function select_currency($code = 'THB')
+function select_currency($code = NULL)
 {
+  $ci =& get_instance();
+  $ci->load->model('currency_model');
+  $code = (empty($code) ? getConfig('CURRENCY') : $code);
+  $code = $code === '##' ? getConfig('CURRENCY') : $code;
   $sc = "";
-  $arr = array("THB", "AUB", "EUB", "GBS", "GBB", "USB", "USS");
 
-  foreach($arr as $rs)
+  $currency = $ci->currency_model->get_list();
+
+  if(!empty($currency))
   {
-    $sc .= '<option value="'.$rs.'" '.is_selected($code, $rs).'>'.$rs.'</option>';
+    foreach($currency as $rs)
+    {
+      $sc .= '<option value="'.$rs->Code.'" '.is_selected($code, $rs->Code).'>'.$rs->Code.'</option>';
+    }
   }
 
   return $sc;

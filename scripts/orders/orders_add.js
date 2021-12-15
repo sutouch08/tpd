@@ -42,8 +42,21 @@ function getAddress() {
 	let code = $('#customer').val();
 	let vatCode = $('#customer option:selected').data('vat');
 	let vatRate = $('#customer option:selected').data('rate');
+	let currency = $('#customer option:selected').data('currency');
+
+	if(currency == '##') {
+		$('#currency').removeAttr('disabled');
+	}
+	else
+	{
+		$('#currency').attr('disabled', 'disabled');
+	}
+
+	currency = currency == '##' ? $('#default_currency').val() : currency;
+
 	$('#VatGroup').val(vatCode);
 	$('#vatRate').val(vatRate);
+	$('#currency').val(currency);
 	recalVat();
 	get_address_ship_to_code(code);
 	//---- create Address bill to
@@ -52,6 +65,8 @@ function getAddress() {
 	if($('#slpName').length) {
 		get_sale_name_by_customer(code);
 	}
+
+	getRate();
 }
 
 

@@ -27,6 +27,7 @@
 <?php $this->load->view('order_promotion/order_promotion_add_footer'); ?>
 
 <input type="hidden" id="sale_id" value="<?php echo $this->_user->sale_id; ?>" />
+<input type="hidden" id="default_currency" value="<?php echo getConfig('CURRENCY'); ?>" />
 </form>
 
 
@@ -57,7 +58,7 @@
 <script id="customer-template" type="text/x-handlebarsTemplate">
 		<option value="">Select Customer</option>
 		{{#each this}}
-			<option value="{{CardCode}}" data-sale="{{SlpCode}}" data-vat="{{ECVatGroup}}" data-rate="{{Rate}}">{{CardCode}}  {{CardName}}</option>
+			<option value="{{CardCode}}" data-currency="{{Currency}}" data-sale="{{SlpCode}}" data-vat="{{ECVatGroup}}" data-rate="{{Rate}}">{{CardCode}}  {{CardName}}</option>
 		{{/each}}
 </script>
 

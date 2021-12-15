@@ -458,6 +458,22 @@ class Orders_model extends CI_Model
 
 
 
+  public function price_list_name($price_list)
+  {
+    if(!empty($price_list))
+    {
+      $rs = $this->ms->select('ListName')->where('ListNum', $price_list)->get('OPLN');
+      if($rs->num_rows() === 1)
+      {
+        return $rs->row()->ListName;
+      }
+    }
+
+    return NULL;
+  }
+
+
+
 
   public function get_currency_rate($code, $date)
   {
@@ -524,6 +540,45 @@ class Orders_model extends CI_Model
     }
 
     return NULL;
+  }
+
+
+  public function get_do_status_by_so($docEntry)
+  {
+    $rs = $this->ms
+    ->from('RDR1')
+    ->join('ORDR', 'RDR1.DocEntry = ORDR.DocEntry', 'left')
+    ->where('RDR1.DocEntry', $docEntry)
+    ->where('ORDR.DocStatus', 'O')
+    ->where('RDR1.OpenQty >', 0)
+    ->count_all_results();
+
+    if($rs > 0)
+    {
+      return 'P';
+    }
+
+    return 'F';
+  }
+
+
+
+  public function get_so_open_qty($code)
+  {
+    //--- Do ถูกดึงไปเปิด AR/Inv ครบแล้วหรือยัง
+    $rs = $this->ms
+    ->select_sum('RDR1.OpenQty')
+    ->from('RDR1')
+    ->join('ORDR', 'RDR1.DocEntry = ORDR.DocEntry', 'left')
+    ->where('ORDR.U_WEB_ORNO', $code)
+    ->get();
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->OpenQty;
+    }
+
+    return 0;
   }
 
 
@@ -630,25 +685,31 @@ class Orders_model extends CI_Model
   }
 
 
-  public function ge_do_no($code, $item_code)
+  public function get_do_no($code, $item_code)
   {
     $docNum = "";
 
     $rs = $this->ms
     ->select('ODLN.DocNum')
-    ->from('RDR1')
-    ->join('ORDR', 'RDR1.DocEntry = ORDR.DocEntry', 'left')
-    ->join('ODLN', 'RDR1.TrgetEntry = ODLN.DocEntry', 'left')
-    ->where('ORDR.U_WEB_ORNO', $code)
-    ->where('RDR1.ItemCode', $item_code)
+    ->from('DLN1')
+    ->join('ODLN', 'DLN1.DocEntry = ODLN.DocEntry', 'inner')
+    ->where('ODLN.U_WEB_ORNO', $code)
+    ->where('ODLN.CANCELED', 'N')
+    ->where('DLN1.ItemCode', $item_code)
     ->get();
 
     if($rs->num_rows() > 0)
     {
+      $arr = array();
       $i = 1;
       foreach($rs->result() as $ra)
       {
-        $docNum .= $i == 1 ? $ra->DocNum : ", {$ra->DocNum}";
+        if(!isset($arr[$ra->DocNum]))
+        {
+          $arr[$ra->DocNum] = $ra->DocNum;
+          $docNum .= $i == 1 ? $ra->DocNum : "<br/>".$ra->DocNum;
+          $i++;
+        }
       }
     }
 
@@ -659,23 +720,50 @@ class Orders_model extends CI_Model
   public function get_inv_no_and_date($code, $item_code)
   {
     $rs = $this->ms
-    ->distinct()
     ->select('OINV.DocNum, OINV.DocDate')
-    ->from('RDR1')
-    ->join('ORDR', 'RDR1.DocEntry = ORDR.DocEntry', 'left')
-    ->join('ODLN', 'RDR1.TrgetEntry = ODLN.DocEntry', 'left')
-    ->join('DLN1', 'ODLN.DocEntry = DLN1.DocEntry', 'left')
-    ->join('OINV', 'DLN1.TrgetEntry = OINV.DocEntry', 'left')
-    ->where('ORDR.U_WEB_ORNO', $code)
-    ->where('RDR1.ItemCode', $item_code)
+    ->from('INV1')
+    ->join('OINV', 'INV1.DocEntry = OINV.DocEntry', 'inner')
+    ->where('OINV.U_WEB_ORNO', $code)
+    ->where('OINV.CANCELED', 'N')
+    ->where('INV1.ItemCode', $item_code)
     ->get();
 
     if($rs->num_rows() > 0)
     {
-      return $rs->row();
+      return $rs->result();
     }
 
     return NULL;
+  }
+
+
+
+  public function get_do_open_qty($code)
+  {
+    //--- Do ถูกดึงไปเปิด AR/Inv ครบแล้วหรือยัง
+    $rs = $this->ms
+    ->select_sum('DLN1.OpenQty')
+    ->from('DLN1')
+    ->join('ODLN', 'DLN1.DocEntry = ODLN.DocEntry', 'left')
+    ->where('ODLN.U_WEB_ORNO', $code)
+    ->get();
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->OpenQty;
+    }
+
+    return 0;
+  }
+
+
+  public function count_do_open_staus($code)
+  {
+    return $this->ms
+    ->where('DocStatus', 'O')
+    ->where('CANCELED', 'N')
+    ->where('U_WEB_ORNO', $code)
+    ->count_all_results('ODLN');
   }
 
 
@@ -718,7 +806,10 @@ class Orders_model extends CI_Model
     ->where('Status', 2)
     ->where('DocNum IS NOT NULL', NULL, FALSE)
     ->where('Approved', 'A')
+    ->group_start()
     ->where('DeliveryNo IS NULL', NULL, FALSE)
+    ->or_where('DO_Status !=', 'F')
+    ->group_end()
     ->limit($limit)
     ->get($this->tb);
 
@@ -736,6 +827,7 @@ class Orders_model extends CI_Model
     $rs = $this->ms
     ->select('DocNum')
     ->where('U_WEB_ORNO', $code)
+    ->where('CANCELED', 'N')
     ->get('ODLN');
 
     if($rs->num_rows() > 0)
@@ -743,7 +835,7 @@ class Orders_model extends CI_Model
       return $rs->result();
     }
 
-    return NUL;
+    return NULL;
   }
 
 
@@ -755,7 +847,10 @@ class Orders_model extends CI_Model
     ->where('DocNum IS NOT NULL', NULL, FALSE)
     ->where('Approved', 'A')
     ->where('DeliveryNo IS NOT NULL', NULL, FALSE)
+    ->group_start()
     ->where('InvoiceNo IS NULL', NULL, FALSE)
+    ->or_where('INV_Status !=', 'F')
+    ->group_end()
     ->limit($limit)
     ->get($this->tb);
 
@@ -774,6 +869,7 @@ class Orders_model extends CI_Model
     $rs = $this->ms
     ->select('DocNum')
     ->where('U_WEB_ORNO', $code)
+    ->where('CANCELED', 'N')
     ->get('OINV');
 
     if($rs->num_rows() > 0)

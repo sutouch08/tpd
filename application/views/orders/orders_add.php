@@ -27,6 +27,7 @@
 <?php $this->load->view('orders/orders_add_footer'); ?>
 
 <input type="hidden" id="sale_id" value="<?php echo $this->_user->sale_id; ?>" />
+<input type="hidden" id="default_currency" value="<?php echo getConfig('CURRENCY'); ?>" />
 </form>
 
 
@@ -57,7 +58,7 @@
 <script id="customer-template" type="text/x-handlebarsTemplate">
 		<option value="">Select Customer</option>
 		{{#each this}}
-			<option value="{{CardCode}}" data-sale="{{SlpCode}}" data-vat="{{ECVatGroup}}" data-rate="{{Rate}}">{{CardCode}}  {{CardName}}</option>
+			<option value="{{CardCode}}" data-currency="{{Currency}}" data-sale="{{SlpCode}}" data-vat="{{ECVatGroup}}" data-rate="{{Rate}}">{{CardCode}}  {{CardName}}</option>
 		{{/each}}
 </script>
 
@@ -88,7 +89,7 @@
 	<tr><th>เลขที่ใบสั่งสินค้า</th><td>{{orderCode}}</td></tr>
 	<tr><th>ที่อยู่ตามใบกำกับภาษี</th><td>{{billToCode}}  {{billToAddress}}</td></tr>
 	<tr><th>สถานที่ส่งของ</th><td>{{shipToCode}}  {{shipToAddress}}</td></tr>
-	<tr><th>สถานที่จัดส่งเพิ่มเติม</th><td>{{exShipTo}}</td></tr>		
+	<tr><th>สถานที่จัดส่งเพิ่มเติม</th><td>{{exShipTo}}</td></tr>
 	<tr><th>Currency</th><td>{{currency}} | Rate: {{currencyRate}} </td></tr>
 	<tr><th>วันที่สั่งสินค้า</th><td>{{docDate}}</td></tr>
 	<tr><th>วันที่จัดส่ง</th><td>{{dueDate}}</td></tr>

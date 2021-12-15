@@ -128,8 +128,8 @@
 					<th class="width-10 text-center">ผู้มีสิทธิ์อนุมัติ</th>
 					<th class="width-10">ผู้อนุมัติ</th>
 					<th class="width-10 text-center">SO No.</th>
-					<th class="width-5 text-center">Do No.</th>
-					<th class="width-5 text-center">Invoice No.</th>
+					<th class="width-5 text-center">Do Status</th>
+					<th class="width-5 text-center">Invoice Status</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -182,8 +182,8 @@
 						</td>
 						<td class="middle"><?php echo $rs->Approver; ?></td>
 						<td class="middle"><?php echo $rs->DocNum; ?></td>
-						<td class="middle"><?php echo $rs->DeliveryNo; ?></td>
-						<td class="middle"><?php echo $rs->InvoiceNo; ?></td>
+						<td class="middle"><?php echo $rs->DO_Status == 'P' ? 'Partial' : ($rs->DO_Status == 'F' ? 'Full' : '') ; ?></td>
+						<td class="middle"><?php echo $rs->INV_Status == 'P' ? 'Partial' : ($rs->INV_Status == 'F' ? 'Full' : ''); ?></td>
 					</tr>
 					<?php $no++; ?>
 				<?php endforeach; ?>
@@ -209,9 +209,7 @@
             </div>
             <div class="modal-body">
               <div class="row" id="result">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive" id="result">
-
-                </div>
+              
               </div>
             </div>
 
@@ -249,19 +247,19 @@
 </table>
 </div>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
-<table class="table table-bordered border-1" style="min-width:100%;">
+<table class="table table-bordered border-1" style="min-width:1200px;">
 	<thead>
 		<tr>
 			<th class="middle text-center">#</th>
 			<th class="width-20 middle">รายการสินค้า</th>
-			<th class="width-8 middle text-right">จำนวน</th>
-			<th class="width-8 middle text-right">แถม</th>
+			<th class="width-5 middle text-right">จำนวน</th>
+			<th class="width-5 middle text-right">แถม</th>
 			<th class="width-8 middle text-center">หน่วย</th>
 			<th class="width-8 middle text-right">ราคา/หน่วย (Term)</th>
 			<th class="width-8 middle text-right">ราคา(พิเศษ)/หน่วย</th>
 			<th class="width-8 middle text-right">มูลค่า</th>
 			<th class="width-8 middle text-right">หมายเหตุ</th>
-			<th class="width-8 middle text-right">จำนวนค้างส่ง</th>
+			<th class="width-5 middle text-right">จำนวนค้างส่ง</th>
 			<th class="width-8 middle text-right">เลขที่ DO</th>
 			<th class="width-8 middle text-right">เลขที่ใบแจ้งหนี้</th>
 			<th class="width-8 middle text-right">วันที่ใบแจ้งหนี้</th>
@@ -287,19 +285,21 @@
 					<td class="middle text-right">{{stdPrice}}</td>
 					<td class="middle text-right">{{sellPrice}}</td>
 					<td class="middle text-right">{{amount}}</td>
-					<td class="middle">{{LineText}}</td>
+					<td class="middle">{{lineText}}</td>
 					<td class="middle text-right">{{openQty}}</td>
-					<td class="middle text-center">{{DoNo}}</td>
-					<td class="middle text-center">{{InvNo}}</td>
-					<td class="middle text-center">{{InvDate}}</td>
+					<td class="middle text-center">{{{DoNo}}}</td>
+					<td class="middle text-center">{{{InvNo}}}</td>
+					<td class="middle text-center">{{{InvDate}}}</td>
 				</tr>
 			{{/if}}
 		{{/each}}
 	</tbody>
 </table>
 </div>
+<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+	{{#if ApproveBy}} {{ApproveBy}} {{/if}}
+</div>
 
-{{#if ApproveBy}} {{ApproveBy}} {{/if}}
 </script>
 
 
