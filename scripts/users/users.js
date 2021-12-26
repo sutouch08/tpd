@@ -51,7 +51,7 @@ function getDelete(id, uname){
         if(rs == 'success'){
           swal({
             title:'Success',
-            text:'Sales Team has been deleted',
+            text:'User has been deleted',
             type:'success',
             time: 1000
           });

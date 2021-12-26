@@ -383,49 +383,41 @@ class Users extends PS_Controller{
 
 		if($this->pm->can_delete)
 		{
-			$sc = FALSE;
-			$this->error = "รอทำระบบให้เสร็จก่อน";
+			
+			$id = $this->input->post('id');
 
-			// $id = $this->input->post('id');
-			//
-			// $user = $this->user_model->get($id);
+			$user = $this->user_model->get($id);
 
-			// if(!empty($user))
-			// {
-			// 	//--- check transection
-			// 	if($this->user_model->isApprover($user->uname))
-			// 	{
-			// 		$sc = FALSE;
-			// 		$this->error = "Delete Failed : User is approver";
-			// 	}
-			//
-			// 	if($sc === TRUE && $this->user_model->has_quotation_transection($user->id))
-			// 	{
-			// 		$sc = FALSE;
-			// 		$this->error = "Delete Failed : User has Quotation transections";
-			// 	}
-			//
-			// 	if($sc === TRUE && $this->user_model->has_customer_transection($user->id))
-			// 	{
-			// 		$sc = FALSE;
-			// 		$this->error = "Delete Failed : User has Customer transection";
-			// 	}
-			//
-			// 	if($sc === TRUE)
-			// 	{
-			// 		if(! $this->user_model->delete($user->id))
-			// 		{
-			// 			$sc = FALSE;
-			// 			$this->error = "Delete Failed";
-			// 		}
-			// 	}
-			//
-			// }
-			// else
-			// {
-			// 	$sc = FALSE;
-			// 	$this->error = "Invalid User ID";
-			// }
+			if(!empty($user))
+			{
+				//--- check transection
+				if($this->user_model->isApprover($user->id))
+				{
+					$sc = FALSE;
+					$this->error = "Delete Failed : User is approver";
+				}
+
+				if($sc === TRUE && $this->user_model->has_order_transection($user->id))
+				{
+					$sc = FALSE;
+					$this->error = "Delete Failed : User has sales order transections";
+				}
+
+				if($sc === TRUE)
+				{
+					if(! $this->user_model->delete($user->id))
+					{
+						$sc = FALSE;
+						$this->error = "Delete Failed";
+					}
+				}
+
+			}
+			else
+			{
+				$sc = FALSE;
+				$this->error = "Invalid User ID";
+			}
 		}
 		else
 		{

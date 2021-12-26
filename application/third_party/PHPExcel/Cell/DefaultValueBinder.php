@@ -83,8 +83,7 @@ class PHPExcel_Cell_DefaultValueBinder implements PHPExcel_Cell_IValueBinder
         } elseif ($pValue instanceof PHPExcel_RichText) {
             return PHPExcel_Cell_DataType::TYPE_INLINE;
 
-        // } elseif (!is_int($pValue) && $pValue{0} === '=' && strlen($pValue) > 1) {
-				} elseif (0 ===strpos($pValue, '=') && strlen($pValue) > 1) {
+        } elseif (substr($pValue,0,1) === '=' && strlen($pValue) > 1) {
             return PHPExcel_Cell_DataType::TYPE_FORMULA;
 
         } elseif (is_bool($pValue)) {

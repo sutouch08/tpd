@@ -179,6 +179,7 @@ class Sync_data extends CI_Controller
                 'DocNum' => $sap->DocNum,
                 'sap_date' => $temp->F_SapDate,
                 'Status' => 2, //--- เข้า SAP แล้ว
+                'SO_Status' => 'O',
                 'Message' => NULL
               );
 
@@ -372,7 +373,7 @@ class Sync_data extends CI_Controller
               $i++;
             }
           }
-          
+
 
           $arr = array(
             'InvoiceNo' => limitText($ivNo, 97)

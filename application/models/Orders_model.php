@@ -224,6 +224,45 @@ class Orders_model extends CI_Model
       $this->db->where('Status', $ds['Status']);
     }
 
+    if($ds['SO_Status'] != 'all')
+    {
+      if($ds['SO_Status'] == 'x')
+      {
+        $this->db->where('SO_Status IS NULL', NULL, FALSE);
+      }
+      else
+      {
+        $this->db->where('SO_Status', $ds['SO_Status']);
+      }
+    }
+
+
+    if($ds['DO_Status'] != 'all')
+    {
+      if($ds['DO_Status'] == 'x')
+      {
+        $this->db->where('DO_Status IS NULL', NULL, FALSE);
+      }
+      else
+      {
+        $this->db->where('DO_Status', $ds['DO_Status']);
+      }
+    }
+
+
+
+    if($ds['INV_Status'] != 'all')
+    {
+      if($ds['INV_Status'] == 'x')
+      {
+        $this->db->where('INV_Status IS NULL', NULL, FALSE);
+      }
+      else
+      {
+        $this->db->where('INV_Status', $ds['INV_Status']);
+      }
+    }
+
 
     if(!$this->isGM && !$this->_SuperAdmin && !$this->isAdmin)
     {
@@ -377,6 +416,47 @@ class Orders_model extends CI_Model
     if($ds['Status'] !== 'all')
     {
       $this->db->where('Status', $ds['Status']);
+    }
+
+
+
+    if($ds['SO_Status'] != 'all')
+    {
+      if($ds['SO_Status'] == 'x')
+      {
+        $this->db->where('SO_Status IS NULL', NULL, FALSE);
+      }
+      else
+      {
+        $this->db->where('SO_Status', $ds['SO_Status']);
+      }
+    }
+
+
+    if($ds['DO_Status'] != 'all')
+    {
+      if($ds['DO_Status'] == 'x')
+      {
+        $this->db->where('DO_Status IS NULL', NULL, FALSE);
+      }
+      else
+      {
+        $this->db->where('DO_Status', $ds['DO_Status']);
+      }
+    }
+
+
+
+    if($ds['INV_Status'] != 'all')
+    {
+      if($ds['INV_Status'] == 'x')
+      {
+        $this->db->where('INV_Status IS NULL', NULL, FALSE);
+      }
+      else
+      {
+        $this->db->where('INV_Status', $ds['INV_Status']);
+      }
     }
 
 

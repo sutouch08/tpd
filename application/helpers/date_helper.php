@@ -181,4 +181,33 @@ function added_date($date, $add_days)
 {
   return date('Y-m-d', strtotime("+{$add_days} day {$date}"));
 }
+
+
+function shift_date($date = "", $add_days = NULL, $skip_week_end = FALSE)
+{
+  $date = empty($date) ? date('Y-m-d') : $date;
+  $sDate = !empty($add_days) ? date('Y-m-d', strtotime("+{$add_days} day {$date}")) : date('Y-m-d', strtotime($date));
+
+  if($skip_week_end)
+  {
+    $dayName = date("l", strtotime($sDate));
+    $plus_day = 0;
+    if($dayName == 'Sunday')
+    {
+      $plus_day += 1;
+    }
+
+    if($dayName == 'Saturday')
+    {
+      $plus_day += 2;
+    }
+
+    if($plus_day > 0)
+    {
+      $sDate = date('Y-m-d', strtotime($sDate));
+    }
+  }
+
+  return $sDate;
+}
  ?>

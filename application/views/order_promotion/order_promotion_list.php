@@ -79,6 +79,37 @@
 		</select>
   </div>
 
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+    <label class="search-label">SO Status</label>
+    <select class="form-control input-sm" name="SO_Status" onchange="getSearch()">
+			<option value="all">ทั้งหมด</option>
+			<option value="x" <?php echo is_selected("x", $SO_Status); ?>>No SO</option>
+			<option value="O" <?php echo is_selected('O', $SO_Status); ?>>Open</option>
+			<option value="C" <?php echo is_selected('C', $SO_Status); ?>>Closed</option>
+			<option value="D" <?php echo is_selected('D', $SO_Status); ?>>Cancelled</option>
+		</select>
+  </div>
+
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+    <label class="search-label">DO Status</label>
+    <select class="form-control input-sm" name="DO_Status" onchange="getSearch()">
+			<option value="all">ทั้งหมด</option>
+			<option value="x" <?php echo is_selected("x", $DO_Status); ?>>No DO</option>
+			<option value="P" <?php echo is_selected('P', $DO_Status); ?>>Partial</option>
+			<option value="F" <?php echo is_selected('F', $DO_Status); ?>>Full</option>
+		</select>
+  </div>
+
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+    <label class="search-label">Inv Status</label>
+    <select class="form-control input-sm" name="INV_Status" onchange="getSearch()">
+			<option value="all">ทั้งหมด</option>
+			<option value="x" <?php echo is_selected("x", $INV_Status); ?>>No Invoice</option>
+			<option value="P" <?php echo is_selected('P', $INV_Status); ?>>Partial</option>
+			<option value="F" <?php echo is_selected('F', $INV_Status); ?>>Full</option>
+		</select>
+  </div>
+
 	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
 		<label class="search-label">วันที่</label>
 		<div class="input-daterange input-group">
@@ -113,11 +144,11 @@
 					<th class="width-8">ใบสั่งซื้อ</th>
 					<th class="width-8 text-right">มูลค่า</th>
 					<th class="width-5 text-center">Preview</th>
-					<th class="width-5 text-center">การอนุมัติ</th>
 					<th class="width-5 text-center">สถานะ</th>
-					<th class="width-10 text-center">ผู้มีสิทธิ์อนุมัติ</th>
+					<th class="width-5 text-center">การอนุมัติ</th>
 					<th class="width-10">ผู้อนุมัติ</th>
 					<th class="width-10 text-center">SO No.</th>
+					<th class="width-5 text-center">So Status</th>
 					<th class="width-5 text-center">Do Status</th>
 					<th class="width-5 text-center">Invoice Status</th>
 				</tr>
@@ -139,17 +170,6 @@
 							<button class="btn btn-xs btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</button>
 						</td>
 						<td class="middle text-center">
-							<?php if($rs->must_approve == 1 && $rs->Approved == 'A') : ?>
-								<span class="label label-xlg label-success btn-block">อนุมัติ</span>
-							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'P') : ?>
-								<span class="label label-xlg label-warning btn-block">รออนุมัติ</span>
-							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'R') : ?>
-								<span class="label label-xlg label-danger btn-block">ไม่อนุมัติ</span>
-							<?php else : ?>
-								<span class="label label-xlg label-success btn-block">อนุมัติ</span>
-							<?php endif; ?>
-						</td>
-						<td class="middle text-center">
 							<?php if($rs->Status == 2) : ?>
 								<button type="button" class="btn btn-xs btn-success btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</button>
 							<?php endif; ?>
@@ -160,17 +180,25 @@
 								<button type="button" class="btn btn-xs btn-warning btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</button>
 							<?php endif; ?>
 							<?php if($rs->Status == 0) : ?>
-								<button type="button" class="btn btn-xs btn-danger btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">No Export</button>
+								<span class="label label-xlg label-danger">Not Export</span>
 							<?php endif; ?>
-
 						</td>
 						<td class="middle text-center">
-							<?php if($rs->must_approve == 1) : ?>
-								<button class="btn btn-xs btn-primary" onclick="showAuthorize('<?php echo $rs->code; ?>')">Authorizer</button>
+							<?php if($rs->must_approve == 1 && $rs->Approved == 'A') : ?>
+								<span class="label label-xlg label-success btn-block">อนุมัติ</span>
+							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'P') : ?>
+								<span class="label label-xlg label-warning btn-block">รออนุมัติ</span>
+							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'R') : ?>
+								<span class="label label-xlg label-danger btn-block">ไม่อนุมัติ</span>
+							<?php else : ?>
+								<span class="label label-xlg label-success btn-block">อนุมัติ</span>
 							<?php endif; ?>
 						</td>
+
+
 						<td class="middle"><?php echo $rs->Approver; ?></td>
 						<td class="middle"><?php echo $rs->DocNum; ?></td>
+						<td class="middle"><?php echo $rs->SO_Status == 'C' ? 'Closed' : ($rs->SO_Status == 'O' ? 'Open' : ($rs->SO_Status == 'D' ? 'Cancelled' : '')); ?></td>
 						<td class="middle"><?php echo $rs->DO_Status == 'P' ? 'Partial' : ($rs->DO_Status == 'F' ? 'Full' : '') ; ?></td>
 						<td class="middle"><?php echo $rs->INV_Status == 'P' ? 'Partial' : ($rs->INV_Status == 'F' ? 'Full' : ''); ?></td>
 					</tr>
@@ -178,7 +206,7 @@
 				<?php endforeach; ?>
 			<?php else : ?>
 				<tr>
-					<td colspan="14" class="middle text-center">ไม่พบรายการ</td>
+					<td colspan="15" class="middle text-center">ไม่พบรายการ</td>
 				</tr>
 			<?php endif; ?>
 			</tbody>

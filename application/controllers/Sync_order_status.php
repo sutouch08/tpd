@@ -19,25 +19,43 @@ class Sync_order_status extends CI_Controller
     {
       foreach($list as $ds)
       {
-        if($ds->Cancelled === 'Y')
+        if($ds->CancelledSO === 'Y')
         {
-          if($ds->Type === 'DO')
+          $arr = array(
+            'SO_Status' => 'D',
+            'DO_Status' => NULL,
+            'INV_Status' => NULL
+          );
+        }
+        else
+        {
+          $arr = array();
+
+          if($ds->CancelledSO === 'C')
           {
-            $arr = array(
-              'DO_Status' => NULL
-            );
+            $arr['SO_Status'] = 'C';
           }
-          else if($ds->Type === 'INV')
+          else
           {
-            $arr = array(
-              'INV_Status' => NULL
-            );
+            $arr['SO_Status'] = 'O';
+          }
+
+          if($ds->CancelledDO === 'Y')
+          {
+            $arr['DO_Status'] = NULL;
+            $arr['DeliveryNo'] = NULL;
+          }
+
+          if($ds->CancelledIV === 'Y')
+          {
+            $arr['INV_Status'] = NULL;
+            $arr['InvoiceNo'] = NULL;
           }
         }
 
         if(!$this->update($ds->U_WEB_ORNO, $arr))
         {
-          $arr = array(
+          $upd = array(
             'F_Web' => 'N',
             'F_Message' => "Update failed",
             'F_WebDate' => now()
@@ -45,18 +63,19 @@ class Sync_order_status extends CI_Controller
         }
         else
         {
-          $arr = array(
+          $upd = array(
             'F_Web' => 'Y',
             'F_Message' => NULL,
             'F_WebDate' => now()
           );
         }
 
-        $this->update_temp($ds->DocEntry, $arr);
+        $this->update_temp($ds->DocEntry, $upd);
 
       } //--- endforeach
     }
   }
+
 
 
   private function getUpdateList()
@@ -66,7 +85,7 @@ class Sync_order_status extends CI_Controller
     ->where('F_Web IS NULL', NULL, FALSE)
     ->or_where('F_Web', 'N')
     ->group_end()
-    ->where('DocNum >', 0)
+    ->where('DocNumSO >', 0)
     ->limit($this->limit)
     ->get('Status');
 
@@ -81,13 +100,24 @@ class Sync_order_status extends CI_Controller
 
   private function update($code, array $ds = array())
   {
-    return $this->db->where('code', $code)->update('code', $ds);
+    if(!empty($ds))
+    {
+      return $this->db->where('code', $code)->update('orders', $ds);
+    }
+
+    return TRUE;
   }
 
 
   private function update_temp($docEntry, array $ds = array())
   {
-    return $this->mc->where('DocEntry', $docEntry)->update('Status', $ds);
+
+    if(!empty($ds))
+    {
+      return $this->mc->where('DocEntry', $docEntry)->update('Status', $ds);
+    }
+
+    return TRUE;
   }
 
 } //--- end class

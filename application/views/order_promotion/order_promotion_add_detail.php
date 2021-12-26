@@ -13,7 +13,7 @@
 
   </div>
   <div class="col-sm-12 col-xs-12 padding-5 table-responsive">
-    <table class="table table-bordered" style="table-layout: fixed; min-width:100%; width:1000px; margin-bottom:10px;">
+    <table class="table table-bordered" style="table-layout: fixed; min-width:100%; width:1130px; margin-bottom:10px;">
       <thead>
         <tr>
           <th class="middle text-center" style="width:50px;">#</th>
@@ -27,6 +27,9 @@
           <th class="middle text-center" style="width:100px;">ราคา(พิเศษ) /หน่วย</th>
           <th class="middle text-center" style="width:100px;">มูลค่า</th>
           <th class="middle text-center" style="width:100px;">หมายเหตุ</th>
+          <?php if($this->isAdmin) : ?>
+            <th class="middle text-center" style="width:100px;">Free text</th>
+          <?php endif; ?>
         </tr>
       </thead>
       <tbody id="details-template">
@@ -37,7 +40,9 @@
             <input type="hidden" class="item-vat-code" id="itemVatCode-1" data-no="1">
             <input type="hidden" class="item-vat-rate" id="itemVatRate-1" dta-no="1">
             <input type="hidden" class="whs" id="whsCode-1" data-no="1">
-            <input type="text" class="form-control input-sm input-item-code" id="item-1" data-no="1" />
+            <select class="width-100 input-item-code" id="item-1" data-no="1" onchange="getItemData(1)">
+              <option value="">Select Promotion</option>
+            </select>
           </td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-1" value="" disabled/></td>
@@ -54,7 +59,10 @@
             <input type="number" class="form-control input-sm text-right" id="price-1" value="" disabled onkeyup="recalAmount(1)"/>
           </td>
           <td class="middle"><input type="number" class="form-control input-sm text-right" id="amount-1" value="" disabled/></td>
-          <td class="middle"><input type="text" class="form-control input-sm text-right" id="remark-1" maxlength="100" value="" /></td>
+          <td class="middle"><input type="text" class="form-control input-sm" id="remark-1" maxlength="100" value="" /></td>
+          <?php if($this->isAdmin) : ?>
+            <td class="middle"><input type="text" class="form-control input-sm" id="freeTxt-1" maxlength="100" value="" /></td>
+          <?php endif; ?>
         </tr>
       </tbody>
     </table>
@@ -70,11 +78,18 @@
 <tr id="row-{{no}}">
   <td class="middle text-center"><input type="checkbox" class="ace chk" id="chk-{{no}}" value="{{no}}"/><span class="lbl"></span></td>
   <td class="middle">
-  <input type="hidden" class="item-code" id="itemCode-{{no}}" data-no="{{no}}">
-  <input type="hidden" class="item-vat-code" id="itemVatCode-{{no}}" data-no="{{no}}">
-  <input type="hidden" class="item-vat-rate" id="itemVatRate-{{no}}" dta-no="{{no}}">
-  <input type="hidden" class="whs" id="whsCode-{{no}}" data-no="{{no}}">
-  <input type="text" class="form-control input-sm input-item-code" id="item-{{no}}" data-no="{{no}}" />
+    <input type="hidden" class="item-code" id="itemCode-{{no}}" data-no="{{no}}">
+    <input type="hidden" class="item-vat-code" id="itemVatCode-{{no}}" data-no="{{no}}">
+    <input type="hidden" class="item-vat-rate" id="itemVatRate-{{no}}" dta-no="{{no}}">
+    <input type="hidden" class="whs" id="whsCode-{{no}}" data-no="{{no}}">
+    <select class="width-100 input-item-code" id="item-{{no}}" data-no="{{no}}" onchange="getItemData({{no}})">
+      <option value="">Select Products</option>
+      {{#if promotion_items}}
+        {{#each promotion_items}}
+          <option value="{{code}}">{{name}}</option>
+        {{/each}}
+        {{/if}}
+    </select>
   </td>
   <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-{{no}}" value="" disabled /></td>
   <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-{{no}}" value="" disabled/></td>
@@ -92,5 +107,14 @@
   </td>
   <td class="middle"><input type="number" class="form-control input-sm text-right" id="amount-{{no}}" value="" disabled/></td>
   <td class="middle"><input type="text" class="form-control input-sm text-right" id="remark-{{no}}" maxlength="100" value="" /></td>
+  <?php if($this->isAdmin) : ?>
+    <td class="middle"><input type="text" class="form-control input-sm" id="freeTxt-{{no}}" maxlength="100" value="" /></td>
+  <?php endif; ?>
 </tr>
 </script>
+<!--
+<div class="input-group width-100">
+  <input type="text" class="form-control input-sm input-item-code" id="item-{{no}}" data-no="{{no}}" />
+  <span class="input-group-addon" onclick="clearText({{no}})">x</span>
+</div>
+-->

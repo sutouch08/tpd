@@ -34,7 +34,10 @@ class Orders extends PS_Controller
 			'CardCode' => get_filter('CardCode', 'so_CardCode', ''),
 			'UserName' => get_filter('UserName', 'so_UserName', ''),
 			'Approved' => get_filter('Approved', 'so_Approved', 'all'),
-			'Status' => get_filter('Status', 'so_Status', 'all'),
+			'Status' => get_filter('Status', 'doc_status', 'all'),
+			'SO_Status' => get_filter('SO_Status', 'SO_Status', 'all'),
+			'DO_Status' => get_filter('DO_Status', 'DO_Status', 'all'),
+			'INV_Status' => get_filter('INV_Status', 'INV_Status', 'all'),
 			'fromDate' => get_filter('fromDate', 'so_fromDate', ''),
 			'toDate' => get_filter('toDate', 'so_toDate', '')
 		);
@@ -377,12 +380,13 @@ class Orders extends PS_Controller
 			$qr .= "WHERE OITM.ItemType = 'I' ";
 			$qr .= "AND OITM.SellItem = 'Y' ";
 			$qr .= "AND OITM.validFor = 'Y' ";
+			$qr .= "AND OITM.ItemCode LIKE 'FG%' ";
 			$qr .= "AND ITM1.PriceList = {$priceList} ";
 			$qr .= "AND ITM1.Price > 0 ";
 
 			if($txt != '*')
 			{
-				$qr .= "AND (OITM.ItemCode LIKE N'%{$this->ms->escape_str($txt)}%' OR OITM.ItemName LIKE N'%{$this->ms->escape_str($txt)}%') ";
+				$qr .= "AND (OITM.ItemName LIKE N'%{$this->ms->escape_str($txt)}%') ";
 			}
 
 			$qr .= "ORDER BY OITM.ItemName ASC ";
@@ -562,12 +566,18 @@ class Orders extends PS_Controller
 								'lineText' => get_null($rs->lineText)
 							);
 
+							if(!empty($rs->freeTxt))
+							{
+								$arr['FreeText'] = trim($rs->freeTxt);
+							}
+
 							if($sellPrice > 0 && $sellPrice < $rs->stdPrice)
 							{
 								$priceEdit = TRUE;
 							}
 
 							$id = $this->orders_model->add_detail($arr);
+
 							if($id != FALSE)
 							{
 								$row++;
@@ -1341,7 +1351,10 @@ class Orders extends PS_Controller
 			'so_CardCode',
 			'so_UserName',
 			'so_Approved',
-			'so_Status',
+			'doc_status',
+			'SO_Status',
+			'DO_Status',
+			'INV_Status',
 			'so_fromDate',
 			'so_toDate',
 			'so_is_promotion'

@@ -66,7 +66,7 @@
     <select class="form-control input-sm" name="status" onchange="getSearch()">
 			<option value="all">All</option>
 			<option value="1" <?php echo is_selected('1', $status); ?>>Active</option>
-			<option value="0" <?php echo is_selected('0', $status); ?>>Disactive</option>
+			<option value="0" <?php echo is_selected('0', $status); ?>>Inactive</option>
 		</select>
   </div>
 

@@ -373,20 +373,20 @@ class PHPExcel_Worksheet_AutoFilter_Column
 			if (is_object($value)) {
 				if ($key == '_parent') {
 					//	Detach from autofilter parent
-					$this->$key = NULL;
+					$this->{$key} = NULL;
 				} else {
-					$this->$key = clone $value;
+				$this->{$key} = clone $value;
 				}
 			} elseif ((is_array($value)) && ($key == '_ruleset')) {
 				//	The columns array of PHPExcel_Worksheet_AutoFilter objects
-				$this->$key = array();
+				$this->{$key} = array();
 				foreach ($value as $k => $v) {
-					$this->$key[$k] = clone $v;
+					$this->{$key[$k]} = clone $v;
 					// attach the new cloned Rule to this new cloned Autofilter Cloned object
-					$this->$key[$k]->setParent($this);
+					$this->{$key[$k]}->setParent($this);
 				}
 			} else {
-				$this->$key = $value;
+				$this->{$key} = $value;
 			}
 		}
 	}

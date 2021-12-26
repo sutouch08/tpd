@@ -36,7 +36,10 @@ class Order_promotion extends PS_Controller
 			'CardCode' => get_filter('CardCode', 'so_CardCode', ''),
 			'UserName' => get_filter('UserName', 'so_UserName', ''),
 			'Approved' => get_filter('Approved', 'so_Approved', 'all'),
-			'Status' => get_filter('Status', 'so_Status', 'all'),
+			'Status' => get_filter('Status', 'doc_status', 'all'),
+			'SO_Status' => get_filter('SO_Status', 'SO_Status', 'all'),
+			'DO_Status' => get_filter('DO_Status', 'DO_Status', 'all'),
+			'INV_Status' => get_filter('INV_Status', 'INV_Status', 'all'),
 			'fromDate' => get_filter('fromDate', 'so_fromDate', ''),
 			'toDate' => get_filter('toDate', 'so_toDate', '')
 		);
@@ -408,6 +411,47 @@ class Order_promotion extends PS_Controller
 
 
 
+	public function get_promotion_items()
+	{
+		$sc = TRUE;
+		$ds = array();
+
+		if($this->input->get('promotion_id'))
+		{
+			$promotion_id = $this->input->get('promotion_id');
+			$qr = "SELECT ItemCode, ItemName FROM promotion_detail WHERE promotion_id = {$promotion_id}";
+			$rs = $this->db->query($qr);
+
+			if($rs->num_rows() > 0)
+			{
+
+				foreach($rs->result() as $rd)
+				{
+					$arr = array(
+						'code' => $rd->ItemCode,
+						'name' => $rd->ItemName
+					);
+
+					array_push($ds, $arr);
+				}
+			}
+			else
+			{
+				$sc = FALSE;
+				$this->error = "There are no item in promotion";
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = "Invalid promotion";
+		}
+
+		echo $sc === TRUE ? json_encode($ds) : $this->error;
+	}
+
+
+
 
 	function get_item_data()
 	{
@@ -565,6 +609,7 @@ class Order_promotion extends PS_Controller
 								'VatAmount' => $rs->VatAmount,
 								'LineTotal' => $rs->lineTotal,
 								'WhsCode' => get_null($rs->WhsCode),
+								'FreeText' => empty($rs->freeTxt) ? NULL : trim($rs->freeTxt),
 								'lineText' => get_null($rs->lineText),
 								'status' => 'A',
 								'promotion_id' => $header->promotion_id,
@@ -848,7 +893,10 @@ class Order_promotion extends PS_Controller
 			'so_CardCode',
 			'so_UserName',
 			'so_Approved',
-			'so_Status',
+			'doc_status',
+			'SO_Status',
+			'DO_Status',
+			'INV_Status',
 			'so_fromDate',
 			'so_toDate'
 		);

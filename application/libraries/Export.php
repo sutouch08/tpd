@@ -130,6 +130,7 @@ class Export
 										'GTotal' => $rs->LineTotal,
 										'VatSum' => $rs->VatAmount,
 										'WhsCode' => $rs->WhsCode,
+                    'FreeTxt' => $rs->FreeText,
 										'OwnerCode' => $order->OwnerCode,
 										'U_WEB_ORNO' => $order->code,
 										'U_BEX_WEBREMARK' => $rs->LineText,
@@ -161,6 +162,7 @@ class Export
 							if($sc === TRUE)
 							{
 								$arr = array(
+                  'DocNum' => NULL,
 									'Status' => 1,
 									'temp_date' => now()
 								);

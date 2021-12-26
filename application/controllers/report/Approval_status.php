@@ -181,7 +181,7 @@ class Approval_status extends PS_Controller
 			$report_title = 'รายงานออเดอร์ แยกตามลูกค้า แสดงรายการสินค้า วันที่ ' . thai_date($ds['fromDate'],'/') .' ถึง '.thai_date($ds['toDate'], '/');
 			$customer_title = 'ลูกค้า : '.($ds['allCustomer'] === TRUE ? 'ทั้งหมด' : $ds['customerFrom']."  -  ".$ds['customerTo']);
 			$grouplist = 'กลุ่มลูกค้า : '.($ds['allCustomerGroup'] === TRUE ? 'ทั้งหมด' : $group_title);
-			$approver     = 'ผู้อนุมัติ :  '. ($ds['allApprover']? 'ทั้งหมด' : $approver_title);
+			$approver  = 'ผู้อนุมัติ :  '. ($ds['allApprover']? 'ทั้งหมด' : $approver_title);
 
 			//--- load excel library
 			$this->load->library('excel');

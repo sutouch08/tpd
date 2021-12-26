@@ -648,6 +648,33 @@ class User_model extends CI_Model
     return NULL;
   }
 
+
+
+  public function isApprover($user_id)
+  {
+    $count = $this->db->where('user_id', $user_id)->count_all_results('approver');
+
+    if($count > 0)
+    {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
+
+  public function has_order_transection($user_id)
+  {
+    $count = $this->db->where('user_id', $user_id)->count_all_results('orders');
+
+    if($count > 0)
+    {
+      return TRUE;
+    }
+
+    return FALSE;
+  }
+
 } //---- End class
 
  ?>

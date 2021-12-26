@@ -700,6 +700,10 @@ function saveAdd() {
 				"WhsCode" : $('#whsCode-'+no).val()
 			}
 
+			if($('#freeTxt-'+no).length) {
+				item.freeTxt = $('#freeTxt-'+no).val();
+			}
+
 			details.push(item);
 		}
 	}); //--- end each function
@@ -740,6 +744,12 @@ function saveAdd() {
 	})
 
 }
+
+function clearText(no) {
+	$('#item-'+no).val('');
+	$('#itemCode-'+no).val('');
+}
+
 
 
 $(document).ready(function(){

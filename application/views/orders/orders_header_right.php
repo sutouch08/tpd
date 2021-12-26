@@ -41,10 +41,10 @@
       </div>
 
       <div class="form-group">
-        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">วันที่ส่งสินค้า</label>
+        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">วันที่ต้องการจัดส่ง</label>
         <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
           <span class="input-icon input-icon-right">
-          <input type="text" id="DocDueDate" class="form-control input-sm text-center" value="<?php echo date('d-m-Y', strtotime('+3 days')); ?>" readonly/>
+          <input type="text" id="DocDueDate" class="form-control input-sm text-center" value="<?php echo date('d-m-Y', strtotime(shift_date(now(), 3, TRUE))); ?>" readonly/>
           <i class="ace-icon fa fa-calendar-o"></i>
           </span>
         </div>

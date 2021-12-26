@@ -59,7 +59,7 @@ function getAddress() {
 	get_address_ship_to_code(code);
 	//---- create Address bill to
 	get_address_bill_to_code(code);
-	
+
 	getRate();
 }
 
@@ -183,60 +183,113 @@ function get_address_bill_to() {
 }
 
 
+// function checkPromotionList() {
+// 	let count = 0;
+// 	$('.item-code').each(function(){
+// 		if($(this).val() != "") {
+// 			count++;
+// 		}
+// 	});
+//
+// 	if(count > 0) {
+// 		//--- clear item
+// 		$('#details-template').html('');
+//
+// 		//--- add new value to top row
+// 		$('#top-row').val(0);
+//
+// 		addRow();
+// 	}
+//
+// 	init();
+// }
+
+
 function checkPromotionList() {
-	let count = 0;
-	$('.item-code').each(function(){
-		if($(this).val() != "") {
-			count++;
-		}
-	});
-
-	if(count > 0) {
-		//--- clear item
-		$('#details-template').html('');
-
-		//--- add new value to top row
-		$('#top-row').val(0);
-
-		addRow();
-	}
-
-	init();
+	//--- clear item
+	$('#details-template').html('');
+	//--- add new value to top row
+	$('#top-row').val(0);
+	addRow();
 }
 
 
-function init() {
-	var promotion_id = $('#promotion').val();
-	var promotion_id = promotion_id == "" ? "nopromotion" : promotion_id;
-
-	$('.input-item-code').autocomplete({
-		source:HOME + 'get_promotion_item_code_and_name/'+promotion_id,
-		autoFocus:true,
-		open:function(event){
-			var $ul = $(this).autocomplete('widget');
-			$ul.css('width', 'auto');
-		},
-		close:function(){
-			var data = $(this).val();
-			var arr = data.split(' | ');
-			if(arr.length == 2) {
-				let no = $(this).data("no");
-				$('#itemCode-'+no).val(arr[1]);
-				$(this).val(arr[0]);
-				getItemData(arr[1], no);
-			}
-			else {
-				$(this).val('');
-			}
-		}
-	})
-}
-
-
+// function init() {
+// 	var promotion_id = $('#promotion').val();
+// 	var promotion_id = promotion_id == "" ? "nopromotion" : promotion_id;
+//
+// 	$('.input-item-code').autocomplete({
+// 		source:HOME + 'get_promotion_item_code_and_name/'+promotion_id,
+// 		autoFocus:true,
+// 		open:function(event){
+// 			var $ul = $(this).autocomplete('widget');
+// 			$ul.css('width', 'auto');
+// 		},
+// 		close:function(){
+// 			var data = $(this).val();
+// 			var arr = data.split(' | ');
+// 			if(arr.length == 2) {
+// 				let no = $(this).data("no");
+// 				$('#itemCode-'+no).val(arr[1]);
+// 				$(this).val(arr[0]);
+// 				getItemData(arr[1], no);
+// 			}
+// 			else {
+// 				$(this).val('');
+// 			}
+// 		}
+// 	})
+// }
 
 
-	function getItemData(code, no) {
+
+
+	// function getItemData(code, no) {
+	// 	let promotion_id = $('#promotion').val();
+	//
+	// 	$.ajax({
+	// 		url:HOME + "get_item_data",
+	// 		type:"GET",
+	// 		cache:false,
+	// 		data:{
+	// 			'code' : code,
+	// 			'promotion_id' : promotion_id
+	// 		},
+	// 		success:function(rs) {
+	// 			var rs = $.trim(rs);
+	// 			if(isJson(rs)) {
+	// 				var ds = $.parseJSON(rs);
+	// 				var price = parseFloat(ds.price);
+	// 				$('#uom-'+no).val(ds.uom);
+	// 				$('#qty-'+no).val(ds.qty);
+	// 				$('#minQty-'+no).val(ds.qty);
+	// 				$('#stdPrice-'+no).val(ds.price);
+	// 				$('#price-'+no).val(ds.price);
+	// 				$('#instock-'+no).val(ds.inStock);
+	// 				$('#commit-'+no).val(ds.commit);
+	// 				$('#available-'+no).val(ds.available);
+	// 				$('#itemVatCode-'+no).val(ds.vatCode);
+	// 				$('#itemVatRate-'+no).val(ds.vatRate);
+	// 				$('#whsCode-'+no).val(ds.whsCode);
+	//
+	// 				recalAmount(no);
+	// 			}
+	// 			else {
+	// 				swal({
+	// 					title:'Error!',
+	// 					text:rs,
+	// 					type:'error'
+	// 				})
+	// 			}
+	// 		}
+	// 	})
+	// }
+
+
+	function getItemData(no) {
 		let promotion_id = $('#promotion').val();
+		let code = $('#item-'+no).val();
+		$('#itemCode-'+no).val(code);
 
 		$.ajax({
 			url:HOME + "get_item_data",
@@ -278,20 +331,93 @@ function init() {
 
 
 
+// function addRow() {
+// 	var no = $('#top-row').val();
+// 	no++;
+// 	$('#top-row').val(no);
+//
+// 	var data = {"no" : no};
+// 	var source = $('#row-template').html();
+// 	var output = $('#details-template');
+//
+// 	render_append(source, data, output);
+// 	init();
+//
+// 	$('#itemCode-'+no).focus();
+// }
+
+//
+// function get_promotion_items() {
+// 	let promotion_id = $('#promotion').val();
+//
+// 	load_in();
+//
+// 	$.ajax({
+// 		url:HOME + 'get_promotion_items',
+// 		type:'GET',
+// 		cache:false,
+// 		data:{
+// 			'promotion_id' : promotion_id
+// 		},
+// 		success:function(rs) {
+// 			load_out();
+// 			if(isJson(rs)) {
+// 				var ds = $.parseJSON(rs);
+// 			}
+// 		}
+// 	})
+// }
+
+
+
+
+
 function addRow() {
 	var no = $('#top-row').val();
 	no++;
 	$('#top-row').val(no);
 
-	var data = {"no" : no};
-	var source = $('#row-template').html();
-	var output = $('#details-template');
+	let promotion_id = $('#promotion').val();
 
-	render_append(source, data, output);
-	init();
+	if(promotion_id == "") {
+		var data = {"no" : no};
+		var source = $('#row-template').html();
+		var output = $('#details-template');
+		render_append(source, data, output);
+	}
+	else {
+		$.ajax({
+			url:HOME + 'get_promotion_items',
+			type:'GET',
+			cache:false,
+			data:{
+				'promotion_id' : promotion_id
+			},
+			success:function(rs) {
+				if(isJson(rs)) {
+					var ds = $.parseJSON(rs);
+					var data = {"no" : no, "promotion_items" : ds};
+					var source = $('#row-template').html();
+					var output = $('#details-template');
+					render_append(source, data, output);
 
-	$('#itemCode-'+no).focus();
+					$('#item-'+no).select2();
+				}
+				else {
+					swal({
+						title:'Error!',
+						text:rs,
+						type:'error'
+					})
+				}
+			}
+		})
+	}
 }
+
+
+
+
 
 function removeRow() {
 	$('.chk').each(function(){
@@ -665,6 +791,11 @@ function saveAdd() {
 				"WhsCode" : $('#whsCode-'+no).val()
 			}
 
+			if($('#freeTxt-'+no).length)
+			{
+				item.freeTxt = $('#freeTxt-'+no).val();
+			}
+
 			details.push(item);
 		}
 	}); //--- end each function
@@ -707,9 +838,9 @@ function saveAdd() {
 }
 
 
-$(document).ready(function(){
-	init();
-})
+// $(document).ready(function(){
+// 	init();
+// })
 
 
 
