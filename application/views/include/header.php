@@ -55,11 +55,13 @@
 				</button>
 
 				<div class="navbar-header pull-left">
-					<a href="<?php echo base_url(); ?>" class="navbar-brand" style="min-width:167px;">
-					<!--	<img src="<?php echo base_url(); ?>images/company/company-logo.png" height="50">-->
+					<a href="<?php echo base_url(); ?>" class="navbar-brand">
+						<img src="<?php echo base_url(); ?>images/company/company-logo.png" height="40" class="hidden-sm hidden-xs">
+						<!--
 						<small>
 							<?php echo getConfig('COMPANY_NAME'); ?>
 						</small>
+						-->
 					</a>
 				</div>
 

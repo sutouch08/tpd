@@ -245,7 +245,9 @@ function doApprove() {
       check++;
     }
     else {
-      let item = {"id" : $(this).val(), "status" : "R"}
+      let id = $(this).val();
+      let reject_text = $('#reject-item-'+ id).val();
+      let item = {"id" : id, "status" : "R", "reject_text" : reject_text }
       items.push(item);
     }
   });
@@ -301,9 +303,13 @@ function doReject() {
   let code = $('#OrderCode').val();
   let check = 0;
   let count = 0;
+  let items = [];
 
   $('.check-item').each(function(){
     if($(this).is(':checked')) {
+      let id = $(this).val();
+      let reject_text = $("#reject-item-"+id).val();
+      items.push({"id" : id, "reject_text" : reject_text});
       check++;
     }
 
@@ -321,7 +327,8 @@ function doReject() {
       type:'POST',
       cache:false,
       data:{
-        'code' : code
+        'code' : code,
+        'items' : JSON.stringify(items)
       },
       success:function(rs) {
         load_out();

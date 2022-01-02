@@ -113,9 +113,9 @@ class Orders_model extends CI_Model
   }
 
 
-  public function reject_detail($id)
+  public function reject_detail($id, $reason)
   {
-    return $this->db->set('status', 'R')->where('id', $id)->or_where('link_id', $id)->update($this->td);
+    return $this->db->set('status', 'R')->set('reject_text', $reason)->where('id', $id)->or_where('link_id', $id)->update($this->td);
   }
 
 

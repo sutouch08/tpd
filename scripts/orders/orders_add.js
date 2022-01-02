@@ -428,6 +428,7 @@ function previewOrder() {
 	var billToCode = $('#billToCode').val();
 	var billToAddress = $('#BillTo').val();
 	var priceList = $('#priceList').val();
+	var listName = $('#priceList option:selected').text();
 	var docDate = $('#DocDate').val();
 	var dueDate = $('#DocDueDate').val();
 	var PoNo = $('#PoNo').val();
@@ -536,6 +537,8 @@ function previewOrder() {
 		"docDate" : docDate,
 		"dueDate" : dueDate,
 		"PoNo" : PoNo,
+		"priceList" : priceList,
+		"listName" : listName,
 		"exShipTo" : exShipTo,
 		"billOption" : $("input[name=billoption]:checked").val(),
 		"requiredSQ" : $('#require-sq').is(':checked') ? 'Y' : 'N',

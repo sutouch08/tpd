@@ -48,6 +48,14 @@
     </div>
 
     <div class="form-group">
+      <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">สถานที่จัดส่งเพิ่มเติม</label>
+      <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
+        <textarea id="exShipTo" class="autosize autosize-transition form-control" maxlength="254" onkeyup="wordCount($(this), 2)"></textarea>
+        <span class="pull-right grey"><span id="word-count-2">0</span>/254</span>
+      </div>
+    </div>
+
+    <div class="form-group">
       <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Vat Group</label>
       <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6">
         <input type="text" class="form-control input-sm" id="VatGroup" value="" disabled>

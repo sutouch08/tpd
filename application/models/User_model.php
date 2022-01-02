@@ -262,7 +262,6 @@ class User_model extends CI_Model
     $rs = $this->ms
     ->select('ListNum AS id, ListName AS name')
     ->where('ListNum >=', 11)
-    ->where('ListNum <=', 15)
     ->get('OPLN');
 
     if($rs->num_rows() > 0)
@@ -279,7 +278,6 @@ class User_model extends CI_Model
     $rs = $this->ms
     ->select('ListNum AS id, ListName AS name')
     ->where('ListNum >=', 11)
-    ->where('ListNum <=', 15)
     ->get('OPLN');
 
     if($rs->num_rows() > 0)

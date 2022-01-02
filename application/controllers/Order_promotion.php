@@ -70,7 +70,7 @@ class Order_promotion extends PS_Controller
 
 	public function add_new()
 	{
-		$this->title = "Orders Promotion - Add";
+		$this->title = "Order Promotion Add";
 		$this->load->helper('promotion');
 
 		if($this->pm->can_add)

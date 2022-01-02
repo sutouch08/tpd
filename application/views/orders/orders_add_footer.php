@@ -34,25 +34,26 @@
   </div>
 
   <!--- right column -->
+  <hr class="padding-5 visible-xs" />
   <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
     <div class="form-horizontal">
       <div class="form-group">
-        <label class="col-sm-6 control-label no-padding-right">รวมจำนวนเงิน</label>
-        <div class="col-sm-6 col-xs-12 padding-5">
+        <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label no-padding-right">รวมจำนวนเงิน</label>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right" id="totalAmount" value="0.00" disabled>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
-        <div class="col-sm-6 col-xs-6 padding-5">
+        <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
+        <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-5">
           <input type="text" id="totalVat" class="form-control input-sm text-right" value="0.00" disabled />
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-sm-6 control-label no-padding-right">จำนวนเงินรวมทั้งสิ้น</label>
-        <div class="col-sm-6 col-xs-6 padding-5">
+        <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 control-label no-padding-right">จำนวนเงินรวมทั้งสิ้น</label>
+        <div class="ccol-lg-6 col-md-6 col-sm-6 col-xs-6 padding-5">
           <input type="text" id="docTotal" class="form-control input-sm text-right" value="0.00" disabled/>
         </div>
       </div>

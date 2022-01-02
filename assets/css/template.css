@@ -628,21 +628,21 @@ hr.padding-5 {
 
 
  .active > a {
-	border-left:solid 5px #f57c92;
+	border-left:solid 5px #F70017;
 }
 
 
 
 .active > a:hover {
   text-decoration: none;
-	border-left:solid 5px #f57c92;
+	border-left:solid 5px #F70017;
 	background-color:White;
 	transition:linear 0.1s;
 }
 
 
 .nav .open > a, .nav .open > a:hover, .nav .open > a:focus{
-	border-color: #f57c92;
+	border-color: #F70017;
 }
 
 

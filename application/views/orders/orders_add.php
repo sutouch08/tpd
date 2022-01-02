@@ -96,19 +96,29 @@
 	<tr><th>เลขที่ PO</th><td>{{PoNo}}</td></tr>
 	<tr><th>บิลลงวันที่</th><td>{{billOption}}</td></tr>
 	<tr><th>ต้องการใบเสนอราคา</th><td>{{requiredSQ}}</td></tr>
+	<tr>
+		<th>
+			PriceList
+			<label class="pull-right">
+				<input type="checkbox" class="ace check-list" onchange="toggleSubmit()">
+				<span class="lbl"></span>
+			</label>
+		</th>
+		<td>{{listName}}</td>
+	</tr>
 	<tr><th>Remark สำหรับสื่อสารกับ Admin</th><td>{{remark}}</td></tr>
 </table>
 <table class="table table-bordered border-1" style="min-width:100%;">
 	<thead>
 		<tr>
 			<th class="width-5 middle text-center">#</th>
-			<th class="width-30 middle">รายการสินค้า</th>
-			<th class="width-10 middle text-right">จำนวน</th>
-			<th class="width-10 middle text-right">แถม</th>
+			<th class="width-30 middle text-center">รายการสินค้า</th>
+			<th class="width-10 middle text-center">จำนวน</th>
+			<th class="width-10 middle text-center">แถม</th>
 			<th class="width-10 middle text-center">หน่วย</th>
-			<th class="width-10 middle text-right">ราคา/หน่วย (Term)</th>
-			<th class="width-10 middle text-right">ราคา(พิเศษ)/หน่วย</th>
-			<th class="width-10 middle text-right">มูลค่า</th>
+			<th class="width-10 middle text-center">ราคา/หน่วย (Term)</th>
+			<th class="width-10 middle text-center">ราคา(พิเศษ)/หน่วย</th>
+			<th class="width-10 middle text-center">มูลค่า</th>
 			<th class=""></th>
 		</tr>
 	</thead>

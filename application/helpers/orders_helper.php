@@ -33,4 +33,20 @@ function get_checkbox($id, $status = 'P', $can_approve = FALSE, $no = "")
   return $sc;
 }
 
+
+
+function get_rejectbox($id, $status = 'P', $can_approve = FALSE, $no = "")
+{
+  $sc = "";
+
+  if($status = 'P')
+  {
+    if($can_approve)
+    {
+      $sc = '<input type="text" class="form-control input-sm reject-box" id="reject-item-'.$id.'" value="" />';
+    }
+  }
+
+  return $sc;
+}
  ?>

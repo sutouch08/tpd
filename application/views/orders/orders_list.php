@@ -5,6 +5,7 @@
 		font-weight: bold;
 		background-color: #F8F8F8;
 	}
+
 </style>
 
 <div class="row">
@@ -23,7 +24,7 @@
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
 <div class="row">
   <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="search-label">Web Order</label>
+    <label class="search-label">เลขที่</label>
     <input type="text" class="form-control input-sm text-center search-box" name="WebCode" value="<?php echo $WebCode; ?>" />
   </div>
 
@@ -48,7 +49,7 @@
   </div>
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="search-label">Po No.</label>
+    <label class="search-label">ใบสั่งซื้อ</label>
     <input type="text" class="form-control input-sm text-center search-box" name="PoNo" value="<?php echo $PoNo; ?>" />
   </div>
 
@@ -79,7 +80,7 @@
 
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="search-label">Temp Status</label>
+    <label class="search-label">สถานะ</label>
     <select class="form-control input-sm" name="Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
 			<option value="0" <?php echo is_selected('0', $Status); ?>>Not Export</option>
@@ -111,7 +112,7 @@
   </div>
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="search-label">Inv Status</label>
+    <label class="search-label">Invoice Status</label>
     <select class="form-control input-sm" name="INV_Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
 			<option value="x" <?php echo is_selected("x", $INV_Status); ?>>No Invoice</option>
@@ -146,12 +147,12 @@
 		<table class="table table-striped table-hover border-1" style="min-width:1200px;">
 			<thead>
 				<tr>
-					<th class="width-5 text-center">#</th>
-					<th class="width-10">วันที่</th>
-					<th class="width-10">User</th>
-					<th class="width-10">เลขที่</th>
-					<th class="width-20">ลูกค้า</th>
-					<th class="width-8">ใบสั่งซื้อ</th>
+					<th class="text-center">#</th>
+					<th style="width:90px;">วันที่</th>
+					<th class="" style="min-width:100px;">User</th>
+					<th style="min-width:100px;">เลขที่</th>
+					<th style="min-width:200px;">ลูกค้า</th>
+					<th class="width-10">ใบสั่งซื้อ</th>
 					<th class="width-8 text-right">มูลค่า</th>
 					<th class="width-5 text-center">Preview</th>
 					<th class="width-5 text-center">สถานะ</th>
@@ -160,7 +161,7 @@
 					<th class="width-10">ผู้อนุมัติ</th>
 					<th class="width-10 text-center">SO No.</th>
 					<th class="width-10 text-center">SO Status</th>
-					<th class="width-5 text-center">Do Status</th>
+					<th class="width-5 text-center">DO Status</th>
 					<th class="width-5 text-center">Invoice Status</th>
 				</tr>
 			</thead>
@@ -211,10 +212,16 @@
 							<?php else : ?>
 								<span class="label label-xlg label-success btn-block">อนุมัติ</span>
 							<?php endif; ?>
-						</td>						
+						</td>
 						<td class="middle"><?php echo $rs->Approver; ?></td>
 						<td class="middle"><?php echo $rs->DocNum; ?></td>
-						<td class="middle"><?php echo $rs->SO_Status == 'C' ? 'Closed' : ($rs->SO_Status == 'O' ? 'Open' : ($rs->SO_Status == 'D' ? 'Cancelled' : '')); ?></td>
+						<td class="middle">
+							<?php if($rs->SO_Status == 'D') : ?>
+								<span class="red">Cancelled</span>
+							<?php else : ?>
+							<?php echo $rs->SO_Status == 'C' ? 'Closed' : ($rs->SO_Status == 'O' ? 'Open' : ''); ?>
+							<?php endif; ?>
+						</td>
 						<td class="middle"><?php echo $rs->DO_Status == 'P' ? 'Partial' : ($rs->DO_Status == 'F' ? 'Full' : '') ; ?></td>
 						<td class="middle"><?php echo $rs->INV_Status == 'P' ? 'Partial' : ($rs->INV_Status == 'F' ? 'Full' : ''); ?></td>
 					</tr>
@@ -264,6 +271,7 @@
 <table class="table table-striped table-bordered border-1" style="margin-bottom:10px;">
 	<tbody>
 	<tr><td class="th">เลขที่ใบสั่งสินค้า</td><td>{{orderCode}}</td></tr>
+	<tr><td class="th">User</td><td>{{user}}</td></tr>
 	<tr><td class="th" class="width-30">รหัสลูกค้า</td><td>{{customerName}}</td></tr>
 	<tr><td class="th">ที่อยู่ตามใบกำกับภาษี</td><td>{{billToCode}} | {{billToAddress}}</td></tr>
 	<tr><td class="th">สถานที่ส่งของ</td><td>{{shipToCode}} | {{shipToAddress}}</td></tr>
@@ -271,31 +279,34 @@
 	<tr><td class="th">Currency</td><td>{{currency}} | Rate: {{currencyRate}} </td></tr>
 	<tr><td class="th">วันที่สั่งสินค้า</td><td>{{docDate}}</td></tr>
 	<tr><td class="th">วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
+	<tr><th>Promotion</th><td>{{promotionCode}}  |   {{promotionName}}</td></tr>
 	<tr><td class="th">Sales Order No.</td><td>{{SONO}}</td></tr>
 	<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}</td></tr>
 	<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
 	<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
+	<tr><td class="th">Price List</td><td>{{PriceList}}</td></tr>
 	<tr><td class="th">Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>
 	</tbody>
 </table>
 </div>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
-<table class="table table-bordered border-1" style="min-width:1200px;">
+<table class="table table-bordered border-1" style="min-width:1550px;">
 	<thead>
 		<tr>
 			<th class="middle text-center">#</th>
-			<th class="width-20 middle">รายการสินค้า</th>
-			<th class="width-5 middle text-right">จำนวน</th>
-			<th class="width-5 middle text-right">แถม</th>
-			<th class="width-8 middle text-center">หน่วย</th>
-			<th class="width-8 middle text-right">ราคา/หน่วย (Term)</th>
-			<th class="width-8 middle text-right">ราคา(พิเศษ)/หน่วย</th>
-			<th class="width-8 middle text-right">มูลค่า</th>
-			<th class="width-8 middle text-right">หมายเหตุ</th>
-			<th class="width-5 middle text-right">จำนวนค้างส่ง</th>
-			<th class="width-8 middle text-right">เลขที่ DO</th>
-			<th class="width-8 middle text-right">เลขที่ใบแจ้งหนี้</th>
-			<th class="width-8 middle text-right">วันที่ใบแจ้งหนี้</th>
+			<th class="middle text-center" style="width:250px;">รายการสินค้า</th>
+			<th class="middle text-center" style="width:100px;">จำนวน</th>
+			<th class="middle text-center" style="width:100px;">แถม</th>
+			<th class="middle text-center" style="width:100px;">หน่วย</th>
+			<th class="middle text-center" style="width:100px;">ราคา/หน่วย (Term)</th>
+			<th class="middle text-center" style="width:100px;">ราคา(พิเศษ)/หน่วย</th>
+			<th class="middle text-center" style="width:100px;">มูลค่า</th>
+			<th class="middle text-center" style="width:100px;">หมายเหตุ</th>
+			<th class="middle text-center" style="width:100px;">จำนวนค้างส่ง</th>
+			<th class="middle text-center" style="width:100px;">เลขที่ DO</th>
+			<th class="middle text-center" style="width:100px;">เลขที่ Invoice</th>
+			<th class="middle text-center" style="width:100px;">วันที่ Invoice</th>
+			<th class="middle text-center" style="width:200px;">เหตุผลในการ Reject</th>
 		</tr>
 	</thead>
 	<tbody>
@@ -304,7 +315,7 @@
 				<tr>
 					<td colspan="7" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
 					<td class="middle text-right">{{totalAmount}}</td>
-					<td></td><td></td><td></td><td></td>
+					<td></td><td></td><td></td><td></td><td></td><td></td>
 				</tr>
 			{{else}}
 				<tr>
@@ -323,6 +334,7 @@
 					<td class="middle text-center">{{{DoNo}}}</td>
 					<td class="middle text-center">{{{InvNo}}}</td>
 					<td class="middle text-center">{{{InvDate}}}</td>
+					<td class="middle">{{{rejectbox}}}</td>
 				</tr>
 			{{/if}}
 		{{/each}}

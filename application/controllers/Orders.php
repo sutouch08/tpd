@@ -68,7 +68,7 @@ class Orders extends PS_Controller
 
 	public function add_new()
 	{
-		$this->title = "Orders - Add";
+		$this->title = "Order Add";
 
 		if($this->pm->can_add)
 		{
@@ -114,7 +114,17 @@ class Orders extends PS_Controller
 				$ds['customer'] = $this->customer_model->get_user_customer_list($this->_user->sale_id, "V", $customer_group, $sale_person);
 			}
 
-			$ds['priceList'] = $this->user_model->get_user_price_list($this->_user->id);
+			$priceList = $this->user_model->get_user_price_list($this->_user->id);
+
+			if(!empty($priceList))
+			{
+				foreach($priceList as $rs)
+				{
+					$rs->list_name = $this->orders_model->price_list_name($rs->list_id);
+				}
+			}
+
+			$ds['priceList'] = $priceList;
 			$this->load->view('orders/orders_add', $ds);
 		}
 		else
@@ -499,7 +509,9 @@ class Orders extends PS_Controller
 				$PL = array(
 					"11" => 3,
 					"12" => 6,
-					"13" => 7
+					"13" => 7,
+					"16" => -1,
+					"17" => 5
 				);
 
 				$groupNum = isset($PL[$header->PriceList]) ? $PL[$header->PriceList] : $customer->GroupNum;
@@ -791,6 +803,7 @@ class Orders extends PS_Controller
 
 				$ds = array(
 					'orderCode' => $doc->code,
+					'user' => $doc->uname,
 					'SONO' => $doc->DocNum,
 					'DONO' => $doc->DeliveryNo,
 					'INVNO' => $doc->InvoiceNo,
@@ -805,6 +818,7 @@ class Orders extends PS_Controller
 					'docDate' => thai_date($doc->DocDate, FALSE),
 					'dueDate' => thai_date($doc->DocDueDate, FALSE),
 					'PoNo' => $doc->NumAtCard,
+					'PriceList' => empty($doc->PriceList) ? "-" : $this->orders_model->price_list_name($doc->PriceList),
 					'billOption' => $doc->BillDate == 1 ? 'Y' : 'N',
 					'requiredSQ' => $doc->requireSQ == 1 ? 'Y' : 'N',
 					'remark' => $doc->Comments,
@@ -890,13 +904,16 @@ class Orders extends PS_Controller
 								'DoNo' => $DoNo,
 								'InvNo' => $InvNo,
 								'InvDate' => empty($InvNo) ? NULL : $InvDate,
-								'checkbox' => get_checkbox($rs->id, $rs->status, $can_approve, $no) //--- orders_helper
+								'checkbox' => get_checkbox($rs->id, $rs->status, $can_approve, $no), //--- orders_helper
+								'rejectbox' => ($rs->status == 'P' ? get_rejectbox($rs->id, $rs->status, $can_approve, $no) : $rs->reject_text)
 							);
 
 							array_push($ds['items'], $arr);
+
+							$no++;
 						}
 
-						$no++;
+
 					}
 
 					$arr = array(
@@ -983,7 +1000,7 @@ class Orders extends PS_Controller
 
 								if($item->status == "R")
 								{
-									$this->orders_model->reject_detail($item->id);
+									$this->orders_model->reject_detail($item->id, get_null($item->reject_text));
 									$approval_status = 'P';
 								}
 							}
@@ -1064,6 +1081,20 @@ class Orders extends PS_Controller
 						);
 
 						$this->orders_model->update($code, $arr);
+
+						$items = json_decode($this->input->post('items'));
+						if(!empty($items))
+						{
+							foreach($items as $item)
+							{
+								$reject_text = get_null($item->reject_text);
+								if(!empty($reject_text))
+								{
+									$arr = array('reject_text' => $item->reject_text);
+									$this->orders_model->update_detail($item->id, $arr);
+								}
+							}
+						}
 					}
 					else
 					{

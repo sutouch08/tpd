@@ -41,7 +41,7 @@
 						Welcome
 					</span>
 				-->
-					<span class="login100-form-avatar">
+					<span class="login100-form-avatar" style="width:200px; height:200px;">
 						<img src="<?php echo base_url(); ?>assets/images/vf.jpg" alt="AVATAR">
 					</span>
 
