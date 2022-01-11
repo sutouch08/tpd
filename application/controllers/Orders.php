@@ -896,9 +896,9 @@ class Orders extends PS_Controller
 								'qty' => number($rs->Qty, 2),
 								'free' => number($rs->freeQty, 2),
 								'uom' => $rs->UomCode,
-								'stdPrice' => number($rs->stdPrice, 2),
-								'sellPrice' => number($rs->SellPrice, 2),
-								'amount' => number($rs->LineTotal, 2),
+								'stdPrice' => number($rs->stdPrice, 4),
+								'sellPrice' => number($rs->SellPrice, 4),
+								'amount' => number($rs->LineTotal, 4),
 								'lineText' => $rs->LineText,
 								'openQty' => round($open_qty, 2),
 								'DoNo' => $DoNo,
@@ -917,7 +917,7 @@ class Orders extends PS_Controller
 					}
 
 					$arr = array(
-						'totalAmount' => number($doc->DocTotal, 2)
+						'totalAmount' => number($doc->DocTotal, 4)
 					);
 
 					array_push($ds['items'], $arr);

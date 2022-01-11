@@ -487,13 +487,13 @@ function recalAmount(no) {
 	if(sellPrice != "") {
 		let amount = qty * sellPrice;
 		let vatamount = get_vat_amount(amount, vatRate);
-		$('#amount-'+no).val(amount.toFixed(2));
+		$('#amount-'+no).val(amount.toFixed(4));
 		$('#vatAmount-'+no).val(vatamount);
 	}
 	else {
 		let amount = qty * stdPrice;
 		let vatamount = get_vat_amount(amount, vatRate);
-		$('#amount-'+no).val(amount.toFixed(2));
+		$('#amount-'+no).val(amount.toFixed(4));
 		$('#vatAmount-'+no).val(vatamount);
 	}
 
@@ -517,9 +517,9 @@ function recalTotal() {
 	});
 
 
-	$('#totalAmount').val(addCommas(totalAmount.toFixed(2)));
-	$('#totalVat').val(addCommas(totalVat.toFixed(2)));
-	$('#docTotal').val(addCommas(docTotal.toFixed(2)));
+	$('#totalAmount').val(addCommas(totalAmount.toFixed(4)));
+	$('#totalVat').val(addCommas(totalVat.toFixed(4)));
+	$('#docTotal').val(addCommas(docTotal.toFixed(4)));
 }
 
 

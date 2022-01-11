@@ -291,7 +291,8 @@ class Sync_data extends CI_Controller
           }
 
           $arr = array(
-            'DeliveryNo' => limitText($doNo, 97)
+            'DeliveryNo' => limitText($doNo, 97),
+            'last_do_sync' => now()
           );
 
           $so = $this->orders_model->get_sap_order($rs->code);
@@ -321,6 +322,12 @@ class Sync_data extends CI_Controller
         }
         else
         {
+          $arr = array(
+            'last_do_sync' => now()
+          );
+
+          $this->orders_model->update($rs->code, $arr);
+
           $logs = array(
             'code' => $rs->code,
             'sync_code' => 'DO',
@@ -376,7 +383,8 @@ class Sync_data extends CI_Controller
 
 
           $arr = array(
-            'InvoiceNo' => limitText($ivNo, 97)
+            'InvoiceNo' => limitText($ivNo, 97),
+            'last_inv_sync' => now()
           );
 
           $so = $this->orders_model->get_sap_order($rs->code);
@@ -415,6 +423,12 @@ class Sync_data extends CI_Controller
         }
         else
         {
+          $arr = array(
+            'last_inv_sync' => now()
+          );
+
+          $this->orders_model->update($rs->code, $arr);
+
           $logs = array(
             'code' => $rs->code,
             'sync_code' => 'INV',

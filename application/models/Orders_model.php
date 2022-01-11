@@ -886,10 +886,14 @@ class Orders_model extends CI_Model
     ->where('Status', 2)
     ->where('DocNum IS NOT NULL', NULL, FALSE)
     ->where('Approved', 'A')
+    ->where('SO_Status IS NOT NULL', NULL, FALSE)
+    ->where('SO_Status !=', 'D')
     ->group_start()
     ->where('DeliveryNo IS NULL', NULL, FALSE)
     ->or_where('DO_Status !=', 'F')
     ->group_end()
+    ->order_by('SO_Status', 'ASC')
+    ->order_by('last_do_sync', 'ASC')
     ->limit($limit)
     ->get($this->tb);
 
@@ -926,11 +930,15 @@ class Orders_model extends CI_Model
     ->where('Status', 2)
     ->where('DocNum IS NOT NULL', NULL, FALSE)
     ->where('Approved', 'A')
+    ->where('SO_Status IS NOT NULL', NULL, FALSE)
+    ->where('SO_Status !=', 'D')
     ->where('DeliveryNo IS NOT NULL', NULL, FALSE)
     ->group_start()
     ->where('InvoiceNo IS NULL', NULL, FALSE)
     ->or_where('INV_Status !=', 'F')
     ->group_end()
+    ->order_by('SO_Status', 'ASC')
+    ->order_by('last_inv_sync', 'ASC')
     ->limit($limit)
     ->get($this->tb);
 

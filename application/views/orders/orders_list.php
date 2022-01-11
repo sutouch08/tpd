@@ -44,12 +44,12 @@
   </div>
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="search-label">INV No.</label>
+    <label class="search-label">Invoice No.</label>
     <input type="text" class="form-control input-sm text-center search-box" name="InvoiceNo" value="<?php echo $InvoiceNo; ?>" />
   </div>
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="search-label">ใบสั่งซื้อ</label>
+    <label class="search-label">เลขที่ PO</label>
     <input type="text" class="form-control input-sm text-center search-box" name="PoNo" value="<?php echo $PoNo; ?>" />
   </div>
 
@@ -63,8 +63,8 @@
     <select class="form-control input-sm" name="Approved" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
 			<option value="P" <?php echo is_selected('P', $Approved); ?>>รออนุมัติ</option>
-			<option value="A" <?php echo is_selected('A', $Approved); ?>>อนุมมัติ</option>
-			<option value="AP" <?php echo is_selected('AP', $Approved); ?>>อนุมมัติบางส่วน</option>
+			<option value="A" <?php echo is_selected('A', $Approved); ?>>อนุมัติ</option>
+			<option value="AP" <?php echo is_selected('AP', $Approved); ?>>อนุมัติบางส่วน</option>
 			<option value="R" <?php echo is_selected('R', $Approved); ?>>ไม่อนุมัติ</option>
 		</select>
   </div>
@@ -152,7 +152,7 @@
 					<th class="" style="min-width:100px;">User</th>
 					<th style="min-width:100px;">เลขที่</th>
 					<th style="min-width:200px;">ลูกค้า</th>
-					<th class="width-10">ใบสั่งซื้อ</th>
+					<th class="width-10">เลขที่ PO</th>
 					<th class="width-8 text-right">มูลค่า</th>
 					<th class="width-5 text-center">Preview</th>
 					<th class="width-5 text-center">สถานะ</th>
@@ -214,16 +214,16 @@
 							<?php endif; ?>
 						</td>
 						<td class="middle"><?php echo $rs->Approver; ?></td>
-						<td class="middle"><?php echo $rs->DocNum; ?></td>
-						<td class="middle">
+						<td class="middle text-center"><?php echo $rs->DocNum; ?></td>
+						<td class="middle text-center">
 							<?php if($rs->SO_Status == 'D') : ?>
 								<span class="red">Cancelled</span>
 							<?php else : ?>
 							<?php echo $rs->SO_Status == 'C' ? 'Closed' : ($rs->SO_Status == 'O' ? 'Open' : ''); ?>
 							<?php endif; ?>
 						</td>
-						<td class="middle"><?php echo $rs->DO_Status == 'P' ? 'Partial' : ($rs->DO_Status == 'F' ? 'Full' : '') ; ?></td>
-						<td class="middle"><?php echo $rs->INV_Status == 'P' ? 'Partial' : ($rs->INV_Status == 'F' ? 'Full' : ''); ?></td>
+						<td class="middle text-center"><?php echo $rs->DO_Status == 'P' ? 'Partial' : ($rs->DO_Status == 'F' ? 'Full' : '') ; ?></td>
+						<td class="middle text-center"><?php echo $rs->INV_Status == 'P' ? 'Partial' : ($rs->INV_Status == 'F' ? 'Full' : ''); ?></td>
 					</tr>
 					<?php $no++; ?>
 				<?php endforeach; ?>
@@ -280,7 +280,7 @@
 	<tr><td class="th">วันที่สั่งสินค้า</td><td>{{docDate}}</td></tr>
 	<tr><td class="th">วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
 	<tr><th>Promotion</th><td>{{promotionCode}}  |   {{promotionName}}</td></tr>
-	<tr><td class="th">Sales Order No.</td><td>{{SONO}}</td></tr>
+	<tr><td class="th">SO No.</td><td>{{SONO}}</td></tr>
 	<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}</td></tr>
 	<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
 	<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
