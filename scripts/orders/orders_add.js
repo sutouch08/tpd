@@ -657,7 +657,8 @@ function saveAdd() {
 		'ShipToCode' : $('#shipToCode').val(),
 		'ShipTo' : $('#ShipTo').val(),
 		'exShipTo' : $('#exShipTo').val(),
-		'VatGroup' : $('#vatGroup').val(),
+		'VatGroup' : $('#VatGroup').val(),
+		'VatRate' : $('#vatRate').val(),
 		//--- right Column
 		'DocDate' : $('#DocDate').val(), //****** required
 		'DocDueDate' : $('#DocDueDate').val(), //****** required
@@ -751,6 +752,15 @@ function saveAdd() {
 function clearText(no) {
 	$('#item-'+no).val('');
 	$('#itemCode-'+no).val('');
+	$('#uom-'+no).val('');
+	$('#stdPrice-'+no).val('');
+	$('#price-'+no).val('');
+	$('#instock-'+no).val('');
+	$('#commit-'+no).val('');
+	$('#available-'+no).val('');
+	$('#itemVatCode-'+no).val('');
+	$('#itemVatRate-'+no).val('');
+	$('#whsCode-'+no).val('');
 }
 
 

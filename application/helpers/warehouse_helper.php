@@ -13,7 +13,7 @@ function select_warehouse($code = NULL)
   {
     foreach($options as $rs)
     {
-      $sc .= "<option value='{$rs->code}' ".is_selected($rs->code, $code).">{$rs->code}</option>";
+      $sc .= "<option value='{$rs->code}' ".is_selected($rs->code, $code).">{$rs->code} : {$rs->name}</option>";
     }
   }
 

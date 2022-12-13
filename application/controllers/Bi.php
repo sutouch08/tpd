@@ -22,5 +22,20 @@ class Bi extends PS_Controller
 	}
 
 
+	public function get_link()
+	{
+		$link = $this->_user->bi_link == 1 ? $this->user_model->get_bi_link($this->_user->sale_id) : NULL;
+
+		if(! empty($link))
+		{
+			echo $link;
+		}
+		else
+		{
+			echo "not found";
+		}
+	}
+
+
 
 } //--- end class

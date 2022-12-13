@@ -59,6 +59,11 @@
   </div>
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+    <label class="search-label">ผู้อนุมัติ</label>
+    <input type="text" class="form-control input-sm text-center search-box" name="Approver" value="<?php echo $Approver; ?>" />
+  </div>
+
+	<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
     <label class="search-label">การอนุมัติ</label>
     <select class="form-control input-sm" name="Approved" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
@@ -69,7 +74,7 @@
 		</select>
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
     <label class="search-label">Promotion</label>
     <select class="form-control input-sm" name="is_promotion" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
@@ -79,7 +84,7 @@
   </div>
 
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1 col-md-1-harf col-sm-2 col-xs-6 padding-5">
     <label class="search-label">สถานะ</label>
     <select class="form-control input-sm" name="Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
@@ -90,7 +95,7 @@
 		</select>
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1 col-md-1-harf col-sm-2 col-xs-6 padding-5">
     <label class="search-label">SO Status</label>
     <select class="form-control input-sm" name="SO_Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
@@ -101,7 +106,7 @@
 		</select>
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1 col-md-1-harf col-sm-2 col-xs-6 padding-5">
     <label class="search-label">DO Status</label>
     <select class="form-control input-sm" name="DO_Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
@@ -111,7 +116,7 @@
 		</select>
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
     <label class="search-label">Invoice Status</label>
     <select class="form-control input-sm" name="INV_Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>

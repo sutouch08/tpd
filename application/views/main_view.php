@@ -354,11 +354,30 @@
     window.location.href = BASE_URL + 'order_promotion/add_new';
   }
 
-  function goPowerBi() {
-    var target = window.location.href = BASE_URL + 'bi';
-    var prop = "width=800, height=900, left="+center+", scrollbars=yes";
-    window.open(target, '_blank', prop);
+	function goPowerBi() {
+		$.ajax({
+			url:BASE_URL + 'bi/get_link',
+			type:'GET',
+			cache:false,
+			success:function(rs) {
+				if(rs != "not found") {
+					var target = rs;					
+					var center    = ($(document).width() - 800)/2;
+			    var prop = "width=800, height=900, left="+center+", scrollbars=yes";
+			    window.open(target, '_blank', prop);
+				}
+				else {
+					swal("Power Bi Link not found");
+				}
+			}
+		});
   }
+
+  // function goPowerBi() {
+  //   var target = window.location.href = BASE_URL + 'bi';
+  //   var prop = "width=800, height=900, left="+center+", scrollbars=yes";
+  //   window.open(target, '_blank', prop);
+  // }
 
 </script>
 

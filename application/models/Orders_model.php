@@ -167,6 +167,12 @@ class Orders_model extends CI_Model
     }
 
 
+    if(!empty($ds['Approver']))
+    {
+      $this->db->like('Approver', $ds['Approver']);
+    }
+
+
     if(!empty($ds['DocNum']))
     {
       $this->db->like('DocNum', $ds['DocNum']);
@@ -358,6 +364,12 @@ class Orders_model extends CI_Model
     if(!empty($ds['UserName']))
     {
       $this->db->like('uname', $ds['UserName']);
+    }
+
+
+    if(!empty($ds['Approver']))
+    {
+      $this->db->like('Approver', $ds['Approver']);
     }
 
 

@@ -33,6 +33,7 @@ class Orders extends PS_Controller
 			'PoNo' => get_filter('PoNo', 'so_PoNo', ''),
 			'CardCode' => get_filter('CardCode', 'so_CardCode', ''),
 			'UserName' => get_filter('UserName', 'so_UserName', ''),
+			'Approver' => get_filter('Approver', 'so_Approver', ''),
 			'Approved' => get_filter('Approved', 'so_Approved', 'all'),
 			'Status' => get_filter('Status', 'doc_status', 'all'),
 			'SO_Status' => get_filter('SO_Status', 'SO_Status', 'all'),
@@ -484,6 +485,7 @@ class Orders extends PS_Controller
 		$sc = TRUE;
 		$header = json_decode($this->input->post('header'));
 		$details = json_decode($this->input->post('details'));
+		$dfWhsCode = getConfig('DEFAULT_WAREHOUSE');
 
 		if(!empty($header))
 		{
@@ -548,6 +550,8 @@ class Orders extends PS_Controller
 					'uname' => $this->_user->uname
 				);
 
+				$this->db->trans_begin();
+
 					if($this->orders_model->add($arr))
 					{
 						$row = 1;
@@ -558,79 +562,103 @@ class Orders extends PS_Controller
 								break;
 							}
 
-							$sellPrice = $rs->SellPrice == "" ? $rs->stdPrice : $rs->SellPrice;
+							$item = $this->item_model->get($rs->ItemCode, $header->PriceList);
 
-							$arr = array(
-								'order_code' => $code,
-								'LineNum' => $row,
-								'ItemCode' => $rs->ItemCode,
-								'ItemName' => $rs->ItemName,
-								'Qty' => $rs->Qty,
-								'freeQty' => $rs->freeQty,
-								'UomCode' => $rs->UomCode,
-								'stdPrice' => $rs->stdPrice,
-								'SellPrice' => $sellPrice,
-								'VatGroup' => $rs->VatGroup,
-								'VatRate' => $rs->VatRate,
-								'VatAmount' => $rs->VatAmount,
-								'LineTotal' => $rs->lineTotal,
-								'WhsCode' => get_null($rs->WhsCode),
-								'lineText' => get_null($rs->lineText)
-							);
-
-							if(!empty($rs->freeTxt))
+							if(! empty($item))
 							{
-								$arr['FreeText'] = trim($rs->freeTxt);
-							}
 
-							if($sellPrice > 0 && $sellPrice < $rs->stdPrice)
-							{
-								$priceEdit = TRUE;
-							}
+								$sellPrice = $rs->SellPrice == "" ? $item->stdPrice : $rs->SellPrice;
 
-							$id = $this->orders_model->add_detail($arr);
-
-							if($id != FALSE)
-							{
-								$row++;
-								if($rs->freeQty > 0)
+								if(! empty($header->VatGroup))
 								{
-									$arr = array(
-										'order_code' => $code,
-										'LineNum' => $row,
-										'ItemCode' => $rs->ItemCode,
-										'ItemName' => $rs->ItemName,
-										'Qty' => $rs->freeQty,
-										'UomCode' => $rs->UomCode,
-										'stdPrice' => get_zero($rs->stdPrice),
-										'SellPrice' => 0.00,
-										'DiscPrcnt' => 100,
-										'VatGroup' => $rs->VatGroup,
-										'VatRate' => $rs->VatRate,
-										'VatAmount' => 0.00,
-										'LineTotal' => 0.00,
-										'WhsCode' => get_null($rs->WhsCode),
-										'lineText' => NULL,
-										'free_item' => 1,
-										'link_id' => $id
-									);
-
-									if($this->orders_model->add_detail($arr))
+									if($header->VatRate > 0 && $sellPrice > 0)
 									{
-										$row++;
+										$amount = $rs->Qty * $sellPrice;
+										$rs->VatAmount = ($amount * $header->VatRate) / (100 + $header->VatRate);
+									}
+								}
+								else
+								{
+									if($item->Rate > 0 && $sellPrice > 0)
+									{
+										$amount = $rs->Qty * $sellPrice;
+										$rs->VatAmount = ($amount * $item->Rate) / (100 + $item->Rate);
+									}
+								}
+
+								$arr = array(
+									'order_code' => $code,
+									'LineNum' => $row,
+									'ItemCode' => $item->code,
+									'ItemName' => $item->name,
+									'Qty' => $rs->Qty,
+									'freeQty' => $rs->freeQty,
+									'UomCode' => $item->uom,
+									'stdPrice' => $item->price,
+									'SellPrice' => $sellPrice,
+									'VatGroup' => empty($header->VatGroup) ? $item->VatCode : $header->VatGroup,
+									'VatRate' => empty($header->VatGroup) ? $item->Rate : $header->VatRate,
+									'VatAmount' => $rs->VatAmount,
+									'LineTotal' => $rs->Qty * $sellPrice,
+									'WhsCode' => empty($rs->WhsCode) ? $dfWhsCode : $rs->WhsCode,
+									'lineText' => get_null($rs->lineText)
+								);
+
+								if(!empty($rs->freeTxt))
+								{
+									$arr['FreeText'] = trim($rs->freeTxt);
+								}
+
+								if($sellPrice < $rs->stdPrice)
+								{
+									$priceEdit = TRUE;
+								}
+
+								$id = $this->orders_model->add_detail($arr);
+
+								if($id != FALSE)
+								{
+									$row++;
+									if($rs->freeQty > 0)
+									{
+										$arr = array(
+											'order_code' => $code,
+											'LineNum' => $row,
+											'ItemCode' => $item->code,
+											'ItemName' => $item->name,
+											'Qty' => $rs->freeQty,
+											'UomCode' => $item->uom,
+											'stdPrice' => $item->price,
+											'SellPrice' => 0.00,
+											'DiscPrcnt' => 100,
+											'VatGroup' => empty($header->VatGroup) ? $item->VatCode : $header->VatGroup,
+											'VatRate' => empty($header->VatGroup) ? $item->Rate : $header->VatRate,
+											'VatAmount' => 0.00,
+											'LineTotal' => 0.00,
+											'WhsCode' => empty($rs->WhsCode) ? $dfWhsCode : $rs->WhsCode,
+											'lineText' => NULL,
+											'free_item' => 1,
+											'link_id' => $id
+										);
+
+											if($this->orders_model->add_detail($arr))
+											{
+												$row++;
+											}
+											else
+											{
+												$sc = FALSE;
+												$this->error = "Insert Free Item failed : {{$rs->ItemCode}}";
+											}
+										}
 									}
 									else
 									{
 										$sc = FALSE;
-										$this->error = "Insert Free Item failed : {{$rs->ItemCode}}";
+										$this->error = "Insert Item failed : {{$rs->ItemCode}}";
 									}
-								}
 							}
-							else
-							{
-								$sc = FALSE;
-								$this->error = "Insert Item failed : {{$rs->ItemCode}}";
-							}
+
 						} //--- end foreach details
 
 
@@ -664,6 +692,15 @@ class Orders extends PS_Controller
 					{
 						$sc = FALSE;
 						$this->error = "Insert Order failed";
+					}
+
+					if($sc === TRUE)
+					{
+						$this->db->trans_commit();
+					}
+					else
+					{
+						$this->db->trans_rollback();
 					}
 			}
 			else
@@ -1381,6 +1418,7 @@ class Orders extends PS_Controller
 			'so_PoNo',
 			'so_CardCode',
 			'so_UserName',
+			'so_Approver',
 			'so_Approved',
 			'doc_status',
 			'SO_Status',

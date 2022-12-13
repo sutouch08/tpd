@@ -42,6 +42,17 @@
       </div>
       <div class="divider-hidden"></div>
 
+			<div class="col-lg-3 col-md-4 col-sm-5 col-xs-8 padding-5">
+        <span class="form-control left-label">Default Warehouse</span>
+      </div>
+      <div class="col-lg-5 col-md-5 col-sm-5 col-xs-6 padding-5">
+        <select class="width-100" id="dfWhsCode" name="DEFAULT_WAREHOUSE">
+					<option value="">Please select</option>
+					<?php echo select_warehouse($DEFAULT_WAREHOUSE); ?>
+				</select>
+      </div>
+      <div class="divider-hidden"></div>
+
       <div class="divider-hidden"></div>
 
 
@@ -58,3 +69,6 @@
   	</div><!--/ row -->
   </form>
 </div>
+<script>
+	$('#dfWhsCode').select2();
+</script>
