@@ -286,6 +286,13 @@ function init() {
 					$('#itemVatRate-'+no).val(ds.vatRate);
 					$('#whsCode-'+no).val(ds.whsCode);
 
+					if(ds.is_sale_discount == 'Y') {
+						$('#dis-'+no).prop('checked', true);
+					}
+					else {
+						$('#dis-'+no).prop('checked', false);
+					}
+
 					recalAmount(no);
 				}
 				else {
@@ -497,7 +504,8 @@ function previewOrder() {
 					"uom" : $('#uom-'+no).val(),
 					"stdPrice" : addCommas($('#stdPrice-'+no).val()),
 					"sellPrice" : addCommas($('#price-'+no).val()),
-					"amount" : addCommas($('#amount-'+no).val())
+					"amount" : addCommas($('#amount-'+no).val()),
+					"dis" : $('#dis-'+no).is(':checked') ? '<i class="fa fa-check blue"></i>' : ''
 				}
 
 				items.push(item);
@@ -672,7 +680,8 @@ function saveAdd() {
 		'comments' : $.trim($('#remark').val()),
 
 		'totalVat' : removeCommas($('#totalVat').val()), //-- VatSum
-		'docTotal' : removeCommas($('#docTotal').val())
+		'docTotal' : removeCommas($('#docTotal').val()),
+		'is_discount_sales' : 0
 	}
 
 
@@ -688,6 +697,7 @@ function saveAdd() {
 			let vatRate = $('#itemVatRate-'+no).val(); ///---- vat rate at item
 			let sellPrice = $('#price-'+no).val();
 			let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
+			let dis = $('#dis-'+no).is(':checked') ? 1 : 0;
 			let item = {
 				"ItemCode" : $(this).val(),
 				"ItemName" : $("#item-"+no).val(),
@@ -701,11 +711,16 @@ function saveAdd() {
 				"VatAmount" : $('#vatAmount-'+no).val(),
 				"lineTotal" : $('#amount-'+no).val(),
 				"lineText" : $('#remark-'+no).val(),
-				"WhsCode" : $('#whsCode-'+no).val()
+				"WhsCode" : $('#whsCode-'+no).val(),
+				"discount_sales" : dis
 			}
 
 			if($('#freeTxt-'+no).length) {
 				item.freeTxt = $('#freeTxt-'+no).val();
+			}
+
+			if(dis == 1) {
+				ds.is_discount_sales = 1;
 			}
 
 			details.push(item);

@@ -78,7 +78,8 @@ class Export
               'U_Pricelist' => $price_list,
               'U_Approval' => $order->Approver,
 							'F_Web' => 'A',
-							'F_WebDate' => now()
+							'F_WebDate' => now(),
+              'U_TPD_HDiscSale' => $order->is_discount_sales == 1 ? 'Y' : NULL
 						);
 
 						//--- start transection
@@ -135,7 +136,8 @@ class Export
 										'U_WEB_ORNO' => $order->code,
 										'U_BEX_WEBREMARK' => $rs->LineText,
                     'U_Pricelist' => $price_list,
-                    'U_Approval' => $order->Approver
+                    'U_Approval' => $order->Approver,
+                    'U_TPD_DDiscSale' => $rs->discount_sales == 1 ? 'Y' : NULL
 									);
 
 									if(!$this->ci->orders_model->add_temp_detail($arr))

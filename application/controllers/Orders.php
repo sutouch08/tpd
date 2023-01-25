@@ -40,7 +40,8 @@ class Orders extends PS_Controller
 			'DO_Status' => get_filter('DO_Status', 'DO_Status', 'all'),
 			'INV_Status' => get_filter('INV_Status', 'INV_Status', 'all'),
 			'fromDate' => get_filter('fromDate', 'so_fromDate', ''),
-			'toDate' => get_filter('toDate', 'so_toDate', '')
+			'toDate' => get_filter('toDate', 'so_toDate', ''),
+			'is_discount_sales' => get_filter('is_discount_sales', 'is_discount_sales', 'all')
 		);
 
 		//--- แสดงผลกี่รายการต่อหน้า
@@ -162,7 +163,7 @@ class Orders extends PS_Controller
 		else
 		{
 			$customer_group = array();
-
+			$sale_person = array();
 			$sale_team = $this->user_model->get_user_team($this->_user->id);
 
 			if(!empty($sale_team))
@@ -453,7 +454,8 @@ class Orders extends PS_Controller
 						'inStock' => $whsQty,
 						'commit' => $commitQty,
 						'available' => $available,
-						'whsCode' => $item->dfWhsCode
+						'whsCode' => $item->dfWhsCode,
+						'is_sale_discount' => $item->U_TPD_DiscSale == 'Y' ? 'Y' : 'N'
 					);
 				}
 				else
@@ -545,6 +547,7 @@ class Orders extends PS_Controller
 					'Comments' => get_null($header->comments),
 					'BillDate' => $header->billOption == 'Y' ? 1 : 0,
 					'requireSQ' => $header->requireSQ == 'Y' ? 1 : 0,
+					'is_discount_sales' => $header->is_discount_sales,
 					'date_add' => now(),
 					'user_id' => $this->_user->id,
 					'uname' => $this->_user->uname
@@ -600,6 +603,7 @@ class Orders extends PS_Controller
 									'VatRate' => empty($header->VatGroup) ? $item->Rate : $header->VatRate,
 									'VatAmount' => $rs->VatAmount,
 									'LineTotal' => $rs->Qty * $sellPrice,
+									'discount_sales' => $rs->discount_sales,
 									'WhsCode' => empty($rs->WhsCode) ? $dfWhsCode : $rs->WhsCode,
 									'lineText' => get_null($rs->lineText)
 								);
@@ -635,6 +639,7 @@ class Orders extends PS_Controller
 											'VatRate' => empty($header->VatGroup) ? $item->Rate : $header->VatRate,
 											'VatAmount' => 0.00,
 											'LineTotal' => 0.00,
+											'discount_sales' => $rs->discount_sales,
 											'WhsCode' => empty($rs->WhsCode) ? $dfWhsCode : $rs->WhsCode,
 											'lineText' => NULL,
 											'free_item' => 1,
@@ -936,6 +941,7 @@ class Orders extends PS_Controller
 								'stdPrice' => number($rs->stdPrice, 4),
 								'sellPrice' => number($rs->SellPrice, 4),
 								'amount' => number($rs->LineTotal, 4),
+								'dis' => $rs->discount_sales == 1 ? '<i class="fa fa-check blue"></i>' : '',
 								'lineText' => $rs->LineText,
 								'openQty' => round($open_qty, 2),
 								'DoNo' => $DoNo,
@@ -1426,7 +1432,8 @@ class Orders extends PS_Controller
 			'INV_Status',
 			'so_fromDate',
 			'so_toDate',
-			'so_is_promotion'
+			'so_is_promotion',
+			'is_discount_sales'
 		);
 
 		clear_filter($filter);

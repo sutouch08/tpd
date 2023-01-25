@@ -41,7 +41,8 @@ class Order_promotion extends PS_Controller
 			'DO_Status' => get_filter('DO_Status', 'DO_Status', 'all'),
 			'INV_Status' => get_filter('INV_Status', 'INV_Status', 'all'),
 			'fromDate' => get_filter('fromDate', 'so_fromDate', ''),
-			'toDate' => get_filter('toDate', 'so_toDate', '')
+			'toDate' => get_filter('toDate', 'so_toDate', ''),
+			'is_discount_sales' => get_filter('is_discount_sales', 'is_discount_sales', 'all')
 		);
 
 		//--- แสดงผลกี่รายการต่อหน้า
@@ -488,7 +489,8 @@ class Order_promotion extends PS_Controller
 							'inStock' => $whsQty,
 							'commit' => $commitQty,
 							'available' => $available,
-							'whsCode' => $item->dfWhsCode
+							'whsCode' => $item->dfWhsCode,
+							'is_sale_discount' => $item->U_TPD_DiscSale == 'Y' ? 'Y' : 'N'
 						);
 					}
 					else
@@ -574,6 +576,7 @@ class Order_promotion extends PS_Controller
 						'Comments' => get_null($header->comments),
 						'BillDate' => $header->billOption == 'Y' ? 1 : 0,
 						'requireSQ' => $header->requireSQ == 'Y' ? 1 : 0,
+						'is_discount_sales' => $header->is_discount_sales,
 						'date_add' => now(),
 						'user_id' => $this->_user->id,
 						'uname' => $this->_user->uname,
@@ -608,6 +611,7 @@ class Order_promotion extends PS_Controller
 								'VatRate' => $rs->VatRate,
 								'VatAmount' => $rs->VatAmount,
 								'LineTotal' => $rs->lineTotal,
+								'discount_sales' => $rs->discount_sales,
 								'WhsCode' => get_null($rs->WhsCode),
 								'FreeText' => empty($rs->freeTxt) ? NULL : trim($rs->freeTxt),
 								'lineText' => get_null($rs->lineText),
@@ -638,6 +642,7 @@ class Order_promotion extends PS_Controller
 										'VatRate' => $rs->VatRate,
 										'VatAmount' => 0.00,
 										'LineTotal' => 0.00,
+										'discount_sales' => $rs->discount_sales,
 										'WhsCode' => get_null($rs->WhsCode),
 										'lineText' => NULL,
 										'free_item' => 1,
@@ -898,7 +903,8 @@ class Order_promotion extends PS_Controller
 			'DO_Status',
 			'INV_Status',
 			'so_fromDate',
-			'so_toDate'
+			'so_toDate',
+			'is_discount_sales'
 		);
 
 		clear_filter($filter);

@@ -113,6 +113,7 @@
 		<tr>
 			<th class="width-5 middle text-center">#</th>
 			<th class="width-30 middle text-center">รายการสินค้า</th>
+			<th class="width-5 middle text-center">Discount Sales</th>
 			<th class="width-10 middle text-center">จำนวน</th>
 			<th class="width-10 middle text-center">แถม</th>
 			<th class="width-10 middle text-center">หน่วย</th>
@@ -126,13 +127,14 @@
 		{{#each items}}
 			{{#if @last}}
 				<tr>
-					<td colspan="7" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
+					<td colspan="8" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
 					<td colspan="2" class="middle text-right">{{totalAmount}}</td>
 				</tr>
 			{{else}}
 				<tr>
 					<td class="middle text-center">{{no}}</td>
 					<td class="middle">{{itemName}}</td>
+					<td class="middle text-center">{{{dis}}}</td>
 					<td class="middle text-right">{{qty}}</td>
 					<td class="middle text-right">{{free}}</td>
 					<td class="middle text-center">{{uom}}</td>

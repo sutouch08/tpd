@@ -13,11 +13,12 @@
 
   </div>
   <div class="col-sm-12 col-xs-12 padding-5 table-responsive">
-    <table class="table table-bordered" style="table-layout: fixed; min-width:100%; width:12300px;">
+    <table class="table table-bordered" style="table-layout: fixed; min-width:100%; width:1310px;">
       <thead>
         <tr>
           <th class="middle text-center" style="width:50px;">#</th>
           <th class="middle text-center" style="width:200px;">รายการสินค้า</th>
+          <th class="middle text-center" style="width:80px;">Discount Sales</th>
           <th class="middle text-center" style="width:80px;">In Stock</th>
           <th class="middle text-center" style="width:80px;">Committed</th>
           <th class="middle text-center" style="width:80px;">Available</th>
@@ -47,6 +48,7 @@
             </div>
 
           </td>
+          <td class="middle text-center"><label><input type="checkbox" class="ace dis" id="dis-1" value="1" /><span class="lbl"></span></lable></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-1" value="" disabled/></td>
@@ -86,6 +88,7 @@
       <span class="input-group-addon" onclick="clearText({{no}})">x</span>
     </div>
   </td>
+  <td class="middle text-center"><label><input type="checkbox" class="ace dis" id="dis-{{no}}" value="1" /><span class="lbl"></span></lable></td>
   <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-{{no}}" value="" disabled /></td>
   <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-{{no}}" value="" disabled/></td>
   <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-{{no}}" value="" disabled/></td>

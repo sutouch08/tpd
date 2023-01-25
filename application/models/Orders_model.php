@@ -242,6 +242,11 @@ class Orders_model extends CI_Model
       }
     }
 
+    if(isset($ds['is_discount_sales']) && $ds['is_discount_sales'] != 'all')
+    {
+      $this->db->where('is_discount_sales', $ds['is_discount_sales']);
+    }
+
 
     if($ds['DO_Status'] != 'all')
     {
@@ -430,7 +435,10 @@ class Orders_model extends CI_Model
       $this->db->where('Status', $ds['Status']);
     }
 
-
+    if(isset($ds['is_discount_sales']) && $ds['is_discount_sales'] != 'all')
+    {
+      $this->db->where('is_discount_sales', $ds['is_discount_sales']);
+    }
 
     if($ds['SO_Status'] != 'all')
     {

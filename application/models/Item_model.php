@@ -14,7 +14,7 @@ class Item_model extends CI_Model
     {
       $rs = $this->ms
       ->select('OITM.ItemCode AS code, OITM.ItemName AS name')
-      ->select('OITM.SalUnitMsr AS uom, ITM1.Price AS price')
+      ->select('OITM.SalUnitMsr AS uom, OITM.U_TPD_DiscSale, ITM1.Price AS price')
       ->select('OITM.DfltWH AS dfWhsCode, OVTG.Code AS VatCode, OVTG.Rate')
       ->from('OITM')
       ->join('ITM1', 'ITM1.ItemCode = OITM.ItemCode', 'left')
@@ -39,7 +39,7 @@ class Item_model extends CI_Model
   {
     $rs = $this->ms
     ->select('OITM.ItemCode AS code, OITM.ItemName AS name')
-    ->select('OITM.SalUnitMsr AS uom, OITM.DfltWH AS dfWhsCode')
+    ->select('OITM.SalUnitMsr AS uom, OITM.DfltWH AS dfWhsCode, OITM.U_TPD_DiscSale')
     ->select('OVTG.Code AS VatCode, OVTG.Rate')
     ->from('OITM')
     ->join('OVTG', 'OVTG.Code = OITM.VatGourpSa', 'left')

@@ -183,28 +183,6 @@ function get_address_bill_to() {
 }
 
 
-// function checkPromotionList() {
-// 	let count = 0;
-// 	$('.item-code').each(function(){
-// 		if($(this).val() != "") {
-// 			count++;
-// 		}
-// 	});
-//
-// 	if(count > 0) {
-// 		//--- clear item
-// 		$('#details-template').html('');
-//
-// 		//--- add new value to top row
-// 		$('#top-row').val(0);
-//
-// 		addRow();
-// 	}
-//
-// 	init();
-// }
-
-
 function checkPromotionList() {
 	//--- clear item
 	$('#details-template').html('');
@@ -212,78 +190,6 @@ function checkPromotionList() {
 	$('#top-row').val(0);
 	addRow();
 }
-
-
-// function init() {
-// 	var promotion_id = $('#promotion').val();
-// 	var promotion_id = promotion_id == "" ? "nopromotion" : promotion_id;
-//
-// 	$('.input-item-code').autocomplete({
-// 		source:HOME + 'get_promotion_item_code_and_name/'+promotion_id,
-// 		autoFocus:true,
-// 		open:function(event){
-// 			var $ul = $(this).autocomplete('widget');
-// 			$ul.css('width', 'auto');
-// 		},
-// 		close:function(){
-// 			var data = $(this).val();
-// 			var arr = data.split(' | ');
-// 			if(arr.length == 2) {
-// 				let no = $(this).data("no");
-// 				$('#itemCode-'+no).val(arr[1]);
-// 				$(this).val(arr[0]);
-// 				getItemData(arr[1], no);
-// 			}
-// 			else {
-// 				$(this).val('');
-// 			}
-// 		}
-// 	})
-// }
-
-
-
-
-	// function getItemData(code, no) {
-	// 	let promotion_id = $('#promotion').val();
-	//
-	// 	$.ajax({
-	// 		url:HOME + "get_item_data",
-	// 		type:"GET",
-	// 		cache:false,
-	// 		data:{
-	// 			'code' : code,
-	// 			'promotion_id' : promotion_id
-	// 		},
-	// 		success:function(rs) {
-	// 			var rs = $.trim(rs);
-	// 			if(isJson(rs)) {
-	// 				var ds = $.parseJSON(rs);
-	// 				var price = parseFloat(ds.price);
-	// 				$('#uom-'+no).val(ds.uom);
-	// 				$('#qty-'+no).val(ds.qty);
-	// 				$('#minQty-'+no).val(ds.qty);
-	// 				$('#stdPrice-'+no).val(ds.price);
-	// 				$('#price-'+no).val(ds.price);
-	// 				$('#instock-'+no).val(ds.inStock);
-	// 				$('#commit-'+no).val(ds.commit);
-	// 				$('#available-'+no).val(ds.available);
-	// 				$('#itemVatCode-'+no).val(ds.vatCode);
-	// 				$('#itemVatRate-'+no).val(ds.vatRate);
-	// 				$('#whsCode-'+no).val(ds.whsCode);
-	//
-	// 				recalAmount(no);
-	// 			}
-	// 			else {
-	// 				swal({
-	// 					title:'Error!',
-	// 					text:rs,
-	// 					type:'error'
-	// 				})
-	// 			}
-	// 		}
-	// 	})
-	// }
 
 
 	function getItemData(no) {
@@ -316,6 +222,13 @@ function checkPromotionList() {
 					$('#itemVatRate-'+no).val(ds.vatRate);
 					$('#whsCode-'+no).val(ds.whsCode);
 
+					if(ds.is_sale_discount == 'Y') {
+						$('#dis-'+no).prop('checked', true);
+					}
+					else {
+						$('#dis-'+no).prop('checked', false);
+					}
+
 					recalAmount(no);
 				}
 				else {
@@ -328,45 +241,6 @@ function checkPromotionList() {
 			}
 		})
 	}
-
-
-
-// function addRow() {
-// 	var no = $('#top-row').val();
-// 	no++;
-// 	$('#top-row').val(no);
-//
-// 	var data = {"no" : no};
-// 	var source = $('#row-template').html();
-// 	var output = $('#details-template');
-//
-// 	render_append(source, data, output);
-// 	init();
-//
-// 	$('#itemCode-'+no).focus();
-// }
-
-//
-// function get_promotion_items() {
-// 	let promotion_id = $('#promotion').val();
-//
-// 	load_in();
-//
-// 	$.ajax({
-// 		url:HOME + 'get_promotion_items',
-// 		type:'GET',
-// 		cache:false,
-// 		data:{
-// 			'promotion_id' : promotion_id
-// 		},
-// 		success:function(rs) {
-// 			load_out();
-// 			if(isJson(rs)) {
-// 				var ds = $.parseJSON(rs);
-// 			}
-// 		}
-// 	})
-// }
 
 
 
@@ -613,7 +487,8 @@ function previewOrder() {
 						"uom" : $('#uom-'+no).val(),
 						"stdPrice" : addCommas($('#stdPrice-'+no).val()),
 						"sellPrice" : addCommas($('#price-'+no).val()),
-						"amount" : addCommas($('#amount-'+no).val())
+						"amount" : addCommas($('#amount-'+no).val()),
+						"dis" : $('#dis-'+no).is(':checked') ? '<i class="fa fa-check blue"></i>' : ''
 					}
 
 					items.push(item);
@@ -758,7 +633,8 @@ function saveAdd() {
 		'comments' : $.trim($('#remark').val()),
 
 		'totalVat' : removeCommas($('#totalVat').val()), //-- VatSum
-		'docTotal' : removeCommas($('#docTotal').val())
+		'docTotal' : removeCommas($('#docTotal').val()),
+		'is_discount_sales' : 0
 	}
 
 
@@ -774,7 +650,7 @@ function saveAdd() {
 			let vatRate = $('#itemVatRate-'+no).val(); ///---- vat rate at item
 			let sellPrice = $('#price-'+no).val();
 			let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
-
+			let dis = $('#dis-'+no).is(':checked') ? 1 : 0;
 			let item = {
 				"ItemCode" : $(this).val(),
 				"ItemName" : $("#item-"+no).val(),
@@ -788,12 +664,17 @@ function saveAdd() {
 				"VatAmount" : $('#vatAmount-'+no).val(),
 				"lineTotal" : $('#amount-'+no).val(),
 				"lineText" : $('#remark-'+no).val(),
-				"WhsCode" : $('#whsCode-'+no).val()
+				"WhsCode" : $('#whsCode-'+no).val(),
+				"discount_sales" : dis
 			}
 
 			if($('#freeTxt-'+no).length)
 			{
 				item.freeTxt = $('#freeTxt-'+no).val();
+			}
+
+			if(dis == 1) {
+				ds.is_discount_sales = 1;
 			}
 
 			details.push(item);
@@ -836,12 +717,6 @@ function saveAdd() {
 	})
 
 }
-
-
-// $(document).ready(function(){
-// 	init();
-// })
-
 
 
 

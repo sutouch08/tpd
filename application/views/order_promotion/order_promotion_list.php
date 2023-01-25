@@ -22,42 +22,42 @@
 <hr class="padding-5"/>
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
 <div class="row">
-  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+  <div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">เลขที่</label>
     <input type="text" class="form-control input-sm text-center search-box" name="WebCode" value="<?php echo $WebCode; ?>" />
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">ลูกค้า</label>
     <input type="text" class="form-control input-sm text-center search-box" name="CardCode" value="<?php echo $CardCode; ?>" placeholder="Code OR Name" />
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">SO No.</label>
     <input type="text" class="form-control input-sm text-center search-box" name="DocNum" value="<?php echo $DocNum; ?>" />
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">DO No.</label>
     <input type="text" class="form-control input-sm text-center search-box" name="DeliveryNo" value="<?php echo $DeliveryNo; ?>" />
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">Invoice No.</label>
     <input type="text" class="form-control input-sm text-center search-box" name="InvoiceNo" value="<?php echo $InvoiceNo; ?>" />
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">เลขที่ PO</label>
     <input type="text" class="form-control input-sm text-center search-box" name="PoNo" value="<?php echo $PoNo; ?>" />
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">User</label>
     <input type="text" class="form-control input-sm text-center search-box" name="UserName" value="<?php echo $UserName; ?>" />
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">การอนุมัติ</label>
     <select class="form-control input-sm" name="Approved" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
@@ -68,7 +68,7 @@
   </div>
 
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">สถานะ</label>
     <select class="form-control input-sm" name="Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
@@ -79,7 +79,7 @@
 		</select>
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">SO Status</label>
     <select class="form-control input-sm" name="SO_Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
@@ -90,7 +90,7 @@
 		</select>
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">DO Status</label>
     <select class="form-control input-sm" name="DO_Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
@@ -100,13 +100,22 @@
 		</select>
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
     <label class="search-label">Invoice Status</label>
     <select class="form-control input-sm" name="INV_Status" onchange="getSearch()">
 			<option value="all">ทั้งหมด</option>
 			<option value="x" <?php echo is_selected("x", $INV_Status); ?>>No Invoice</option>
 			<option value="P" <?php echo is_selected('P', $INV_Status); ?>>Partial</option>
 			<option value="F" <?php echo is_selected('F', $INV_Status); ?>>Full</option>
+		</select>
+  </div>
+
+	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
+    <label class="search-label">Discount Sales</label>
+    <select class="form-control input-sm" name="is_discount_sales" onchange="getSearch()">
+			<option value="all">ทั้งหมด</option>
+			<option value="1" <?php echo is_selected('1', $is_discount_sales); ?>>มี</option>
+			<option value="0" <?php echo is_selected('0', $is_discount_sales); ?>>ไม่มี</option>
 		</select>
   </div>
 
@@ -118,11 +127,11 @@
 		</div>
 	</div>
 
-  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+  <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
     <label class="display-block not-show">buton</label>
     <button type="submit" class="btn btn-xs btn-primary btn-block"><i class="fa fa-search"></i> Search</button>
   </div>
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
     <label class="display-block not-show">buton</label>
     <button type="button" class="btn btn-xs btn-warning btn-block" onclick="clearFilter()"><i class="fa fa-retweet"></i> Reset</button>
   </div>
@@ -277,6 +286,7 @@
 		<tr>
 			<th class="middle text-center">#</th>
 			<th class="width-20 middle text-center">รายการสินค้า</th>
+			<th class="middle text-center" style="width:80px;">Discount Sales</th>
 			<th class="width-5 middle text-center">จำนวน</th>
 			<th class="width-5 middle text-center">แถม</th>
 			<th class="width-8 middle text-center">หน่วย</th>
@@ -294,7 +304,7 @@
 		{{#each items}}
 			{{#if @last}}
 				<tr>
-					<td colspan="7" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
+					<td colspan="8" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
 					<td class="middle text-right">{{totalAmount}}</td>
 					<td></td><td></td><td></td><td></td>
 				</tr>
@@ -304,6 +314,7 @@
 						{{{checkbox}}}
 					</td>
 					<td class="middle">{{itemName}}</td>
+					<td class="middle text-center">{{{dis}}}</td>
 					<td class="middle text-right">{{qty}}</td>
 					<td class="middle text-right">{{free}}</td>
 					<td class="middle text-center">{{uom}}</td>
