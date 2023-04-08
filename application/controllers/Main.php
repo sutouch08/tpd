@@ -20,16 +20,16 @@ class Main extends PS_Controller
 		$this->pm->can_view = 1;
 		$ds = array();
 
-		if(!empty($this->_user->sale_id))
+		if(!empty($this->_user->id))
 		{
 
 			$fromDate = date('01-m-Y');
 			$toDate = date('t-m-Y');
-			$sale_id = $this->_user->sale_id;
-			$ds['sumOrdered'] = round($this->order_report_model->get_sum_order($sale_id, $fromDate, $toDate), 2);
-			$ds['sumPending'] = round($this->order_report_model->get_sum_pending($sale_id, $fromDate, $toDate), 2);
-			$ds['sumApproved'] = round($this->order_report_model->get_sum_approved($sale_id, $fromDate, $toDate), 2);
-			$ds['sumRejected'] = round($this->order_report_model->get_sum_rejected($sale_id, $fromDate, $toDate), 2);
+			$user_id = $this->_user->id;
+			$ds['sumOrdered'] = round($this->order_report_model->get_sum_order($user_id, $fromDate, $toDate), 2);
+			$ds['sumPending'] = round($this->order_report_model->get_sum_pending($user_id, $fromDate, $toDate), 2);
+			$ds['sumApproved'] = round($this->order_report_model->get_sum_approved($user_id, $fromDate, $toDate), 2);
+			$ds['sumRejected'] = round($this->order_report_model->get_sum_rejected($user_id, $fromDate, $toDate), 2);
 			$ds['bi_link'] = $this->_user->bi_link == 1 ? $this->user_model->get_bi_link($this->_user->sale_id) : NULL;
 		}
 
@@ -46,14 +46,14 @@ class Main extends PS_Controller
 		$ds = array();
 		$fromDate = $this->input->get('fromDate');
 		$toDate = $this->input->get('toDate');
-		$sale_id = $this->_user->sale_id;
+		$user_id = $this->_user->id;
 
-		if(!empty($sale_id))
+		if(!empty($user_id))
 		{
-			$ds['sumOrdered'] = number($this->order_report_model->get_sum_order($sale_id, $fromDate, $toDate), 2);
-			$ds['sumPending'] = number($this->order_report_model->get_sum_pending($sale_id, $fromDate, $toDate), 2);
-			$ds['sumApproved'] = number($this->order_report_model->get_sum_approved($sale_id, $fromDate, $toDate), 2);
-			$ds['sumRejected'] = number($this->order_report_model->get_sum_rejected($sale_id, $fromDate, $toDate), 2);
+			$ds['sumOrdered'] = number($this->order_report_model->get_sum_order($user_id, $fromDate, $toDate), 2);
+			$ds['sumPending'] = number($this->order_report_model->get_sum_pending($user_id, $fromDate, $toDate), 2);
+			$ds['sumApproved'] = number($this->order_report_model->get_sum_approved($user_id, $fromDate, $toDate), 2);
+			$ds['sumRejected'] = number($this->order_report_model->get_sum_rejected($user_id, $fromDate, $toDate), 2);
 		}
 		else
 		{
@@ -74,11 +74,11 @@ class Main extends PS_Controller
 		$fromDate = $this->input->get('fromDate');
 		$toDate = $this->input->get('toDate');
 		$status = $this->input->get('status');
-		$sale_id = $this->_user->sale_id;
+		$user_id = $this->_user->id;
 
-		if(!empty($sale_id))
+		if(!empty($user_id))
 		{
-			$report = $this->order_report_model->get_report_by_sale_id($sale_id, $fromDate, $toDate, $status);
+			$report = $this->order_report_model->get_report_by_user_id($user_id, $fromDate, $toDate, $status);
 
 			if(!empty($report))
 			{

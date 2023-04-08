@@ -3,7 +3,7 @@
     padding:3px;
   }
 </style>
-
+<?php $hide = $this->disSale ? "" : 'hide'; ?>
 <div class="row">
   <div class="col-sm-12 col-xs-12 padding-5">
     <button type="button" class="btn btn-sm btn-info" onclick="addRow()">Add Row</button>
@@ -18,7 +18,6 @@
         <tr>
           <th class="middle text-center" style="width:50px;">#</th>
           <th class="middle text-center" style="width:200px;">รายการสินค้า</th>
-          <th class="middle text-center" style="width:80px;">Discount Sales</th>
           <th class="middle text-center" style="width:80px;">In Stock</th>
           <th class="middle text-center" style="width:80px;">Committed</th>
           <th class="middle text-center" style="width:80px;">Available</th>
@@ -27,6 +26,7 @@
           <th class="middle text-center" style="width:80px;">หน่วย</th>
           <th class="middle text-center" style="width:100px;">ราคา/หน่วย (Term)</th>
           <th class="middle text-center" style="width:100px;">ราคา(พิเศษ) /หน่วย</th>
+          <th class="middle text-center <?php echo $hide; ?>" style="width:80px;">Discount Sales</th>
           <th class="middle text-center" style="width:100px;">มูลค่า</th>
           <th class="middle text-center" style="width:100px;">หมายเหตุ</th>
           <?php if($this->isAdmin) : ?>
@@ -48,7 +48,6 @@
             </div>
 
           </td>
-          <td class="middle text-center"><label><input type="checkbox" class="ace dis" id="dis-1" value="1" /><span class="lbl"></span></lable></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-1" value="" disabled/></td>
@@ -60,6 +59,7 @@
             <input type="hidden" id="vatAmount-1" value="0.00">
           </td>
           <td class="middle"><input type="number" class="form-control input-sm text-right" id="price-1" value="" onkeyup="recalAmount(1)"/></td>
+          <td class="middle text-center <?php echo $hide; ?>"><label><input type="checkbox" class="ace dis" id="dis-1" value="1" /><span class="lbl"></span></lable></td>
           <td class="middle"><input type="number" class="form-control input-sm text-right" id="amount-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm" id="remark-1" maxlength="100" value="" /></td>
           <?php if($this->isAdmin) : ?>
@@ -88,7 +88,6 @@
       <span class="input-group-addon" onclick="clearText({{no}})">x</span>
     </div>
   </td>
-  <td class="middle text-center"><label><input type="checkbox" class="ace dis" id="dis-{{no}}" value="1" /><span class="lbl"></span></lable></td>
   <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-{{no}}" value="" disabled /></td>
   <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-{{no}}" value="" disabled/></td>
   <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-{{no}}" value="" disabled/></td>
@@ -100,6 +99,7 @@
   <input type="hidden" id="vatAmount-{{no}}" value="0.00">
   </td>
   <td class="middle"><input type="number" class="form-control input-sm text-right" id="price-{{no}}" value="" onkeyup="recalAmount({{no}})"/></td>
+  <td class="middle text-center <?php echo $hide; ?>"><label><input type="checkbox" class="ace dis" id="dis-{{no}}" value="1" /><span class="lbl"></span></lable></td>
   <td class="middle"><input type="number" class="form-control input-sm text-right" id="amount-{{no}}" value="" disabled/></td>
   <td class="middle"><input type="text" class="form-control input-sm" id="remark-{{no}}" maxlength="100" value="" /></td>
   <?php if($this->isAdmin) : ?>

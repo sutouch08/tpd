@@ -4,6 +4,8 @@
     $close    = $CLOSE_SYSTEM == 1 ? 'btn-danger' : '';
     $pwd_on   = $USE_STRONG_PWD == 1 ? 'btn-primary' : '';
     $pwd_off  = $USE_STRONG_PWD == 0 ? 'btn-primary' : '';
+    $dis_on   = $USE_DISCSALE == 1 ? 'btn-primary' : '' ;
+    $dis_off  = $USE_DISCSALE == 0 ? 'btn-primary' : '';
     $pm = get_permission('CLOSE_SYSTEM');
     $cando = ($pm->can_add + $pm->can_edit) > 0 ? TRUE : FALSE;
 ?>
@@ -39,7 +41,20 @@
       <span class="help-block">เมื่อเปิดใช้งาน การตั้งรหัสผ่านจะต้องมีความซับซ้อน โดยรหัสผ่านจะต้องมีความยาวไม่น้อยกว่า 8 ตัวอักษรและต้องประกอบด้วย ตัวอัษรพิมพ์ใหญ่ พิมพ์เล็ก ตัวเลข และสัญลักษณ์พิเศษ อย่างน้อยอย่างละ 1 ตัว</span>
     </div>
     <div class="divider-hidden"></div>
-    
+
+    <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"><span class="form-control left-label">Discount Sales</span></div>
+    <div class="col-lg-2 col-md-3 col-sm-4 col-xs-12">
+      <div class="btn-group width-100">
+        <button type="button" class="btn btn-sm <?php echo $dis_on; ?>" style="width:50%;" id="btn-dis-on" onClick="toggleDis(1)">เปิด</button>
+        <button type="button" class="btn btn-sm <?php echo $dis_off; ?>" style="width:50%;" id="btn-dis-off" onClick="toggleDis(0)">ปิด</button>
+      </div>
+      <input type="hidden" name="USE_DISCSALE" id="dis" value="<?php echo $USE_DISCSALE; ?>" />
+    </div>
+    <div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
+      <span class="help-block">เปิด/ปิด การใช้งาน Discount Sales</span>
+    </div>
+    <div class="divider-hidden"></div>
+
 
     <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"><span class="form-control left-label">Sync logs</span></div>
     <div class="col-lg-1-harf col-md-2 col-sm-2-harf col-xs-8">

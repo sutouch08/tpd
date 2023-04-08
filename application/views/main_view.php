@@ -90,7 +90,7 @@
     <button type="button" class="btn btn-xs btn-info btn-block" onclick="getDetails()">Details</button>
   </div>
 	<?php if($this->_user->bi_link == 1) : ?>
-		<?php if(!empty($bi_link)) : ?>
+		<?php if(!empty($this->_user->bi_link)) : ?>
 	<div class="col-lg-2 col-md-2-harf col-sm-2 col-xs-6 padding-5">
 		<label class="display-block not-show">btn</label>
 		<button type="button" class="btn btn-xs btn-success btn-block" onclick="goPowerBi()"><i class="fa fa-barchart"></i>&nbsp; Power BI</button>
@@ -204,8 +204,8 @@
 									<td class="middle">{{Approval_status}}</td>
 									<td class="middle">{{PoNo}}</td>
 									<td class="middle">{{SONo}}</td>
-									<td class="middle">{{DoNo}}</td>
-									<td class="middle">{{InvNo}}</td>
+									<td class="middle">{{{DoNo}}}</td>
+									<td class="middle">{{{InvNo}}}</td>
 									<td class="middle">{{InvoiceDate}}</td>
 								</tr>
 							{{/if}}
@@ -361,7 +361,7 @@
 			cache:false,
 			success:function(rs) {
 				if(rs != "not found") {
-					var target = rs;					
+					var target = rs;
 					var center    = ($(document).width() - 800)/2;
 			    var prop = "width=800, height=900, left="+center+", scrollbars=yes";
 			    window.open(target, '_blank', prop);

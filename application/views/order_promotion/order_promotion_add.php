@@ -8,6 +8,9 @@
 		z-index: 1;
 	}
 </style>
+
+<?php $hide = $this->disSale ? "" : 'hide'; ?>
+
 <div class="row">
 	<div class="col-sm-6 col-xs-6 padding-5">
     <h3 class="title">
@@ -104,12 +107,12 @@
 		<tr>
 			<th class="width-5 middle text-center">#</th>
 			<th class="width-30 middle">รายการสินค้า</th>
-			<th class="width-5 middle text-center">Discount Sales</th>
 			<th class="width-10 middle text-right">จำนวน</th>
 			<th class="width-10 middle text-right">แถม</th>
 			<th class="width-10 middle text-center">หน่วย</th>
 			<th class="width-10 middle text-right">ราคา/หน่วย (Term)</th>
 			<th class="width-10 middle text-right">ราคา(พิเศษ)/หน่วย</th>
+			<th class="width-5 middle text-center <?php echo $hide; ?>">Discount Sales</th>
 			<th class="width-10 middle text-right">มูลค่า</th>
 			<th class=""></th>
 		</tr>
@@ -125,12 +128,12 @@
 				<tr>
 					<td class="middle text-center">{{no}}</td>
 					<td class="middle">{{itemName}}</td>
-					<td class="middle text-center">{{{dis}}}</td>
 					<td class="middle text-right">{{qty}}</td>
 					<td class="middle text-right">{{free}}</td>
 					<td class="middle text-center">{{uom}}</td>
 					<td class="middle text-right">{{stdPrice}}</td>
 					<td class="middle text-right">{{sellPrice}}</td>
+					<td class="middle text-center <?php echo $hide; ?>">{{{dis}}}</td>
 					<td class="middle text-right">{{amount}}</td>
 					<td class="middle text-center">
 						<label><input type="checkbox" class="ace check-list" onchange="toggleSubmit()"><span class="lbl"></span></label>

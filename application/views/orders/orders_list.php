@@ -8,6 +8,8 @@
 
 </style>
 
+<?php $hide = $this->disSale ? "" : 'hide'; ?>
+
 <div class="row">
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
     <h3 class="title">
@@ -92,6 +94,7 @@
 			<option value="1" <?php echo is_selected('1', $Status); ?>>Pending</option>
 			<option value="2" <?php echo is_selected('2', $Status); ?>>Success</option>
 			<option value="3" <?php echo is_selected('3', $Status); ?>>Error</option>
+			<option value="-1" <?php echo is_selected('-1', $Status); ?>>Cancelled</option>
 		</select>
   </div>
 
@@ -206,6 +209,9 @@
 							<?php if($rs->Status == 0) : ?>
 								<span class="label label-xlg label-danger">Not Export</span>
 							<?php endif; ?>
+							<?php if($rs->Status == -1) : ?>
+								<span class="label label-xlg label-danger">Canceled</span>
+							<?php endif; ?>
 						</td>
 						<td class="middle text-center">
 							<?php if($rs->must_approve == 1) : ?>
@@ -309,12 +315,12 @@
 		<tr>
 			<th class="middle text-center">#</th>
 			<th class="middle text-center" style="width:250px;">รายการสินค้า</th>
-			<th class="middle text-center" style="width:80px;">Discount Sales</th>
 			<th class="middle text-center" style="width:100px;">จำนวน</th>
 			<th class="middle text-center" style="width:100px;">แถม</th>
 			<th class="middle text-center" style="width:100px;">หน่วย</th>
 			<th class="middle text-center" style="width:100px;">ราคา/หน่วย (Term)</th>
 			<th class="middle text-center" style="width:100px;">ราคา(พิเศษ)/หน่วย</th>
+			<th class="middle text-center <?php echo $hide; ?>" style="width:80px;">Discount Sales</th>
 			<th class="middle text-center" style="width:100px;">มูลค่า</th>
 			<th class="middle text-center" style="width:100px;">หมายเหตุ</th>
 			<th class="middle text-center" style="width:100px;">จำนวนค้างส่ง</th>
@@ -338,12 +344,12 @@
 						{{{checkbox}}}
 					</td>
 					<td class="middle">{{itemName}}</td>
-					<td class="middle text-center">{{{dis}}}</td>
 					<td class="middle text-right">{{qty}}</td>
 					<td class="middle text-right">{{free}}</td>
 					<td class="middle text-center">{{uom}}</td>
 					<td class="middle text-right">{{stdPrice}}</td>
 					<td class="middle text-right">{{sellPrice}}</td>
+					<td class="middle text-center <?php echo $hide; ?>">{{{dis}}}</td>
 					<td class="middle text-right">{{amount}}</td>
 					<td class="middle">{{lineText}}</td>
 					<td class="middle text-right">{{openQty}}</td>
@@ -448,7 +454,8 @@
 			<tr>
 				<td colspan="2">
 				{{#if del_btn}}
-					<button type="button" class="btn btn-sm btn-danger" onClick="removeTemp()" ><i class="fa fa-trash"></i> Delete Temp</button>
+					<button type="button" class="btn btn-sm btn-danger" onClick="cancleOrder()" ><i class="fa fa-times"></i> Cancel Order</button>
+					<button type="button" class="btn btn-sm btn-warning" onClick="removeTemp()" ><i class="fa fa-trash"></i> Delete Temp</button>
 				{{/if}}
 
 				<button type="button" class="btn btn-sm btn-default pull-right" onclick="closeModal('tempModal')">Close</button>

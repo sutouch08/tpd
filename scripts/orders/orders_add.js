@@ -293,6 +293,8 @@ function init() {
 						$('#dis-'+no).prop('checked', false);
 					}
 
+					$('#qty-'+no).focus();
+					
 					recalAmount(no);
 				}
 				else {

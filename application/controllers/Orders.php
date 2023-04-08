@@ -6,6 +6,7 @@ class Orders extends PS_Controller
 	public $menu_code = 'ORDERS';
 	public $menu_group_code = 'ORDER';
 	public $title = 'Orders';
+	public $disSale = FALSE;
 
   public function __construct()
   {
@@ -18,6 +19,8 @@ class Orders extends PS_Controller
 		$this->load->model('customer_team_model');
 		$this->load->helper('orders');
 		$this->load->helper('sale_team');
+
+		$this->disSale = getConfig('USE_DISCSALE') == 1 ? TRUE : FALSE;
   }
 
 
@@ -547,7 +550,7 @@ class Orders extends PS_Controller
 					'Comments' => get_null($header->comments),
 					'BillDate' => $header->billOption == 'Y' ? 1 : 0,
 					'requireSQ' => $header->requireSQ == 'Y' ? 1 : 0,
-					'is_discount_sales' => $header->is_discount_sales,
+					'is_discount_sales' => $this->disSale ? $header->is_discount_sales : 0,
 					'date_add' => now(),
 					'user_id' => $this->_user->id,
 					'uname' => $this->_user->uname
@@ -603,7 +606,7 @@ class Orders extends PS_Controller
 									'VatRate' => empty($header->VatGroup) ? $item->Rate : $header->VatRate,
 									'VatAmount' => $rs->VatAmount,
 									'LineTotal' => $rs->Qty * $sellPrice,
-									'discount_sales' => $rs->discount_sales,
+									'discount_sales' => $this->disSale ? $rs->discount_sales : 0,
 									'WhsCode' => empty($rs->WhsCode) ? $dfWhsCode : $rs->WhsCode,
 									'lineText' => get_null($rs->lineText)
 								);
@@ -639,7 +642,7 @@ class Orders extends PS_Controller
 											'VatRate' => empty($header->VatGroup) ? $item->Rate : $header->VatRate,
 											'VatAmount' => 0.00,
 											'LineTotal' => 0.00,
-											'discount_sales' => $rs->discount_sales,
+											'discount_sales' => $this->disSale ? $rs->discount_sales : 0,
 											'WhsCode' => empty($rs->WhsCode) ? $dfWhsCode : $rs->WhsCode,
 											'lineText' => NULL,
 											'free_item' => 1,
@@ -1391,6 +1394,48 @@ class Orders extends PS_Controller
     $this->_response($sc);
   }
 
+
+	public function cancle_order()
+  {
+    $sc = TRUE;
+    $code = $this->input->post('code');
+    $temp = $this->orders_model->get_temp_status($code);
+
+    if(empty($temp))
+    {
+      $sc = FALSE;
+      $this->error = "Temp data not exists";
+    }
+    else if($temp->F_Sap === 'Y')
+    {
+      $sc = FALSE;
+      $this->error = "Delete Failed : Temp Data already in SAP";
+    }
+
+    if($sc === TRUE)
+    {
+      if(! $this->orders_model->drop_temp_exists_data($temp->DocEntry))
+      {
+        $sc = FALSE;
+        $this->error = "Delete Failed : Delete Temp Failed";
+      }
+			else
+			{
+				$arr = array(
+					'Status' => -1,
+					'DocNum' => NULL,
+					'Message' => NULL,
+					'sap_date' => NULL,
+					'temp_date' => NULL
+				);
+
+				$this->orders_model->update($code, $arr);
+			}
+    }
+
+
+    $this->_response($sc);
+  }
 
 
 	public function sendToSAP()

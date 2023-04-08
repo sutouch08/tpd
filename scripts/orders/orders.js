@@ -489,3 +489,57 @@ function removeTemp() {
 function closeModal(name) {
   $('#'+name).modal('hide');
 }
+
+
+function cancleOrder() {
+  $('#tempModal').modal('hide');
+
+  var code = $('#U_WEB_ORNO').val();
+
+  swal({
+		title: "คุณแน่ใจ ?",
+		text: "ต้องการยกเลิก '"+code+"' หรือไม่?",
+		type: "warning",
+		showCancelButton: true,
+		confirmButtonColor: "#DD6B55",
+		confirmButtonText: 'ยืนยัน',
+		cancelButtonText: 'ยกเลิก',
+		closeOnConfirm: true
+  }, function() {
+      load_in();
+      $.ajax({
+        url:HOME + 'cancle_order',
+        type:'POST',
+        data:{
+          'code' : code
+        },
+        success:function(rs) {
+          load_out();
+          var rs = $.trim(rs);
+          if(rs === 'success') {
+            setTimeout(function() {
+              swal({
+                title:'Success',
+                type:'success',
+                timer:1000
+              });
+
+              setTimeout(function(){
+                window.location.reload();
+              }, 1000);
+            }, 200);
+          }
+          else {
+            setTimeout(function() {
+              swal({
+                title:'Error!',
+                text:rs,
+                type:'error'
+              });
+            }, 200);
+          }
+        }
+      })
+  });
+
+}

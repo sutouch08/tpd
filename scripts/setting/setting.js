@@ -40,6 +40,22 @@ function togglePWD(option) {
 }
 
 
+function toggleDis(option) {
+	$('#dis').val(option);
+
+	if(option == 1) {
+		$('#btn-dis-on').addClass('btn-primary');
+		$('#btn-dis-off').removeClass('btn-primary');
+		return;
+	}
+	else
+	{
+		$('#btn-dis-on').removeClass('btn-primary');
+		$('#btn-dis-off').addClass('btn-primary');
+	}
+}
+
+
 function openSystem() {
 	$('#closed').val(0);
 	$('#btn-close').removeClass('btn-danger');
