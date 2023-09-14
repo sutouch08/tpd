@@ -383,15 +383,42 @@ class User_model extends CI_Model
 
   public function get_customer_group_list()
   {
-    $rs = $this->ms
-    ->select('GroupCode, GroupName')
-    ->where('GroupCode >=', 5)
-    ->where('GroupCode <=', 16)
-    ->get('OCQG');
+    $groupList = array();
+    $list = $this->getGroupListIn();
+
+    if( ! empty($list))
+    {
+      $list = preg_replace('/\s+/', '', $list);
+      $groupList = explode(',', $list);
+    }
+
+    $this->ms->select('GroupCode, GroupName');
+
+    if( ! empty($groupList))
+    {
+      $this->ms->where_in('GroupCode', $groupList);
+    }
+
+    // ->where('GroupCode >=', 5)
+    // ->where('GroupCode <=', 16)
+    $rs = $this->ms->order_by('GroupName', 'ASC')->get('OCQG');
 
     if($rs->num_rows() > 0)
     {
       return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function getGroupListIn()
+  {
+    $rs = $this->db->select('value')->where('code', 'CUSTOMER_GROUP_LIST')->get('config');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->row()->value;
     }
 
     return NULL;

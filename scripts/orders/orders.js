@@ -236,22 +236,39 @@ function doApprove() {
 
   let code = $('#OrderCode').val();
   let check = 0;
+  let err = 0;
   let items = [];
 
-  $('.check-item').each(function(){
+  $('.check-item').each(function() {
+    let id = $(this).val();
     if($(this).is(':checked')) {
-      let item = {"id" : $(this).val(), "status" : "A"}
+      let item = {"id" : id, "status" : "A"}
       items.push(item);
+      $('#reject-item-'+ id).removeClass('has-error');
       check++;
     }
     else {
-      let id = $(this).val();
       let reject_text = $('#reject-item-'+ id).val();
-      let item = {"id" : id, "status" : "R", "reject_text" : reject_text }
-      items.push(item);
+      if(reject_text.length) {
+        let item = {"id" : id, "status" : "R", "reject_text" : reject_text }
+        items.push(item);
+      }
+      else {
+        $('#reject-item-'+id).addClass('has-error');
+        err++;
+      }
     }
   });
 
+  if(err > 0) {
+    swal({
+      title:'Required',
+      text:'กรุณาระบุเหตุผลในการ Reject ทุกรายการที่ไม่อนุมัติ',
+      type:'warning'
+    });
+
+    return false;
+  }
 
   if(check > 0) {
     $('#previewModal').modal('hide');
@@ -302,14 +319,23 @@ function doReject() {
 
   let code = $('#OrderCode').val();
   let check = 0;
+  let err = 0;
   let count = 0;
   let items = [];
 
-  $('.check-item').each(function(){
+  $('.check-item').each(function() {
     if($(this).is(':checked')) {
       let id = $(this).val();
       let reject_text = $("#reject-item-"+id).val();
-      items.push({"id" : id, "reject_text" : reject_text});
+      if(reject_text.length) {
+        items.push({"id" : id, "reject_text" : reject_text});
+        $('#reject-item-'+id).removeClass('has-error');
+      }
+      else {
+        $('#reject-item-'+id).addClass('has-error');
+        err++;
+      }
+
       check++;
     }
 
@@ -318,6 +344,16 @@ function doReject() {
 
 
   if(check == count) {
+    if(err > 0) {
+      swal({
+        title:'Required',
+        text:'กรุณาระบุเหตุผลในการ Reject ทุกรายการ',
+        type:'warning'
+      });
+
+      return false;
+    }
+
     $('#previewModal').modal('hide');
 
     load_in();
@@ -365,18 +401,13 @@ function doReject() {
 }
 
 
-
-
 function toggleApprove() {
   let check = 0;
-  let count = 0;
 
   $('.check-item').each(function(){
     if($(this).is(':checked')) {
       check++;
     }
-
-    count++;
   });
 
   if(check == 0) {
@@ -386,16 +417,41 @@ function toggleApprove() {
   else {
     if(check > 0) {
       $('#btn-approve').removeAttr('disabled');
-    }
-
-    if(check == count) {
       $('#btn-reject').removeAttr('disabled');
-    }
-    else {
-      $('#btn-reject').attr('disabled', 'disabled');
     }
   }
 }
+
+
+// function toggleApprove() {
+//   let check = 0;
+//   let count = 0;
+//
+//   $('.check-item').each(function(){
+//     if($(this).is(':checked')) {
+//       check++;
+//     }
+//
+//     count++;
+//   });
+//
+//   if(check == 0) {
+//     $('#btn-approve').attr('disabled', 'disabled');
+//     $('#btn-reject').attr('disabled', 'disabled');
+//   }
+//   else {
+//     if(check > 0) {
+//       $('#btn-approve').removeAttr('disabled');
+//     }
+//
+//     if(check == count) {
+//       $('#btn-reject').removeAttr('disabled');
+//     }
+//     else {
+//       $('#btn-reject').attr('disabled', 'disabled');
+//     }
+//   }
+// }
 
 
 

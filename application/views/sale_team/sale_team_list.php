@@ -46,17 +46,17 @@
 
 <div class="row">
 	<div class="col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-hover border-1" style="min-width:300px;">
+		<table class="table table-striped table-hover border-1" style="min-width:1100px;">
 			<thead>
 				<tr>
-					<th class="width-5 middle text-center">#</th>
-					<th class="width-15 middle">Sale Team</th>
-					<th class="width-10 middle">Sale Person</th>
-					<th class="width-10 middle">Cust Team</th>
-					<th class="width-15 middle">Authorizer</th>
-					<th class="width-30 middle">Customer Group</th>
-					<th class="width-5 middle text-center">Member</th>
-					<th class="width-15 middle text-right"></th>
+					<th class="fix-width-40 middle text-center">#</th>
+					<th class="fix-width-150 middle">Sale Team</th>
+					<th class="fix-width-150 middle">Sale Person</th>
+					<th class="fix-width-100 middle">Cust Team</th>
+					<th class="fix-width-150 middle">Authorizer</th>
+					<th class="min-width-300 middle">Customer Group</th>
+					<th class="fix-width-60 middle text-center">Member</th>
+					<th class="fix-width-150 middle text-right"></th>
 				</tr>
 			</thead>
 			<tbody>

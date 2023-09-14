@@ -43,6 +43,14 @@
       <div class="divider-hidden"></div>
 
 			<div class="col-lg-3 col-md-4 col-sm-5 col-xs-8 padding-5">
+        <span class="form-control left-label">Customer Group List</span>
+      </div>
+      <div class="col-lg-5 col-md-5 col-sm-5 col-xs-6 padding-5">
+        <input type="text" class="form-control input-sm" name="CUSTOMER_GROUP_LIST" value="<?php echo $CUSTOMER_GROUP_LIST; ?>" />
+      </div>
+      <div class="divider-hidden"></div>
+
+			<div class="col-lg-3 col-md-4 col-sm-5 col-xs-8 padding-5">
         <span class="form-control left-label">Default Warehouse</span>
       </div>
       <div class="col-lg-5 col-md-5 col-sm-5 col-xs-6 padding-5">

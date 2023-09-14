@@ -302,6 +302,7 @@ class Sync_data extends CI_Controller
             if($so->DocStatus === 'C')
             {
               $arr['DO_Status'] = 'F';
+              $arr['SO_Status'] = 'C';
             }
             else
             {
@@ -371,12 +372,15 @@ class Sync_data extends CI_Controller
           $ivNo = "";
           $ra = array();
           $i = 1;
+          $inv_date = NULL;
+
           foreach($iv as $ds)
           {
             if(!isset($ra[$ds->DocNum]))
             {
               $ra[$ds->DocNum] = $ds->DocNum;
               $ivNo .= $i === 1 ? $ds->DocNum : "<br/>".$ds->DocNum;
+              $inv_date = $ds->DocDate;
               $i++;
             }
           }
@@ -384,6 +388,7 @@ class Sync_data extends CI_Controller
 
           $arr = array(
             'InvoiceNo' => limitText($ivNo, 97),
+            'InvoiceDate' => $inv_date,
             'last_inv_sync' => now()
           );
 

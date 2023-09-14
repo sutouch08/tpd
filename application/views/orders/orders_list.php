@@ -336,7 +336,7 @@
 				<tr>
 					<td colspan="8" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
 					<td class="middle text-right">{{totalAmount}}</td>
-					<td></td><td></td><td></td><td></td><td></td><td></td>
+					<td></td><td></td><td></td><td></td><td></td>
 				</tr>
 			{{else}}
 				<tr>

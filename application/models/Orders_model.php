@@ -975,9 +975,10 @@ class Orders_model extends CI_Model
   public function get_invoice_order($code)
   {
     $rs = $this->ms
-    ->select('DocNum')
+    ->select('DocNum, DocDate')
     ->where('U_WEB_ORNO', $code)
     ->where('CANCELED', 'N')
+    ->order_by('DocEntry', 'ASC')
     ->get('OINV');
 
     if($rs->num_rows() > 0)

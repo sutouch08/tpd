@@ -19,7 +19,7 @@ class Sync_order_status extends CI_Controller
     {
       foreach($list as $ds)
       {
-        if($ds->Type == 'SO' && $ds->Cancelled == 'Y')
+        if($ds->CancelledSO === 'Y')
         {
           $arr = array(
             'SO_Status' => 'D',
@@ -31,24 +31,33 @@ class Sync_order_status extends CI_Controller
         {
           $arr = array();
 
-          if($ds->Type == 'DO' && $ds->Cancelled == 'Y')
+          if($ds->CancelledSO === 'C')
+          {
+            $arr['SO_Status'] = 'C';
+          }
+          else
+          {
+            $arr['SO_Status'] = 'O';
+          }
+
+          if($ds->CancelledDO === 'Y')
           {
             $arr['DO_Status'] = NULL;
             $arr['DeliveryNo'] = NULL;
           }
 
-          if($ds->Type == 'INV' && $ds->Cancelled == 'Y')
+          if($ds->CancelledIV === 'Y')
           {
             $arr['INV_Status'] = NULL;
             $arr['InvoiceNo'] = NULL;
           }
         }
 
-        if( ! $this->update($ds->U_WEB_ORNO, $arr))
+        if(!$this->update($ds->U_WEB_ORNO, $arr))
         {
           $upd = array(
             'F_Web' => 'N',
-            'Message' => "Update failed",
+            'F_Message' => "Update failed",
             'F_WebDate' => now()
           );
         }
@@ -76,7 +85,7 @@ class Sync_order_status extends CI_Controller
     ->where('F_Web IS NULL', NULL, FALSE)
     ->or_where('F_Web', 'N')
     ->group_end()
-    ->where('DocNum IS NOT NULL', NULL, FALSE)
+    ->where('DocNumSO >', 0)
     ->limit($this->limit)
     ->get('Status');
 
