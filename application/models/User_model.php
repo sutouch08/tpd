@@ -262,6 +262,7 @@ class User_model extends CI_Model
     $rs = $this->ms
     ->select('ListNum AS id, ListName AS name')
     ->where('ListNum >=', 11)
+    ->order_by('ListName', 'ASC')
     ->get('OPLN');
 
     if($rs->num_rows() > 0)
@@ -278,6 +279,7 @@ class User_model extends CI_Model
     $rs = $this->ms
     ->select('ListNum AS id, ListName AS name')
     ->where('ListNum >=', 11)
+    ->order_by('ListName', 'ASC')
     ->get('OPLN');
 
     if($rs->num_rows() > 0)
@@ -299,7 +301,7 @@ class User_model extends CI_Model
 
   public function get_user_price_list($user_id)
   {
-    $rs = $this->db->where('user_id', $user_id)->get('user_price_list');
+    $rs = $this->db->where('user_id', $user_id)->order_by('list_name', 'ASC')->get('user_price_list');
 
     if($rs->num_rows() > 0)
     {
