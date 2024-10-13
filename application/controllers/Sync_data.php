@@ -189,7 +189,7 @@ class Sync_data extends CI_Controller
             $logs = array(
               'code' => $rs->code,
               'sync_code' => 'SO',
-              'get_code' => empty($sap) ? : NULL : $sap->DocNum,
+              'get_code' => empty($sap) ? NULL : $sap->DocNum,
               'status' => 1
             );
 
