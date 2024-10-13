@@ -184,17 +184,16 @@ class Sync_data extends CI_Controller
               );
 
               $this->orders_model->update($rs->code, $arr);
+
+              $logs = array(
+                'code' => $rs->code,
+                'sync_code' => 'SO',
+                'get_code' => $sap->DocNum,
+                'status' => 1
+              );
+
+              $this->sync_data_model->add_logs($logs);
             }
-
-            $logs = array(
-              'code' => $rs->code,
-              'sync_code' => 'SO',
-              'get_code' => $sap->DocNum,
-              'status' => 1
-            );
-
-            $this->sync_data_model->add_logs($logs);
-
           }
           else
           {
