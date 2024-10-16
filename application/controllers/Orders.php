@@ -530,6 +530,7 @@ class Orders extends PS_Controller
 					'CardName' => $customer->CardName,
 					'CardGroup' => $group_id,
 					'CardTeam' => $team_id,
+					'CardType' => $header->CardType,
 					'VatGroup' => $customer->ECVatGroup,
 					'SlpCode' => get_null($customer->SlpCode),
 					'GroupNum' => $groupNum,

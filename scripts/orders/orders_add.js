@@ -294,7 +294,7 @@ function init() {
 					}
 
 					$('#qty-'+no).focus();
-					
+
 					recalAmount(no);
 				}
 				else {
@@ -669,6 +669,7 @@ function saveAdd() {
 		'exShipTo' : $('#exShipTo').val(),
 		'VatGroup' : $('#VatGroup').val(),
 		'VatRate' : $('#vatRate').val(),
+		'CardType' : $('#cardType').val(),
 		//--- right Column
 		'DocDate' : $('#DocDate').val(), //****** required
 		'DocDueDate' : $('#DocDueDate').val(), //****** required
