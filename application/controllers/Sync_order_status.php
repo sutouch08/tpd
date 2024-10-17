@@ -65,7 +65,7 @@ class Sync_order_status extends CI_Controller
 
         $logs = array(
           'code' => $ds->U_WEB_ORNO,
-          'sync_code' => $ds->Type,
+          'sync_code' => 'STATUS',
           'get_code' => $ds->Cancelled == 'Y' ? 'Cancelled' : NULL,
           'status' => 1
         );
