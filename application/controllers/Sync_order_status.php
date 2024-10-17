@@ -63,6 +63,15 @@ class Sync_order_status extends CI_Controller
 
         $this->update_temp($ds->DocEntry, $upd);
 
+        $logs = array(
+          'code' => $ds->U_WEB_ORNO,
+          'sync_code' => $ds->Type,
+          'get_code' => $ds->Cancelled == 'Y' ? 'Cancelled' : NULL,
+          'status' => 1
+        );
+
+        $this->add_logs($logs);
+
       } //--- endforeach
     }
   }
@@ -109,6 +118,11 @@ class Sync_order_status extends CI_Controller
     }
 
     return TRUE;
+  }
+
+  public function add_logs($arr)
+  {
+    return $this->db->insert('sync_logs', $arr);
   }
 
 } //--- end class
