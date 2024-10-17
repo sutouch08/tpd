@@ -56,7 +56,7 @@ class Sync_order_status extends CI_Controller
         {
           $upd = array(
             'F_Web' => 'Y',
-            'F_Message' => NULL,
+            'Message' => NULL,
             'F_WebDate' => now()
           );
         }
