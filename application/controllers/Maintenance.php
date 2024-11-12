@@ -13,10 +13,14 @@ class Maintenance extends CI_Controller
 
     $this->uid = get_cookie('uid');
     $this->_user = $this->user_model->get_user_by_uid($this->uid);
-    $this->_SuperAdmin = $this->_user->ugroup_id == -987654321 ? TRUE : FALSE;
-    $this->isGM = $this->_user->role == 'GM' ? TRUE : FALSE;
-    $this->isAdmin = $this->_user->role == 'salesAdmin' ? TRUE : FALSE;
 
+    if( ! empty($this->_user))
+    {
+      $this->_SuperAdmin = $this->_user->ugroup_id == -987654321 ? TRUE : FALSE;
+      $this->isGM = $this->_user->role == 'GM' ? TRUE : FALSE;
+      $this->isAdmin = $this->_user->role == 'salesAdmin' ? TRUE : FALSE;
+    }
+    
     //--- get permission for user
     $this->pm = get_permission('CLOSE_SYSTEM');
     $this->load->model('config_model');

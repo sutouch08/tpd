@@ -28,7 +28,7 @@ class PS_Controller extends CI_Controller
 
     $this->close_system   = getConfig('CLOSE_SYSTEM'); //--- ปิดระบบทั้งหมดหรือไม่
 
-    if($this->close_system == 1 && $this->_SuperAdmin === FALSE)
+    if($this->close_system == 1 && $this->_SuperAdmin === FALSE && $this->isGM === FALSE)
     {
       redirect(base_url().'maintenance');
     }

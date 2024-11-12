@@ -18,15 +18,17 @@
     <div>
         <p>Sorry for the inconvenience but we&rsquo;re performing some maintenance at the moment. If you need to you can always contact us, otherwise we&rsquo;ll be back online shortly!</p>
         <p>&mdash; The Team</p>
+				<?php if(! empty($this->_user)) : ?>
+				<span style="float:right; margin-left:10px;"><button style="padding:15px;" onclick="logout()">LOGOUT</button></span>
+				<?php else : ?>
+					<span style="float:right; margin-left:10px;"><button style="padding:15px;" onclick="login()">LOGIN</button></span>
+				<?php endif; ?>
+
 				<?php if($this->pm->can_add OR $this->pm->can_edit OR $this->pm->can_delete) : ?>
-					<p style="float:right;"><button style="padding:15px;" onclick="openSystem()">OPEN SYSTEM</button></p>
+					<span style="float:right; margin-left:10px;"><button style="padding:15px;" onclick="enterSystem()">ENTER SYSTEM</button></span>
 					<script>
-						function openSystem(){
-							$.get(BASE_URL + 'maintenance/open_system',function(rs){
-								if(rs == 'success'){
-									window.location.href = BASE_URL;
-								}
-							});
+						function enterSystem() {
+							window.location.href = BASE_URL;
 						}
 					</script>
 				<?php endif; ?>
@@ -44,4 +46,12 @@ setInterval(function(){
 		}
 	});
 }, 10000);
+
+function logout() {
+	window.location.href = BASE_URL + 'authentication/logout';
+}
+
+function login() {
+	window.location.href = BASE_URL + 'authentication';
+}
 </script>
