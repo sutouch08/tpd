@@ -1,5 +1,25 @@
 <?php
 
+function select_price_list($id = NULL)
+{
+  $ds = "";
+  $ci =& get_instance();
+  $ci->load->model('user_model');
+
+  $list = $ci->user_model->get_all_price_list();
+
+  if( ! empty($list))
+  {
+    foreach($list as $rs)
+    {
+      $ds .= '<option value="'.$rs->id.'" '.is_selected($id, $rs->id).'>'.$rs->name.'</option>';
+    }
+  }
+
+  return $ds;
+}
+
+
 function get_checkbox($id, $status = 'P', $can_approve = FALSE, $no = "")
 {
 

@@ -17,10 +17,24 @@
       </div>
 
       <div class="form-group">
-        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">Payment Terms</label>
+        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">Price List</label>
         <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
           <select class="width-100" name="priceList" id="priceList" onchange="checkPriceList()">
-            <option value="">Select payment</option>
+            <option value="">เลือก</option>
+            <?php if(!empty($priceList)) : ?>
+              <?php foreach($priceList as $pl) : ?>
+                <option value="<?php echo $pl->list_id; ?>"><?php echo $pl->list_name; ?></option>
+              <?php endforeach; ?>
+            <?php endif; ?>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">Payment Term</label>
+        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
+          <select class="width-100" name="priceList" id="priceList" onchange="checkPriceList()">
+            <option value="">เลือก</option>
             <?php if(!empty($priceList)) : ?>
               <?php foreach($priceList as $pl) : ?>
                 <option value="<?php echo $pl->list_id; ?>"><?php echo $pl->list_name; ?></option>

@@ -304,8 +304,6 @@ function getSearch() {
 }
 
 
-
-
 $('.search-box').keyup(function(e){
 	if(e.keyCode === 13) {
 		getSearch();
@@ -313,10 +311,16 @@ $('.search-box').keyup(function(e){
 });
 
 
+$('.filter').change(function() {
+	getSearch();
+})
+
+
 function clearFilter() {
 	let url = HOME + 'clear_filter';
 	$.get(url, function(rs){ goBack(); });
 }
+
 
 function sort(field){
 	var el = $("#sort_"+field);
@@ -336,6 +340,10 @@ function sort(field){
 }
 
 
+function generateUID() {
+  return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
+}
+
 function validCode(input){
   var regex = /[^a-z0-9-_.]+/gi;
   input.value = input.value.replace(regex, '');
@@ -348,4 +356,69 @@ function validInput(input, regex){
 
 function dismiss(name) {
   $('#'+name).modal('hide');
+}
+
+
+function isInteger(value) {
+	return /^([1-9]|[1-9]\d+)$/
+}
+
+function round(num)
+{
+	return Math.round((num + Number.EPSILON) * 100) / 100;
+}
+
+
+function hilightRow(id) {
+	$('.order-rows').removeClass('active-row');
+	$('#row-'+id).addClass('active-row');
+}
+
+$.fn.hasError = function(msg) {
+  let name = this.attr('id');
+  $('#'+name+'-error').text(msg);
+  return this.addClass('has-error');
+};
+
+$.fn.clearError = function() {
+  this.removeClass('has-error');
+  let name = this.attr('id');
+  return $('#'+name+'-error').text('');
+};
+
+function clearErrorByClass(className) {
+  $('.'+className).each(function() {
+    let name = $(this).attr('id');
+    $('#'+name+'-error').text('');
+    $(this).removeClass('has-error');
+  })
+}
+
+function showError(response) {
+  load_out();
+
+  setTimeout(() => {
+    swal({
+      title:'Error!',
+      text:(typeof response === 'object') ? response.responseText : response,
+      type:'error',
+      html:true
+    })
+  }, 100);
+}
+
+function is_true(val) {
+  if(typeof(val) === 'string') {
+    val = val.trim().toLowerCase();
+  }
+
+  switch (val) {
+    case true:
+    case "true":
+    case 1:
+    case "1":
+      return true;
+    default :
+      return false;
+  }
 }

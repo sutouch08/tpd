@@ -604,6 +604,18 @@ class User_model extends CI_Model
   }
 
 
+  public function get_uname($id)
+  {
+    $rs = $this->db->select('uname')->where('id', $id)->get('user');
+
+    if($rs->num_rows() == 1)
+    {
+      return $rs->row()->uname;
+    }
+
+    return NULL;
+  }
+  
 
   public function get_sale_in()
 	{
