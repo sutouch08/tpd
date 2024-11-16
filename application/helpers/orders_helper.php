@@ -20,6 +20,27 @@ function select_price_list($id = NULL)
 }
 
 
+function select_payment_term($id = NULL)
+{
+  $ds = "";
+  $ci =& get_instance();
+  $ci->load->model('orders_model');
+
+  $list = $ci->orders_model->get_payment_term_list();
+
+  if( ! empty($list))
+  {
+    foreach($list as $rs)
+    {
+      $ds .= '<option value="'.$rs->id.'" data-days="'.$rs->ExtraDays.'" '.is_selected($id, $rs->id).'>'.$rs->name.'</option>';
+    }
+  }
+
+  return $ds;
+}
+
+
+
 function get_checkbox($id, $status = 'P', $can_approve = FALSE, $no = "")
 {
 

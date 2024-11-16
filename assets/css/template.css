@@ -1939,3 +1939,30 @@ input[type=number]::-webkit-outer-spin-button {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
+.tableFixHead {
+	table-layout: fixed;
+	/*min-width: 100%;*/
+	/*margin-top:-1px;
+  margin-left:-1px;
+  margin-right:0px;*/
+	margin-bottom: 0;
+}
+
+.tableFixHead thead th {
+	position: sticky;
+	top: -1px;
+	background-color: white;
+	font-size: 12px;
+}
+
+.tableFixHead tr>td {
+	padding: 3px !important;
+}
+
+.fix-header {
+	z-index: 2;
+  background-color: white;
+  outline: solid 1px #dddddd;
+}

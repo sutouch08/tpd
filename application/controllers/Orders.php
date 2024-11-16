@@ -24,9 +24,8 @@ class Orders extends PS_Controller
   }
 
 
-
 	public function index()
-  {
+	{
 		$filter = array(
 			'is_promotion' => get_filter('is_promotion', 'so_is_promotion', 'all'),
 			'WebCode' => get_filter('WebCode', 'so_WebCode', ''),
@@ -63,12 +62,11 @@ class Orders extends PS_Controller
 
 		$rs = $this->orders_model->get_list($filter, $perpage, $this->uri->segment($segment));
 
-    $filter['data'] = $rs;
+		$filter['data'] = $rs;
 
 		$this->pagination->initialize($init);
-    $this->load->view('orders/orders_list', $filter);
-  }
-
+		$this->load->view('orders/orders_list', $filter);
+	}
 
 
 	public function add_new()
@@ -79,7 +77,7 @@ class Orders extends PS_Controller
 		{
 			$this->load->helper('currency');
 
-			$ds['code'] = $this->get_new_code();
+			$ds['code'] = NULL; //$this->get_new_code();
 
 			if($this->isAdmin)
 			{
@@ -121,7 +119,7 @@ class Orders extends PS_Controller
 
 			$priceList = $this->user_model->get_user_price_list($this->_user->id);
 
-			if(!empty($priceList))
+			if( ! empty($priceList))
 			{
 				foreach($priceList as $rs)
 				{
@@ -137,7 +135,6 @@ class Orders extends PS_Controller
 			$this->deny_page();
 		}
 	}
-
 
 
 	public function get_currency_rate($code)
@@ -257,7 +254,6 @@ class Orders extends PS_Controller
 	}
 
 
-
 	public function get_address_ship_to()
 	{
 		$code = trim($this->input->get('CardCode'));
@@ -298,7 +294,6 @@ class Orders extends PS_Controller
 			echo json_encode($arr);
 		}
 	}
-
 
 
 	public function get_address_bill_to_code()
@@ -378,13 +373,11 @@ class Orders extends PS_Controller
 	}
 
 
-
-
 	public function get_item_code_and_name($priceList)
 	{
-		if($priceList == 'nopricelist')
+		if(empty($priceList))
 		{
-			echo json_encode(array("Please select payment term"));
+			echo json_encode(array("Please select price list"));
 		}
 		else
 		{
@@ -426,6 +419,54 @@ class Orders extends PS_Controller
 	}
 
 
+	public function get_step_template()
+	{
+		$sc = TRUE;
+
+		$ds = '<option value="0" data-stepqty="0" data-freeqty="0" data-force="1">เลือก</option>';
+
+		$PriceList = $this->input->post('PriceList');
+
+		if( ! is_null($PriceList))
+		{
+			$this->load->model('step_rule_model');
+
+			$step = $this->step_rule_model->get_active_details($PriceList);
+
+			if( ! empty($step))
+			{
+				foreach($step as $rs)
+				{
+					$hi = $rs->hilight == 1 ? 'hilight' : '';
+
+					$ds .= '<option value="'.$rs->id.'"
+					class="'.$hi.'"
+					data-force="'.$rs->is_force.'"
+					data-stepqty="'.$rs->stepQty.'"
+					data-freeqty="'.$rs->freeQty.'">'
+					.$rs->labelText
+					.'</option>';
+				}
+			}
+			else
+			{
+				$ds = '<option value="0">No Price List</option>';
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = get_error_message('required');
+		}
+
+		$arr = array(
+			'status' => $sc === TRUE ? 'success' : 'failed',
+			'message' => $sc === TRUE ? 'success' : $this->error,
+			'template' => $sc === TRUE ? $ds : NULL
+		);
+
+		echo json_encode($arr);
+	}
 
 
 	function get_item_data()
@@ -482,7 +523,6 @@ class Orders extends PS_Controller
 
 		echo $sc === TRUE ? json_encode($arr) : $this->error;
 	}
-
 
 
 	public function add()
@@ -791,7 +831,6 @@ class Orders extends PS_Controller
 	}
 
 
-
 	public function check_approve()
 	{
 		$this->load->model('sale_person_model');
@@ -829,8 +868,6 @@ class Orders extends PS_Controller
 
 		echo $message;
 	}
-
-
 
 
 	public function get_detail()
@@ -987,8 +1024,6 @@ class Orders extends PS_Controller
 	}
 
 
-
-
 	public function can_approve($order)
 	{
 		if($this->isGM)
@@ -1012,9 +1047,6 @@ class Orders extends PS_Controller
 
 		return FALSE;
 	}
-
-
-
 
 
 	public function do_approve()
@@ -1100,7 +1132,6 @@ class Orders extends PS_Controller
 	}
 
 
-
 	public function do_reject()
 	{
 		$sc = TRUE;
@@ -1169,7 +1200,6 @@ class Orders extends PS_Controller
 
 		$this->_response($sc);
 	}
-
 
 
 	public function get_authorizer()
@@ -1243,7 +1273,6 @@ class Orders extends PS_Controller
 	}
 
 
-
 	public function get_sale_name_by_customer()
 	{
 		$cardCode = trim($this->input->get('CardCode'));
@@ -1256,29 +1285,28 @@ class Orders extends PS_Controller
 		}
 	}
 
+
 	public function get_new_code($date = NULL)
-  {
-    $date = empty($date) ? date('Y-m-d') : $date;
-    $Y = date('y', strtotime($date));
-    $M = date('m', strtotime($date));
-    $prefix = getConfig('PREFIX_ORDER');
-    $run_digit = getConfig('RUN_DIGIT_ORDER');
-    $pre = $prefix .'-'.$Y.$M;
-    $code = $this->orders_model->get_max_code($pre);
-    if(! empty($code))
-    {
-      $run_no = mb_substr($code, ($run_digit*-1), NULL, 'UTF-8') + 1;
-      $new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', $run_no);
-    }
-    else
-    {
-      $new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', '001');
-    }
+	{
+		$date = empty($date) ? date('Y-m-d') : $date;
+		$Y = date('y', strtotime($date));
+		$M = date('m', strtotime($date));
+		$prefix = getConfig('PREFIX_ORDER');
+		$run_digit = getConfig('RUN_DIGIT_ORDER');
+		$pre = $prefix .'-'.$Y.$M;
+		$code = $this->orders_model->get_max_code($pre);
+		if(! empty($code))
+		{
+			$run_no = mb_substr($code, ($run_digit*-1), NULL, 'UTF-8') + 1;
+			$new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', $run_no);
+		}
+		else
+		{
+			$new_code = $prefix . '-' . $Y . $M . sprintf('%0'.$run_digit.'d', '001');
+		}
 
-    return $new_code;
-  }
-
-
+		return $new_code;
+	}
 
 
 	public function doExport($code)
@@ -1297,15 +1325,14 @@ class Orders extends PS_Controller
 	}
 
 
-
 	public function get_temp_data()
-  {
-    $code = $this->input->get('code'); //--- U_WEBORDER
+	{
+		$code = $this->input->get('code'); //--- U_WEBORDER
 
-    $data = $this->orders_model->get_temp_data($code);
+		$data = $this->orders_model->get_temp_data($code);
 
-    if(!empty($data))
-    {
+		if(!empty($data))
+		{
 			//$btn = "<button type='button' class='btn btn-sm btn-danger' onClick='removeTemp()'' ><i class='fa fa-trash'></i> Delete Temp</button>";
 
 			$status = 'Pending';
@@ -1333,50 +1360,50 @@ class Orders extends PS_Controller
 			}
 
 
-      $arr = array(
-        'U_WEB_ORNO' => $data->U_WEB_ORNO,
-        'CardCode' => $data->CardCode,
-        'CardName' => $data->CardName,
-        'F_WebDate' => thai_date($data->F_WebDate, TRUE),
-        'F_SapDate' => empty($data->F_SapDate) ? '-' : thai_date($data->F_SapDate, TRUE),
-        'F_Sap' => $status, //$data->F_Sap === 'Y' ? 'Success' : ($data->F_Sap === 'N' ? 'Failed' : 'Pending'),
-        'Message' => empty($data->Message) ? '' : $data->Message,
+			$arr = array(
+				'U_WEB_ORNO' => $data->U_WEB_ORNO,
+				'CardCode' => $data->CardCode,
+				'CardName' => $data->CardName,
+				'F_WebDate' => thai_date($data->F_WebDate, TRUE),
+				'F_SapDate' => empty($data->F_SapDate) ? '-' : thai_date($data->F_SapDate, TRUE),
+				'F_Sap' => $status, //$data->F_Sap === 'Y' ? 'Success' : ($data->F_Sap === 'N' ? 'Failed' : 'Pending'),
+				'Message' => empty($data->Message) ? '' : $data->Message,
 				'del_btn' => ($status === "Pending" OR $status === "Failed") ? 'ok' : ''
-      );
+			);
 
-      echo json_encode($arr);
-    }
-    else
-    {
-      echo 'No data found';
-    }
-  }
+			echo json_encode($arr);
+		}
+		else
+		{
+			echo 'No data found';
+		}
+	}
 
 
 	public function remove_temp()
-  {
-    $sc = TRUE;
-    $code = $this->input->post('code');
-    $temp = $this->orders_model->get_temp_status($code);
+	{
+		$sc = TRUE;
+		$code = $this->input->post('code');
+		$temp = $this->orders_model->get_temp_status($code);
 
-    if(empty($temp))
-    {
-      $sc = FALSE;
-      $this->error = "Temp data not exists";
-    }
-    else if($temp->F_Sap === 'Y')
-    {
-      $sc = FALSE;
-      $this->error = "Delete Failed : Temp Data already in SAP";
-    }
+		if(empty($temp))
+		{
+			$sc = FALSE;
+			$this->error = "Temp data not exists";
+		}
+		else if($temp->F_Sap === 'Y')
+		{
+			$sc = FALSE;
+			$this->error = "Delete Failed : Temp Data already in SAP";
+		}
 
-    if($sc === TRUE)
-    {
-      if(! $this->orders_model->drop_temp_exists_data($temp->DocEntry))
-      {
-        $sc = FALSE;
-        $this->error = "Delete Failed : Delete Temp Failed";
-      }
+		if($sc === TRUE)
+		{
+			if(! $this->orders_model->drop_temp_exists_data($temp->DocEntry))
+			{
+				$sc = FALSE;
+				$this->error = "Delete Failed : Delete Temp Failed";
+			}
 			else
 			{
 				$arr = array(
@@ -1389,37 +1416,37 @@ class Orders extends PS_Controller
 
 				$this->orders_model->update($code, $arr);
 			}
-    }
+		}
 
 
-    $this->_response($sc);
-  }
+		$this->_response($sc);
+	}
 
 
 	public function cancle_order()
-  {
-    $sc = TRUE;
-    $code = $this->input->post('code');
-    $temp = $this->orders_model->get_temp_status($code);
+	{
+		$sc = TRUE;
+		$code = $this->input->post('code');
+		$temp = $this->orders_model->get_temp_status($code);
 
-    if(empty($temp))
-    {
-      $sc = FALSE;
-      $this->error = "Temp data not exists";
-    }
-    else if($temp->F_Sap === 'Y')
-    {
-      $sc = FALSE;
-      $this->error = "Delete Failed : Temp Data already in SAP";
-    }
+		if(empty($temp))
+		{
+			$sc = FALSE;
+			$this->error = "Temp data not exists";
+		}
+		else if($temp->F_Sap === 'Y')
+		{
+			$sc = FALSE;
+			$this->error = "Delete Failed : Temp Data already in SAP";
+		}
 
-    if($sc === TRUE)
-    {
-      if(! $this->orders_model->drop_temp_exists_data($temp->DocEntry))
-      {
-        $sc = FALSE;
-        $this->error = "Delete Failed : Delete Temp Failed";
-      }
+		if($sc === TRUE)
+		{
+			if(! $this->orders_model->drop_temp_exists_data($temp->DocEntry))
+			{
+				$sc = FALSE;
+				$this->error = "Delete Failed : Delete Temp Failed";
+			}
 			else
 			{
 				$arr = array(
@@ -1432,11 +1459,11 @@ class Orders extends PS_Controller
 
 				$this->orders_model->update($code, $arr);
 			}
-    }
+		}
 
 
-    $this->_response($sc);
-  }
+		$this->_response($sc);
+	}
 
 
 	public function sendToSAP()
@@ -1459,27 +1486,26 @@ class Orders extends PS_Controller
 	}
 
 
-
-  public function clear_filter()
+	public function clear_filter()
 	{
 		$filter = array(
-			'so_WebCode',
-			'so_DocNum',
-			'so_DeliveryNo',
-			'so_InvoiceNo',
-			'so_PoNo',
-			'so_CardCode',
-			'so_UserName',
-			'so_Approver',
-			'so_Approved',
-			'doc_status',
-			'SO_Status',
-			'DO_Status',
-			'INV_Status',
-			'so_fromDate',
-			'so_toDate',
-			'so_is_promotion',
-			'is_discount_sales'
+		'so_WebCode',
+		'so_DocNum',
+		'so_DeliveryNo',
+		'so_InvoiceNo',
+		'so_PoNo',
+		'so_CardCode',
+		'so_UserName',
+		'so_Approver',
+		'so_Approved',
+		'doc_status',
+		'SO_Status',
+		'DO_Status',
+		'INV_Status',
+		'so_fromDate',
+		'so_toDate',
+		'so_is_promotion',
+		'is_discount_sales'
 		);
 
 		clear_filter($filter);

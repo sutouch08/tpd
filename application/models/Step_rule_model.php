@@ -52,6 +52,27 @@ class Step_rule_model extends CI_Model
   }
 
 
+  public function get_active_details($PriceList)
+  {
+    $rs = $this->db
+    ->select('d.*')
+    ->from('step_rule_details AS d')
+    ->join('step_rule AS r', 'd.PriceList = r.PriceList', 'left')
+    ->where('r.PriceList', $PriceList)
+    ->where('r.active', 1)
+    ->where('d.active', 1)
+    ->order_by('d.position', 'ASC')
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
   public function get_active_price_list()
   {
     $rs = $this->db
@@ -65,7 +86,7 @@ class Step_rule_model extends CI_Model
 
     return NULL;
   }
-  
+
 
   public function add(array $ds = array())
   {

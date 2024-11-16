@@ -608,6 +608,20 @@ class Orders_model extends CI_Model
   }
 
 
+  public function get_payment_term_list()
+  {
+    $rs = $this->ms
+    ->select('GroupNum AS id, PymntGroup AS name, ExtraDays')
+    ->get('OCTG');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
 
   public function is_exists_sap_order($code)
   {
