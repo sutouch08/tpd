@@ -1,10 +1,15 @@
 <?php
 function thai_date($date, $time = FALSE, $sp = '-')
 {
-  $sp = $sp === '' ? '-' : $sp;
-  $format = $time === TRUE ? 'd'.$sp.'m'.$sp.'Y'.' H:i:s' : 'd'.$sp.'m'.$sp.'Y';
+  if( ! is_null($date))
+  {
+    $sp = $sp === '' ? '-' : $sp;
+    $format = $time === TRUE ? 'd'.$sp.'m'.$sp.'Y'.' H:i:s' : 'd'.$sp.'m'.$sp.'Y';
 
-  return date($format, strtotime($date));
+    return date($format, strtotime($date));
+  }
+
+  return NULL;
 }
 
 

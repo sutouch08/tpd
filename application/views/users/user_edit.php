@@ -1,12 +1,12 @@
 <?php $this->load->view('include/header'); ?>
 <div class="row">
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
-    <h4 class="title"><i class="fa fa-user-circle-o"></i> <?php echo $this->title; ?></h4>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
+    <h4 class="title"><?php echo $this->title; ?></h4>
   </div>
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-4 padding-5">
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
 		<p class="pull-right top-p">
 			<button type="button" class="btn btn-sm btn-warning" onclick="goBack()"><i class="fa fa-arrow-left"></i> Back</button>
-			<?php if($this->pm->can_edit) : ?>
+			<?php if($this->pm->can_add) : ?>
 				<button type="button" class="btn btn-sm btn-success" id="btn-save" onclick="update()"><i class="fa fa-save"></i> Update</button>
 			<?php endif; ?>
 		</p>
@@ -18,7 +18,7 @@
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Username</label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-			<input type="text" name="uname" id="uname" class="width-100" maxlength="50" value="<?php echo $user->uname; ?>" onkeyup="validCode(this)" disabled />
+			<input type="text" name="uname" id="uname" class="width-100 e" maxlength="50" value="<?php echo $user->uname; ?>" onkeyup="validCode(this)" disabled />
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="uname-error"></div>
   </div>
@@ -26,7 +26,7 @@
 	<div class="form-group">
 		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Employee</label>
 		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-			<select class="width-100" name="emp" id="emp">
+			<select class="width-100 e" name="emp" id="emp">
 				<option value="">Please select</option>
 				<?php if(!empty($emp_list)) : ?>
 					<?php foreach($emp_list as $emp) : ?>
@@ -41,7 +41,7 @@
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Sales Employee</label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-			<select class="width-100" name="saleman" id="saleman">
+			<select class="width-100 e" name="saleman" id="saleman">
 				<option value="">Please Select</option>
 				<?php if(!empty($sale_list)) : ?>
 					<?php foreach($sale_list as $sale) : ?>
@@ -56,7 +56,7 @@
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">User Group</label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-			<select class="width-100" name="ugroup" id="ugroup">
+			<select class="width-100 e" name="ugroup" id="ugroup">
 				<option value=""></option>
 				<?php echo select_user_group($user->ugroup_id); ?>
 			</select>
@@ -68,7 +68,7 @@
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">User Role</label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-			<select class="width-100" name="u_role" id="u_role">
+			<select class="width-100 e" name="u_role" id="u_role">
 				<option value="sales" <?php echo is_selected($user->role, "sales"); ?>>Sales</option>
 				<option value="salesAdmin" <?php echo is_selected($user->role, "salesAdmin"); ?> >Sales Admin</option>
 				<option value="GM" <?php echo is_selected($user->role, "GM"); ?>>GM</option>
@@ -100,13 +100,13 @@
 	<div class="divider"></div>
 
 	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Payment Term</label>
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Price List</label>
     <div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 table-responsive">
 			<table class="table table-striped table-bordered border-1">
 				<thead>
 					<tr>
 						<th class="width-10 text-center">#</th>
-						<th>Select Payment Term</th>
+						<th>Select Price List</th>
 						<th class="width-10 text-center">
 							<label>
 								<input type="checkbox" class="ace" id="chk-all">
@@ -145,11 +145,11 @@
 	<div class="divider"></div>
 
 	<div class="form-group">
-		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-8 control-label no-padding-right">Team</label>
+		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-8 control-label no-padding-right">Sales Team Condition</label>
 		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-8">
 			<select class="width-100" name="sale_team" id="sale_team">
 				<option value="">Please Select</option>
-				<?php echo select_sale_team(); ?>
+				<?php echo select_sales_team_condition(); ?>
 			</select>
 		</div>
 		<label class="col-xs-4 padding-5 visible-xs" style="margin-top:-25px;">Role</label>
@@ -168,26 +168,33 @@
 		<div class="help-block col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 red" id="sale-team-error"></div>
 	</div>
 
-	<?php $no = 1; ?>
-	<div class="form-group <?php echo empty($user->user_team) ? 'hide' : ''; ?>" id="team-list">
+	<div class="form-group <?php echo empty($user->user_condition) ? 'hide' : ''; ?>" id="team-list">
 		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
 		<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" id="user-team-list">
-			<?php if(!empty($user->user_team)) : ?>
-				<?php foreach($user->user_team as $rs) : ?>
+			<?php if( ! empty($user->user_condition)) : ?>
+				<?php foreach($user->user_condition as $rs) : ?>
+					<?php $no = $rs->user_role .'-'.$rs->condition_id; ?>
 					<label class="btn-block"  style="padding:10px; border:solid 1px #81a87b;" id="tag-<?php echo $no; ?>">
 				    <?php echo $rs->user_role; ?> | <?php echo $rs->team_name; ?>
-				    <a class="pointer bold pull-right red" onclick="removeTag(<?php echo $no; ?>)" style="margin-left:15px;">
+				    <a class="pointer bold pull-right red" onclick="removeTag('<?php echo $no; ?>')" style="margin-left:15px;">
 				      <i class="fa fa-times"></i>
 				    </a>
 				  </label>
-				  <input type="hidden" class="team-list" name="team_list" id="team-<?php echo $no; ?>" value="<?php echo $rs->team_id; ?>" data-role="<?php echo $rs->user_role; ?>"/>
-					<?php $no++; ?>
+				  <input type="hidden" class="team-list" name="team_list" id="team-<?php echo $no; ?>" value="<?php echo $rs->condition_id; ?>" data-role="<?php echo $rs->user_role; ?>"/>
 				<?php endforeach; ?>
 			<?php endif; ?>
 		</div>
 	</div>
 
+	<div class="divider-hidden"></div>
+	<div class="divider-hidden"></div>
+	<div class="divider-hidden"></div>
 
+  <div class="form-group">
+    <div class="col-lg-7 col-md-9 col-sm-9 col-xs-12 text-right">
+    <button type="button" class="btn btn-sm btn-success btn-100" id="btn-save" onclick="update()"><i class="fa fa-save"></i> Update</button>
+    </div>
+  </div>
 
 	<input type="hidden" name="id" id="id" value="<?php echo $user->id; ?>" />
 	<input type="hidden" id="use_strong_pwd" value="<?php echo $strong_pwd; ?>" />
@@ -196,7 +203,7 @@
 	<script id="tag-template" type="text/x-handlebarsTemplate">
 	  <label class="btn-block"  style="padding:10px; border:solid 1px #81a87b;" id="tag-{{no}}">
 	    {{role}} | {{name}}
-	    <a class="pointer bold pull-right red" onclick="removeTag({{no}})" style="margin-left:15px;">
+	    <a class="pointer bold pull-right red" onclick="removeTag('{{no}}')" style="margin-left:15px;">
 	      <i class="fa fa-times"></i>
 	    </a>
 	  </label>

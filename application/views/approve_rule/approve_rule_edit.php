@@ -1,9 +1,9 @@
 <?php $this->load->view('include/header'); ?>
 <div class="row">
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
-    <h4 class="title"><i class="fa fa-user-circle"></i>&nbsp; <?php echo $this->title; ?></h4>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
+    <h4 class="title"><?php echo $this->title; ?></h4>
   </div>
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-4 padding-5">
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
 		<p class="pull-right top-p">
 			<button type="button" class="btn btn-sm btn-warning" onclick="goBack()"><i class="fa fa-arrow-left"></i> Back</button>
 		</p>
@@ -14,7 +14,7 @@
 
 <hr class="padding-5 margin-bottom-30"/>
 
-<form class="form-horizontal">
+<div class="form-horizontal">
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Code</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -26,7 +26,7 @@
   <div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Condition</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-			<select class="form-control input-sm" name="conditions" id="conditions">
+			<select class="form-control input-sm e" name="conditions" id="conditions">
 				<option value="">Please Select</option>
 				<?php echo select_conditions($data->conditions); ?>
 			</select>
@@ -38,18 +38,18 @@
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Amount</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-			<input type="number" name="amount" id="amount" class="width-100" value="<?php echo $data->amount ?>" />
+			<input type="number" name="amount" id="amount" class="width-100 e" value="<?php echo $data->amount ?>" />
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="amount-error"></div>
   </div>
 
 
 	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Sale Team</label>
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Sales Team Condition</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-			<select class="form-control input-sm" name="sale_team" id="sale_team">
+			<select class="form-control input-sm e" name="sale_team" id="sale_team">
 				<option value="">Please Select</option>
-				<?php echo select_sale_team($data->sale_team); ?>
+				<?php echo select_sales_team_condition($data->sale_team); ?>
 			</select>
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="sale_team-error"></div>
@@ -78,15 +78,18 @@
   </div>
 
 
+	<div class="divider-hidden"></div>
+	<div class="divider-hidden"></div>
+	<div class="divider-hidden"></div>
+
   <div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
-    <div class="col-lg-2 col-lg-offset-2 col-md-2 col-md-offset-2 col-sm-2 col-sm-offset-2 col-xs-12">
-    <button type="button" class="btn btn-sm btn-success btn-block" id="btn-save" onclick="update()"><i class="fa fa-save"></i> Update</button>
+    <div class="col-lg-7 col-md-7 col-sm-7 col-xs-12 text-right">
+    <button type="button" class="btn btn-sm btn-success btn-100" id="btn-save" onclick="update()"><i class="fa fa-save"></i> Update</button>
     </div>
   </div>
 
-	<input type="hidden" id="rule_id" value="<?php echo $data->id; ?>" />	
-</form>
+	<input type="hidden" id="id" value="<?php echo $data->id; ?>" />
+</div>
 
 
 <script src="<?php echo base_url(); ?>scripts/approve_rule/approve_rule.js?v=<?php echo date('Ymd'); ?>"></script>

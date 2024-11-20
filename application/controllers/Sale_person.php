@@ -15,16 +15,13 @@ class Sale_person extends PS_Controller
   }
 
 
-
-  public function index()
-  {
-		$this->title = "Sales Person - List";
-
+	public function index()
+	{
 		$filter = array(
 			'name' => get_filter('name', 'sale_person_name', '')
 		);
 
-				//--- แสดงผลกี่รายการต่อหน้า
+		//--- แสดงผลกี่รายการต่อหน้า
 		$perpage = get_filter('set_rows', 'rows', 20);
 		//--- หาก user กำหนดการแสดงผลมามากเกินไป จำกัดไว้แค่ 300
 		if($perpage > 300)
@@ -40,18 +37,15 @@ class Sale_person extends PS_Controller
 
 		$result = $this->sale_person_model->get_list($filter, $perpage, $this->uri->segment($segment));
 
-    $filter['data'] = $result;
+		$filter['data'] = $result;
 
 		$this->pagination->initialize($init);
-    $this->load->view('sale_person/sale_person_list', $filter);
-  }
-
+		$this->load->view('sale_person/sale_person_list', $filter);
+	}
 
 
 	public function add_new()
 	{
-		$this->title = "Sales Person - Add";
-
 		if($this->pm->can_add)
 		{
 			$this->load->view('sale_person/sale_person_add');
@@ -108,12 +102,8 @@ class Sale_person extends PS_Controller
 	}
 
 
-
-
 	public function edit($id)
-	{
-		$this->title = "Sales Person - Edit";
-
+	{		
 		if($this->pm->can_edit)
 		{
 			$rs = $this->sale_person_model->get($id);
@@ -134,7 +124,6 @@ class Sale_person extends PS_Controller
 			$this->deny_page();
 		}
 	}
-
 
 
 	public function update($id)
@@ -184,7 +173,6 @@ class Sale_person extends PS_Controller
 	}
 
 
-
 	public function delete($id)
 	{
 		$sc = TRUE;
@@ -205,8 +193,6 @@ class Sale_person extends PS_Controller
 
 		$this->_response($sc);
 	}
-
-
 
 
   public function clear_filter()

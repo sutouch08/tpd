@@ -1,27 +1,27 @@
 <?php $this->load->view('include/header'); ?>
 <div class="row">
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
-    <h4 class="title">
-      <?php echo $this->title; ?>
-    </h4>
-  </div>
-  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-4 padding-5">
-    	<p class="pull-right top-p">
-      <?php if($this->pm->can_add) : ?>
-        <button type="button" class="btn btn-sm btn-success" onclick="goAdd()"><i class="fa fa-plus"></i> New </button>
-      <?php endif; ?>
-      </p>
-  </div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
+		<h4 class="title">
+			<?php echo $this->title; ?>
+		</h4>
+	</div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
+		<p class="pull-right top-p">
+			<?php if($this->pm->can_add) : ?>
+				<button type="button" class="btn btn-sm btn-success" onclick="goAdd()"><i class="fa fa-plus"></i> New </button>
+			<?php endif; ?>
+		</p>
+	</div>
 </div><!-- End Row -->
 <hr class="padding-5"/>
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
 <div class="row">
-  <div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
+  <div class="col-lg-1-harf col-md-3 col-sm-3 col-xs-6 padding-5">
     <label>Code</label>
     <input type="text" class="form-control input-sm text-center search-box" name="code" value="<?php echo $code; ?>" />
   </div>
 
-	<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-3 col-sm-3 col-xs-6 padding-5">
     <label>conditions</label>
     <select class="form-control input-sm" name="conditions" onchange="getSearch()">
 			<option value="all">All</option>
@@ -29,16 +29,16 @@
 		</select>
   </div>
 
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+	<div class="col-lg-1-harf col-md-3 col-sm-3 col-xs-6 padding-5">
     <label>Amount</label>
     <input type="text" class="form-control input-sm text-center search-box" name="amount" value="<?php echo $amount; ?>" />
   </div>
 
-	<div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-3 padding-5">
-    <label>Sale team</label>
+	<div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
+    <label>Sales team condition</label>
     <select class="form-control input-sm" name="sale_team" onchange="getSearch()">
 			<option value="all">All</option>
-			<?php echo select_sale_team($sale_team); ?>
+			<?php echo select_sales_team_condition($sale_team); ?>
 		</select>
   </div>
 
@@ -60,11 +60,11 @@
 		</select>
   </div>
 
-  <div class="col-lg-1 col-md-1 col-sm-1 col-xs-6 padding-5">
+  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-3 padding-5">
     <label class="display-block not-show">buton</label>
     <button type="submit" class="btn btn-xs btn-primary btn-block">Search</button>
   </div>
-	<div class="col-lg-1 col-md-1 col-sm-1 col-xs-3 padding-5">
+	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-3 padding-5">
     <label class="display-block not-show">buton</label>
     <button type="button" class="btn btn-xs btn-warning btn-block" onclick="clearFilter()">Reset</button>
   </div>

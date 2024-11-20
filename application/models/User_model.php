@@ -19,24 +19,41 @@ class User_model extends CI_Model
   }
 
 
+  public function get_all($active = FALSE)
+  {
+    if($active)
+    {
+      $thsi->db->where('status', 1);
+    }
+
+    $rs = $this->db->order_by('uname', 'ASC')->get('user');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
 
 
   public function add(array $ds = array())
   {
-    if($this->db->insert('user', $ds))
+    if( ! empty($ds))
     {
-      return $this->db->insert_id();
+      if($this->db->insert('user', $ds))
+      {
+        return $this->db->insert_id();
+      }
     }
 
     return FALSE;
   }
 
 
-
-
   public function update($id, array $ds = array())
   {
-    if(!empty($ds))
+    if( ! empty($ds))
     {
       $this->db->where('id', $id);
 
@@ -59,11 +76,14 @@ class User_model extends CI_Model
   }
 
 
+  public function drop_user_condition($id)
+  {
+    return $this->db->where('user_id', $id)->delete('user_condition');
+  }
+
 
   function count_rows(array $ds = array())
   {
-    $this->user_in = $ds['sale_team'] !== "all" ? $this->user_in_team($ds['sale_team']) : "";
-
     $this->db
     ->from('user AS u')
     ->join('user_group AS g', 'u.ugroup_id = g.id', 'left')
@@ -89,16 +109,15 @@ class User_model extends CI_Model
       $this->db->where('u.ugroup_id', $ds['user_group']);
     }
 
-    if(!empty($ds['sale_team']) && $ds['sale_team'] !== 'all')
+    if( ! empty($ds['sale_team']) && $ds['sale_team'] !== 'all')
     {
-      $this->db->where_in('u.id', $this->user_in);
+      $this->db->where_in('u.id', $this->user_condition_in($ds['sale_team']));
     }
 
     if($ds['role'] != 'all')
     {
       $this->db->where('u.role', $ds['role']);
     }
-
 
     if($ds['status'] !== 'all')
     {
@@ -107,9 +126,6 @@ class User_model extends CI_Model
 
     return $this->db->count_all_results();
   }
-
-
-
 
 
   function get_list(array $ds = array(), $perpage = 20, $offset = 0)
@@ -141,9 +157,9 @@ class User_model extends CI_Model
     }
 
 
-    if(!empty($ds['sale_team']) && $ds['sale_team'] !== 'all')
+    if( ! empty($ds['sale_team']) && $ds['sale_team'] !== 'all')
     {
-      $this->db->where_in('u.id', $this->user_in);
+      $this->db->where_in('u.id', $this->user_condition_in($ds['sale_team']));
     }
 
     if($ds['role'] != 'all')
@@ -169,19 +185,24 @@ class User_model extends CI_Model
   }
 
 
+  public function add_user_team(array $ds = array())
+  {
+    return $this->db->insert('user_team', $ds);
+  }
 
 
-    public function add_user_team(array $ds = array())
-    {
-      return $this->db->insert('user_team', $ds);
-    }
+  public function add_user_condition(array $ds = array())
+  {
+    return $this->db->insert('user_condition', $ds);
+  }
 
 
-  public function user_in_team($team_id)
+  public function user_condition_in($condition_id)
   {
     $sc = array();
 
-    $qr = "SELECT user_id FROM user_team WHERE team_id = {$team_id}";
+    $qr = "SELECT user_id FROM user_condition WHERE condition_id = {$condition_id}";
+
     $rs = $this->db->query($qr);
 
     if($rs->num_rows() > 0)
@@ -239,6 +260,7 @@ class User_model extends CI_Model
   public function get_all_user_group()
   {
     $rs = $this->db->where('id >',0)->order_by('name', 'ASC')->get('user_group');
+
     if($rs->num_rows() > 0)
     {
       return $rs->result();
@@ -248,13 +270,23 @@ class User_model extends CI_Model
   }
 
 
+  public function get_all_area()
+  {
+    $rs = $this->db->get('area_name');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
 
 
   public function add_user_price_list(array $ds = array())
   {
     return $this->db->insert('user_price_list', $ds);
   }
-
 
 
   public function get_all_price_list()
@@ -298,7 +330,6 @@ class User_model extends CI_Model
   }
 
 
-
   public function get_user_price_list($user_id)
   {
     $rs = $this->db->where('user_id', $user_id)->order_by('list_name', 'ASC')->get('user_price_list');
@@ -318,16 +349,15 @@ class User_model extends CI_Model
   }
 
 
-
   public function get_user_team($user_id)
   {
-    $qr  = "SELECT ut.*, st.name AS team_name, sp.name AS sale_person ";
-    $qr .= "FROM user_team AS ut ";
-    $qr .= "LEFT JOIN sale_team AS st ON ut.team_id = st.id ";
-    $qr .= "LEFT JOIN sale_person AS sp ON st.sale_person_id = sp.id ";
-    $qr .= "WHERE ut.user_id = ".$user_id;
-
-    $rs = $this->db->query($qr);
+    $rs = $this->db
+    ->select('uc.*, sc.name AS team_name, sp.name AS sale_person')
+    ->from('user_condition AS uc')
+    ->join('sales_team_condition AS sc', 'uc.condition_id = sc.id', 'left')
+    ->join('sale_person AS sp', 'sc.sale_id = sp.id', 'left')
+    ->where('uc.user_id', $user_id)
+    ->get();
 
     if($rs->num_rows() > 0)
     {
@@ -337,6 +367,24 @@ class User_model extends CI_Model
     return NULL;
   }
 
+
+  public function get_user_condition($user_id)
+  {
+    $rs = $this->db
+    ->select('uc.*, sc.name AS team_name, sp.name AS sale_person')
+    ->from('user_condition AS uc')
+    ->join('sales_team_condition AS sc', 'uc.condition_id = sc.id', 'left')
+    ->join('sale_person AS sp', 'sc.sale_id = sp.id', 'left')
+    ->where('uc.user_id', $user_id)
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
 
 
   public function get_team_by_customer_group($group_id, $sale_person_id)
@@ -380,7 +428,6 @@ class User_model extends CI_Model
 
     return NULL;
   }
-
 
 
   public function get_customer_group_list()
@@ -445,50 +492,32 @@ class User_model extends CI_Model
 
   public function get_user_credentials($uname)
   {
-    $this->db->where('uname', $uname);
-    $rs = $this->db->get('user');
+    $rs = $this->db->where('uname', $uname)->get('user');
 
     if($rs->num_rows() === 1)
     {
       return $rs->row();
     }
 
-    return FALSE;
+    return NULL;
   }
 
 
   public function verify_uid($uid)
   {
-    $rs = $this->db
-    ->select('uid')
-    ->where('uid', $uid)
-    ->where('status', 1)
-    ->get('user');
+    $count = $this->db->where('uid', $uid)->where('status', 1)->count_all_results('user');
 
-    return $rs->num_rows() === 1 ? TRUE : FALSE;
+    return $count === 1 ? TRUE : FALSE;
   }
 
 
-  public function is_exists_uname($uname, $old_uname = NULL)
+  public function is_exists_uname($uname)
   {
-    $this->db->where('uname', $uname);
 
-    if(!empty($old_uname))
-    {
-      $this->db->where('uname !=', $old_uname);
-    }
+    $count = $this->db->where('uname', $uname)->count_all_results('user');
 
-    $rs = $this->db->get('user');
-
-    if($rs->num_rows() > 0)
-    {
-      return TRUE;
-    }
-
-    return FALSE;
+    return $count > 0 ? TRUE : FALSE;
   }
-
-
 
 
   public function get_permission($menu, $uid, $ugroup_id)
@@ -615,7 +644,7 @@ class User_model extends CI_Model
 
     return NULL;
   }
-  
+
 
   public function get_sale_in()
 	{

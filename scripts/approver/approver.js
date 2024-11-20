@@ -17,28 +17,30 @@ function goEdit(id) {
 }
 
 
-function saveAdd() {
+$('#uname').change(function() {
+  let uname = $('#uname').val();
+  let name = $('#uname option:selected').data('name');
+  $('#emp_name').val(name);
+});
 
-  var arr = [
-    {'el' : 'uname', 'label':'uname-error', 'error':'uname_error'},
-    {'el' : 'amount', 'label' : 'amount-error', 'error' : 'amount_error'}
-  ];
 
-  arr.forEach(check_value);
+function add() {
+  clearErrorByClass('e');
 
-  var error = uname_error + amount_error;
+  let h = {
+    'uname' : $('#uname').val(),
+    'emp_name' : $('#emp_name').val(),
+    'amount' : parseDefault(parseFloat($('#amount').val()), 0),
+    'status' : $('#status').is(':checked') ? 1 : 0
+  }
 
-  if( error > 0) {
+  if(h.uname == '') {
+    $('#uname').hasError('Required');
     return false;
   }
 
-  let uname = $('#uname').val();
-  let amount = parseDefault(parseFloat($('#amount').val()), 0);
-  let status = $('#status').is(':checked') ? 1 : 0;
-
-  if(amount <= 0) {
-    $('#amount').addClass('has-error');
-    $('#amount-error').text("Approve amount must be greater than 0");
+  if(h.amount <= 0) {
+    $('#amount').hasError('Approve amount must be greater than 0');
     $('#amount').focus();
     return false;
   }
@@ -50,14 +52,12 @@ function saveAdd() {
     type:'POST',
     cache:false,
     data:{
-      'uname' : uname,
-      'amount' : amount,
-      'status' : status
+      'data' : JSON.stringify(h)
     },
     success:function(rs) {
       load_out();
-      var rs = $.trim(rs);
-      if(rs === 'success') {
+
+      if(rs.trim() === 'success') {
         swal({
           title:'Success',
           type:'success',
@@ -69,21 +69,12 @@ function saveAdd() {
         }, 1200);
       }
       else {
-        swal({
-          title:'Error!',
-          text:rs,
-          type:'error'
-        })
+        showError(rs);
       }
     },
-    error:function(xhr) {
+    error:function(rs) {
       load_out();
-      swal({
-        title:'Error!',
-        text:'Error: '+xhr.responseText,
-        type:'error',
-        html:true
-      });
+      showError(rs);
     }
   })
 }
@@ -91,26 +82,17 @@ function saveAdd() {
 
 
 function update() {
+  clearErrorByClass('e');
 
-  var arr = [
-    {'el' : 'amount', 'label' : 'amount-error', 'error' : 'amount_error'}
-  ];
-
-  arr.forEach(check_value);
-
-  var error = amount_error;
-
-  if( error > 0) {
-    return false;
+  let h = {
+    'id' : $('#id').val(),
+    'uname' : $('#uname').val(),
+    'amount' : parseDefault(parseFloat($('#amount').val()), 0),
+    'status' : $('#status').is(':checked') ? 1 : 0
   }
 
-  let id = $('#id').val();
-  let amount = parseDefault(parseFloat($('#amount').val()), 0);
-  let status = $('#status').is(':checked') ? 1 : 0;
-
-  if(amount <= 0) {
-    $('#amount').addClass('has-error');
-    $('#amount-error').text("Approve amount must be greater than 0");
+  if(h.amount <= 0) {
+    $('#amount').hasError("Approve amount must be greater than 0");
     $('#amount').focus();
     return false;
   }
@@ -122,115 +104,80 @@ function update() {
     type:'POST',
     cache:false,
     data:{
-      'id' : id,
-      'amount' : amount,
-      'status' : status
+      'data' : JSON.stringify(h)
     },
     success:function(rs) {
       load_out();
-      var rs = $.trim(rs);
-      if(rs === 'success') {
+
+      if(rs.trim() === 'success') {
         swal({
           title:'Success',
           type:'success',
           timer:1200
         });
-
       }
       else {
-        swal({
-          title:'Error!',
-          text:rs,
-          type:'error'
-        })
+        showError(rs);
       }
     },
-    error:function(xhr) {
+    error:function(rs) {
       load_out();
-      swal({
-        title:'Error!',
-        text:'Error: '+xhr.responseText,
-        type:'error',
-        html:true
-      });
+      showError(rs);
     }
   })
 }
 
 
-
-function getDelete(id, name){
+function getDelete(id, uname){
   swal({
     title:'Are sure ?',
-    text:'Do you really want to delete '+ name +' ? <br/> This process cannot be undone.',
+    text:'Do you really want to delete '+ uname +' ? <br/> This process cannot be undone.',
     type:'warning',
     showCancelButton: true,
 		confirmButtonColor: '#FA5858',
 		confirmButtonText: 'Delete',
 		cancelButtonText: 'Cancle',
-		closeOnConfirm: false,
+		closeOnConfirm: true,
     html:true
-  },function(){
-    $.ajax({
-      url: HOME + 'delete',
-      type:'POST',
-      cache:false,
-      data:{
-        'id' : id,
-        'uname' : name
-      },
-      success:function(rs){
-        if(rs == 'success'){
-          swal({
-            title:'Success',
-            text:'Approver has been deleted',
-            type:'success',
-            time: 1000
-          });
+  }, function() {
+    load_in();
 
-          setTimeout(function(){
-            window.location.reload();
-          }, 1500)
+    setTimeout(() => {
+      $.ajax({
+        url:HOME + 'delete',
+        type:'POST',
+        cache:false,
+        data:{
+          'id' : id,
+          'uname' : uname
+        },
+        success:function(rs) {
+          load_out();
 
+          if(rs.trim() === 'success') {
+            swal({
+              title:'Success',
+              text:'Approver has been deleted',
+              type:'success',
+              time: 1000
+            });
+
+            setTimeout(function(){
+              window.location.reload();
+            }, 1200)
+          }
+          else {
+            showError(rs);
+          }
+        },
+        error:function(rs) {
+          load_out();
+          showError(rs);
         }
-        else {
-          swal({
-            title:'Error!',
-            text:rs,
-            type:'error'
-          });
-        }
-      }
-    })
+      })
+    }, 100);    
   })
 }
-
-$('#uname').autocomplete({
-  source: BASE_URL + 'auto_complete/get_user_and_emp',
-  autoFocus:true,
-  close:function() {
-    var rs = $.trim($(this).val());
-    if(rs === 'Not found') {
-      $(this).val('');
-    }
-    else {
-      var arr = rs.split(' | ');
-      if(arr.length === 2) {
-        $(this).val(arr[0]); //--- uname
-        $('#emp_name').val(arr[1]); //--- emp name
-      }
-      else {
-        $(this).val('');
-      }
-    }
-  }
-});
-
-
-
-$('#uname').focusout(function(){
-  validData($(this), $('#uname-error'), "uname_error");
-});
 
 
 $('#gp').focusout(function(){

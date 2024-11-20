@@ -12,9 +12,8 @@ class Approve_rule extends PS_Controller{
     $this->home = base_url().'approve_rule';
 		$this->load->model('approve_rule_model');
 		$this->load->helper('approve');
-		$this->load->helper('sale_team');
+		$this->load->helper('sales_team_condition');
   }
-
 
 
   public function index()
@@ -62,6 +61,7 @@ class Approve_rule extends PS_Controller{
 		if($this->pm->can_add)
 		{
 			$ds['code'] = $this->get_new_code();
+
 			$this->load->view('approve_rule/approve_rule_add', $ds);
 		}
 		else
@@ -73,48 +73,43 @@ class Approve_rule extends PS_Controller{
 
 	public function add()
 	{
-
 		$sc = TRUE;
+
 		if($this->pm->can_add)
 		{
-			if($this->input->post('conditions'))
+			$ds = json_decode($this->input->post('data'));
+
+			if( ! empty($ds) && ! empty($ds->conditions) && ! empty($ds->sale_team))
 			{
 				$code = $this->get_new_code();
-				$conditions = $this->input->post('conditions');
-				$amount = $this->input->post('amount');
-				$sale_team = $this->input->post('sale_team');
-				$is_price_list = $this->input->post('is_price_list') == 1 ? 1 : 0;
-				$status = $this->input->post('status') == 1 ? 1 : 0;
 
 				$arr = array(
 					'code' => $code,
-					'conditions' => $conditions,
-					'amount' => $amount,
-					'sale_team' => $sale_team,
-					'is_price_list' => $is_price_list,
-					'status' => $status,
+					'conditions' => $ds->conditions,
+					'amount' => $ds->amount,
+					'sale_team' => $ds->sale_team,
+					'is_price_list' => $ds->is_price_list,
+					'status' => $ds->status,
 					'add_by' => $this->_user->id,
 					'date_add' => now()
 				);
-
 
 				if(!$this->approve_rule_model->add($arr))
 				{
 					$sc = FALSE;
 					$this->error = "Insert approve rule failed";
 				}
-
 			}
 			else
 			{
 				$sc = FALSE;
-				$this->error = "Missing Required Parameter";
+				$this->error = get_error_message('required');
 			}
 		}
 		else
 		{
 			$sc = FALSE;
-			$this->error = "Missing permission";
+			$this->error = get_error_message('permission');
 		}
 
 		$this->_response($sc);
@@ -124,6 +119,7 @@ class Approve_rule extends PS_Controller{
 	public function edit($id)
 	{
 		$this->title = "Approve rule - Edit";
+
 		if($this->pm->can_edit)
 		{
 			$rs = $this->approve_rule_model->get($id);
@@ -142,37 +138,31 @@ class Approve_rule extends PS_Controller{
 		{
 			$this->deny_page();
 		}
-
 	}
 
 
 
 	public function update()
 	{
-
 		$sc = TRUE;
+
 		if($this->pm->can_edit)
 		{
-			if($this->input->post('rule_id') && $this->input->post('conditions'))
-			{
-				$id = $this->input->post('rule_id');
-				$conditions = $this->input->post('conditions');
-				$amount = $this->input->post('amount');
-				$sale_team = $this->input->post('sale_team');
-				$is_price_list = $this->input->post('is_price_list') == 1 ? 1 : 0;
-				$status = $this->input->post('status') == 1 ? 1 : 0;
+			$ds = json_decode($this->input->post('data'));
 
+			if( ! empty($ds) && ! empty($ds->id) && ! empty($ds->conditions) && ! empty($ds->sale_team))
+			{
 				$arr = array(
-					'conditions' => $conditions,
-					'amount' => $amount,
-					'sale_team' => $sale_team,
-					'is_price_list' => $is_price_list,
-					'status' => $status,
+					'conditions' => $ds->conditions,
+					'amount' => $ds->amount,
+					'sale_team' => $ds->sale_team,
+					'is_price_list' => $ds->is_price_list,
+					'status' => $ds->status,
 					'update_by' => $this->_user->id,
 					'date_upd' => now()
 				);
 
-				if(!$this->approve_rule_model->update($id, $arr))
+				if( ! $this->approve_rule_model->update($ds->id, $arr))
 				{
 					$sc = FALSE;
 					$this->error = "Update failed";
@@ -181,13 +171,13 @@ class Approve_rule extends PS_Controller{
 			else
 			{
 				$sc = FALSE;
-				$this->error = "Missing Required Parameter";
+				$this->error = get_error_message('required');
 			}
 		}
 		else
 		{
 			$sc = FALSE;
-			$this->error = "Missing permission";
+			$this->error = get_error_message('permission');
 		}
 
 		$this->_response($sc);

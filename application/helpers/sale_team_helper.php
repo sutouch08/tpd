@@ -4,9 +4,9 @@ function select_sale_team($id = NULL)
 {
   $sc = "";
   $ci =& get_instance();
-  $ci->load->model('sale_team_model');
+  $ci->load->model('sales_team_model');
 
-  $teams = $ci->sale_team_model->get_all_team();
+  $teams = $ci->sales_team_model->get_all_team();
 
   if(!empty($teams))
   {

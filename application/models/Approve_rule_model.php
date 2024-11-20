@@ -64,13 +64,10 @@ class Approve_rule_model extends CI_Model
   }
 
 
-
   public function drop_rule_approver($rule_id)
   {
     return $this->db->where('rule_id', $rule_id)->delete('rule_approver');
   }
-
-
 
 
   public function update($id, array $ds = array())
@@ -82,7 +79,6 @@ class Approve_rule_model extends CI_Model
 
     return FALSE;
   }
-
 
 
   public function delete($id)
@@ -107,7 +103,6 @@ class Approve_rule_model extends CI_Model
   }
 
 
-
   public function is_exists($user_id)
   {
     $rs = $this->db->where('user_id', $user_id)->count_all_results('approve_rule');
@@ -121,7 +116,6 @@ class Approve_rule_model extends CI_Model
   }
 
 
-
   public function is_exists_approver($rule_id, $user_id)
   {
     if($this->db->where('rule_id', $rule_id)->where('user_id', $user_id)->count_all_results('rule_approver') > 0)
@@ -133,7 +127,6 @@ class Approve_rule_model extends CI_Model
   }
 
 
-
   public function count_rows(array $ds = array())
   {
     if($ds['code'] != "")
@@ -141,12 +134,12 @@ class Approve_rule_model extends CI_Model
       $this->db->like('code', $ds['code']);
     }
 
-
     if($ds['conditions'] != "all" OR $ds['amount'] != "")
     {
       if($ds['conditions'] != "all" && $ds['amount'] != "")
       {
         $sign = $this->get_condition_sign($ds['conditions']);
+
         if($sign !== "")
         {
           $this->db->where("amount {$sign}", $ds['amount']);
@@ -165,12 +158,10 @@ class Approve_rule_model extends CI_Model
       }
     }
 
-
     if($ds['sale_team'] != "all")
     {
       $this->db->where('sale_team', $ds['sale_team']);
     }
-
 
     if($ds['is_price_list'] != "all")
     {
@@ -189,22 +180,21 @@ class Approve_rule_model extends CI_Model
   public function get_list(array $ds = array(), $limit = 20, $offset = 0)
   {
     $this->db
-    ->select('approve_rule.*')
-    ->select('sale_team.name AS team_name')
-    ->from('approve_rule')
-    ->join('sale_team', 'approve_rule.sale_team = sale_team.id', 'left');
+    ->select('ar.*, sc.name AS team_name')
+    ->from('approve_rule AS ar')
+    ->join('sales_team_condition AS sc', 'ar.sale_team = sc.id', 'left');
 
     if($ds['code'] != "")
     {
       $this->db->like('code', $ds['code']);
     }
 
-
     if($ds['conditions'] != "all" OR $ds['amount'] != "")
     {
       if($ds['conditions'] != "all" && $ds['amount'] != "")
       {
         $sign = $this->get_condition_sign($ds['conditions']);
+
         if($sign !== "")
         {
           $this->db->where("amount {$sign}", $ds['amount']);
@@ -223,12 +213,10 @@ class Approve_rule_model extends CI_Model
       }
     }
 
-
     if($ds['sale_team'] != "all")
     {
       $this->db->where('sale_team', $ds['sale_team']);
     }
-
 
     if($ds['is_price_list'] != "all")
     {
@@ -249,7 +237,6 @@ class Approve_rule_model extends CI_Model
 
     return NULL;
   }
-
 
 
 

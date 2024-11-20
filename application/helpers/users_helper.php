@@ -79,12 +79,12 @@ function select_user_group($id = NULL)
 }
 
 
-function user_team_label($user_id)
+function user_condition_label($user_id)
 {
   $ds = "";
 
   $ci =& get_instance();
-  $team = $ci->user_model->get_user_team($user_id);
+  $team = $ci->user_model->get_user_condition($user_id);
 
   if(!empty($team))
   {
@@ -100,7 +100,45 @@ function user_team_label($user_id)
 }
 
 
-function select_saleman($sale_id = '')
+function select_user_id($id = NULL)
+{
+  $ds = '';
+
+  $ci =& get_instance();
+  $users = $ci->user_model->get_all();
+
+  if( ! empty($users))
+  {
+    foreach($users as $rs)
+    {
+      $ds .= '<option value="'.$rs->id.'" data-uname="'.$rs->uname.'" data-name="'.$rs->emp_name.'" '.is_selected($id, $rs->id).'>'.$rs->uname.' | '.$rs->emp_name.'</option>';
+    }
+  }
+
+  return $ds;
+}
+
+
+function select_uname($uname = NULL)
+{
+  $ds = '';
+
+  $ci =& get_instance();
+  $users = $ci->user_model->get_all();
+
+  if( ! empty($users))
+  {
+    foreach($users as $rs)
+    {
+      $ds .= '<option value="'.$rs->uname.'" data-id="'.$rs->id.'" data-name="'.$rs->emp_name.'" '.is_selected($uname, $rs->uname).'>'.$rs->uname.' | '.$rs->emp_name.'</option>';
+    }
+  }
+
+  return $ds;
+}
+
+
+function select_saleman($sale_id = NULL)
 {
   $ds = '';
   $CI =& get_instance();
@@ -108,6 +146,24 @@ function select_saleman($sale_id = '')
   if(!empty($qs))
   {
     foreach($qs as $rs)
+    {
+      $ds .= '<option value="'.$rs->id.'" '.is_selected($rs->id, $sale_id).'>'.$rs->name.'</option>';
+    }
+  }
+
+  return $ds;
+}
+
+
+function select_area($id = NULL)
+{
+  $ds = '';
+  $ci =& get_instance();
+  $area = $ci->user_model->get_all_area();
+
+  if( ! empty($area))
+  {
+    foreach($area as $rs)
     {
       $ds .= '<option value="'.$rs->id.'" '.is_selected($rs->id, $sale_id).'>'.$rs->name.'</option>';
     }
@@ -125,5 +181,17 @@ function get_sale_name($sale_id)
 
 }
 
+
+function uname($id)
+{
+  $ci =& get_instance();
+
+  if( ! empty($id))
+  {
+    return $ci->user_model->get_uname($id);
+  }
+
+  return NULL;
+}
 
  ?>

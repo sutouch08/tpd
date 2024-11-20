@@ -1,9 +1,9 @@
 var HOME = BASE_URL + 'users/';
-var uname_error = 1;
-var pwd_error = 1;
-var emp_error = 1;
-//var sale_error = 1;
-var ugroup_error = 1;
+var uname_error = 0;
+var pwd_error = 0;
+var emp_error = 0;
+var ugroup_error = 0;
+var area_error = 0;
 
 
 function goBack() {
@@ -74,55 +74,69 @@ function getDelete(id, uname){
 }
 
 
+function add() {
+  clearErrorByClass('e');
+  uname_error = 0;
+  emp_error = 0;
+  ugroup_error = 0;
+  area_error = 0;
 
-function saveAdd() {
-  var arr = [
-    {'el' : 'uname', 'label':'uname-error', 'error':'uname_error'},
-    {'el' : 'emp', 'label' : 'emp-error', 'error' : 'emp_error'},
-    {'el' : 'ugroup', 'label' : 'ugroup-error', 'error' : 'ugroup_error'}
-  ];
+  let h = {
+    'uname' : $('#uname').val().trim(),
+    'emp_id' : $('#emp').val(),
+    'emp_name' : $('#emp option:selected').text(),
+    'sale_id' : $('#saleman').val(),
+    'sale_name' : $('#saleman option:selected').text(),
+    'pwd' : $('#pwd').val().trim(),
+    'ugroup' : $('#ugroup').val(),
+    'area_id' : $('#area').val(),
+    'status' : $('#status').is(':checked') ? 1 : 0,
+    'bi' : $('#bi').is(':checked') ? 1 : 0,
+    'role' : $('#u_role').val(),
+    'team' : [],
+    'price_list' : []
+  };
 
-  arr.forEach(check_value);
+  if(h.uname.length == 0) {
+    $('#uname').hasError('Required');
+    uname_error = 1;
+  }
 
+  if(h.pwd.length == 0) {
+    $('#pwd').hasError('Required');
+    pwd_error = 1;
+  }
 
-  var error = uname_error + emp_error + pwd_error + ugroup_error;
+  if(h.emp_id == '') {
+    $('#emp').hasError('Required');
+    emp_error = 1;
+  }
+
+  if(h.ugroup == '') {
+    $('#ugroup').hasError('Required');
+    ugroup_error = 1;
+  }
+
+  if(h.role == 'sales' && h.area_id == '') {
+    $('#area').hasError('Required when User Role = Sales');
+    area_error = 1;
+  }
+
+  let error = uname_error + emp_error + pwd_error + ugroup_error + area_error;
 
   if( error > 0) {
     return false;
   }
 
-  let uname = $('#uname').val();
-  let emp_id = $('#emp').val();
-  let emp_name = $('#emp :selected').text();
-  let sale_id = $('#saleman').val();
-  let sale_name = $('#saleman option:selected').text();
-  let pwd = $('#pwd').val();
-  let ugroup = $('#ugroup').val();
-  let status = $('#status').is(':checked') ? 1 : 0;
-  let bi = $('#bi').is(':checked') ? 1 : 0;
-  let role = $('#u_role').val();
-  let team = [];
-
-  let priceList = [];
-
-  $('.chk').each(function() {
-    if($(this).is(':checked')) {
-      let pl = {"id" : $(this).val(), "name" : $(this).data('name')};
-      priceList.push(pl);
-    }
-  })
-
-  $('.team-list').each(function() {
-    let team_list = {
-      "team_id" : $(this).val(),
-      "user_role" : $(this).data('role')
-    }
-
-    team.push(team_list);
+  $('.chk:checked').each(function() {
+    h.price_list.push({"id" : $(this).val(), "name" : $(this).data('name')});
   });
 
-
-
+  if($('.team-list').length) {
+    $('.team-list').each(function() {
+      h.team.push({'team_id' : $(this).val(), 'user_role' : $(this).data('role')});
+    })
+  }
 
   load_in();
 
@@ -131,18 +145,7 @@ function saveAdd() {
     type:'POST',
     cache:false,
     data:{
-      'uname' : uname,
-      'emp_id' : emp_id,
-      'emp_name' : emp_name,
-      'sale_id' : sale_id,
-      'sale_name' : sale_name,
-      'pwd' : pwd,
-      'ugroup' : ugroup,
-      'status' : status,
-      'bi' : bi,
-      'role' : role,
-      'user_team' : JSON.stringify(team),
-      'price_list' : JSON.stringify(priceList)
+      'data' : JSON.stringify(h)
     },
     success:function(rs) {
       load_out();
@@ -179,50 +182,52 @@ function saveAdd() {
 }
 
 
-
 function update() {
-  var arr = [
-    {'el' : 'emp', 'label' : 'emp-error', 'error' : 'emp_error'},
-    {'el' : 'ugroup', 'label' : 'ugroup-error', 'error' : 'ugroup_error'}
-  ];
+  clearErrorByClass('e');
+  uname_error = 0;
+  emp_error = 0;
+  ugroup_error = 0;
 
-  arr.forEach(check_value);
+  let h = {
+    'id' : $('#id').val(),
+    'emp_id' : $('#emp').val(),
+    'emp_name' : $('#emp option:selected').text(),
+    'sale_id' : $('#saleman').val(),
+    'sale_name' : $('#saleman option:selected').text(),
+    'ugroup' : $('#ugroup').val(),
+    'status' : $('#status').is(':checked') ? 1 : 0,
+    'bi' : $('#bi').is(':checked') ? 1 : 0,
+    'role' : $('#u_role').val(),
+    'team' : [],
+    'price_list' : []
+  };
 
 
-  var error = emp_error + ugroup_error;
+  if(h.emp_id == '') {
+    $('#emp').hasError('Required');
+    emp_error = 1;
+  }
+
+  if(h.ugroup == '') {
+    $('#ugroup').hasError('Required');
+    ugroup_error = 1;
+  }
+
+  let error = emp_error + ugroup_error;
 
   if( error > 0) {
     return false;
   }
 
-  let id = $('#id').val();
-  let emp_id = $('#emp').val();
-  let emp_name = $('#emp option:selected').text();
-  let sale_id = $('#saleman').val();
-  let sale_name = $('#saleman option:selected').text();
-  let ugroup = $('#ugroup').val();
-  let status = $('#status').is(':checked') ? 1 : 0;
-  let bi = $('#bi').is(':checked') ? 1 : 0;
-  let role = $('#u_role').val();
-  let team = [];
-
-  let priceList = [];
-
-  $('.chk').each(function() {
-    if($(this).is(':checked')) {
-      let pl = {"id" : $(this).val(), "name" : $(this).data('name')};
-      priceList.push(pl);
-    }
-  })
-
-  $('.team-list').each(function() {
-    let team_list = {
-      "team_id" : $(this).val(),
-      "user_role" : $(this).data('role')
-    }
-
-    team.push(team_list);
+  $('.chk:checked').each(function() {
+    h.price_list.push({"id" : $(this).val(), "name" : $(this).data('name')});
   });
+
+  if($('.team-list').length) {
+    $('.team-list').each(function() {
+      h.team.push({'team_id' : $(this).val(), 'user_role' : $(this).data('role')});
+    })
+  }
 
   load_in();
 
@@ -231,17 +236,7 @@ function update() {
     type:'POST',
     cache:false,
     data:{
-      'user_id' : id,
-      'emp_id' : emp_id,
-      'emp_name' : emp_name,
-      'sale_id' : sale_id,
-      'sale_name' : sale_name,
-      'ugroup' : ugroup,
-      'status' : status,
-      'bi' : bi,
-      'user_team' : JSON.stringify(team),
-      'price_list' : JSON.stringify(priceList),
-      'role' : role
+      'data' : JSON.stringify(h)
     },
     success:function(rs) {
       load_out();
@@ -274,111 +269,71 @@ function update() {
 }
 
 
-function check_value(item, index) {
-  let el = $('#'+item.el);
-  let label = $('#'+item.label);
-  let error = item.error;
-
-  validData(el, label, error);
-}
-
-
 function check_uname() {
-  var el_uname = $('#uname');
-  var label = $('#uname-error');
-  var uname = $.trim($('#uname').val());
-  var old_uname = $('#old_uname').val();
+  let uname = $('#uname').val().trim();
 
   $.ajax({
     url:HOME + 'is_exists_uname',
     type:'POST',
     cache:false,
     data:{
-      'uname' : uname,
-      'old_uname' : old_uname
+      'uname' : uname
     },
     success:function(rs) {
-      var rs = $.trim(rs);
-      if(rs === 'success') {
-        clear_error(el_uname, label);
+      if(rs.trim() == 'success') {
+        $('#uname').clearError();
         uname_error = 0;
       }
       else {
-        set_error(el_uname, label, rs);
+        $('#uname').hasError(rs);
         uname_error = 1;
       }
     }
   })
 }
 
-//-- use to validate password is strong or not
-function validatePassword(input)
-{
-	var passw = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
 
-	if(input.match(passw))
-	{
-		return true;
-	}
-	else
-	{
-		return false;
-	}
+function validatePassword(input) {
+	let passw = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,20}$/;
+  return input.match(passw);
 }
 
 
 function check_pwd() {
-  var use_strong_pwd = $('#use_strong_pwd').val();
-  var pwd = $('#pwd').val();
-  var cfpwd = $('#cfpwd').val();
-  var el = $('#cfpwd');
-  var label = $('#cfpwd-error');
+  pwd_error = 0;
+  $('#pwd').clearError();
+  $('#cfpwd').clearError();
+
+  let use_strong_pwd = $('#use_strong_pwd').val();
+  let pwd = $('#pwd').val().trim();
+  let cfpwd = $('#cfpwd').val().trim();
 
   if(use_strong_pwd == 1) {
     //--- check pwd is strong or not
-    if(!validatePassword(pwd)) {
-			$('#pwd-error').text('The password must have at least 8 characters, at least 1 digit(s), at least 1 lower case letter(s), at least 1 upper case letter(s), at least 1 non-alphanumeric character(s) ');
-      $('#pwd').addClass('has-error');
+    if( ! validatePassword(pwd)) {
+      errmsg = 'The password must have at least 8 characters, at least 1 digit(s), at least 1 lower case letter(s), at least 1 upper case letter(s), at least 1 non-alphanumeric character(s) ';
+			$('#pwd').hasError(errmsg);
 			pwd_error = 1;
       return false;
 		}
-		else {
-			$('#pwd-error').text('');
-			$('#pwd').removeClass('has-error');
-			pwd_error = 0;
-		}
   }
-  else {
-    if(pwd.length < 6) {
-      $('#pwd-error').text('The password must have at least 6 characters');
-      $('#pwd').addClass('has-error');
-      pwd_error = 1;
-      return false;
-    }
-    else {
-      $('#pwd-error').text('');
-			$('#pwd').removeClass('has-error');
-			pwd_error = 0;
-    }
+
+  if(pwd.length < 6) {
+    $('#pwd').hasError('The password must have at least 6 characters');
+    pwd_error = 1;
+    return false;
   }
 
 
   if(pwd !== cfpwd) {
-    set_error(el, label, "Password didn't match");
+    $('#cfpwd').hasError("Password didn't match");
     pwd_error = 1;
-  }
-  else {
-    clear_error(el, label);
-    pwd_error = 0;
   }
 }
 
 
 $('#pwd').focusout(function(){
-  var pwd = $(this).val();
-  if(pwd.length > 0) {
-    check_pwd();
-  }
+  check_pwd();
 })
 
 
@@ -387,45 +342,21 @@ $('#cfpwd').focusout(function(){
 })
 
 
-function validData(el, label, error) {
-  if(el.val() == '') {
-    set_error(el, label, "Required");
-    window[error] = 1;
-  }
-  else {
-    clear_error(el, label);
-    window[error] = 0;
-  }
+function reset_password() {
+  let id = $('#user_id').val();
+  let pwd = $('#pwd').val().trim();
+  let cfpwd = $('#cfpwd').val().trim();
 
-  console.log(error + " = " + window[error]);
-}
-
-
-function reset_password(){
-  var id = $('#user_id').val();
-  var pwd = $('#pwd');
-  var cfpwd = $('#cfpwd');
-  var pLabel = $('#pwd-error');
-  var cLabel = $('#cfpwd-error');
-  var password = $.trim(pwd.val());
-  var cm_pwd = $.trim(cfpwd.val());
-
-  if(password.length === 0) {
-    set_error(pwd, pLabel, "Required");
-    pwd.focus();
+  if(pwd.length == 0) {
+    $('#pwd').hasError('Required');
+    $('#pwd').focus();
     return false;
   }
-  else {
-    clear_error(pwd, pLabel);
-  }
 
-  if(password !== cm_pwd) {
-    set_error(cfpwd, cLabel, "Password Mismatch");
-    cfpwd.focus();
+  if(pwd !== cfpwd) {
+    $('#cfpwd').hasError('Password Mismatch');
+    $('#cfpwd').focus();
     return false;
-  }
-  else {
-    clear_error(pwd, cLabel);
   }
 
   load_in();
@@ -436,67 +367,77 @@ function reset_password(){
     cache:false,
     data:{
       'id' : id,
-      'pwd' : password
+      'pwd' : pwd
     },
     success:function(rs) {
       load_out();
-      var rs = $.trim(rs);
-      if(rs === 'success') {
+
+      if(rs.trim() === 'success') {
         swal({
           title:'Success',
           text:'Password has been changed',
           type:'success',
-          timer:2000
+          timer:1000
         });
       }
       else {
-        swal({
-          title:'Error!!',
-          text:rs,
-          type:'error'
-        })
+        showError(rs);
       }
+    },
+    error:function(rs) {
+      load_out();
+      showError(rs);
     }
   })
 }
 
 
-
-
 $('#uname').focusout(function(){
-  var uname = $('#uname').val();
-  if(uname.length > 0) {
-    check_uname();
+  uname_error = 0;
+  let uname = $('#uname').val().trim();
+
+  if(uname.length) {
+    return check_uname();
   }
   else {
-    validData($(this), $('#uname-error'), "uname_error");
+    $('#uname').hasError('Required');
+    uname_error = 1;
   }
 });
 
 
 $('#emp').focusout(function() {
-  validData($(this), $('#emp-error'), 'emp_error');
+  emp_error = 0;
+
+  if($('#emp').val() == '') {
+    $('#emp').hasError('Required');
+    emp_error = 1;
+  }
 })
 
 
 $('#ugroup').focusout(function() {
-  validData($(this), $('#ugroup-error'), 'ugroup_error');
+  ugroup_error = 0;
+  if($('#ugroup').val() == '') {
+    $('#ugroup').hasError('Required');
+    ugroup_error = 1;
+  }
 })
 
 
-
-//----- focus next element when press enter
 $('#uname').keyup(function(e){
   if(e.keyCode === 13) {
     $('#pwd').focus();
   }
 })
 
+
 $('#pwd').keyup(function(e){
   if(e.keyCode === 13) {
     $('#cfpwd').focus();
   }
 })
+
 
 $('#cfpwd').keyup(function(e){
   if(e.keyCode === 13) {
@@ -512,51 +453,48 @@ $('#status').keyup(function(e){
 })
 
 
-
-
 function addTeam() {
-  let no = $('#no').val();
-  no = parseDefault(parseInt(no), 1);
+  $('#sale_team').clearError();
+
   let team_id = $('#sale_team').val();
   let name = $('#sale_team option:selected').text();
   let role = $('#role').val();
-
+  let no = role + '-' + team_id;
 
   if(team_id == "") {
-    $('#sale_team').addClass('has-error');
+    $('#sale_team').hasError();
     return false;
   }
-  else {
-    $('#sale_team').removeClass('has-error');
+
+  if($('#team-'+no).length == 0) {
+    let source = $('#tag-template').html();
+    let data = {
+      "no" : no,
+      "team_id" : team_id,
+      "name" : name,
+      "role" : role
+    };
+
+    let output = $('#user-team-list');
+
+    render_append(source, data, output);
+
+    $('#sale_team').val('');
+    $('#role').val('Sales');
+    $('#team-list').removeClass('hide');
   }
-
-  let source = $('#tag-template').html();
-  let data = {
-    "no" : no,
-    "team_id" : team_id,
-    "name" : name,
-    "role" : role
-  };
-
-  let output = $('#user-team-list');
-
-  render_append(source, data, output);
-
-  $('#sale_team').val('');
-  $('#role').val('Sales');
-  $('#no').val(no+1);
-  $('#team-list').removeClass('hide');
 }
-
 
 
 function removeTag(id) {
   $('#tag-'+id).remove();
   $('#team-'+id).remove();
+
   if($('.team-list').length == 0) {
     $('#team-list').addClass('hide');
   }
 }
+
 
 $('#chk-all').change(function(){
   if($(this).is(':checked')) {

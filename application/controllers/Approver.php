@@ -14,9 +14,8 @@ class Approver extends PS_Controller{
   }
 
 
-
-  public function index()
-  {
+	public function index()
+	{
 		$this->title = "Authorizer - List";
 
 		$filter = array(
@@ -46,9 +45,8 @@ class Approver extends PS_Controller{
 
 		$this->pagination->initialize($init);
 
-    $this->load->view('approver/approver_list', $filter);
-  }
-
+		$this->load->view('approver/approver_list', $filter);
+	}
 
 
 	public function add_new()
@@ -69,35 +67,34 @@ class Approver extends PS_Controller{
 	public function add()
 	{
 		$sc = TRUE;
+
 		if($this->pm->can_add)
 		{
-			if($this->input->post('uname'))
+			$ds = json_decode($this->input->post('data'));
+
+			if( ! empty($ds) && ! empty($ds->uname) && ! empty($ds->amount))
 			{
-				$uname = trim($this->input->post('uname'));
-				$amount = $this->input->post('amount');
-				$status = $this->input->post('status') == 1 ? 1 : 0;
+				$user = $this->user_model->get_user_by_uname($ds->uname);
 
-				$user = $this->user_model->get_user_by_uname($uname);
-
-				if(!empty($user))
+				if( ! empty($user))
 				{
 					//--- check exists approver
-					if(!$this->approver_model->is_exists($user->id))
+					if( ! $this->approver_model->is_exists($user->id))
 					{
 						$arr = array(
 							'user_id' => $user->id,
 							'uname' => $user->uname,
 							'emp_name' => $user->emp_name,
-							'amount' => $amount,
-							'status' => $status,
+							'amount' => $ds->amount,
+							'status' => $ds->status,
 							'date_add' => now(),
 							'add_by' => $this->_user->id
 						);
 
-						if(! $this->approver_model->add($arr))
+						if( ! $this->approver_model->add($arr))
 						{
 							$sc = FALSE;
-							$this->error = "Add new Approver failed";
+							$this->error = "Failed to create approver";
 						}
 					}
 					else
@@ -131,12 +128,15 @@ class Approver extends PS_Controller{
 	public function edit($id)
 	{
 		$this->title = "Authorizer - Edit";
+
 		if($this->pm->can_edit)
 		{
-			$rs = $this->approver_model->get($id);
-			if(!empty($rs))
+			$ap = $this->approver_model->get($id);
+
+			if( ! empty($ap))
 			{
-				$ds['data'] = $rs;
+				$ds['data'] = $ap;
+
 				$this->load->view('approver/approver_edit', $ds);
 			}
 			else
@@ -148,9 +148,7 @@ class Approver extends PS_Controller{
 		{
 			$this->deny_page();
 		}
-
 	}
-
 
 
 	public function update()
@@ -159,20 +157,18 @@ class Approver extends PS_Controller{
 
 		if($this->pm->can_edit)
 		{
-			if($this->input->post('id'))
-			{
-				$id = $this->input->post('id');
-				$amount = $this->input->post('amount');
-				$status = $this->input->post('status') == 1 ? 1 : 0;
+			$ds = json_decode($this->input->post('data'));
 
+			if( ! empty($ds) && ! empty($ds->id) && ! empty($ds->amount))
+			{
 				$arr = array(
-					'amount' => $amount,
-					'status' => $status,
+					'amount' => $ds->amount,
+					'status' => $ds->status,
 					'date_upd' => now(),
 					'update_by' => $this->_user->id
 				);
 
-				if(! $this->approver_model->update($id, $arr))
+				if(! $this->approver_model->update($ds->id, $arr))
 				{
 					$sc = FALSE;
 					$this->error = "Update failed";
@@ -197,16 +193,46 @@ class Approver extends PS_Controller{
 	public function delete()
 	{
 		$sc = TRUE;
+
+		$id = $this->input->post('id');
+
 		if($this->pm->can_delete)
 		{
-			if($this->input->post('id'))
+			if( ! empty($id))
 			{
-				$id = $this->input->post('id');
+				$ap = $this->approver_model->get($id);
 
-				if(! $this->approver_model->delete($id))
+				if(empty($ap))
 				{
 					$sc = FALSE;
-					$this->error = "Delete failed";
+					$this->error = get_error_message('notfound');
+				}
+
+				if($sc === TRUE)
+				{
+					$this->db->trans_begin();
+
+					//--- delete approver
+					if( ! $this->approver_model->delete($id))
+					{
+						$sc = FALSE;
+						$this->error = "Failed to delete authorizer";
+					}
+
+					if($sc === TRUE && ! $this->approver_model->drop_approver_condition($ap->user_id))
+					{
+						$sc = FALSE;
+						$this->error = "Failed to remove sales team condition link";
+					}
+
+					if($sc === TRUE)
+					{
+						$this->db->trans_commit();
+					}
+					else
+					{
+						$this->db->trans_rollback();
+					}
 				}
 			}
 			else
@@ -218,7 +244,7 @@ class Approver extends PS_Controller{
 		else
 		{
 			$sc = FALSE;
-			$this->error = "Missing Permission";
+			$this->error = get_error_message('permission');
 		}
 
 		$this->_response($sc);

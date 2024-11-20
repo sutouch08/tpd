@@ -15,56 +15,32 @@ function goEdit(id) {
 }
 
 
+function add() {
+  clearErrorByClass('e');
 
-function saveAdd() {
-  var conditions = $('#conditions').val();
-  var amount = parseDefault(parseFloat($('#amount').val()),0);
-  var sale_team = $('#sale_team').val();
-  var is_price_list = $('#is_price_list').is(':checked') ? 1 : 0;
-  var status = $('#status').is(':checked') ? 1 : 0;
+  let h = {
+    'conditions' : $('#conditions').val(),
+    'amount' : parseDefault(parseFloat($('#amount').val()), 0),
+    'sale_team' : $('#sale_team').val(),
+    'is_price_list' : $('#is_price_list').is(':checked') ? 1 : 0,
+    'status' : $('#status').is(':checked') ? 1 : 0
+  }
 
-
-  if(conditions == "") {
-    $('#conditions').addClass('has-error');
-    $('#conditions-error').text('Required');
+  if(h.conditions == '') {
+    $('#conditions').hasError('Required');
     return false;
   }
-  else {
-    $('#conditions').removeClass('has-error');
-    $('#conditions-error').text('');
-  }
 
-
-  if(sale_team == "") {
-    $('#sale_team').addClass('has-error');
-    $('#sale_team-error').text('Required');
+  if(h.sale_team == '') {
+    $('#sale_team').hasError('Required');
     return false;
   }
-  else {
-    $('#sale_team').removeClass('has-error');
-    $('#sale_team-error').text('');
-  }
 
-
-  if(amount < 0) {
-    $('#amount').addClass('has-error');
-    $('#amount-error').text('Amount must Greater than 0');
+  if(h.amount <= 0) {
+    $('#amount').hasError('Amount must Greater than 0');
     $('#amount').focus();
     return false;
   }
-  else {
-    $('#amount').removeClass('has-error');
-    $('#amount-error').text('');
-  }
-
-
-  var fd = new FormData();
-
-  fd.append("conditions", conditions);
-  fd.append("amount", amount);
-  fd.append("sale_team", sale_team);
-  fd.append("is_price_list", is_price_list);
-  fd.append("status" , status);
 
   load_in();
 
@@ -72,13 +48,13 @@ function saveAdd() {
     url:HOME + 'add',
     type:'POST',
     cache:false,
-    data:fd,
-    processData:false,
-    contentType:false,
+    data:{
+      'data' : JSON.stringify(h)
+    },
     success:function(rs) {
       load_out();
-      var rs = $.trim(rs);
-      if(rs === 'success') {
+
+      if(rs.trim() === 'success') {
         swal({
           title:'Success',
           type:'success',
@@ -90,78 +66,44 @@ function saveAdd() {
         }, 1200);
       }
       else {
-        swal({
-          title:"Error",
-          text:rs,
-          type:'error'
-        })
+        showError(rs);
       }
     },
-    error:function(xhr) {
+    error:function(rs) {
       load_out();
-      swal({
-        title:"Error!",
-        text:"Error : "+xhr.responseText,
-        type:"error",
-        html:true
-      })
+      showError(rs);
     }
   })
-
 }
 
 
-
-
 function update() {
-  var rule_id = $('#rule_id').val();
-  var conditions = $('#conditions').val();
-  var amount = parseDefault(parseFloat($('#amount').val()),0);
-  var sale_team = $('#sale_team').val();
-  var is_price_list = $('#is_price_list').is(':checked') ? 1 : 0;
-  var status = $('#status').is(':checked') ? 1 : 0;
+  clearErrorByClass('e');
 
-  if(conditions == "") {
-    $('#conditions').addClass('has-error');
-    $('#conditions-error').text('Required');
+  let h = {
+    'id' : $('#id').val(),
+    'conditions' : $('#conditions').val(),
+    'amount' : parseDefault(parseFloat($('#amount').val()), 0),
+    'sale_team' : $('#sale_team').val(),
+    'is_price_list' : $('#is_price_list').is(':checked') ? 1 : 0,
+    'status' : $('#status').is(':checked') ? 1 : 0
+  }
+
+  if(h.conditions == '') {
+    $('#conditions').hasError('Required');
     return false;
   }
-  else {
-    $('#conditions').removeClass('has-error');
-    $('#conditions-error').text('');
+
+  if(h.sale_team == '') {
+    $('#sale_team').hasError('Required');
+    return false;
   }
 
-
-  if(amount < 0) {
-    $('#amount').addClass('has-error');
-    $('#amount-error').text('Amount must Greater than 0');
+  if(h.amount <= 0) {
+    $('#amount').hasError('Amount must Greater than 0');
     $('#amount').focus();
     return false;
   }
-  else {
-    $('#amount').removeClass('has-error');
-    $('#amount-error').text('');
-  }
-
-  if(sale_team == "") {
-    $('#sale_team').addClass('has-error');
-    $('#sale_team-error').text('Required');
-    return false;
-  }
-  else {
-    $('#sale_team').removeClass('has-error');
-    $('#sale_team-error').text('');
-  }
-
-
-  var fd = new FormData();
-
-  fd.append("rule_id", rule_id);
-  fd.append("conditions", conditions);
-  fd.append("amount", amount);
-  fd.append("sale_team", sale_team);
-  fd.append("is_price_list", is_price_list);
-  fd.append("status" , status);
 
   load_in();
 
@@ -169,44 +111,33 @@ function update() {
     url:HOME + 'update',
     type:'POST',
     cache:false,
-    data:fd,
-    processData:false,
-    contentType:false,
+    data:{
+      'data' : JSON.stringify(h)
+    },
     success:function(rs) {
       load_out();
-      var rs = $.trim(rs);
-      if(rs === 'success') {
+
+      if(rs.trim() === 'success') {
         swal({
           title:'Success',
           type:'success',
           timer:1000
         });
 
-        setTimeout(function() {
+        setTimeout(function(){
           window.location.reload();
         }, 1200);
       }
       else {
-        swal({
-          title:"Error",
-          text:rs,
-          type:'error'
-        })
+        showError(rs);
       }
     },
-    error:function(xhr) {
+    error:function(rs) {
       load_out();
-      swal({
-        title:"Error!",
-        text:"Error : "+xhr.responseText,
-        type:"error",
-        html:true
-      })
+      showError(rs);
     }
   })
-
 }
-
 
 
 

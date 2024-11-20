@@ -5,7 +5,7 @@ class Customer_team extends PS_Controller
 {
 	public $menu_code = 'CUSTOMER_TEAM';
 	public $menu_group_code = 'ADMIN';
-	public $title = 'Customer team';
+	public $title = 'Department';
 
   public function __construct()
   {
@@ -18,8 +18,6 @@ class Customer_team extends PS_Controller
 
   public function index()
   {
-		$this->title = "Customer Team - List";
-
 		$filter = array(
 			'name' => get_filter('name', 'customer_team_name', '')
 		);
@@ -50,8 +48,6 @@ class Customer_team extends PS_Controller
 
 	public function add_new()
 	{
-		$this->title = "Customer Team - Add";
-
 		if($this->pm->can_add)
 		{
 			$this->load->view('customer_team/customer_team_add');
@@ -111,9 +107,7 @@ class Customer_team extends PS_Controller
 
 
 	public function edit($id)
-	{
-		$this->title = "Customer Team - Edit";
-
+	{		
 		if($this->pm->can_edit)
 		{
 			$rs = $this->customer_team_model->get($id);

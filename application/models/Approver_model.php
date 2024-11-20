@@ -33,8 +33,6 @@ class Approver_model extends CI_Model
   }
 
 
-
-
   public function get_by_uname($uname)
   {
     $rs = $this->db->where('uname', $uname)->get('approver');
@@ -46,7 +44,6 @@ class Approver_model extends CI_Model
 
     return NULL;
   }
-
 
 
   public function add(array $ds = array())
@@ -63,7 +60,6 @@ class Approver_model extends CI_Model
   }
 
 
-
   public function update($id, array $ds = array())
   {
     if(!empty($ds))
@@ -75,12 +71,16 @@ class Approver_model extends CI_Model
   }
 
 
-
   public function delete($id)
   {
     return $this->db->where('id', $id)->delete('approver');
   }
 
+
+  public function drop_approver_condition($user_id)
+  {
+    return $this->db->where('user_id', $user_id)->delete('approver_condition');
+  }
 
 
   public function is_exists($user_id)
@@ -156,7 +156,6 @@ class Approver_model extends CI_Model
   }
 
 
-
   public function get_all_active_approver()
   {
     $rs = $this->db->where('status', 1)->get('approver');
@@ -168,7 +167,6 @@ class Approver_model extends CI_Model
 
     return NULL;
   }
-
 
 
   public function get_all_approver()
@@ -209,7 +207,6 @@ class Approver_model extends CI_Model
 
     return $sign;
   }
-
 
 } //--- end class
 

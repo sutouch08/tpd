@@ -1,7 +1,8 @@
 <?php
 defined('BASEPATH') OR exit('No direct script access allowed');
 
-class Users extends PS_Controller{
+class Users extends PS_Controller
+{
 	public $menu_code = 'USER';
 	public $menu_group_code = 'ADMIN';
 	public $title = 'Users';
@@ -10,14 +11,12 @@ class Users extends PS_Controller{
   {
     parent::__construct();
     $this->home = base_url().'users';
+		$this->load->helper('sales_team_condition');
   }
 
 
-
-  public function index()
-  {
-		$this->load->helper('sale_team');
-
+	public function index()
+	{
 		$filter = array(
 			'uname' => get_filter('uname', 'username', ''),
 			'emp_name' => get_filter('emp_name', 'emp_name', ''),
@@ -48,7 +47,7 @@ class Users extends PS_Controller{
 		{
 			foreach($rs as $ds)
 			{
-				$ds->team_name = user_team_label($ds->id);
+				$ds->team_name = user_condition_label($ds->id);
 			}
 		}
 
@@ -56,18 +55,14 @@ class Users extends PS_Controller{
 
 		$this->pagination->initialize($init);
 
-    $this->load->view('users/users_list', $filter);
-  }
-
+		$this->load->view('users/users_list', $filter);
+	}
 
 
 	public function add_new()
 	{
-		$this->title = "Users - Add";
 		if($this->pm->can_add)
 		{
-			$this->load->helper('sale_team');
-
 			$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
 			$ds['emp_list'] = $this->user_model->get_all_employee();
 			$ds['sale_list'] = $this->user_model->get_all_slp();
@@ -88,94 +83,59 @@ class Users extends PS_Controller{
 
 		if($this->pm->can_add)
 		{
-			$uname = trim($this->input->post('uname'));
-			$emp_name = trim($this->input->post('emp_name'));
-			$sale_id = $this->input->post('sale_id');
-			$sale_name = empty($sale_id) ? NULL : $this->input->post('sale_name');
-			$ugroup_id = $this->input->post('ugroup');
+			$ds = json_decode($this->input->post('data'));
 
-			if($uname != "" && $uname !== NULL)
+			if( ! empty($ds) && ! empty($ds->emp_name) && ! empty($ds->ugroup))
 			{
-				if(empty($emp_name))
-				{
-					$sc = FALSE;
-					$this->error = "Missing required parameter: Employee";
-				}
-
-				if(empty($ugroup_id))
-				{
-					$sc = FALSE;
-					$this->error = "Missing required parameter: User Group";
-				}
-
-
-				if($sc === TRUE)
-				{
-					if($this->user_model->is_exists_uname($uname))
-					{
-						$sc = FALSE;
-						$this->error = "Username already exists";
-					}
-				}
-
-				if($sc === TRUE)
+				if( ! $this->user_model->is_exists_uname($ds->uname))
 				{
 					$arr = array(
-						'uname' => $uname,
-						'pwd' => password_hash(trim($this->input->post('pwd')), PASSWORD_DEFAULT),
+						'uname' => $ds->uname,
+						'pwd' => password_hash($ds->pwd, PASSWORD_DEFAULT),
 						'uid' => md5(uniqid()),
-						'emp_name' => $emp_name,
-						'emp_id' => get_null(trim($this->input->post('emp_id'))),
-						'sale_id' => get_null($sale_id),
-						'sale_name' => get_null($sale_name),
-						'ugroup_id' => $ugroup_id,
-						'role' => $this->input->post('role'),
-						'status' => $this->input->post('status') == 1 ? 1 : 0,
-						'bi_link' => $this->input->post('bi') == 1 ? 1 : 0,
+						'emp_name' => $ds->emp_name,
+						'emp_id' => get_null($ds->emp_id),
+						'sale_id' => get_null($ds->sale_id),
+						'sale_name' => empty($ds->sale_id) ? NULL : $ds->sale_name,
+						'ugroup_id' => $ds->ugroup,
+						'area_id' => $ds->area_id,
+						'role' => $ds->role,
+						'status' => $ds->status,
+						'bi_link' => $ds->bi,
 						'date_add' => now(),
 						'add_by' => $this->_user->id
 					);
 
 					$user_id = $this->user_model->add($arr);
 
-					if($user_id !== FALSE)
+					if($user_id)
 					{
 						//--- insert user_customer_group
-						if(!empty($this->input->post('user_team')))
+						if( ! empty($ds->team))
 						{
-							$user_team = json_decode($this->input->post('user_team'));
-
-							if(!empty($user_team))
+							foreach($ds->team as $rs)
 							{
-								foreach($user_team as $rs)
-								{
-									$arr = array(
-										'user_id' => $user_id,
-										'team_id' => $rs->team_id,
-										'user_role' => $rs->user_role
-									);
+								$arr = array(
+									'user_id' => $user_id,
+									'team_id' => $rs->team_id, //--- condition id
+									'user_role' => $rs->user_role
+								);
 
-									$this->user_model->add_user_team($arr);
-								}
+								$this->user_model->add_user_team($arr);
 							}
 						}
 
-						if(!empty($this->input->post('price_list')))
+						if( ! empty($ds->price_list))
 						{
-							$priceList = json_decode($this->input->post('price_list'));
-
-							if(!empty($priceList))
+							foreach($ds->price_list as $pl)
 							{
-								foreach($priceList as $pl)
-								{
-									$arr = array(
-										'user_id' => $user_id,
-										'list_id' => $pl->id,
-										'list_name' => $pl->name
-									);
+								$arr = array(
+									'user_id' => $user_id,
+									'list_id' => $pl->id,
+									'list_name' => $pl->name
+								);
 
-									$this->user_model->add_user_price_list($arr);
-								}
+								$this->user_model->add_user_price_list($arr);
 							}
 						}
 					}
@@ -184,31 +144,36 @@ class Users extends PS_Controller{
 						$sc = FALSE;
 						$this->error = "Insert user failed";
 					}
+
+				}
+				else
+				{
+					$sc = FALSE;
+					$this->error = "Username already exists";
 				}
 			}
 			else
 			{
 				$sc = FALSE;
-				$this->error = "Missing Required Parameter : Username";
+				$this->error = get_error_message('required');
 			}
 		}
 		else
 		{
 			$sc = FALSE;
-			$this->error = "Missing permission";
+			$this->error = get_error_message('permission');
 		}
 
 		$this->_response($sc);
 	}
 
 
-  public function is_exists_uname()
+	public function is_exists_uname()
 	{
 		$sc = TRUE;
 		$uname = trim($this->input->post('uname'));
-		$old_uname = trim($this->input->post('old_uname'));
 
-		if($this->user_model->is_exists_uname($uname, $old_uname))
+		if($this->user_model->is_exists_uname($uname))
 		{
 			$sc = FALSE;
 			$this->error = "Username already exists";
@@ -219,23 +184,20 @@ class Users extends PS_Controller{
 
 
 
-
 	public function edit($id)
 	{
-		$this->title = "Users - Edit";
-
 		if($this->pm->can_edit)
 		{
-			$this->load->helper('sale_team');
+			$user = $this->user_model->get($id);
 
-			$rs = $this->user_model->get($id);
-
-			if(!empty($rs))
+			if( ! empty($user))
 			{
-				$rs->user_team = $this->user_model->get_user_team($id);
+				$user->user_team = $this->user_model->get_user_team($id);
 				$user_price_list = $this->user_model->get_user_price_list($id);
+
 				$pl = array();
-				if(!empty($user_price_list))
+
+				if( ! empty($user_price_list))
 				{
 					foreach($user_price_list as $ps)
 					{
@@ -243,8 +205,9 @@ class Users extends PS_Controller{
 					}
 				}
 
-				$rs->priceList = $pl;
-				$ds['user'] = $rs;
+				$user->priceList = $pl;
+
+				$ds['user'] = $user;
 				$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
 				$ds['emp_list'] = $this->user_model->get_all_employee();
 				$ds['sale_list'] = $this->user_model->get_all_slp();
@@ -261,9 +224,7 @@ class Users extends PS_Controller{
 		{
 			$this->deny_page();
 		}
-
 	}
-
 
 
 	public function update()
@@ -272,90 +233,75 @@ class Users extends PS_Controller{
 
 		if($this->pm->can_edit)
 		{
-			if($this->input->post('user_id'))
+			$ds = json_decode($this->input->post('data'));
+
+			if( ! empty($ds) && ! empty($ds->id) && ! empty($ds->emp_id) && ! empty($ds->ugroup))
 			{
-				$id = $this->input->post('user_id');
-				$emp_name = trim($this->input->post('emp_name'));
-				$sale_id = $this->input->post('sale_id');
-				$sale_name = empty($sale_id) ? NULL : $this->input->post('sale_name');
-				$ugroup_id = $this->input->post('ugroup');
+				$arr = array(
+					'emp_name' => get_null($ds->emp_name),
+					'emp_id' => get_null($ds->emp_id),
+					'sale_id' => get_null($ds->sale_id),
+					'sale_name' => empty($ds->sale_id) ? NULL : $ds->sale_name,
+					'ugroup_id' => $ds->ugroup,
+					'status' => $ds->status,
+					'bi_link' => $ds->bi,
+					'role' => $ds->role,
+					'date_upd' => now(),
+					'update_by' => $this->_user->id
+				);
 
-
-				if(empty($emp_name))
+				if( ! $this->user_model->update($ds->id, $arr))
 				{
 					$sc = FALSE;
-					$this->error = "Missing required parameter: Employee";
-				}
-
-				if(empty($ugroup_id))
-				{
-					$sc = FALSE;
-					$this->error = "Missing required parameter: User Group";
+					$this->error = "Failed to update user data";
 				}
 
 				if($sc === TRUE)
 				{
-					$arr = array(
-						'emp_name' => $emp_name,
-						'emp_id' => get_null(trim($this->input->post('emp_id'))),
-						'sale_id' => get_null($sale_id),
-						'sale_name' => get_null($sale_name),
-						'ugroup_id' => $ugroup_id,
-						'status' => $this->input->post('status') == 1 ? 1 : 0,
-						'bi_link' => $this->input->post('bi') == 1 ? 1 : 0,
-						'role' => $this->input->post('role'),
-						'update_by' => $this->_user->id
-					);
-
-					if(!$this->user_model->update($id, $arr))
+					//--- drop user price list
+					if( ! $this->user_model->drop_user_price_list($ds->id))
 					{
 						$sc = FALSE;
-						$this->error = "Update failed";
+						$this->error = "Update user success but failed to remove previous user price list";
 					}
-					else
+
+					if($sc === TRUE && ! empty($ds->price_list))
 					{
-						//--- drop exists user_team
-						$this->user_model->drop_user_team($id);
-
-						//--- insert new user_team
-						if(!empty($this->input->post('user_team')))
+						foreach($ds->price_list as $rs)
 						{
-							$user_team = json_decode($this->input->post('user_team'));
+							$arr = array(
+								'user_id' => $ds->id,
+								'list_id' => $rs->id,
+								'list_name' => $rs->name
+							);
 
-							if(!empty($user_team))
-							{
-								foreach($user_team as $rs)
-								{
-									$arr = array(
-										'user_id' => $id,
-										'team_id' => $rs->team_id,
-										'user_role' => $rs->user_role
-									);
-
-									$this->user_model->add_user_team($arr);
-								}
-							}
+							$this->user_model->add_user_price_list($arr);
 						}
+					}
+				}
 
-						$this->user_model->drop_user_price_list($id);
 
-						if(!empty($this->input->post('price_list')))
+				if($sc === TRUE)
+				{
+					//--- drop exists user_condition
+					if( ! $this->user_model->drop_user_condition($ds->id))
+					{
+						$sc = FALSE;
+						$this->error = "Update user success but failed to remove previous sales team condition";
+					}
+
+					//--- insert new user_team
+					if($sc === TRUE && ! empty($ds->team))
+					{
+						foreach($ds->team as $rs)
 						{
-							$priceList = json_decode($this->input->post('price_list'));
+							$arr = array(
+							'user_id' => $ds->id,
+							'condition_id' => $rs->team_id,
+							'user_role' => $rs->user_role
+							);
 
-							if(!empty($priceList))
-							{
-								foreach($priceList as $pl)
-								{
-									$arr = array(
-										'user_id' => $id,
-										'list_id' => $pl->id,
-										'list_name' => $pl->name
-									);
-
-									$this->user_model->add_user_price_list($arr);
-								}
-							}
+							$this->user_model->add_user_condition($arr);
 						}
 					}
 				}
@@ -363,18 +309,17 @@ class Users extends PS_Controller{
 			else
 			{
 				$sc = FALSE;
-				$this->error = "Missing required parameter";
+				$this->error = get_error_message('required');
 			}
 		}
 		else
 		{
 			$sc = FALSE;
-			$this->error = "Missing Permission";
+			$this->error = get_error_message('permission');
 		}
 
 		$this->_response($sc);
 	}
-
 
 
 	public function delete()
@@ -383,12 +328,11 @@ class Users extends PS_Controller{
 
 		if($this->pm->can_delete)
 		{
-			
 			$id = $this->input->post('id');
 
 			$user = $this->user_model->get($id);
 
-			if(!empty($user))
+			if( ! empty($user))
 			{
 				//--- check transection
 				if($this->user_model->isApprover($user->id))
@@ -400,23 +344,46 @@ class Users extends PS_Controller{
 				if($sc === TRUE && $this->user_model->has_order_transection($user->id))
 				{
 					$sc = FALSE;
-					$this->error = "Delete Failed : User has sales order transections";
+					$this->error = get_error_message('transection', "{$user->uname}");
 				}
 
 				if($sc === TRUE)
 				{
-					if(! $this->user_model->delete($user->id))
+					$this->db->trans_begin();
+
+					//--- remove condition
+					if($sc === TRUE && ! $this->user_model->drop_user_condition($user->id))
 					{
 						$sc = FALSE;
-						$this->error = "Delete Failed";
+						$this->error = "Failed to remove user sales team condition";
+					}
+
+					if($sc === TRUE && ! $this->user_model->drop_user_price_list($user->id))
+					{
+						$sc = FALSE;
+						$this->error = "Failed to remove user price list";
+					}
+
+					if($sc === TRUE && ! $this->user_model->delete($user->id))
+					{
+						$sc = FALSE;
+						$this->error = "Failed to delete user";
+					}
+
+					if($sc === TRUE)
+					{
+						$this->db->trans_commit();
+					}
+					else
+					{
+						$this->db->trans_rollback();
 					}
 				}
-
 			}
 			else
 			{
 				$sc = FALSE;
-				$this->error = "Invalid User ID";
+				$this->error = get_error_message('required');
 			}
 		}
 		else
@@ -475,7 +442,7 @@ class Users extends PS_Controller{
 					$pwd = password_hash($pwd, PASSWORD_DEFAULT);
 
 					$arr = array(
-						'pwd' => $pwd
+					'pwd' => $pwd
 					);
 
 					if( ! $this->user_model->update($id, $arr))
@@ -519,18 +486,19 @@ class Users extends PS_Controller{
 	{
 
 		$filter = array(
-			'username',
-			'emp_name',
-			'sale_id',
-			'sale_team',
-			'user_group',
-			'user_status',
-			'role'
+		'username',
+		'emp_name',
+		'sale_id',
+		'sale_team',
+		'user_group',
+		'user_status',
+		'role'
 		);
 
 		clear_filter($filter);
 		echo 'done';
 	}
+
 
 }//--- end class
 
