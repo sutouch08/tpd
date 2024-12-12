@@ -1955,14 +1955,16 @@ input[type=number]::-webkit-outer-spin-button {
 	top: -1px;
 	background-color: white;
 	font-size: 12px;
+  outline: solid 1px #dddddd;
+  z-index: 1;
 }
 
 .tableFixHead tr>td {
-	padding: 3px !important;
+	padding: 3px;
 }
 
 .fix-header {
-	z-index: 2;
+	z-index: 3 !important;
   background-color: white;
   outline: solid 1px #dddddd;
 }

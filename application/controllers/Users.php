@@ -11,6 +11,7 @@ class Users extends PS_Controller
   {
     parent::__construct();
     $this->home = base_url().'users';
+		$this->load->model('sales_team_model');
 		$this->load->helper('sales_team_condition');
   }
 
@@ -19,43 +20,83 @@ class Users extends PS_Controller
 	{
 		$filter = array(
 			'uname' => get_filter('uname', 'username', ''),
-			'emp_name' => get_filter('emp_name', 'emp_name', ''),
+			'emp_id' => get_filter('emp_id', 'emp_id', 'all'),
 			'sale_id' => get_filter('sale_id', 'sale_id', 'all'),
 			'user_group' => get_filter('user_group', 'user_group', 'all'),
-			'sale_team' => get_filter('sale_team', 'sale_team', 'all'),
+			'area_id' => get_filter('area_id', 'area_id', 'all'),
+			'team_id' => get_filter('team_id', 'team_id', 'all'),
 			'role' => get_filter('role', 'role', 'all'),
 			'status' => get_filter('status', 'user_status', 'all')
 		);
 
-		//--- แสดงผลกี่รายการต่อหน้า
-		$perpage = get_filter('set_rows', 'rows', 20);
-		//--- หาก user กำหนดการแสดงผลมามากเกินไป จำกัดไว้แค่ 300
-		if($perpage > 300)
+		if($this->input->post('search'))
 		{
-			$perpage = get_filter('rows', 'rows', 300);
+			redirect($this->home);
 		}
-
-		$segment = 3; //-- url segment
-		$rows = $this->user_model->count_rows($filter);
-
-		//--- ส่งตัวแปรเข้าไป 4 ตัว base_url ,  total_row , perpage = 20, segment = 3
-		$init	= pagination_config($this->home.'/index/', $rows, $perpage, $segment);
-
-		$rs = $this->user_model->get_list($filter, $perpage, $this->uri->segment($segment));
-
-		if(!empty($rs))
+		else
 		{
-			foreach($rs as $ds)
+			//--- แสดงผลกี่รายการต่อหน้า
+			$perpage = get_filter('set_rows', 'rows', 20);
+			//--- หาก user กำหนดการแสดงผลมามากเกินไป จำกัดไว้แค่ 300
+			if($perpage > 300)
 			{
-				$ds->team_name = user_condition_label($ds->id);
+				$perpage = get_filter('rows', 'rows', 300);
 			}
+
+			$segment = 3; //-- url segment
+			$rows = $this->user_model->count_rows($filter);
+
+			//--- ส่งตัวแปรเข้าไป 4 ตัว base_url ,  total_row , perpage = 20, segment = 3
+			$init	= pagination_config($this->home.'/index/', $rows, $perpage, $segment);
+
+			$data = $this->user_model->get_list($filter, $perpage, $this->uri->segment($segment));
+			$teamName = [];
+			$areaName = [];
+			$groupName = [];
+
+			if( ! empty($data))
+			{
+				$groups = $this->user_model->get_all_user_group();
+
+				if( ! empty($groups))
+				{
+					foreach($groups as $ug)
+					{
+						$groupName[$ug->id] = $ug->name;
+					}
+				}
+
+
+				$teams = $this->sales_team_model->get_all();
+
+				if( ! empty($teams))
+				{
+					foreach($teams as $tm)
+					{
+						$teamName[$tm->id] = $tm->name;
+					}
+				}
+
+				$areas = $this->user_model->get_all_area();
+
+				if( ! empty($areas))
+				{
+					foreach($areas as $ar)
+					{
+						$areaName[$ar->id] = $ar->name;
+					}
+				}
+			}
+
+			$filter['data'] = $data;
+			$filter['groupName'] = $groupName;
+			$filter['teamName'] = $teamName;
+			$filter['areaName'] = $areaName;
+
+			$this->pagination->initialize($init);
+
+			$this->load->view('users/users_list', $filter);
 		}
-
-		$filter['data'] = $rs;
-
-		$this->pagination->initialize($init);
-
-		$this->load->view('users/users_list', $filter);
 	}
 
 
@@ -64,9 +105,9 @@ class Users extends PS_Controller
 		if($this->pm->can_add)
 		{
 			$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
-			$ds['emp_list'] = $this->user_model->get_all_employee();
 			$ds['sale_list'] = $this->user_model->get_all_slp();
 			$ds['price_list'] = $this->user_model->get_all_price_list();
+			$ds['sales_team'] = $this->sales_team_model->get_all();
 
 			$this->load->view('users/user_add', $ds);
 		}
@@ -99,6 +140,7 @@ class Users extends PS_Controller
 						'sale_name' => empty($ds->sale_id) ? NULL : $ds->sale_name,
 						'ugroup_id' => $ds->ugroup,
 						'area_id' => $ds->area_id,
+						'team_id' => get_null($ds->team_id),
 						'role' => $ds->role,
 						'status' => $ds->status,
 						'bi_link' => $ds->bi,
@@ -117,11 +159,12 @@ class Users extends PS_Controller
 							{
 								$arr = array(
 									'user_id' => $user_id,
-									'team_id' => $rs->team_id, //--- condition id
-									'user_role' => $rs->user_role
+									'team_id' => $rs->id, //--- sales team id
+									'user_role' => "Lead"
 								);
 
 								$this->user_model->add_user_team($arr);
+								// $this->user_model->add_user_condition($arr);
 							}
 						}
 
@@ -192,9 +235,8 @@ class Users extends PS_Controller
 
 			if( ! empty($user))
 			{
-				$user->user_team = $this->user_model->get_user_team($id);
-				$user_price_list = $this->user_model->get_user_price_list($id);
 
+				$user_price_list = $this->user_model->get_user_price_list($id);
 				$pl = array();
 
 				if( ! empty($user_price_list))
@@ -207,11 +249,25 @@ class Users extends PS_Controller
 
 				$user->priceList = $pl;
 
+				$user_team = $this->user_model->get_user_team($id);
+				$uTeam = array();
+
+				if( ! empty($user_team))
+				{
+					foreach($user_team as $ut)
+					{
+						$uTeam[$ut->team_id] = $ut->team_id;
+					}
+				}
+
+				$user->user_team = $uTeam;
+
 				$ds['user'] = $user;
 				$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
 				$ds['emp_list'] = $this->user_model->get_all_employee();
 				$ds['sale_list'] = $this->user_model->get_all_slp();
 				$ds['price_list'] = $this->user_model->get_all_price_list();
+				$ds['sales_team'] = $this->sales_team_model->get_all();
 
 				$this->load->view('users/user_edit', $ds);
 			}
@@ -243,6 +299,8 @@ class Users extends PS_Controller
 					'sale_id' => get_null($ds->sale_id),
 					'sale_name' => empty($ds->sale_id) ? NULL : $ds->sale_name,
 					'ugroup_id' => $ds->ugroup,
+					'area_id' => $ds->area_id,
+					'team_id' => get_null($ds->team_id),
 					'status' => $ds->status,
 					'bi_link' => $ds->bi,
 					'role' => $ds->role,
@@ -284,10 +342,10 @@ class Users extends PS_Controller
 				if($sc === TRUE)
 				{
 					//--- drop exists user_condition
-					if( ! $this->user_model->drop_user_condition($ds->id))
+					if( ! $this->user_model->drop_user_team($ds->id))
 					{
 						$sc = FALSE;
-						$this->error = "Update user success but failed to remove previous sales team condition";
+						$this->error = "Update user success but failed to remove previous user team lead";
 					}
 
 					//--- insert new user_team
@@ -297,11 +355,12 @@ class Users extends PS_Controller
 						{
 							$arr = array(
 							'user_id' => $ds->id,
-							'condition_id' => $rs->team_id,
-							'user_role' => $rs->user_role
+							'team_id' => $rs->id,
+							'user_role' => "Lead"
 							);
 
-							$this->user_model->add_user_condition($arr);
+							$this->user_model->add_user_team($arr);
+							// $this->user_model->add_user_condition($arr);
 						}
 					}
 				}
@@ -352,7 +411,7 @@ class Users extends PS_Controller
 					$this->db->trans_begin();
 
 					//--- remove condition
-					if($sc === TRUE && ! $this->user_model->drop_user_condition($user->id))
+					if($sc === TRUE && ! $this->user_model->drop_user_team($user->id))
 					{
 						$sc = FALSE;
 						$this->error = "Failed to remove user sales team condition";
@@ -484,19 +543,18 @@ class Users extends PS_Controller
 
 	public function clear_filter()
 	{
-
 		$filter = array(
 		'username',
-		'emp_name',
+		'emp_id',
 		'sale_id',
-		'sale_team',
+		'team_id',
+		'area_id',
 		'user_group',
 		'user_status',
 		'role'
 		);
 
-		clear_filter($filter);
-		echo 'done';
+		return clear_filter($filter);
 	}
 
 

@@ -10,16 +10,16 @@
 </style>
 <?php $hide = $this->disSale ? "" : 'hide'; ?>
 <div class="row">
-	<div class="col-sm-6 col-xs-6 padding-5">
-    <h3 class="title">
-      <?php echo $this->title; ?>
-    </h3>
-    </div>
-    <div class="col-sm-6 col-xs-6 padding-5">
-    	<p class="pull-right top-p">
-        <button type="button" class="btn btn-sm btn-default" onclick="leave()"><i class="fa fa-arrow-left"></i> &nbsp; Back</button>
-      </p>
-    </div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
+		<h3 class="title">
+			<?php echo $this->title; ?>
+		</h3>
+	</div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
+		<p class="pull-right top-p">
+			<button type="button" class="btn btn-sm btn-default" onclick="leave()"><i class="fa fa-arrow-left"></i> &nbsp; Back</button>
+		</p>
+	</div>
 </div><!-- End Row -->
 <hr class="padding-5"/>
 <form id="addForm" method="post" action="<?php echo $this->home; ?>/add">
@@ -57,9 +57,21 @@
 
 
 <script id="customer-template" type="text/x-handlebarsTemplate">
-		<option value="">Select Customer</option>
-		{{#each this}}
-			<option value="{{CardCode}}" data-currency="{{Currency}}" data-sale="{{SlpCode}}" data-vat="{{ECVatGroup}}" data-rate="{{Rate}}">{{CardCode}}  {{CardName}}</option>
+		<option value="">Select Customer ({{this.count}})</option>
+		{{#each this.data}}
+			<option value="{{CardCode}}"
+				data-code="{{CardCode}}"
+				data-name="{{CardName}}"
+				data-groupnum="{{GroupNum}}"
+				data-area="{{areaId}}"
+				data-currency="{{Currency}}"
+				data-sale="{{SlpCode}}"
+				data-vat="{{ECVatGroup}}"
+				data-rate="{{Rate}}"
+				data-control="{{isControl}}"
+				data-saleteam="{{saleTeam}}">
+				{{CardCode}}  {{CardName}}
+			</option>
 		{{/each}}
 </script>
 
@@ -107,29 +119,50 @@
 		</th>
 		<td>{{listName}}</td>
 	</tr>
+	<tr>
+		<th>
+			Payment Terms
+			<label class="pull-right">
+				<input type="checkbox" class="ace check-list" onchange="toggleSubmit()">
+				<span class="lbl"></span>
+			</label>
+		</th>
+		<td>{{termName}}</td>
+	</tr>
 	<tr><th>Remark สำหรับสื่อสารกับ Admin</th><td>{{remark}}</td></tr>
 </table>
 <table class="table table-bordered border-1" style="min-width:100%;">
 	<thead>
 		<tr>
-			<th class="width-5 middle text-center">#</th>
-			<th class="width-30 middle text-center">รายการสินค้า</th>
-			<th class="width-10 middle text-center">จำนวน</th>
-			<th class="width-10 middle text-center">แถม</th>
-			<th class="width-10 middle text-center">หน่วย</th>
-			<th class="width-10 middle text-center">ราคา/หน่วย (Term)</th>
-			<th class="width-10 middle text-center">ราคา(พิเศษ)/หน่วย</th>
-			<th class="width-5 middle text-center <?php echo $hide; ?>">Discount Sales</th>
-			<th class="width-10 middle text-center">มูลค่า</th>
-			<th class=""></th>
+			<th class="fix-width-50 middle text-center">#</th>
+			<th class="min-width-300 middle text-center">รายการสินค้า</th>
+			<th class="fix-width-80 middle text-center">จำนวน</th>
+			<th class="fix-width-80 middle text-center">แถม</th>
+			<th class="fix-width-100 middle text-center">หน่วย</th>
+			<th class="fix-width-100 middle text-center">ราคา/หน่วย (Term)</th>
+			<th class="fix-width-100 middle text-center">ราคา(พิเศษ)/หน่วย</th>
+			<th class="fix-width-50 middle text-center <?php echo $hide; ?>">Discount Sales</th>
+			<th class="fix-width-100 middle text-center">มูลค่า</th>
+			<th class="fix-width-50"></th>
 		</tr>
 	</thead>
 	<tbody>
 		{{#each items}}
 			{{#if @last}}
 				<tr>
-					<td colspan="8" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
-					<td colspan="2" class="middle text-right">{{totalAmount}}</td>
+					<td colspan="7" class="middle text-right"><strong>มูลค่าก่อนส่วนลดท้ายบิล</strong></td>
+					<td class="middle text-right">{{totalBefDi}}</td>
+					<td class="middle text-right"></td>
+				</tr>
+				<tr>
+					<td colspan="7" class="middle text-right"><strong>ส่วนลด [{{DiscPrcnt}} %]</strong></td>
+					<td class="middle text-right">{{DiscSum}}</td>
+					<td class="middle text-right"></td>
+				</tr>
+				<tr>
+					<td colspan="7" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
+					<td class="middle text-right">{{totalAmount}}</td>
+					<td class="middle text-right"></td>
 				</tr>
 			{{else}}
 				<tr>

@@ -21,9 +21,8 @@ class Sales_team_condition extends PS_Controller
 	{
 		$filter = array(
 			'name' => get_filter('name', 'con_name', ''),
-			'sale_id' => get_filter('sale_id', 'con_sale_id', 'all'),
-			'dep_id' => get_filter('dep_id', 'con_dep_id', 'all'),
-			'team_id' => get_filter('team_id', 'con_team_id', 'all')
+			'team_id' => get_filter('team_id', 'con_team_id', 'all'),
+			'area_id' => get_filter('area_id', 'con_area_id', 'all')
 		);
 
 		//--- แสดงผลกี่รายการต่อหน้า
@@ -64,6 +63,21 @@ class Sales_team_condition extends PS_Controller
 				}
 
 				$rs->approver_list = $apv;
+
+				$areaName = "";
+				$area = $this->sales_team_condition_model->get_condition_area($rs->id);
+
+				if( ! empty($area))
+				{
+					$i = 1;
+					foreach($area as $ar)
+					{
+						$areaName .= $i === 1 ? $ar->name : ", ".$ar->name;
+						$i++;
+					}
+				}
+
+				$rs->area_list = $areaName;
 			}
 		}
 
@@ -79,7 +93,8 @@ class Sales_team_condition extends PS_Controller
 	{
 		if($this->pm->can_add)
 		{
-			$this->load->view('sales_team_condition/sales_team_condition_add');
+			$ds['area'] = $this->user_model->get_all_area();
+			$this->load->view('sales_team_condition/sales_team_condition_add', $ds);
 		}
 		else
 		{
@@ -94,7 +109,7 @@ class Sales_team_condition extends PS_Controller
 
 		$ds = json_decode($this->input->post('data'));
 
-		if( ! empty($ds))
+		if( ! empty($ds) && ! empty($ds->team_id) && ! empty($ds->area) && ! empty($ds->approver))
 		{
 			if($this->pm->can_add)
 			{
@@ -105,8 +120,6 @@ class Sales_team_condition extends PS_Controller
 
 					$arr = array(
 						'name' => $ds->name,
-						'sale_id' => $ds->sale_id,
-						'dep_id' => $ds->dep_id,
 						'team_id' => $ds->team_id,
 						'date_add' => now(),
 						'add_by' => $this->_user->id
@@ -130,6 +143,23 @@ class Sales_team_condition extends PS_Controller
 									$sc = FALSE;
 									$this->error = "Failed to make link to approver";
 									break;
+								}
+							}
+						}
+
+						if($sc === TRUE && ! empty($ds->area))
+						{
+							foreach($ds->area as $area_id)
+							{
+								$arr = array(
+									'condition_id' => $id,
+									'area_id' => $area_id
+								);
+
+								if( ! $this->sales_team_condition_model->add_area($arr))
+								{
+									$sc = FALSE;
+									$this->error = "Failed to make link to area";
 								}
 							}
 						}
@@ -181,7 +211,19 @@ class Sales_team_condition extends PS_Controller
 			if( ! empty($rs))
 			{
 				$rs->approver = $this->sales_team_condition_model->get_condition_approver($id);
+				$condition_area = $this->sales_team_condition_model->get_condition_area($id);
 
+				$rs->area = array();
+
+				if( ! empty($condition_area))
+				{
+					foreach($condition_area as $ar)
+					{
+						$rs->area[$ar->area_id] = $ar->area_id;
+					}
+				}
+
+				$data['area'] = $this->user_model->get_all_area();
 				$data['data'] = $rs;
 				$this->load->view('sales_team_condition/sales_team_condition_edit', $data);
 			}
@@ -205,7 +247,7 @@ class Sales_team_condition extends PS_Controller
 		{
 			$ds = json_decode($this->input->post('data'));
 
-			if( ! empty($ds))
+			if( ! empty($ds) && ! empty($ds->area) && ! empty($ds->team_id) && ! empty($ds->approver))
 			{
 				//--- check duplication
 				if( ! $this->sales_team_condition_model->is_exists_name($ds->name, $ds->id))
@@ -214,45 +256,69 @@ class Sales_team_condition extends PS_Controller
 
 					$arr = array(
 						'name' => $ds->name,
-						'sale_id' => $ds->sale_id,
-						'dep_id' => $ds->dep_id,
 						'team_id' => $ds->team_id,
 						'date_upd' => now(),
 						'update_by' => $this->_user->id
 					);
 
-					if($this->sales_team_condition_model->update($ds->id, $arr))
+					if( ! $this->sales_team_condition_model->update($ds->id, $arr))
 					{
-						if( $this->sales_team_condition_model->drop_condition_approver($ds->id))
-						{
-							if( ! empty($ds->approver))
-							{
-								foreach($ds->approver as $user_id)
-								{
-									$arr = array(
-										'condition_id' => $ds->id,
-										'user_id' => $user_id
-									);
+						$sc = FALSE;
+						$this->error = "Update data failed";
+					}
 
-									if( ! $this->sales_team_condition_model->add_approver($arr))
-									{
-										$sc = FALSE;
-										$this->error = "Failed to make link to approver";
-										break;
-									}
-								}
-							}
-						}
-						else
+					if($sc === TRUE)
+					{
+						if( ! $this->sales_team_condition_model->drop_condition_approver($ds->id))
 						{
 							$sc = FALSE;
 							$this->error = "Failed to delete previous approver link";
 						}
+
+						if($sc === TRUE && ! empty($ds->approver))
+						{
+							foreach($ds->approver as $user_id)
+							{
+								$arr = array(
+									'condition_id' => $ds->id,
+									'user_id' => $user_id
+								);
+
+								if( ! $this->sales_team_condition_model->add_approver($arr))
+								{
+									$sc = FALSE;
+									$this->error = "Failed to make link to approver";
+									break;
+								}
+							}
+						}
 					}
-					else
+
+					if($sc === TRUE)
 					{
-						$sc = FALSE;
-						$this->error = "Update data failed";
+						if( ! $this->sales_team_condition_model->drop_condition_area($ds->id))
+						{
+							$sc = FALSE;
+							$this->error = "Failed to delete previous area link";
+						}
+
+						if($sc === TRUE && ! empty($ds->area))
+						{
+							foreach($ds->area as $area_id)
+							{
+								$arr = array(
+									'condition_id' => $ds->id,
+									'area_id' => $area_id
+								);
+
+								if( ! $this->sales_team_condition_model->add_area($arr))
+								{
+									$sc = FALSE;
+									$this->error = "Failed to make link to area";
+									break;
+								}
+							}
+						}
 					}
 
 					if($sc === TRUE)
@@ -379,13 +445,11 @@ class Sales_team_condition extends PS_Controller
 	{
 		$filter = array(
 			'con_name',
-			'con_sale_id',
-			'con_dep_id',
+			'con_area_id',
 			'con_team_id'
 		);
 
-		clear_filter($filter);
-		echo 'done';
+		return clear_filter($filter);		
 	}
 
 }//--- end class

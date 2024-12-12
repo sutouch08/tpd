@@ -4,6 +4,7 @@ var pwd_error = 0;
 var emp_error = 0;
 var ugroup_error = 0;
 var area_error = 0;
+var team_error = 0;
 
 
 function goBack() {
@@ -12,11 +13,13 @@ function goBack() {
 
 
 function goAdd() {
+  load_in();
   window.location.href = HOME + 'add_new';
 }
 
 
 function goEdit(id) {
+  load_in();
   window.location.href = HOME + 'edit/'+id;
 }
 
@@ -80,6 +83,7 @@ function add() {
   emp_error = 0;
   ugroup_error = 0;
   area_error = 0;
+  team_error = 0;
 
   let h = {
     'uname' : $('#uname').val().trim(),
@@ -90,6 +94,7 @@ function add() {
     'pwd' : $('#pwd').val().trim(),
     'ugroup' : $('#ugroup').val(),
     'area_id' : $('#area').val(),
+    'team_id' : $('#sale-team').val(),
     'status' : $('#status').is(':checked') ? 1 : 0,
     'bi' : $('#bi').is(':checked') ? 1 : 0,
     'role' : $('#u_role').val(),
@@ -122,7 +127,12 @@ function add() {
     area_error = 1;
   }
 
-  let error = uname_error + emp_error + pwd_error + ugroup_error + area_error;
+  if(h.role == 'sales' && h.team_id == '') {
+    $('#sale-team').hasError('Required when User Role = Sales');
+    team_error = 1;
+  }
+
+  let error = uname_error + emp_error + pwd_error + ugroup_error + area_error + team_error;
 
   if( error > 0) {
     return false;
@@ -132,11 +142,9 @@ function add() {
     h.price_list.push({"id" : $(this).val(), "name" : $(this).data('name')});
   });
 
-  if($('.team-list').length) {
-    $('.team-list').each(function() {
-      h.team.push({'team_id' : $(this).val(), 'user_role' : $(this).data('role')});
-    })
-  }
+  $('.team:checked').each(function() {
+    h.team.push({'id' : $(this).val(), 'name' : $(this).data('name')});
+  });
 
   load_in();
 
@@ -187,6 +195,8 @@ function update() {
   uname_error = 0;
   emp_error = 0;
   ugroup_error = 0;
+  area_error = 0;
+  team_error = 0;
 
   let h = {
     'id' : $('#id').val(),
@@ -195,6 +205,8 @@ function update() {
     'sale_id' : $('#saleman').val(),
     'sale_name' : $('#saleman option:selected').text(),
     'ugroup' : $('#ugroup').val(),
+    'area_id' : $('#area').val(),
+    'team_id' : $('#sale-team').val(),
     'status' : $('#status').is(':checked') ? 1 : 0,
     'bi' : $('#bi').is(':checked') ? 1 : 0,
     'role' : $('#u_role').val(),
@@ -213,7 +225,17 @@ function update() {
     ugroup_error = 1;
   }
 
-  let error = emp_error + ugroup_error;
+  if(h.role == 'sales' && h.area_id == '') {
+    $('#area').hasError('Required when User Role = Sales');
+    area_error = 1;
+  }
+
+  if(h.role == 'sales' && h.sale_id == '') {
+    $('#sale-team').hasError('Required when User Role = Sales');
+    team_error = 1;
+  }
+
+  let error = emp_error + ugroup_error + area_error + team_error;
 
   if( error > 0) {
     return false;
@@ -223,11 +245,9 @@ function update() {
     h.price_list.push({"id" : $(this).val(), "name" : $(this).data('name')});
   });
 
-  if($('.team-list').length) {
-    $('.team-list').each(function() {
-      h.team.push({'team_id' : $(this).val(), 'user_role' : $(this).data('role')});
-    })
-  }
+  $('.team:checked').each(function() {
+    h.team.push({"id" : $(this).val(), "name" : $(this).data("name")});
+  })
 
   load_in();
 
@@ -406,7 +426,7 @@ $('#uname').focusout(function(){
 });
 
 
-$('#emp').focusout(function() {
+$('#emp').change(function() {
   emp_error = 0;
 
   if($('#emp').val() == '') {
@@ -416,11 +436,54 @@ $('#emp').focusout(function() {
 })
 
 
-$('#ugroup').focusout(function() {
+$('#ugroup').change(function() {
   ugroup_error = 0;
   if($('#ugroup').val() == '') {
     $('#ugroup').hasError('Required');
     ugroup_error = 1;
+  }
+})
+
+
+$('#u_role').change(function() {
+  if($('#u_role').val() == 'sales') {
+    if($('#area').val() == "") {
+      $('#area').hasError('Required when User Role = Sales');
+      area_error = 1;
+    }
+
+    if($('#sale-team').val() == "") {
+      $('#sale-team').hasError('Required when User Role = Sales');
+      team_error = 1;
+    }
+  }
+  else {
+    $('#area').clearError();
+    $('#sale-team').clearError();
+    area_error = 0;
+    team_error = 0;
+  }
+});
+
+
+$('#sale-team').change(function() {
+  $('#sale-team').clearError();
+  team_error = 0;
+
+  if($('#u_role').val() == 'sales' && $(this).val() == '') {
+    $('#sale-team').hasError('Required when User Role = Sales');
+    team_error = 1;
+  }
+})
+
+
+$('#area').change(function() {
+  $('#area').clearError();
+  area_error = 0;
+
+  if($('#u_role').val() == 'sales' && $(this).val() == '') {
+    $('#area').hasError('Required when User Role = Sales');
+    area_error = 1;
   }
 })
 
@@ -453,49 +516,6 @@ $('#status').keyup(function(e){
 })
 
 
-function addTeam() {
-  $('#sale_team').clearError();
-
-  let team_id = $('#sale_team').val();
-  let name = $('#sale_team option:selected').text();
-  let role = $('#role').val();
-  let no = role + '-' + team_id;
-
-  if(team_id == "") {
-    $('#sale_team').hasError();
-    return false;
-  }
-
-  if($('#team-'+no).length == 0) {
-    let source = $('#tag-template').html();
-    let data = {
-      "no" : no,
-      "team_id" : team_id,
-      "name" : name,
-      "role" : role
-    };
-
-    let output = $('#user-team-list');
-
-    render_append(source, data, output);
-
-    $('#sale_team').val('');
-    $('#role').val('Sales');
-    $('#team-list').removeClass('hide');
-  }
-}
-
-
-function removeTag(id) {
-  $('#tag-'+id).remove();
-  $('#team-'+id).remove();
-
-  if($('.team-list').length == 0) {
-    $('#team-list').addClass('hide');
-  }
-}
-
-
 $('#chk-all').change(function(){
   if($(this).is(':checked')) {
     $('.chk').prop('checked', true);
@@ -504,3 +524,12 @@ $('#chk-all').change(function(){
     $('.chk').prop('checked', false);
   }
 })
+
+$('#team-all').change(function() {
+  if($(this).is(':checked')) {
+    $('.team').prop('checked', true);
+  }
+  else {
+    $('.team').prop('checked', false);
+  }
+});

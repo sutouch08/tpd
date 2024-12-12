@@ -6,18 +6,26 @@ window.addEventListener('load', () => {
 function changeCustomerList() {
 	let type = $('#cardType').val();
 
+	load_in();
+
 	$.ajax({
 		url:HOME + 'get_user_customer_list/'+type,
 		type:"GET",
 		cache:false,
 		success:function(rs) {
-			//load_out();
+			load_out();
 			if(isJson(rs)) {
-				let data = $.parseJSON(rs);
+				let ds = JSON.parse(rs);
+				let data = {
+					'count' : ds.length,
+					'data' : ds
+				}
+
 				let source = $('#customer-template').html();
 				let output = $('#customer');
 
 				render(source, data, output);
+
 				$('#customer').select2();
 				$('#VatGroup').val('');
 				$('#vatRate').val('');
@@ -37,6 +45,22 @@ function changeCustomerList() {
 		}
 	})
 }
+
+
+$('#customer').change(function() {
+	init();
+
+	let isControl = $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N';
+
+	if(isControl == 'N') {
+		$('.is-control').each(function() {
+			if($(this).val() == 'Y') {
+				let no = $(this).data('no');
+				$('#row-'+no).remove();
+			}
+		})
+	}
+});
 
 
 function getAddress() {
@@ -230,10 +254,12 @@ function checkPriceList() {
 
 
 function init() {
-	let priceList = parseDefault(parseInt($('#priceList').val()), 0);
+	let priceList = $('#priceList').val();
+	priceList = priceList == "" ? 0 : priceList;
+	let control = $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N';
 
 	$('.input-item-code').autocomplete({
-		source:HOME + 'get_item_code_and_name/'+priceList,
+		source:HOME + 'get_item_code_and_name/'+priceList+'/'+control,
 		autoFocus:true,
 		open:function(event){
 			var $ul = $(this).autocomplete('widget');
@@ -257,7 +283,7 @@ function init() {
 
 
 function getStepTemplate() {
-	let priceList = parseDefault(parseInt($('#priceList').val()), 0);
+	let priceList = $('#priceList').val();
 
 	$.ajax({
 		url:HOME + 'get_step_template',
@@ -267,8 +293,6 @@ function getStepTemplate() {
 			'PriceList' : priceList
 		},
 		success:function(rs) {
-			console.log('get step template success');
-
 			if(isJson(rs)) {
 				let ds = JSON.parse(rs);
 
@@ -314,8 +338,9 @@ function getStepTemplate() {
 
 
 function getItemData(code, no) {
-	var priceList = $('#priceList').val();
-	var priceList = priceList == "" ? "nopricelist" : priceList;
+	let priceList = $('#priceList').val();
+
+	load_in();
 
 	$.ajax({
 		url:HOME + "get_item_data",
@@ -323,16 +348,20 @@ function getItemData(code, no) {
 		cache:false,
 		data:{
 			'code' : code,
-			'priceList' : priceList
+			'priceList' : priceList,
+			'no' : no
 		},
 		success:function(rs) {
-			var rs = $.trim(rs);
+			load_out();
+
 			if(isJson(rs)) {
-				var ds = $.parseJSON(rs);
-				var price = parseFloat(ds.price);
+				let ds = JSON.parse(rs);
+				let price = parseFloat(ds.price);
+
+				$('#control-'+no).val(ds.isControl);
 				$('#uom-'+no).val(ds.uom);
 				$('#stdPrice-'+no).val(price);
-				$('#price-'+no).val(price);
+				$('#price-'+no).val('');
 				$('#instock-'+no).val(ds.inStock);
 				$('#commit-'+no).val(ds.commit);
 				$('#available-'+no).val(ds.available);
@@ -347,17 +376,28 @@ function getItemData(code, no) {
 					$('#dis-'+no).prop('checked', false);
 				}
 
+				if(ds.step != '' && ds.step !== null && ds.step != undefined) {
+					$('#step-'+no).html(ds.step);
+				}
+
 				$('#qty-'+no).focus();
+
+				if(ds.isControl == 'Y') {
+					$('#row-'+no).addClass('control');
+				}
+				else {
+					$('#row-'+no).removeClass('control');
+				}
 
 				recalAmount(no);
 			}
 			else {
-				swal({
-					title:'Error!',
-					text:rs,
-					type:'error'
-				})
+				showError(rs);
 			}
+		},
+		error:function(rs) {
+			load_out();
+			showError(rs);
 		}
 	})
 }
@@ -372,9 +412,15 @@ function updateSelectStep(no) {
 
 
 function updateStepQty(no) {
-	let stepQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('stepqty')), 0);
-	let freeQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('freeqty')), 0);
+	let priceList = $('#priceList').val();
+	let stepQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('stepqty')), 0);
+	let freeQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('freeqty')), 0);
 	let force = $('#step-'+no+' option:selected').data('force');
+	let price = parseDefault(parseFloat($('#step-'+no+' option:selected').data('price')), 0);
+
+	if(priceList == 'x') {
+		$('#stdPrice-'+no).val(price);
+	}
 
 	$('#qty-'+no).val(stepQty);
 	$('#free-'+no).val(freeQty);
@@ -465,11 +511,14 @@ function recalAmount(no) {
 	let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
 	let sellPrice = $('#price-'+no).val();
 
+
+
 	if(sellPrice != "") {
 		let amount = qty * sellPrice;
 		let vatamount = get_vat_amount(amount, vatRate);
 		$('#amount-'+no).val(amount.toFixed(4));
 		$('#vatAmount-'+no).val(vatamount);
+		console.log(amount);
 	}
 	else {
 		let amount = qty * stdPrice;
@@ -483,83 +532,100 @@ function recalAmount(no) {
 
 
 function recalTotal() {
-	var totalAmount = 0.00; //--- price before vat
+	var totalBefDi = 0.00; //--- total befor discount but include vat
+	var discPrcnt = parseDefault(parseFloat($('#discPrcnt').val()), 0); //--- discount percentage
+	var totalDisc = 0.00; //--- discount amount
 	var totalVat = 0.00; //--- total vat
+	var totalAmount = 0; //--- total after bill discount
 	var docTotal = 0.00;
 
 	$('.input-qty').each(function(){
 		let no = $(this).data('no');
-		let vatAmount = parseDefault(parseFloat($('#vatAmount-'+no).val()), 0);
+		let vatRate = parseDefault(parseFloat($('#itemVatRate-'+no).val()), 0);
 		let amount = parseDefault(parseFloat($('#amount-'+no).val()), 0);
-		let lineTotal = amount - vatAmount;
+		let discAmount = amount * (discPrcnt * 0.01);
+		let lineTotal = amount - discAmount; //--- total after discount but include vat
+		let vatAmount = get_vat_amount(lineTotal, vatRate);
 
-		totalAmount += lineTotal;
+		totalBefDi += amount;
+		totalDisc += discAmount;
 		totalVat += vatAmount;
-		docTotal += amount;
+		totalAmount += lineTotal;
 	});
 
+	totalBefVat = totalAmount - totalVat;
+	docTotal = totalAmount;
 
-	$('#totalAmount').val(addCommas(totalAmount.toFixed(4)));
+	$('#totalBefDi').val(addCommas(totalBefDi.toFixed(4)));
+	$('#discSum').val(addCommas(totalDisc.toFixed(4)));
+	$('#totalAmount').val(addCommas(totalBefVat.toFixed(4)));
 	$('#totalVat').val(addCommas(totalVat.toFixed(4)));
 	$('#docTotal').val(addCommas(docTotal.toFixed(4)));
 }
 
 
 function previewOrder() {
-	var err = 0;
-	var count = 0;
-	var runno = 1;
-	var msg = "";
-	var price_edit = 0;
+	clearErrorByClass('e');
+
+	let err = 0;
+	let count = 0;
+	let runno = 1;
+	let msg = "";
+	let price_edit = 0;
+
 	//--- check valid data
-	var customerCode = $('#customer').val();
-	var customerName = $('#customer option:selected').text();
-	var shipToCode = $('#shipToCode').val();
-	var shipToAddress = $('#ShipTo').val();
-	var billToCode = $('#billToCode').val();
-	var billToAddress = $('#BillTo').val();
-	var priceList = $('#priceList').val();
-	var listName = $('#priceList option:selected').text();
-	var docDate = $('#DocDate').val();
-	var dueDate = $('#DocDueDate').val();
-	var PoNo = $('#PoNo').val();
-	var exShipTo = $('#exShipTo').val();
-	var currencyRate = $('#currencyRate').val();
-	var currency = $('#currency').val();
-	var items = [];
+	let customerCode = $('#customer').val();
+	let customerName = $('#customer option:selected').data('name');
+	let saleTeam = $('#customer option:selected').data('saleteam');
+	let areaId = $('#customer option:selected').data('area');
+	let shipToCode = $('#shipToCode').val();
+	let shipToAddress = $('#ShipTo').val();
+	let billToCode = $('#billToCode').val();
+	let billToAddress = $('#BillTo').val();
+	let priceList = $('#priceList').val();
+	let term = $('#term').val();
+	let termName = $('#term option:selected').text();
+	let listName = $('#priceList option:selected').text();
+	let docDate = $('#DocDate').val();
+	let dueDate = $('#DocDueDate').val();
+	let PoNo = $('#PoNo').val();
+	let exShipTo = $('#exShipTo').val();
+	let currencyRate = $('#currencyRate').val();
+	let currency = $('#currency').val();
+	let items = [];
+	let totalBefDi = 0;
+	let totalAmount = 0;
+	let DiscPrcnt = parseDefault(parseFloat($('#discPrcnt').val()), 0);
+	let DiscSum = 0;
 
 	if(customerCode == "") {
-		$('#customer').addClass('has-error');
-		msg = "กรุณาเลือกลูกค้า";
-		warning(msg);
+		$('#customer').hasError();
+		warning("กรุณาเลือกลูกค้า");
 		return false;
-	}
-	else {
-		$('#customer').removeClass('has-error');
 	}
 
 	if(priceList == "") {
-		$('#priceList').addClass('has-error');
-		msg = "กรุณาเลือก payment term";
-		warning(msg);
+		$('#priceList').hasError();
+		warning("กรุณาเลือก Price List");
 		return false;
-	}
-	else {
-		$('#priceList').removeClass('has-error');
 	}
 
 	if(currencyRate == 0) {
-		$('#currencyRate').addClass('has-error');
-		msg = "อัตราแลกเปลี่ยนไม่ถูกต้อง";
-		warning(msg);
+		$('#currencyRate').hasError();
+		warning("อัตราแลกเปลี่ยนไม่ถูกต้อง");
 		return false;
 	}
-	else {
-		$('#currencyRate').removeClass('has-error');
+
+	if(term == "") {
+		$('#term').hasError();
+		warning("กรุณาเลือก Payment Term");
+		return false;
 	}
+
 
 	$('.item-code').each(function() {
 		let no = $(this).data('no');
+
 		if($(this).val() != "") {
 			count++;
 			if($('#qty-'+no).val() == "" || $('#qty-'+no).val() == 0) {
@@ -579,6 +645,8 @@ function previewOrder() {
 					}
 				}
 
+				let amount = parseDefault(parseFloat($('#amount-'+no).val()), 0);
+
 				let item = {
 					"no" : runno,
 					"ItemCode" : $(this).val(),
@@ -588,23 +656,31 @@ function previewOrder() {
 					"uom" : $('#uom-'+no).val(),
 					"stdPrice" : addCommas($('#stdPrice-'+no).val()),
 					"sellPrice" : addCommas($('#price-'+no).val()),
-					"amount" : addCommas($('#amount-'+no).val()),
+					"amount" : addCommas(amount),
 					"dis" : $('#dis-'+no).is(':checked') ? '<i class="fa fa-check blue"></i>' : ''
 				}
 
 				items.push(item);
 				runno++;
+				totalBefDi += amount;
 			}
 		}
 	});
 
-	let docTotal = {"totalAmount" : $('#docTotal').val()};
+	DiscSum = totalBefDi * (DiscPrcnt * 0.01);
+	totalAmount = totalBefDi - DiscSum;
 
-	items.push(docTotal);
+	let subTotal = {
+		"totalBefDi" : addCommas(totalBefDi),
+		"DiscPrcnt" : DiscPrcnt,
+		"DiscSum" : addCommas(DiscSum),
+		"totalAmount" : addCommas(totalAmount)
+	}
+
+	items.push(subTotal);
 
 	if(count == 0) {
-		msg = "ไม่พบรายการสินค้า";
-		warning(msg);
+		warning("ไม่พบรายการสินค้า");
 		return false;
 	}
 
@@ -614,9 +690,7 @@ function previewOrder() {
 	}
 
 
-
-
-	var data = {
+	let data = {
 		"orderCode" : $('#code').val(),
 		"customerCode" : customerCode,
 		"customerName" : customerName,
@@ -630,6 +704,7 @@ function previewOrder() {
 		"dueDate" : dueDate,
 		"PoNo" : PoNo,
 		"priceList" : priceList,
+		"termName" : termName,
 		"listName" : listName,
 		"exShipTo" : exShipTo,
 		"billOption" : $("input[name=billoption]:checked").val(),
@@ -638,16 +713,18 @@ function previewOrder() {
 		"items" : items
 	}
 
-	let total = removeCommas($('#docTotal').val());
+	console.log(data);
 
 	$.ajax({
 		url:HOME + 'check_approve',
 		type:'GET',
 		cache:false,
 		data:{
-			'docTotal' : total,
+			'docTotal' : totalAmount,
 			'priceEdit' : price_edit,
-			'customerCode' : customerCode
+			'customerCode' : customerCode,
+			'saleTeam' : saleTeam,
+			'areaId' : areaId
 		},
 		success:function(rs) {
 			if(rs == 'pass') {
@@ -668,12 +745,12 @@ function previewOrder() {
 					cancelButtonText: 'กลับไปแก้ไข',
 					closeOnConfirm: true
 			  },function(){
-					var source = $('#preview-template').html();
-					var output = $('#result');
-
-					render(source, data, output);
-
-					$('#previewModal').modal('show');
+					setTimeout(() => {
+						var source = $('#preview-template').html();
+						var output = $('#result');
+						render(source, data, output);
+						$('#previewModal').modal('show');
+					}, 100);
 			  })
 			}
 		}
@@ -708,6 +785,24 @@ function toggleSubmit() {
 }
 
 
+function toggleDiscount() {
+	let discPrcnt = parseDefault(parseFloat($('#term option:selected').data('disc')), 0);
+	let canChange = $('#term option:selected').data('change');
+
+	$('#discPrcnt').val(discPrcnt);
+
+	if(canChange == 1) {
+		$('#discPrcnt').removeAttr('disabled');
+		$('#discPrcnt').focus();
+	}
+	else {
+		$('#discPrcnt').attr('disabled', 'disabled');
+	}
+
+	recalTotal();
+}
+
+
 function getRate() {
 	var code = $('#currency').val();
 	if(code === 'THB') {
@@ -737,10 +832,18 @@ function getRate() {
 
 
 function saveAdd() {
+
 	$('#previewModal').modal('hide');
+
 	var ds = {
 		//---- Right column
 		'CardCode' : $('#customer').val(),  //****** required
+		'CardName' : $('#customer option:selected').data('name'),
+		'CustomerGroupNum' : $('#customer option:selected').data('groupnum'),
+		'isControl' : $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N',
+		'saleTeam' : $('#customer option:selected').data('saleteam'),
+		'areaId' : $('#customer option:selected').data('area'),
+		'SlpCode' : $('#customer option:selected').data('sale'),
 		'PriceList' : $('#priceList').val(),
 		'PayToCode' : $('#billToCode').val(),
 		'BillTo' : $('#BillTo').val(),
@@ -756,14 +859,19 @@ function saveAdd() {
 		'NumAtCard' : $('#PoNo').val(),
 		'DocCur' : $('#currency').val(),
 		'DocRate' : $('#currencyRate').val(),
-
 		//---- footer
+		'TotalBefDi' : parseDefault(parseFloat(removeCommas($('#totalBefDi').val())), 0),
+		'term' : $('#term').val(),
+		'DiscType' : $('#term option:selected').data('change') == '1' ? 'M' : 'A',
+		'GroupNum' : $('#term option:selected').data('groupnum'),
+		'DiscPrcnt' : parseDefault(parseFloat($('#discPrcnt').val()), 0),
+		'DiscSum' : parseDefault(parseFloat(removeCommas($('#discSum').val())), 0),
 		'billOption' : $("input[name=billoption]:checked").val(),
 		'requireSQ' : $('#require-sq').is(':checked') ? 'Y' : 'N',
 		'comments' : $.trim($('#remark').val()),
-
-		'totalVat' : removeCommas($('#totalVat').val()), //-- VatSum
-		'docTotal' : removeCommas($('#docTotal').val()),
+		'TotalAfDisc' : parseDefault(parseFloat(removeCommas($('#totalAmount').val())), 0),
+		'totalVat' : parseDefault(parseFloat(removeCommas($('#totalVat').val())), 0),
+		'docTotal' : parseDefault(parseFloat(removeCommas($('#docTotal').val())), 0),
 		'is_discount_sales' : 0
 	}
 
@@ -781,9 +889,12 @@ function saveAdd() {
 			let sellPrice = $('#price-'+no).val();
 			let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
 			let dis = $('#dis-'+no).is(':checked') ? 1 : 0;
+			let step_id = $('#step-'+no).val();
+
 			let item = {
 				"ItemCode" : $(this).val(),
 				"ItemName" : $("#item-"+no).val(),
+				"isControl" : $('#control-'+no).val(),
 				"Qty" : parseDefault(parseFloat($('#qty-'+no).val()), 1),
 				"freeQty" : parseDefault(parseFloat($('#free-'+no).val()), 0),
 				"UomCode" : $('#uom-'+no).val(),
@@ -795,7 +906,8 @@ function saveAdd() {
 				"lineTotal" : $('#amount-'+no).val(),
 				"lineText" : $('#remark-'+no).val(),
 				"WhsCode" : $('#whsCode-'+no).val(),
-				"discount_sales" : dis
+				"discount_sales" : dis,
+				"step_id" : step_id
 			}
 
 			if($('#freeTxt-'+no).length) {
@@ -870,3 +982,8 @@ function wordCount(el, no) {
 	let count = el.val().length;
 	$('#word-count-'+no).text(count);
 }
+
+
+$('#discPrcnt').keyup(function() {
+	recalTotal();
+})

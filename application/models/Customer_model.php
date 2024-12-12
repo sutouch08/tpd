@@ -20,104 +20,24 @@ class Customer_model extends CI_Model
     return NULL;
   }
 
-
-  public function get_user_customer_list($sale_id, $type = "V", $group_ids = array(), $sale_person = array())
+  public function get_user_customer_list($area_id, $type = "V")
   {
     //--- V = vat Q = non vat
-    if(!empty($sale_id))
-    {
-      $qry = "";
-      $sps = "";
-
-      if(!empty($group_ids))
-      {
-        $i = 1;
-        foreach($group_ids as $no)
-        {
-          $qry .= $i == 1 ? "OCRD.QryGroup{$no} = 'Y' " : "OR OCRD.QryGroup{$no} = 'Y' ";
-          $i++;
-        }
-      }
-
-      if(!empty($group_id))
-      {
-        $count = 17;
-        $c = 5;
-        while($c < $count)
-        {
-          $qry .= $c == 1 ? "OCRD.QryGroup{$c} = 'Y' " : "OR OCRD.QryGroup{$c} = 'Y' ";
-          $c++;
-        }
-      }
-
-
-      if(!empty($sale_person))
-      {
-        $in = "";
-        $i = 1;
-        foreach($sale_person as $sp)
-        {
-          $in .= $i === 1 ? "'{$sp}'" : ", '{$sp}'";
-          $i++;
-        }
-
-        $sps = "AND U_SALE_PERSON IN({$in}) ";
-      }
-
-
-      $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OCRD.Currency, OVTG.Rate ";
-      $qr .= "FROM OCRD LEFT JOIN OVTG ON OCRD.ECVatGroup = OVTG.Code ";
-      $qr .= "WHERE OCRD.CardType = 'C' ";
-      $qr .= "AND OCRD.validFor = 'Y' ";
-      $qr .= "AND OCRD.SlpCode = {$sale_id} ";
-
-      if(!empty($qry))
-      {
-        $qr .= "AND ({$qry}) ";
-      }
-
-      $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
-      $qr .= "AND OCRD.U_SALE_PERSON IS NOT NULL ";
-      $qr .= $sps;
-      $qr .= "ORDER BY OCRD.CardCode ASC";
-
-
-      $rs = $this->ms->query($qr);
-
-      if($rs->num_rows() > 0)
-      {
-        return $rs->result();
-      }
-    }
-
-    return NULL;
-  }
-
-
-
-  public function get_all_user_customer_list($type = "V")
-  {
-    $qry = "";
-    $count = 64;
-    $c = 1;
-    while($c < $count)
-    {
-      $qry .= $c == 1 ? "OCRD.QryGroup{$c} = 'Y' " : "OR OCRD.QryGroup{$c} = 'Y' ";
-      $c++;
-    }
-
-    $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OCRD.Currency, OVTG.Rate ";
-    $qr .= "FROM OCRD LEFT JOIN OVTG ON OCRD.ECVatGroup = OVTG.Code ";
-    $qr .= "WHERE OCRD.CardType = 'C' ";
-    $qr .= "AND OCRD.validFor = 'Y' ";
-    if(!empty($qry))
-    {
-      $qr .= "AND ({$qry}) ";
-    }
-    $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
-    $qr .= "AND OCRD.U_SALE_PERSON IS NOT NULL ";
-    $qr .= "ORDER BY OCRD.CardCode ASC";
-    $rs = $this->ms->query($qr);
+    $rs = $this->ms
+    ->select('C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, C.Currency')
+    ->select('C.U_TPD_DrugCon AS isControl, C.U_TPD_BI_SalesTeam AS saleTeam')
+    ->select('C.U_TPD_BI_AreaName AS areaId, V.Rate')
+    ->from('OCRD AS C')
+    ->join('OVTG AS V', 'C.ECVatGroup = V.Code', 'left')
+    ->where('C.CardType', 'C')
+    ->where('C.validFor', 'Y')
+    ->where('C.SlpCode >', 0)
+    ->where('C.U_TPD_BI_AreaName IS NOT NULL', NULL, FALSE)
+    ->where('C.U_TPD_BI_AreaName', $area_id)
+    ->where('C.U_BEX_CUST_VQ', $type."-")
+    ->where('C.U_SALE_PERSON IS NOT NULL', NULL, FALSE)
+    ->order_by('C.CardCode', 'ASC')
+    ->get();
 
     if($rs->num_rows() > 0)
     {
@@ -125,6 +45,60 @@ class Customer_model extends CI_Model
     }
 
     return NULL;
+  }
+
+
+  public function get_all_user_customer_list($type = "V")
+  {
+    //--- V = vat Q = non vat
+    $rs = $this->ms
+    ->select('C.CardCode, C.CardName, C.SlpCode, C.ECVatGroup, C.Currency, C.U_TPD_DrugCon AS isControl, U_TPD_BI_SalesTeam AS saleTeam, V.Rate')
+    ->from('OCRD AS C')
+    ->join('OVTG AS V', 'C.ECVatGroup = V.Code', 'left')
+    ->where('C.CardType', 'C')
+    ->where('C.validFor', 'Y')
+    ->where('C.SlpCode >', 0)
+    ->where('C.U_TPD_BI_AreaName IS NOT NULL', NULL, FALSE)
+    ->where('C.U_BEX_CUST_VQ', $type."-")
+    ->where('C.U_SALE_PERSON IS NOT NULL', NULL, FALSE)
+    ->order_by('C.CardCode', 'ASC')
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+    //
+    // $qry = "";
+    // $count = 64;
+    // $c = 1;
+    // while($c < $count)
+    // {
+    //   $qry .= $c == 1 ? "OCRD.QryGroup{$c} = 'Y' " : "OR OCRD.QryGroup{$c} = 'Y' ";
+    //   $c++;
+    // }
+    //
+    // $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OCRD.Currency, OVTG.Rate ";
+    // $qr .= "FROM OCRD LEFT JOIN OVTG ON OCRD.ECVatGroup = OVTG.Code ";
+    // $qr .= "WHERE OCRD.CardType = 'C' ";
+    // $qr .= "AND OCRD.validFor = 'Y' ";
+    // if(!empty($qry))
+    // {
+    //   $qr .= "AND ({$qry}) ";
+    // }
+    // $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
+    // $qr .= "AND OCRD.U_SALE_PERSON IS NOT NULL ";
+    // $qr .= "ORDER BY OCRD.CardCode ASC";
+    // $rs = $this->ms->query($qr);
+    //
+    // if($rs->num_rows() > 0)
+    // {
+    //   return $rs->result();
+    // }
+    //
+    // return NULL;
   }
 
 

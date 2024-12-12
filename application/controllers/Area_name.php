@@ -3,9 +3,9 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 class Area_name extends PS_Controller
 {
-	public $menu_code = 'SALES_TEAM';
+	public $menu_code = 'AREA_NAME';
 	public $menu_group_code = 'ADMIN';
-	public $title = 'Sales Team';
+	public $title = 'Area Name';
 
   public function __construct()
   {

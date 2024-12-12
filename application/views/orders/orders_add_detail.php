@@ -1,12 +1,20 @@
 <style>
-  .table > tr > td {
-    padding:3px;
+  .table tr > td {
+    padding:3px !important;
   }
 
   .hilight {
     font-style: italic;
     font-weight: bold;
     color: red;
+  }
+
+  tr.control input {
+    color:red !important;
+  }
+
+  tr.control select {
+    color:red !important;
   }
 
   @media (min-width: 768px) {
@@ -33,7 +41,7 @@
     }
   }
 </style>
-<?php $width = 1321; ?>
+<?php $width = 1401; ?>
 <?php $hide = $this->disSale ? "" : 'hide'; ?>
 <?php $width += $this->disSale ? 80 : 0; ?>
 <?php $width += $this->isAdmin ? 100 : 0; ?>
@@ -46,13 +54,14 @@
   <div class="divider-hidden">
 
   </div>
-  <div class="col-sm-12 col-xs-12 padding-5 border-1 table-responsive" style="max-height:600px; padding-left:0px; padding-right:0px; padding-bottom:5px; margin-left:5px; margin-right:5px;">
-    <table class="table table-bordered tableFixHead" style="margin-left: -1px; margin-top: -1px; width:<?php echo $width; ?>px;">
+  <div class="col-sm-12 col-xs-12 padding-5 border-1 table-responsive" style="max-height:400px; padding-left:0px; padding-right:0px; padding-bottom:5px; margin-left:5px; margin-right:5px;">
+    <table class="table table-bordered tableFixHead" style="margin-left: -1px; margin-top: -1px; width:<?php echo $width; ?>px; min-width:100% !important;">
       <thead>
         <tr>
           <th class="fix-width-40 middle text-center fix-no fix-header">#</th>
           <th class="fix-width-250 middle text-center fix-item fix-header">รายการสินค้า</th>
           <th class="fix-width-150 middle text-center fix-step fix-header">Step</th>
+          <th class="fix-width-80 middle text-center">Controlled</th>
           <th class="fix-width-80 middle text-center">In Stock</th>
           <th class="fix-width-80 middle text-center">Committed</th>
           <th class="fix-width-80 middle text-center">Available</th>
@@ -87,6 +96,7 @@
               <option value="">เลือก</option>
             </select>
           </td>
+          <td class="middle"><input type="text" class="form-control input-sm text-center is-control" id="control-1" data-no="1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-1" value="" disabled/></td>
@@ -133,6 +143,7 @@
         <option value="0">เลือก</option>
       </select>
     </td>
+    <td class="middle"><input type="text" class="form-control input-sm text-center is-control" id="control-{{no}}" data-no="{{no}}" value="" disabled /></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-{{no}}" value="" disabled /></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-{{no}}" value="" disabled/></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-{{no}}" value="" disabled/></td>

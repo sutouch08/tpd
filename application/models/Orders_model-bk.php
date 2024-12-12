@@ -49,9 +49,10 @@ class Orders_model extends CI_Model
   }
 
 
+
   public function add(array $ds = array())
   {
-    if( ! empty($ds))
+    if(!empty($ds))
     {
       return $this->db->insert($this->tb, $ds);
     }
@@ -60,9 +61,10 @@ class Orders_model extends CI_Model
   }
 
 
+
   public function add_detail(array $ds = array())
   {
-    if( ! empty($ds))
+    if(!empty($ds))
     {
       if($this->db->insert($this->td, $ds))
       {
@@ -74,9 +76,10 @@ class Orders_model extends CI_Model
   }
 
 
+
   public function update($code, array $ds = array())
   {
-    if( ! empty($ds) && !empty($code))
+    if(!empty($ds) && !empty($code))
     {
       return $this->db->where('code', $code)->update($this->tb, $ds);
     }
@@ -85,15 +88,17 @@ class Orders_model extends CI_Model
   }
 
 
+
   public function update_detail($id, array $ds = array())
   {
-    if( ! empty($ds) && !empty($ds))
+    if(!empty($ds) && !empty($ds))
     {
       return $this->db->where('id', $id)->update($this->td, $ds);
     }
 
     return FALSE;
   }
+
 
 
   public function approve_detail($id)
@@ -114,10 +119,12 @@ class Orders_model extends CI_Model
   }
 
 
+
   public function reject_details($code)
   {
     return $this->db->set('status', 'R')->where('order_code', $code)->update($this->td);
   }
+
 
 
   public function delete_detail($id)
@@ -139,12 +146,13 @@ class Orders_model extends CI_Model
       $this->db->where('is_promotion', $ds['is_promotion']);
     }
 
-    if( ! empty($ds['WebCode']))
+
+    if(!empty($ds['WebCode']))
     {
       $this->db->like('code', $ds['WebCode']);
     }
 
-    if( ! empty($ds['CardCode']))
+    if(!empty($ds['CardCode']))
     {
       $this->db->group_start();
       $this->db->like('CardCode', $ds['CardCode']);
@@ -152,41 +160,50 @@ class Orders_model extends CI_Model
       $this->db->group_end();
     }
 
-    if( ! empty($ds['UserName']))
+
+    if(!empty($ds['UserName']))
     {
       $this->db->like('uname', $ds['UserName']);
     }
 
-    if( ! empty($ds['Approver']))
+
+    if(!empty($ds['Approver']))
     {
       $this->db->like('Approver', $ds['Approver']);
     }
 
-    if( ! empty($ds['DocNum']))
+
+    if(!empty($ds['DocNum']))
     {
       $this->db->like('DocNum', $ds['DocNum']);
     }
 
-    if( ! empty($ds['DeliveryNo']))
+
+
+    if(!empty($ds['DeliveryNo']))
     {
       $this->db->like('DeliveryNo', $ds['DeliveryNo']);
     }
 
-    if( ! empty($ds['InvoiceNo']))
+
+    if(!empty($ds['InvoiceNo']))
     {
       $this->db->like('InvoiceNo', $ds['InvoiceNo']);
     }
 
-    if( ! empty($ds['PoNo']))
+
+    if(!empty($ds['PoNo']))
     {
       $this->db->like('NumAtCard', $ds['PoNo'] );
     }
 
-    if( ! empty($ds['fromDate']) && !empty($ds['toDate']))
+
+    if(!empty($ds['fromDate']) && !empty($ds['toDate']))
     {
       $this->db->where('DocDate >=', from_date($ds['fromDate']));
       $this->db->where('DocDate <=',to_date($ds['toDate']));
     }
+
 
     if($ds['Approved'] !== 'all')
     {
@@ -206,6 +223,7 @@ class Orders_model extends CI_Model
         }
       }
     }
+
 
     if($ds['Status'] !== 'all')
     {
@@ -229,6 +247,7 @@ class Orders_model extends CI_Model
       $this->db->where('is_discount_sales', $ds['is_discount_sales']);
     }
 
+
     if($ds['DO_Status'] != 'all')
     {
       if($ds['DO_Status'] == 'x')
@@ -240,6 +259,8 @@ class Orders_model extends CI_Model
         $this->db->where('DO_Status', $ds['DO_Status']);
       }
     }
+
+
 
     if($ds['INV_Status'] != 'all')
     {
@@ -253,39 +274,74 @@ class Orders_model extends CI_Model
       }
     }
 
-    if( ! $this->isGM && ! $this->_SuperAdmin && ! $this->isAdmin)
-    {
-      if(!$this->isGM && !$this->_SuperAdmin && !$this->isAdmin)
-      {
-        //--- จะมี user_team ได้ ต้องถูกเพิ่มเป็น lead เท่านั้น
-        $teams = $this->get_user_team($this->_user->id);
-        //---- case
-        if( ! empty($teams))
-        {
-          $this->db->group_start();
-          $this->db->where('user_id', $this->_user->id);
 
-          if( ! empty($this->_user->area_id))
+    if(!$this->isGM && !$this->_SuperAdmin && !$this->isAdmin)
+    {
+      $teams = $this->user_model->get_user_team($this->_user->id);
+      $user = array();
+      $group = array();
+
+      //---- case
+      if(!empty($teams))
+      {
+        $i = 1;
+        foreach($teams as $rs)
+        {
+          if($rs->user_role == "Lead")
           {
-            $this->db->or_where('area_id', $this->_user->area_id);
+            //--- เป็น lead ดู user ในทีมว่าม่ใครบ้าง
+            $users = $this->user_model->user_in_team($rs->team_id);
+
+            if(!empty($users))
+            {
+              foreach($users as $user_id)
+              {
+                if(!isset($user[$user_id]))
+                {
+                  $user[$user_id] = $user_id;
+                }
+              }
+            }
           }
 
-          $this->db->or_where_in('team_id', $teams);
-          $this->db->group_end();
+
+          $team_customer_group = $this->user_model->get_team_customer_group($rs->team_id);
+
+          if(!empty($team_customer_group))
+          {
+            foreach($team_customer_group as $tcg)
+            {
+              if(!isset($group[$tcg->group_id]))
+              {
+                $group[$tcg->group_id] = $tcg->group_id;
+              }
+            }
+          }
+
+        } //--- end foreach
+
+        //--- ถ้า ว่าง แสดงว่า ไม่ได้เป็น lead จะเห็นเฉพาะเอกสารของตัวเองเท่านั้น
+        if(!empty($user) && !empty($group))
+        {
+          $this->db->where_in('user_id', $user);
+          $this->db->where_in('CardGroup', $group);
         }
         else
         {
-          $this->db
-          ->group_start()
-          ->where('user_id', $this->_user->id)
-          ->or_where('area_id', $this->_user->area_id)
-          ->group_end();
+          $this->db->where('user_id', $this->_user->id);
         }
+      }
+      else
+      {
+        $this->db->where('user_id', $this->_user->id);
       }
     }
 
     return $this->db->count_all_results('orders');
   }
+
+
+
 
 
   function get_list(array $ds = array(), $perpage = 20, $offset = 0)
@@ -296,12 +352,12 @@ class Orders_model extends CI_Model
       $this->db->where('is_promotion', $ds['is_promotion']);
     }
 
-    if( ! empty($ds['WebCode']))
+    if(!empty($ds['WebCode']))
     {
       $this->db->like('code', $ds['WebCode']);
     }
 
-    if( ! empty($ds['CardCode']))
+    if(!empty($ds['CardCode']))
     {
       $this->db->group_start();
       $this->db->like('CardCode', $ds['CardCode']);
@@ -309,41 +365,50 @@ class Orders_model extends CI_Model
       $this->db->group_end();
     }
 
-    if( ! empty($ds['UserName']))
+
+    if(!empty($ds['UserName']))
     {
       $this->db->like('uname', $ds['UserName']);
     }
 
-    if( ! empty($ds['Approver']))
+
+    if(!empty($ds['Approver']))
     {
       $this->db->like('Approver', $ds['Approver']);
     }
 
-    if( ! empty($ds['DocNum']))
+
+    if(!empty($ds['DocNum']))
     {
       $this->db->like('DocNum', $ds['DocNum']);
     }
 
-    if( ! empty($ds['DeliveryNo']))
+
+
+    if(!empty($ds['DeliveryNo']))
     {
       $this->db->like('DeliveryNo', $ds['DeliveryNo']);
     }
 
-    if( ! empty($ds['InvoiceNo']))
+
+    if(!empty($ds['InvoiceNo']))
     {
       $this->db->like('InvoiceNo', $ds['InvoiceNo']);
     }
 
-    if( ! empty($ds['PoNo']))
+
+    if(!empty($ds['PoNo']))
     {
       $this->db->like('NumAtCard', $ds['PoNo'] );
     }
 
-    if( ! empty($ds['fromDate']) && !empty($ds['toDate']))
+
+    if(!empty($ds['fromDate']) && !empty($ds['toDate']))
     {
       $this->db->where('DocDate >=', from_date($ds['fromDate']));
       $this->db->where('DocDate <=',to_date($ds['toDate']));
     }
+
 
     if($ds['Approved'] !== 'all')
     {
@@ -363,6 +428,7 @@ class Orders_model extends CI_Model
         }
       }
     }
+
 
     if($ds['Status'] !== 'all')
     {
@@ -386,6 +452,7 @@ class Orders_model extends CI_Model
       }
     }
 
+
     if($ds['DO_Status'] != 'all')
     {
       if($ds['DO_Status'] == 'x')
@@ -397,6 +464,8 @@ class Orders_model extends CI_Model
         $this->db->where('DO_Status', $ds['DO_Status']);
       }
     }
+
+
 
     if($ds['INV_Status'] != 'all')
     {
@@ -410,31 +479,66 @@ class Orders_model extends CI_Model
       }
     }
 
+
     if(!$this->isGM && !$this->_SuperAdmin && !$this->isAdmin)
     {
-      //--- จะมี user_team ได้ ต้องถูกเพิ่มเป็น lead เท่านั้น
-      $teams = $this->get_user_team($this->_user->id);
+      $teams = $this->user_model->get_user_team($this->_user->id);
+      $user = array();
+      $group = array();
+
       //---- case
-      if( ! empty($teams))
+      if(!empty($teams))
       {
-        $this->db->group_start();
-        $this->db->where('user_id', $this->_user->id);
-
-        if( ! empty($this->_user->area_id))
+        $i = 1;
+        foreach($teams as $rs)
         {
-          $this->db->or_where('area_id', $this->_user->area_id);
-        }
+          if($rs->user_role == "Lead")
+          {
+            //--- เป็น lead ดู user ในทีมว่าม่ใครบ้าง
+            $users = $this->user_model->user_in_team($rs->team_id);
 
-        $this->db->or_where_in('team_id', $teams);
-        $this->db->group_end();
+            if(!empty($users))
+            {
+              foreach($users as $user_id)
+              {
+                if(!isset($user[$user_id]))
+                {
+                  $user[$user_id] = $user_id;
+                }
+              }
+            }
+          }
+
+
+          $team_customer_group = $this->user_model->get_team_customer_group($rs->team_id);
+
+          if(!empty($team_customer_group))
+          {
+            foreach($team_customer_group as $tcg)
+            {
+              if(!isset($group[$tcg->group_id]))
+              {
+                $group[$tcg->group_id] = $tcg->group_id;
+              }
+            }
+          }
+
+        } //--- end foreach
+
+        //--- ถ้า ว่าง แสดงว่า ไม่ได้เป็น lead จะเห็นเฉพาะเอกสารของตัวเองเท่านั้น
+        if(!empty($user) && !empty($group))
+        {
+          $this->db->where_in('user_id', $user);
+          $this->db->where_in('CardGroup', $group);
+        }
+        else
+        {
+          $this->db->where('user_id', $this->_user->id);
+        }
       }
       else
       {
-        $this->db
-        ->group_start()
-        ->where('user_id', $this->_user->id)
-        ->or_where('area_id', $this->_user->area_id)
-        ->group_end();
+        $this->db->where('user_id', $this->_user->id);
       }
     }
 
@@ -456,10 +560,9 @@ class Orders_model extends CI_Model
 
   public function price_list_name($price_list)
   {
-    if( ! empty($price_list))
+    if(!empty($price_list))
     {
       $rs = $this->ms->select('ListName')->where('ListNum', $price_list)->get('OPLN');
-      
       if($rs->num_rows() === 1)
       {
         return $rs->row()->ListName;
@@ -479,26 +582,6 @@ class Orders_model extends CI_Model
     if($rs->num_rows() > 0)
     {
       return $rs->row()->Rate;
-    }
-
-    return NULL;
-  }
-
-
-  private function get_user_team($user_id)
-  {
-    $qs = $this->db->query("SELECT team_id FROM user_team WHERE user_id = {$user_id}");
-
-    if($qs->num_rows() > 0)
-    {
-      $ds = array();
-
-      foreach($qs->result() as $rs)
-      {
-        $ds[$rs->team_id] = $rs->team_id;
-      }
-
-      return $ds;
     }
 
     return NULL;

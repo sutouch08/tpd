@@ -19,29 +19,7 @@
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="name-error"></div>
   </div>
-
-	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Sale Person</label>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-			<select class="form-control input-sm e" name="sale_id" id="sale-id">
-				<option value="">Please Select</option>
-				<?php echo select_sale_person($data->sale_id); ?>
-			</select>
-    </div>
-		<div class="help-block col-xs-12 col-sm-reset inline red" id="sale-id-error"></div>
-  </div>
-
-	<div class="form-group">
-    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">BI Department</label>
-    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-			<select class="form-control input-sm e" name="dep_id" id="dep-id">
-				<option value="">Please Select</option>
-				<?php echo select_department($data->dep_id); ?>
-			</select>
-    </div>
-		<div class="help-block col-xs-12 col-sm-reset inline red" id="dep-id-error"></div>
-  </div>
-
+	
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">BI Sales Team</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -53,7 +31,50 @@
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="team-id-error"></div>
   </div>
 
+	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Area</label>
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12 table-responsive border-1 e" id="area" style="margin-left:5px; padding-left:0px; padding-right: 0px; max-height:300px; overflow:auto;">
+			<table class="table table-striped table-bordered tableFixHead border-1" style="margin-top:-1px; margin-left:-1px;">
+				<thead>
+					<tr>
+						<th class="width-20 text-center fix-header">ID</th>
+						<th class="text-center fix-header">Area Name</th>
+						<th class="width-20 text-center fix-header">
+							<label>
+								<input type="checkbox" class="ace" id="area-all">
+								<span class="lbl"></span>
+							</label>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php if( ! empty($area)) : ?>
+						<?php $con_area = $data->area; ?>
+						<?php foreach($area as $ar)  : ?>
+							<tr>
+								<td class="text-center"><?php echo $ar->id; ?></td>
+								<td><?php echo $ar->name; ?></td>
+								<td class="text-center">
+									<label>
+										<input type="checkbox"
+										class="ace area"
+										name="area[<?php echo $ar->id; ?>]"
+										id="ar-<?php echo $ar->id; ?>"
+										value="<?php echo $ar->id; ?>" data-name="<?php echo $ar->name; ?>" <?php echo (empty($data->area[$ar->id]) ? "" : "checked"); ?>>
+										<span class="lbl"></span>
+									</label>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					<?php endif; ?>
+				</tbody>
+			</table>
+    </div>
+		<div class="help-block col-xs-12 col-sm-reset inline red" id="area-error"></div>
+  </div>
+
 	<div class="divider"></div>
+
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Authorizer</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-8">

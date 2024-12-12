@@ -88,36 +88,7 @@ class Order_promotion extends PS_Controller
 			}
 			else
 			{
-				$customer_group = array();
-				$sale_person = array();
-
-				$sale_team = $this->user_model->get_user_team($this->_user->id);
-
-				if(!empty($sale_team))
-				{
-					foreach($sale_team as $rs)
-					{
-						$groups = $this->user_model->get_team_customer_group($rs->team_id);
-
-						if(!empty($groups))
-						{
-							foreach($groups as $group)
-							{
-								if(!isset($customer_group[$group->group_id]))
-								{
-									$customer_group[$group->group_id] = $group->group_id;
-								}
-							}
-						}
-
-						if(!empty($rs->sale_person))
-						{
-							$sale_person[] = $rs->sale_person;
-						}
-					}
-				}
-
-				$ds['customer'] = $this->customer_model->get_user_customer_list($this->_user->sale_id, "V", $customer_group, $sale_person);
+				$ds['customer'] = $this->customer_model->get_user_customer_list($this->_user->area_id, "V");
 			}
 
 			$ds['priceList'] = $this->user_model->get_user_price_list($this->_user->id);
@@ -137,7 +108,7 @@ class Order_promotion extends PS_Controller
 		//$date = "2021-10-31 00:00:00";
 		$rate = $this->orders_model->get_currency_rate($code, $date);
 
-		if(!empty($rate))
+		if( ! empty($rate))
 		{
 			echo $rate;
 		}
@@ -156,39 +127,10 @@ class Order_promotion extends PS_Controller
 		}
 		else
 		{
-			$customer_group = array();
-			$sale_person = array();
-
-			$sale_team = $this->user_model->get_user_team($this->_user->id);
-
-			if(!empty($sale_team))
-			{
-				foreach($sale_team as $rs)
-				{
-					$groups = $this->user_model->get_team_customer_group($rs->team_id);
-
-					if(!empty($groups))
-					{
-						foreach($groups as $group)
-						{
-							if(!isset($customer_group[$group->group_id]))
-							{
-								$customer_group[$group->group_id] = $group->group_id;
-							}
-						}
-					}
-
-					if(!empty($rs->sale_person))
-					{
-						$sale_person[] = $rs->sale_person;
-					}
-				}
-			}
-
-			$list = $this->customer_model->get_user_customer_list($this->_user->sale_id, $type, $customer_group, $sale_person);
+			$list = $this->customer_model->get_user_customer_list($this->_user->area_id, $type);
 		}
 
-		if(!empty($list))
+		if( ! empty($list))
 		{
 			$ds = array();
 
@@ -199,7 +141,9 @@ class Order_promotion extends PS_Controller
 					'CardName' => $rs->CardName,
 					'Currency' => $rs->Currency,
 					'ECVatGroup' => $rs->ECVatGroup,
-					'Rate' => $rs->Rate
+					'Rate' => $rs->Rate,
+					'isControl' => $rs->isControl == 'Y' ? 'Y' : 'N',
+					'saleTeam' => $rs->saleTeam
 				);
 
 				array_push($ds, $arr);
@@ -219,11 +163,11 @@ class Order_promotion extends PS_Controller
 		$code = trim($this->input->get('CardCode'));
 		$ds = array();
 
-		if(!empty($code))
+		if( ! empty($code))
 		{
 			$addr = $this->customer_model->get_address_ship_to_code($code);
 
-			if(!empty($addr))
+			if( ! empty($addr))
 			{
 				$ds = array();
 				foreach($addr as $adr)
@@ -254,11 +198,11 @@ class Order_promotion extends PS_Controller
 	{
 		$code = trim($this->input->get('CardCode'));
 		$adr_code = trim($this->input->get('Address'));
-		if(!empty($code))
+		if( ! empty($code))
 		{
 			$adr = $this->customer_model->get_address_ship_to($code, $adr_code);
 
-			if(!empty($adr))
+			if( ! empty($adr))
 			{
 				$arr = array(
 					'code' => get_empty_text($adr->Address),
@@ -298,11 +242,11 @@ class Order_promotion extends PS_Controller
 		$code = trim($this->input->get('CardCode'));
 		$ds = array();
 
-		if(!empty($code))
+		if( ! empty($code))
 		{
 			$addr = $this->customer_model->get_address_bill_to_code($code);
 
-			if(!empty($addr))
+			if( ! empty($addr))
 			{
 				$ds = array();
 				foreach($addr as $adr)
@@ -332,11 +276,11 @@ class Order_promotion extends PS_Controller
 	{
 		$code = trim($this->input->get('CardCode'));
 		$adr_code = trim($this->input->get('Address'));
-		if(!empty($code))
+		if( ! empty($code))
 		{
 			$adr = $this->customer_model->get_address_bill_to($code, $adr_code);
 
-			if(!empty($adr))
+			if( ! empty($adr))
 			{
 				$arr = array(
 					'code' => get_empty_text($adr->Address),
@@ -462,19 +406,19 @@ class Order_promotion extends PS_Controller
 		$code = trim($this->input->get('code'));
 		$promotion_id = $this->input->get('promotion_id');
 
-		if(!empty($code))
+		if( ! empty($code))
 		{
-			if(!empty($promotion_id))
+			if( ! empty($promotion_id))
 			{
 				$this->load->model('stock_model');
 
 				$pd = $this->promotion_model->get_detail_by_item($promotion_id, $code);
 
-				if(!empty($pd))
+				if( ! empty($pd))
 				{
 					$item = $this->item_model->get_item($code);
 
-					if(!empty($item))
+					if( ! empty($item))
 					{
 						$stock = $this->stock_model->get_stock($item->code, $item->dfWhsCode);
 						$whsQty = !empty($stock) ? round($stock->OnHand,2) : 0;
@@ -532,9 +476,9 @@ class Order_promotion extends PS_Controller
 		$header = json_decode($this->input->post('header'));
 		$details = json_decode($this->input->post('details'));
 
-		if(!empty($header))
+		if( ! empty($header))
 		{
-			if(!empty($details))
+			if( ! empty($details))
 			{
 				$this->load->model('sale_person_model');
 
@@ -759,7 +703,7 @@ class Order_promotion extends PS_Controller
 
 		$code = $this->input->post('code');
 
-		if(!empty($code))
+		if( ! empty($code))
 		{
 			$rs = $this->doExport($code);
 
@@ -797,7 +741,7 @@ class Order_promotion extends PS_Controller
 
     $data = $this->orders_model->get_temp_data($code);
 
-    if(!empty($data))
+    if( ! empty($data))
     {
 			//$btn = "<button type='button' class='btn btn-sm btn-danger' onClick='removeTemp()'' ><i class='fa fa-trash'></i> Delete Temp</button>";
 
@@ -815,7 +759,7 @@ class Order_promotion extends PS_Controller
 			{
 				$so = $this->orders_model->get_sap_order($code);
 
-				if(!empty($so))
+				if( ! empty($so))
 				{
 					$status = "Success";
 				}
@@ -931,7 +875,7 @@ class Order_promotion extends PS_Controller
     $this->_response($sc);
   }
 
-	
+
   public function clear_filter()
 	{
 		$filter = array(

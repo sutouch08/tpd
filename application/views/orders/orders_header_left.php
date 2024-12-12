@@ -14,11 +14,23 @@
     <div class="form-group">
       <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">รหัสลูกค้า</label>
       <div class="col-lg-9 col-md-9 col-sm-9 col-xs-12">
-        <select name="customer" id="customer" class="width-100" onchange="getAddress()">
-          <option value="">Select Customer</option>
-          <?php if(!empty($customer)) : ?>
+        <select name="customer" id="customer" class="width-100 e" onchange="getAddress()">
+          <option value="" id="count-cust">Select Customer (<?php echo empty($customer) ? 0 : count($customer); ?>)</option>
+          <?php if( ! empty($customer)) : ?>
             <?php foreach($customer as $cs) : ?>
-              <option value="<?php echo $cs->CardCode; ?>" data-currency="<?php echo $cs->Currency; ?>" data-sale="<?php echo $cs->SlpCode; ?>" data-vat="<?php echo $cs->ECVatGroup; ?>" data-rate="<?php echo $cs->Rate; ?>"><?php echo $cs->CardCode . " ".$cs->CardName; ?></option>
+              <option value="<?php echo $cs->CardCode; ?>"
+                  data-code="<?php echo $cs->CardCode; ?>"
+                  data-name="<?php echo $cs->CardName; ?>"
+                  data-groupnum="<?php echo $cs->GroupNum; ?>"
+                  data-currency="<?php echo $cs->Currency; ?>"
+                  data-sale="<?php echo $cs->SlpCode; ?>"
+                  data-vat="<?php echo $cs->ECVatGroup; ?>"
+                  data-rate="<?php echo $cs->Rate; ?>"
+                  data-control="<?php echo $cs->isControl == 'Y' ? 'Y' : 'N'; ?>"
+                  data-saleteam="<?php echo $cs->saleTeam; ?>"
+                  data-area="<?php echo $cs->areaId; ?>">
+                  <?php echo $cs->CardCode; ?>  <?php echo $cs->CardName; ?>
+                </option>
             <?php endforeach; ?>
           <?php endif; ?>
         </select>

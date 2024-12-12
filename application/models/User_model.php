@@ -76,105 +76,101 @@ class User_model extends CI_Model
   }
 
 
-  public function drop_user_condition($id)
-  {
-    return $this->db->where('user_id', $id)->delete('user_condition');
-  }
-
-
   function count_rows(array $ds = array())
   {
-    $this->db
-    ->from('user AS u')
-    ->join('user_group AS g', 'u.ugroup_id = g.id', 'left')
-    ->where('u.ugroup_id >', 0);
+    $this->db->where('ugroup_id >', 0);
 
-    if(!empty($ds['uname']))
+    if( ! empty($ds['uname']))
     {
-      $this->db->like('u.uname', $ds['uname']);
+      $this->db->like('uname', $ds['uname']);
     }
 
-    if(!empty($ds['emp_name']))
+    if( ! empty($ds['emp_id']) && $ds['emp_id'] != 'all')
     {
-      $this->db->like('u.emp_name', $ds['emp_name']);
+      $this->db->where('emp_id', $ds['emp_id']);
     }
 
-    if(!empty($ds['sale_id']) && $ds['sale_id'] !== 'all')
+    if( ! empty($ds['sale_id']) && $ds['sale_id'] !== 'all')
     {
-      $this->db->where('u.sale_id', $ds['sale_id']);
+      $this->db->where('sale_id', $ds['sale_id']);
     }
 
-    if(!empty($ds['user_group']) && $ds['user_group'] !== 'all')
+    if( ! empty($ds['user_group']) && $ds['user_group'] !== 'all')
     {
-      $this->db->where('u.ugroup_id', $ds['user_group']);
+      $this->db->where('ugroup_id', $ds['user_group']);
     }
 
-    if( ! empty($ds['sale_team']) && $ds['sale_team'] !== 'all')
+    if( ! empty($ds['area_id']) && $ds['area_id'] != 'all')
     {
-      $this->db->where_in('u.id', $this->user_condition_in($ds['sale_team']));
+      $this->db->where('area_id', $ds['area_id']);
+    }
+
+    if( ! empty($ds['team_id']) && $ds['team_id'] !== 'all')
+    {
+      $this->db->where('team_id', $ds['team_id']);
     }
 
     if($ds['role'] != 'all')
     {
-      $this->db->where('u.role', $ds['role']);
+      $this->db->where('role', $ds['role']);
     }
 
     if($ds['status'] !== 'all')
     {
-      $this->db->where('u.status', $ds['status']);
+      $this->db->where('status', $ds['status']);
     }
 
-    return $this->db->count_all_results();
+    return $this->db->count_all_results('user');
   }
 
 
   function get_list(array $ds = array(), $perpage = 20, $offset = 0)
   {
-    $this->db
-    ->select('u.*, g.name AS group_name')
-    ->from('user AS u')
-    ->join('user_group AS g', 'u.ugroup_id = g.id', 'left')
-    ->where('u.ugroup_id >', 0);
+    $this->db->where('ugroup_id >', 0);
 
-    if(!empty($ds['uname']))
+    if( ! empty($ds['uname']))
     {
-      $this->db->like('u.uname', $ds['uname']);
+      $this->db->like('uname', $ds['uname']);
     }
 
-    if(!empty($ds['emp_name']))
+    if( ! empty($ds['emp_id']) && $ds['emp_id'] != 'all')
     {
-      $this->db->like('u.emp_name', $ds['emp_name']);
+      $this->db->where('emp_id', $ds['emp_id']);
     }
 
-    if(!empty($ds['sale_id']) && $ds['sale_id'] !== 'all')
+    if( ! empty($ds['sale_id']) && $ds['sale_id'] !== 'all')
     {
-      $this->db->where('u.sale_id', $ds['sale_id']);
+      $this->db->where('sale_id', $ds['sale_id']);
     }
 
     if(!empty($ds['user_group']) && $ds['user_group'] !== 'all')
     {
-      $this->db->where('u.ugroup_id', $ds['user_group']);
+      $this->db->where('ugroup_id', $ds['user_group']);
     }
 
-
-    if( ! empty($ds['sale_team']) && $ds['sale_team'] !== 'all')
+    if( ! empty($ds['area_id']) && $ds['area_id'] != 'all')
     {
-      $this->db->where_in('u.id', $this->user_condition_in($ds['sale_team']));
+      $this->db->where('area_id', $ds['area_id']);
+    }
+
+    if( ! empty($ds['team_id']) && $ds['team_id'] !== 'all')
+    {
+      $this->db->where('team_id', $ds['team_id']);
     }
 
     if($ds['role'] != 'all')
     {
-      $this->db->where('u.role', $ds['role']);
+      $this->db->where('role', $ds['role']);
     }
 
     if($ds['status'] !== 'all')
     {
-      $this->db->where('u.status', $ds['status']);
+      $this->db->where('status', $ds['status']);
     }
 
-    $this->db->order_by('u.id', 'DESC')->limit($perpage, $offset);
+    $this->db->order_by('id', 'DESC')->limit($perpage, $offset);
 
-    $rs = $this->db->get();
+    $rs = $this->db->get('user');
 
     if($rs->num_rows() > 0)
     {
@@ -188,36 +184,6 @@ class User_model extends CI_Model
   public function add_user_team(array $ds = array())
   {
     return $this->db->insert('user_team', $ds);
-  }
-
-
-  public function add_user_condition(array $ds = array())
-  {
-    return $this->db->insert('user_condition', $ds);
-  }
-
-
-  public function user_condition_in($condition_id)
-  {
-    $sc = array();
-
-    $qr = "SELECT user_id FROM user_condition WHERE condition_id = {$condition_id}";
-
-    $rs = $this->db->query($qr);
-
-    if($rs->num_rows() > 0)
-    {
-      foreach($rs->result() as $ts)
-      {
-        $sc[] = $ts->user_id;
-      }
-    }
-    else
-    {
-      $sc[] = "000";
-    }
-
-    return $sc;
   }
 
 
@@ -352,30 +318,10 @@ class User_model extends CI_Model
   public function get_user_team($user_id)
   {
     $rs = $this->db
-    ->select('uc.*, sc.name AS team_name, sp.name AS sale_person')
-    ->from('user_condition AS uc')
-    ->join('sales_team_condition AS sc', 'uc.condition_id = sc.id', 'left')
-    ->join('sale_person AS sp', 'sc.sale_id = sp.id', 'left')
-    ->where('uc.user_id', $user_id)
-    ->get();
-
-    if($rs->num_rows() > 0)
-    {
-      return $rs->result();
-    }
-
-    return NULL;
-  }
-
-
-  public function get_user_condition($user_id)
-  {
-    $rs = $this->db
-    ->select('uc.*, sc.name AS team_name, sp.name AS sale_person')
-    ->from('user_condition AS uc')
-    ->join('sales_team_condition AS sc', 'uc.condition_id = sc.id', 'left')
-    ->join('sale_person AS sp', 'sc.sale_id = sp.id', 'left')
-    ->where('uc.user_id', $user_id)
+    ->select('ut.*, st.name AS team_name')
+    ->from('user_team AS ut')
+    ->join('sales_team AS st', 'ut.team_id = st.id', 'left')
+    ->where('ut.user_id', $user_id)
     ->get();
 
     if($rs->num_rows() > 0)

@@ -353,7 +353,7 @@ function pagination_config( $base_url, $total_rows = 0, $perpage = 20, $segment 
     $input_rows .= '  <buton class="btn btn-success btn-xs margin-left-5" type="button" onClick="set_rows()">SET</button>';
     $input_rows .= '</p>';
 
-		$config['full_tag_open'] 		= '<nav><ul class="pagination">';
+		$config['full_tag_open'] 		= '<nav id="pagination"><ul class="pagination">';
 		$config['full_tag_close'] 		= '</ul>'.$input_rows.'</nav><hr class="padding-5">';
 		$config['first_link'] 				= 'First';
 		$config['first_tag_open'] 		= '<li>';

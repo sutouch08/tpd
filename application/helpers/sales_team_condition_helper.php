@@ -110,4 +110,11 @@ function sales_team_name($id)
   return $ci->sales_team_model->get_name($id);
 }
 
+function sales_team_condition_name($id)
+{
+  $ci =& get_instance();
+  $ci->load->model('sales_team_condition_model');
+  return $ci->sales_team_condition_model->get_name($id);
+}
+
 ?>

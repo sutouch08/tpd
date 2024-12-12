@@ -155,6 +155,22 @@ function select_saleman($sale_id = NULL)
 }
 
 
+function select_employee($id = NULL)
+{
+  $ds = '';
+  $CI =& get_instance();
+  $qs = $CI->user_model->get_all_employee();
+  if(!empty($qs))
+  {
+    foreach($qs as $rs)
+    {
+      $ds .= '<option value="'.$rs->empID.'" data-name="'.$rs->firstName.' '.$rs->lastName.'" '.is_selected($rs->empID, $id).'>'.$rs->firstName.' '.$rs->lastName.'</option>';
+    }
+  }
+
+  return $ds;
+}
+
 function select_area($id = NULL)
 {
   $ds = '';
@@ -165,7 +181,7 @@ function select_area($id = NULL)
   {
     foreach($area as $rs)
     {
-      $ds .= '<option value="'.$rs->id.'" '.is_selected($rs->id, $sale_id).'>'.$rs->name.'</option>';
+      $ds .= '<option value="'.$rs->id.'" '.is_selected($rs->id, $id).'>'.$rs->name.'</option>';
     }
   }
 

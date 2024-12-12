@@ -20,6 +20,26 @@ function select_price_list($id = NULL)
 }
 
 
+function select_payment_term_discount($id = NULL)
+{
+  $ds = "<option value=\"-10\" data-groupnum=\"x\" data-disc=\"0\" data-change=\"0\"".is_selected($id, '-10').">Customer default</option>";
+  $ci =& get_instance();
+  $ci->load->model('payment_term_discount_model');
+
+  $list = $ci->payment_term_discount_model->get_active_term_list();
+
+  if( ! empty($list))
+  {
+    foreach($list as $rs)
+    {
+      $ds .= "<option value=\"{$rs->id}\" data-groupnum=\"{$rs->GroupNum}\" data-disc=\"{$rs->DiscPrcnt}\" data-change=\"{$rs->canChange}\"".is_selected($id, $rs->id).">{$rs->name}</option>";
+    }
+  }
+
+  return $ds;
+}
+
+
 function select_payment_term($id = NULL)
 {
   $ds = "";

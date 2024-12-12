@@ -21,9 +21,8 @@ function add() {
 
   let h = {
     'name' : $('#name').val().trim(),
-    'sale_id' : $('#sale-id').val(),
-    'dep_id' : $('#dep-id').val(),
     'team_id' : $('#team-id').val(),
+    'area' : [],
     'approver' : []
   };
 
@@ -32,39 +31,38 @@ function add() {
     return false;
   }
 
-  if(h.sale_id == "") {
-    $('#sale-id').hasError('Required');
-    return false;
-  }
-
-  if(h.dep_id == "") {
-    $('#dep-id').hasError('Required');
-    return false;
-  }
-
   if(h.team_id == "") {
     $('#team-id').hasError('Required');
     return false;
   }
 
-  let approver = [];
+  if($('.area:checked').length == 0) {
+    $('#area').hasError('Required at least 1 area(s)');
+    return false;
+  }
 
   if($('.approver-list').length === 0) {
     $('#approver').hasError('Required at least 1 authorizer(s)');
     return false;
   }
 
-  $('.approver-list').each(function() {
-    approver.push($(this).val());
+  $('.area:checked').each(function() {
+    h.area.push($(this).val());
   });
 
+  $('.approver-list').each(function() {
+    h.approver.push($(this).val());
+  });
 
-  if(approver.length === 0) {
+  if(h.approver.length === 0) {
     $('#approver').hasError('Required at least 1 authorizer(s)');
     return false;
   }
 
-  h.approver = approver;
+  if(h.area.length == 0) {
+    $('#area').hasError('Required at least 1 area(s)');
+    return false;
+  }
 
   load_in();
 
@@ -107,9 +105,8 @@ function update() {
   let h = {
     'id' : $('#id').val(),
     'name' : $('#name').val().trim(),
-    'sale_id' : $('#sale-id').val(),
-    'dep_id' : $('#dep-id').val(),
     'team_id' : $('#team-id').val(),
+    'area' : [],
     'approver' : []
   };
 
@@ -117,40 +114,39 @@ function update() {
     $('#name').hasError('Required');
     return false;
   }
-
-  if(h.sale_id == "") {
-    $('#sale-id').hasError('Required');
-    return false;
-  }
-
-  if(h.dep_id == "") {
-    $('#dep-id').hasError('Required');
-    return false;
-  }
-
+  
   if(h.team_id == "") {
     $('#team-id').hasError('Required');
     return false;
   }
 
-  let approver = [];
+  if($('.area:checked').length === 0) {
+    $('#area').hasError('Required at least 1 area(s)');
+    return false;
+  }
 
   if($('.approver-list').length === 0) {
     $('#approver').hasError('Required at least 1 authorizer(s)');
     return false;
   }
 
-  $('.approver-list').each(function() {
-    approver.push($(this).val());
+  $('.area:checked').each(function() {
+    h.area.push($(this).val());
   });
 
+  $('.approver-list').each(function() {
+    h.approver.push($(this).val());
+  });
 
-  if(approver.length === 0) {
-    $('#approver').hasError('Required at least 1 authorizer(s)');
+  if(h.area.length === 0) {
+    $('#area').hasError('Required at least 1 area(s)');
     return false;
   }
 
-  h.approver = approver;
+  if(h.approver.length === 0) {
+    $('#approver').hasError('Required at least 1 authorizer(s)');
+    return false;
+  }
 
   load_in();
 
@@ -170,6 +166,10 @@ function update() {
           type:'success',
           timer:1000
         });
+
+        setTimeout(() => {
+          window.location.reload();
+        }, 1200);
       }
       else {
         showError(rs);
@@ -259,12 +259,12 @@ function viewMember(id) {
 }
 
 
-$('#chk-all').change(function(){
+$('#area-all').change(function(){
   if($(this).is(':checked')) {
-    $('.chk').prop('checked', true);
+    $('.area').prop('checked', true);
   }
   else {
-    $('.chk').prop('checked', false);
+    $('.area').prop('checked', false);
   }
 })
 

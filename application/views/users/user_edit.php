@@ -7,7 +7,7 @@
 		<p class="pull-right top-p">
 			<button type="button" class="btn btn-sm btn-warning" onclick="goBack()"><i class="fa fa-arrow-left"></i> Back</button>
 			<?php if($this->pm->can_add) : ?>
-				<button type="button" class="btn btn-sm btn-success" id="btn-save" onclick="update()"><i class="fa fa-save"></i> Update</button>
+				<button type="button" class="btn btn-sm btn-success btn-100" id="btn-save" onclick="update()">Update</button>
 			<?php endif; ?>
 		</p>
 	</div>
@@ -28,11 +28,7 @@
 		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
 			<select class="width-100 e" name="emp" id="emp">
 				<option value="">Please select</option>
-				<?php if(!empty($emp_list)) : ?>
-					<?php foreach($emp_list as $emp) : ?>
-						<option value="<?php echo $emp->empID; ?>" <?php echo is_selected($user->emp_id, $emp->empID); ?>><?php echo $emp->firstName.' '.$emp->lastName; ?></option>
-					<?php endforeach; ?>
-				<?php endif; ?>
+				<?php echo select_employee($user->emp_id); ?>
 			</select>
 		</div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="emp-error"></div>
@@ -43,11 +39,7 @@
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
 			<select class="width-100 e" name="saleman" id="saleman">
 				<option value="">Please Select</option>
-				<?php if(!empty($sale_list)) : ?>
-					<?php foreach($sale_list as $sale) : ?>
-						<option value="<?php echo $sale->id; ?>" <?php echo is_selected($user->sale_id, $sale->id); ?>><?php echo $sale->name; ?></option>
-					<?php endforeach; ?>
-				<?php endif; ?>
+				<?php echo select_saleman($user->sale_id); ?>
 			</select>
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="saleman-error"></div>
@@ -62,6 +54,9 @@
 			</select>
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="ugroup-error"></div>
+		<div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 grey">
+			สำหรับกำหนด Permission ของ User
+		</div>
   </div>
 
 
@@ -74,7 +69,40 @@
 				<option value="GM" <?php echo is_selected($user->role, "GM"); ?>>GM</option>
 			</select>
     </div>
-		<div class="help-block col-xs-12 col-sm-reset inline grey"></div>
+		<div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 grey">
+			Sales :  สามารถมองเห็นออเดอร์ของตัวเองและออเดอร์ใน Area ของตัวเองเท่านั้น<br/>
+			Sales Admin :  สามารถมองเห็นออเดอร์ของตัวเองและออเดอร์ของของ Team ที่ตัวเองอยู่เท่านั้น<br/>
+			GM  :  สามารถมองเห็นออเดอร์ทั้งหมดโดยไม่มีเงื่อนไข
+		</div>
+  </div>
+
+	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label ">User Area</label>
+		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+			<select class="width-100" name="area" id="area">
+				<option value="">Please Select</option>
+				<?php echo select_area($user->area_id); ?>
+			</select>
+    </div>
+		<div class="help-block col-xs-12 col-sm-reset inline red" id="area-error"></div>
+		<div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 grey">
+			User จะสมารถมองเห็นออเดอร์ตาม area ที่กำหนดเท่านั้น และ รายชื่อลูกค้าจะถูกดึงมาให้เลือกตาม Area ที่กำหนดเท่านั้น
+		</div>
+  </div>
+
+	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Sales Team</label>
+		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+			<select class="width-100 e" name="sale_team" id="sale-team">
+				<option value="">Please Select</option>
+				<?php echo select_sale_team($user->team_id); ?>
+			</select>
+    </div>
+		<div class="help-block col-xs-12 col-sm-reset inline red" id="sale-team-error"></div>
+		<div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 grey">
+			ใช้สำหรับ stamp ลงใน ออเดอร์ เพื่อกำหนดขอบเขตการมองเห็นของ user ที่เป็น Team Lead ในทีมเดียวกัน<br/>
+			กรณีที่ User role เป็น Sales Admin จะ stamp ลงในออเดอร์ ด้วย sales team ของลูกค้าแทน
+		</div>
   </div>
 
 	<div class="form-group">
@@ -101,13 +129,13 @@
 
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Price List</label>
-    <div class="col-lg-4 col-md-5 col-sm-5 col-xs-12 table-responsive">
-			<table class="table table-striped table-bordered border-1">
+    <div class="col-lg-5 col-md-6 col-sm-6 col-xs-12 table-responsive">
+			<table class="table table-striped table-bordered border-1" style="margin-bottom:0px;">
 				<thead>
 					<tr>
-						<th class="width-10 text-center">#</th>
-						<th>Select Price List</th>
-						<th class="width-10 text-center">
+						<th class="fix-width-50 text-center">#</th>
+						<th class="">Price List</th>
+						<th class="fix-width-50 text-center">
 							<label>
 								<input type="checkbox" class="ace" id="chk-all">
 								<span class="lbl"></span>
@@ -140,51 +168,56 @@
 				</tbody>
 			</table>
     </div>
+		<div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 grey">
+			กำหนดว่า User นี้จะสามารถใช้ Price List ใดได้บ้าง
+		</div>
   </div>
 
 	<div class="divider"></div>
 
 	<div class="form-group">
-		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-8 control-label no-padding-right">Sales Team Condition</label>
-		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-8">
-			<select class="width-100" name="sale_team" id="sale_team">
-				<option value="">Please Select</option>
-				<?php echo select_sales_team_condition(); ?>
-			</select>
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Team Lead</label>
+    <div class="col-lg-5 col-md-6 col-sm-6 col-xs-12 table-responsive">
+			<table class="table table-striped table-bordered border-1" style="margin-bottom:0px;">
+				<thead>
+					<tr>
+						<th class="fix-width-50 text-center ">ID</th>
+						<th class="">Sales Team</th>
+						<th class="fix-width-50 text-center">
+							<label>
+								<input type="checkbox" class="ace" id="team-all">
+								<span class="lbl"></span>
+							</label>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php if( ! empty($sales_team)) : ?>
+						<?php $user_team = $user->user_team; ?>
+						<?php foreach($sales_team as $st)  : ?>
+							<tr>
+								<td class="text-center"><?php echo $st->id; ?></td>
+								<td><?php echo $st->name; ?></td>
+								<td class="text-center">
+									<label>
+										<input type="checkbox"
+										class="ace team"
+										name="team[<?php echo $st->id; ?>]"
+										id="team-<?php echo $st->id; ?>"
+										value="<?php echo $st->id; ?>" data-name="<?php echo $st->name; ?>" <?php echo (empty($user_team[$st->id]) ? "" : "checked"); ?>>
+										<span class="lbl"></span>
+									</label>
+								</td>
+							</tr>
+						<?php endforeach; ?>
+					<?php endif; ?>
+				</tbody>
+			</table>
+    </div>
+		<div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 grey">
+			กำหนดให้ User นี้เป็น Team Lead ในทีมใดๆ จะทำให้ user นี้สามารถมองเห็นออเดอร์ของ User ทั้งหมดในทีมนั้นได้
 		</div>
-		<label class="col-xs-4 padding-5 visible-xs" style="margin-top:-25px;">Role</label>
-		<div class="col-lg-1 col-md-2 col-sm-2 col-xs-4" style="padding-left:5px;">
-			<select class="width-100" id="role">
-				<option value="Sales">Sales</option>
-				<option value="Lead">Lead</option>
-			</select>
-		</div>
-		<div class="divider-hidden visible-xs">	</div>
-		<div class="divider-hidden visible-xs">	</div>
-		<div class="col-xs-6 visible-xs"></div>
-		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6" style="padding-left:5px;">
-			<button type="button" class="btn btn-primary btn-xs btn-block" onclick="addTeam()"><i class="fa fa-plus"></i> Add to list</button>
-		</div>
-		<div class="help-block col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 red" id="sale-team-error"></div>
-	</div>
-
-	<div class="form-group <?php echo empty($user->user_condition) ? 'hide' : ''; ?>" id="team-list">
-		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
-		<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12" id="user-team-list">
-			<?php if( ! empty($user->user_condition)) : ?>
-				<?php foreach($user->user_condition as $rs) : ?>
-					<?php $no = $rs->user_role .'-'.$rs->condition_id; ?>
-					<label class="btn-block"  style="padding:10px; border:solid 1px #81a87b;" id="tag-<?php echo $no; ?>">
-				    <?php echo $rs->user_role; ?> | <?php echo $rs->team_name; ?>
-				    <a class="pointer bold pull-right red" onclick="removeTag('<?php echo $no; ?>')" style="margin-left:15px;">
-				      <i class="fa fa-times"></i>
-				    </a>
-				  </label>
-				  <input type="hidden" class="team-list" name="team_list" id="team-<?php echo $no; ?>" value="<?php echo $rs->condition_id; ?>" data-role="<?php echo $rs->user_role; ?>"/>
-				<?php endforeach; ?>
-			<?php endif; ?>
-		</div>
-	</div>
+  </div>
 
 	<div class="divider-hidden"></div>
 	<div class="divider-hidden"></div>
@@ -192,30 +225,20 @@
 
   <div class="form-group">
     <div class="col-lg-7 col-md-9 col-sm-9 col-xs-12 text-right">
-    <button type="button" class="btn btn-sm btn-success btn-100" id="btn-save" onclick="update()"><i class="fa fa-save"></i> Update</button>
+    <button type="button" class="btn btn-sm btn-success btn-100" id="btn-save" onclick="update()">Update</button>
     </div>
   </div>
 
 	<input type="hidden" name="id" id="id" value="<?php echo $user->id; ?>" />
 	<input type="hidden" id="use_strong_pwd" value="<?php echo $strong_pwd; ?>" />
-	<input type="hidden" id="no" value="<?php echo $no; ?>">
-
-	<script id="tag-template" type="text/x-handlebarsTemplate">
-	  <label class="btn-block"  style="padding:10px; border:solid 1px #81a87b;" id="tag-{{no}}">
-	    {{role}} | {{name}}
-	    <a class="pointer bold pull-right red" onclick="removeTag('{{no}}')" style="margin-left:15px;">
-	      <i class="fa fa-times"></i>
-	    </a>
-	  </label>
-	  <input type="hidden" class="team-list" name="team_list" id="team-{{no}}" value="{{team_id}}" data-role="{{role}}"/>
-	</script>
 
 </form>
 
 <script>
 $('#emp').select2();
 $('#saleman').select2();
+$('#area').select2();
 </script>
 
-<script src="<?php echo base_url(); ?>scripts/users/users.js"></script>
+<script src="<?php echo base_url(); ?>scripts/users/users.js?v=<?php echo date('Ymd'); ?>"></script>
 <?php $this->load->view('include/footer'); ?>

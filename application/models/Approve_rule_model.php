@@ -83,23 +83,8 @@ class Approve_rule_model extends CI_Model
 
   public function delete($id)
   {
-    $this->db->trans_begin();
     //--- delete rule approver
-    $ap = $this->drop_rule_approver($id);
-    $ar = $this->db->where('id', $id)->delete('approve_rule');
-
-    if($ap && $ar)
-    {
-      $this->db->trans_commit();
-      return TRUE;
-    }
-    else
-    {
-      $this->db->trans_rollback();
-      return FALSE;
-    }
-
-    return FALSE;
+    return $this->db->where('id', $id)->delete('approve_rule');
   }
 
 
@@ -239,7 +224,6 @@ class Approve_rule_model extends CI_Model
   }
 
 
-
   public function get_exception_rule($team_id, $docTotal, $priceEdit = FALSE)
   {
     $qr  = "SELECT * FROM approve_rule ";
@@ -272,7 +256,6 @@ class Approve_rule_model extends CI_Model
 
     return NULL;
   }
-
 
 
   public function get_condition_sign($condition)

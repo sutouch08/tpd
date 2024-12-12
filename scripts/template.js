@@ -34,21 +34,22 @@ function toggle_layout(){
 }
 
 
-
 function load_in(){
-	var x = ($(document).innerWidth()/2)-50;
-	$("#loader").css("display","");
-	$("#loader").css("left",x);
-	$("#loader").animate({opacity:0.8, top:300},300);
+	$("#loader").css("display","block");
+	$('#loader-backdrop').css('display', 'block');
+	$("#loader").animate({opacity:0.8},300);
 }
-
 
 
 function load_out(){
-	$("#loader").animate({opacity:0, top:-20},300, function(){ $("#loader").css("display","none");});
+	$("#loader").animate({
+		opacity:0
+	},300,
+	function() {
+		$("#loader").css("display","none");
+		$('#loader-backdrop').css('display', 'none');
+	});
 }
-
-
 
 
 function set_error(el, label, message){
@@ -63,70 +64,63 @@ function clear_error(el, label){
 }
 
 
-
 function isDate(txtDate){
-	 var currVal = txtDate;
-	 if(currVal == '')
-	    return false;
-	  //Declare Regex
-	  var rxDatePattern = /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/;
-	  var dtArray = currVal.match(rxDatePattern); // is format OK?
-	  if (dtArray == null){
-		     return false;
-	  }
-	  //Checks for mm/dd/yyyy format.
-	  dtDay= dtArray[1];
-	  dtMonth = dtArray[3];
-	  dtYear = dtArray[5];
-	  if (dtMonth < 1 || dtMonth > 12){
-	      return false;
-	  }else if (dtDay < 1 || dtDay> 31){
-	      return false;
-	  }else if ((dtMonth==4 || dtMonth==6 || dtMonth==9 || dtMonth==11) && dtDay ==31){
-	      return false;
-	  }else if (dtMonth == 2){
-	     var isleap = (dtYear % 4 == 0 && (dtYear % 100 != 0 || dtYear % 400 == 0));
-	     if (dtDay> 29 || (dtDay ==29 && !isleap)){
-	          return false;
-		 }
-	  }
-	  return true;
+	var currVal = txtDate;
+	if(currVal == '')
+	return false;
+	//Declare Regex
+	var rxDatePattern = /^(\d{1,2})(\/|-)(\d{1,2})(\/|-)(\d{4})$/;
+	var dtArray = currVal.match(rxDatePattern); // is format OK?
+	if (dtArray == null){
+		return false;
 	}
-
-
-
-	function removeCommas(str) {
-	    while (str.search(",") >= 0) {
-	        str = (str + "").replace(',', '');
-	    }
-	    return str;
+	//Checks for mm/dd/yyyy format.
+	dtDay= dtArray[1];
+	dtMonth = dtArray[3];
+	dtYear = dtArray[5];
+	if (dtMonth < 1 || dtMonth > 12){
+		return false;
+	}else if (dtDay < 1 || dtDay> 31){
+		return false;
+	}else if ((dtMonth==4 || dtMonth==6 || dtMonth==9 || dtMonth==11) && dtDay ==31){
+		return false;
+	}else if (dtMonth == 2){
+		var isleap = (dtYear % 4 == 0 && (dtYear % 100 != 0 || dtYear % 400 == 0));
+		if (dtDay> 29 || (dtDay ==29 && !isleap)){
+			return false;
+		}
 	}
+	return true;
+}
 
 
-
-
-	function addCommas(number){
-		 return (
-		 	number.toString()).replace(/^([-+]?)(0?)(\d+)(.?)(\d+)$/g, function(match, sign, zeros, before, decimal, after) {
-		 		var reverseString = function(string) { return string.split('').reverse().join(''); };
-		 		var insertCommas  = function(string) {
-						var reversed   = reverseString(string);
-						var reversedWithCommas = reversed.match(/.{1,3}/g).join(',');
-						return reverseString(reversedWithCommas);
-						};
-					return sign + (decimal ? insertCommas(before) + decimal + after : insertCommas(before + after));
-					});
+function removeCommas(str) {
+	while (str.search(",") >= 0) {
+		str = (str + "").replace(',', '');
 	}
+	return str;
+}
 
 
+function addCommas(number){
+	return (number.toString()).replace(/^([-+]?)(0?)(\d+)(.?)(\d+)$/g, function(match, sign, zeros, before, decimal, after) {
+			var reverseString = function(string) { return string.split('').reverse().join(''); };
+			var insertCommas  = function(string) {
+				var reversed   = reverseString(string);
+				var reversedWithCommas = reversed.match(/.{1,3}/g).join(',');
+				return reverseString(reversedWithCommas);
+			};
+			return sign + (decimal ? insertCommas(before) + decimal + after : insertCommas(before + after));
+		});
+}
 
 
-//**************  Handlebars.js  **********************//
-function render(source, data, output){
+function render(source, data, output) {
 	var template = Handlebars.compile(source);
 	var html = template(data);
 	output.html(html);
 }
+
 
 function render_prepend(source, data, output){
 	var template = Handlebars.compile(source);
@@ -140,8 +134,6 @@ function render_append(source, data, output){
 	var html = template(data);
 	output.append(html);
 }
-
-
 
 
 function set_rows()
@@ -161,8 +153,6 @@ function set_rows()
 }
 
 
-
-
 $('#set_rows').keyup(function(e){
 	if(e.keyCode == 13 && $(this).val() > 0){
 		set_rows();
@@ -170,19 +160,16 @@ $('#set_rows').keyup(function(e){
 });
 
 
-
-
 function reIndex(){
 	let no = parseDefault(parseInt($('#no').val()), 0);
-  $('.no').each(function(index, el) {
-    no += 1;
-    $(this).text(addCommas(no));
-  });
+	$('.no').each(function(index, el) {
+		no += 1;
+		$(this).text(addCommas(no));
+	});
 }
 
-
-
 var downloadTimer;
+
 function get_download(token)
 {
 	load_in();
@@ -196,7 +183,6 @@ function get_download(token)
 }
 
 
-
 function finished_download()
 {
 	window.clearInterval(downloadTimer);
@@ -205,54 +191,54 @@ function finished_download()
 }
 
 
-
-function isJson(str){
-	try{
+function isJson(str) {
+	try {
 		JSON.parse(str);
-	}catch(e){
+	}
+	catch(e) {
 		return false;
 	}
+
 	return true;
 }
 
 
-
-function printOut(url)
-{
+function printOut(url) {
 	var center = ($(document).width() - 800) /2;
 	window.open(url, "_blank", "width=800, height=900. left="+center+", scrollbars=yes");
 }
 
 
-
 function setCookie(cname, cvalue, exdays) {
-  var d = new Date();
-  d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
-  var expires = "expires="+d.toUTCString();
-  document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+	var d = new Date();
+	d.setTime(d.getTime() + (exdays * 24 * 60 * 60 * 1000));
+	var expires = "expires="+d.toUTCString();
+	document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
 }
+
 
 function getCookie(cname) {
-  var name = cname + "=";
-  var ca = document.cookie.split(';');
-  for(var i = 0; i < ca.length; i++) {
-    var c = ca[i];
-    while (c.charAt(0) == ' ') {
-      c = c.substring(1);
-    }
-    if (c.indexOf(name) == 0) {
-      return c.substring(name.length, c.length);
-    }
-  }
-  return "";
+	var name = cname + "=";
+	var ca = document.cookie.split(';');
+	for(var i = 0; i < ca.length; i++) {
+		var c = ca[i];
+		while (c.charAt(0) == ' ') {
+			c = c.substring(1);
+		}
+		if (c.indexOf(name) == 0) {
+			return c.substring(name.length, c.length);
+		}
+	}
+	return "";
 }
+
 
 function deleteCookie( name ) {
   document.cookie = name + '=; expires=Thu, 01 Jan 1970 00:00:01 GMT;';
 }
 
 
-function parseDefault(value, def){
+function parseDefault(value, def) {
 	if(isNaN(value)){
 		return def; //--- return default value
 	}
@@ -344,15 +330,18 @@ function generateUID() {
   return Math.random().toString(36).substring(2, 15) + Math.random().toString(36).substring(2, 15);
 }
 
+
 function validCode(input){
   var regex = /[^a-z0-9-_.]+/gi;
   input.value = input.value.replace(regex, '');
 }
 
+
 function validInput(input, regex){
   var regex = regex === undefined ? /[^a-z0-9-_.]+/gi : regex;
   input.value = input.value.replace(regex, '');
 }
+
 
 function dismiss(name) {
   $('#'+name).modal('hide');
@@ -362,6 +351,7 @@ function dismiss(name) {
 function isInteger(value) {
 	return /^([1-9]|[1-9]\d+)$/
 }
+
 
 function round(num)
 {
@@ -374,17 +364,20 @@ function hilightRow(id) {
 	$('#row-'+id).addClass('active-row');
 }
 
+
 $.fn.hasError = function(msg) {
   let name = this.attr('id');
   $('#'+name+'-error').text(msg);
   return this.addClass('has-error');
 };
 
+
 $.fn.clearError = function() {
   this.removeClass('has-error');
   let name = this.attr('id');
   return $('#'+name+'-error').text('');
 };
+
 
 function clearErrorByClass(className) {
   $('.'+className).each(function() {
@@ -393,6 +386,7 @@ function clearErrorByClass(className) {
     $(this).removeClass('has-error');
   })
 }
+
 
 function showError(response) {
   load_out();
@@ -406,6 +400,7 @@ function showError(response) {
     })
   }, 100);
 }
+
 
 function is_true(val) {
   if(typeof(val) === 'string') {

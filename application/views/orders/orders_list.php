@@ -1,16 +1,49 @@
 <?php $this->load->view('include/header'); ?>
+
 <style>
-	td.th {
-		font-size: 14px;
-		font-weight: bold;
-		background-color: #F8F8F8;
+	.table > tr > td {
+		padding:8px !important;
 	}
 
+  @media (min-width: 768px) {
+
+    .fix-no {
+      left: -1px;
+      position: sticky;
+    }
+
+    .fix-date {
+      left:49px;
+      position: sticky;
+    }
+
+    .fix-code {
+      left:149px;
+      position: sticky;
+    }
+
+		.fix-cust {
+			left:269px;
+			position: sticky;
+		}
+
+		.fix-name {
+			left:369px;
+			position: sticky;
+		}
+
+    td[scope=row] {
+      background-color: #f8f8f8;
+      border: 0 !important;
+      outline: solid 1px #dddddd;
+			z-index: 2;
+    }
+  }
 </style>
 
 <?php $hide = $this->disSale ? "" : 'hide'; ?>
 
-<div class="row">
+<div class="row h-row">
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
     <h3 class="title">
       <?php echo $this->title; ?>
@@ -24,162 +57,166 @@
 </div><!-- End Row -->
 <hr class="padding-5"/>
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
-<div class="row">
-  <div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">เลขที่</label>
-    <input type="text" class="form-control input-sm text-center search-box" name="WebCode" value="<?php echo $WebCode; ?>" />
-  </div>
+	<div class="row f-row">
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">เลขที่</label>
+			<input type="text" class="form-control input-sm text-center search-box" name="WebCode" value="<?php echo $WebCode; ?>" />
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">ลูกค้า</label>
-    <input type="text" class="form-control input-sm text-center search-box" name="CardCode" value="<?php echo $CardCode; ?>" placeholder="Code OR Name" />
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">ลูกค้า</label>
+			<input type="text" class="form-control input-sm text-center search-box" name="CardCode" value="<?php echo $CardCode; ?>" placeholder="Code OR Name" />
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">SO No.</label>
-    <input type="text" class="form-control input-sm text-center search-box" name="DocNum" value="<?php echo $DocNum; ?>" />
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">SO No.</label>
+			<input type="text" class="form-control input-sm text-center search-box" name="DocNum" value="<?php echo $DocNum; ?>" />
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">DO No.</label>
-    <input type="text" class="form-control input-sm text-center search-box" name="DeliveryNo" value="<?php echo $DeliveryNo; ?>" />
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">DO No.</label>
+			<input type="text" class="form-control input-sm text-center search-box" name="DeliveryNo" value="<?php echo $DeliveryNo; ?>" />
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">Invoice No.</label>
-    <input type="text" class="form-control input-sm text-center search-box" name="InvoiceNo" value="<?php echo $InvoiceNo; ?>" />
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">Invoice No.</label>
+			<input type="text" class="form-control input-sm text-center search-box" name="InvoiceNo" value="<?php echo $InvoiceNo; ?>" />
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">เลขที่ PO</label>
-    <input type="text" class="form-control input-sm text-center search-box" name="PoNo" value="<?php echo $PoNo; ?>" />
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">เลขที่ PO</label>
+			<input type="text" class="form-control input-sm text-center search-box" name="PoNo" value="<?php echo $PoNo; ?>" />
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">User</label>
-    <input type="text" class="form-control input-sm text-center search-box" name="UserName" value="<?php echo $UserName; ?>" />
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">User</label>
+			<input type="text" class="form-control input-sm text-center search-box" name="UserName" value="<?php echo $UserName; ?>" />
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">ผู้อนุมัติ</label>
-    <input type="text" class="form-control input-sm text-center search-box" name="Approver" value="<?php echo $Approver; ?>" />
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">ผู้อนุมัติ</label>
+			<input type="text" class="form-control input-sm text-center search-box" name="Approver" value="<?php echo $Approver; ?>" />
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">การอนุมัติ</label>
-    <select class="form-control input-sm" name="Approved" onchange="getSearch()">
-			<option value="all">ทั้งหมด</option>
-			<option value="P" <?php echo is_selected('P', $Approved); ?>>รออนุมัติ</option>
-			<option value="A" <?php echo is_selected('A', $Approved); ?>>อนุมัติ</option>
-			<option value="AP" <?php echo is_selected('AP', $Approved); ?>>อนุมัติบางส่วน</option>
-			<option value="R" <?php echo is_selected('R', $Approved); ?>>ไม่อนุมัติ</option>
-		</select>
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">การอนุมัติ</label>
+			<select class="form-control input-sm" name="Approved" onchange="getSearch()">
+				<option value="all">ทั้งหมด</option>
+				<option value="P" <?php echo is_selected('P', $Approved); ?>>รออนุมัติ</option>
+				<option value="A" <?php echo is_selected('A', $Approved); ?>>อนุมัติ</option>
+				<option value="AP" <?php echo is_selected('AP', $Approved); ?>>อนุมัติบางส่วน</option>
+				<option value="R" <?php echo is_selected('R', $Approved); ?>>ไม่อนุมัติ</option>
+			</select>
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">Promotion</label>
-    <select class="form-control input-sm" name="is_promotion" onchange="getSearch()">
-			<option value="all">ทั้งหมด</option>
-			<option value="1" <?php echo is_selected('1', $is_promotion); ?>>โปรโมชั่น</option>
-			<option value="0" <?php echo is_selected('0', $is_promotion); ?>>ไม่ใช่โปรโมชั่น</option>
-		</select>
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">Promotion</label>
+			<select class="form-control input-sm" name="is_promotion" onchange="getSearch()">
+				<option value="all">ทั้งหมด</option>
+				<option value="1" <?php echo is_selected('1', $is_promotion); ?>>โปรโมชั่น</option>
+				<option value="0" <?php echo is_selected('0', $is_promotion); ?>>ไม่ใช่โปรโมชั่น</option>
+			</select>
+		</div>
 
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">สถานะ</label>
-    <select class="form-control input-sm" name="Status" onchange="getSearch()">
-			<option value="all">ทั้งหมด</option>
-			<option value="0" <?php echo is_selected('0', $Status); ?>>Not Export</option>
-			<option value="1" <?php echo is_selected('1', $Status); ?>>Pending</option>
-			<option value="2" <?php echo is_selected('2', $Status); ?>>Success</option>
-			<option value="3" <?php echo is_selected('3', $Status); ?>>Error</option>
-			<option value="-1" <?php echo is_selected('-1', $Status); ?>>Cancelled</option>
-		</select>
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">สถานะ</label>
+			<select class="form-control input-sm" name="Status" onchange="getSearch()">
+				<option value="all">ทั้งหมด</option>
+				<option value="0" <?php echo is_selected('0', $Status); ?>>Not Export</option>
+				<option value="1" <?php echo is_selected('1', $Status); ?>>Pending</option>
+				<option value="2" <?php echo is_selected('2', $Status); ?>>Success</option>
+				<option value="3" <?php echo is_selected('3', $Status); ?>>Error</option>
+				<option value="-1" <?php echo is_selected('-1', $Status); ?>>Cancelled</option>
+			</select>
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">SO Status</label>
-    <select class="form-control input-sm" name="SO_Status" onchange="getSearch()">
-			<option value="all">ทั้งหมด</option>
-			<option value="x" <?php echo is_selected("x", $SO_Status); ?>>No SO</option>
-			<option value="O" <?php echo is_selected('O', $SO_Status); ?>>Open</option>
-			<option value="C" <?php echo is_selected('C', $SO_Status); ?>>Closed</option>
-			<option value="D" <?php echo is_selected('D', $SO_Status); ?>>Cancelled</option>
-		</select>
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">SO Status</label>
+			<select class="form-control input-sm" name="SO_Status" onchange="getSearch()">
+				<option value="all">ทั้งหมด</option>
+				<option value="x" <?php echo is_selected("x", $SO_Status); ?>>No SO</option>
+				<option value="O" <?php echo is_selected('O', $SO_Status); ?>>Open</option>
+				<option value="C" <?php echo is_selected('C', $SO_Status); ?>>Closed</option>
+				<option value="D" <?php echo is_selected('D', $SO_Status); ?>>Cancelled</option>
+			</select>
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">DO Status</label>
-    <select class="form-control input-sm" name="DO_Status" onchange="getSearch()">
-			<option value="all">ทั้งหมด</option>
-			<option value="x" <?php echo is_selected("x", $DO_Status); ?>>No DO</option>
-			<option value="P" <?php echo is_selected('P', $DO_Status); ?>>Partial</option>
-			<option value="F" <?php echo is_selected('F', $DO_Status); ?>>Full</option>
-		</select>
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">DO Status</label>
+			<select class="form-control input-sm" name="DO_Status" onchange="getSearch()">
+				<option value="all">ทั้งหมด</option>
+				<option value="x" <?php echo is_selected("x", $DO_Status); ?>>No DO</option>
+				<option value="P" <?php echo is_selected('P', $DO_Status); ?>>Partial</option>
+				<option value="F" <?php echo is_selected('F', $DO_Status); ?>>Full</option>
+			</select>
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">Invoice Status</label>
-    <select class="form-control input-sm" name="INV_Status" onchange="getSearch()">
-			<option value="all">ทั้งหมด</option>
-			<option value="x" <?php echo is_selected("x", $INV_Status); ?>>No Invoice</option>
-			<option value="P" <?php echo is_selected('P', $INV_Status); ?>>Partial</option>
-			<option value="F" <?php echo is_selected('F', $INV_Status); ?>>Full</option>
-		</select>
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">Invoice Status</label>
+			<select class="form-control input-sm" name="INV_Status" onchange="getSearch()">
+				<option value="all">ทั้งหมด</option>
+				<option value="x" <?php echo is_selected("x", $INV_Status); ?>>No Invoice</option>
+				<option value="P" <?php echo is_selected('P', $INV_Status); ?>>Partial</option>
+				<option value="F" <?php echo is_selected('F', $INV_Status); ?>>Full</option>
+			</select>
+		</div>
 
-	<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-    <label class="search-label">Discount Sales</label>
-    <select class="form-control input-sm" name="is_discount_sales" onchange="getSearch()">
-			<option value="all">ทั้งหมด</option>
-			<option value="1" <?php echo is_selected("1", $is_discount_sales); ?>>มี</option>
-			<option value="0" <?php echo is_selected('0', $is_discount_sales); ?>>ไม่มี</option>
-		</select>
-  </div>
+		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">Discount Sales</label>
+			<select class="form-control input-sm" name="is_discount_sales" onchange="getSearch()">
+				<option value="all">ทั้งหมด</option>
+				<option value="1" <?php echo is_selected("1", $is_discount_sales); ?>>มี</option>
+				<option value="0" <?php echo is_selected('0', $is_discount_sales); ?>>ไม่มี</option>
+			</select>
+		</div>
 
-	<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
-		<label class="search-label">วันที่</label>
-		<div class="input-daterange input-group">
-			<input type="text" class="form-control input-sm width-50 from-date text-center" id="fromDate" name="fromDate" value="<?php echo $fromDate; ?>" placeholder="From" readonly/>
-			<input type="text" class="form-control input-sm width-50 to-date text-center" id="toDate" name="toDate" value="<?php echo $toDate; ?>" placeholder="To" readonly />
+		<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
+			<label class="search-label">วันที่</label>
+			<div class="input-daterange input-group">
+				<input type="text" class="form-control input-sm width-50 from-date text-center" id="fromDate" name="fromDate" value="<?php echo $fromDate; ?>" placeholder="From" readonly/>
+				<input type="text" class="form-control input-sm width-50 to-date text-center" id="toDate" name="toDate" value="<?php echo $toDate; ?>" placeholder="To" readonly />
+			</div>
+		</div>
+
+		<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+			<label class="display-block not-show">buton</label>
+			<button type="submit" class="btn btn-xs btn-primary btn-block"><i class="fa fa-search"></i> Search</button>
+		</div>
+		<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+			<label class="display-block not-show">buton</label>
+			<button type="button" class="btn btn-xs btn-warning btn-block" onclick="clearFilter()"><i class="fa fa-retweet"></i> Reset</button>
 		</div>
 	</div>
 
-  <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="display-block not-show">buton</label>
-    <button type="submit" class="btn btn-xs btn-primary btn-block"><i class="fa fa-search"></i> Search</button>
-  </div>
-	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-    <label class="display-block not-show">buton</label>
-    <button type="button" class="btn btn-xs btn-warning btn-block" onclick="clearFilter()"><i class="fa fa-retweet"></i> Reset</button>
-  </div>
-</div>
-<hr class="margin-top-15 padding-5">
+	<input type="hidden" name="search" value="1" />
 </form>
-<?php echo $this->pagination->create_links(); ?>
 
+<hr class="margin-top-15 padding-5">
+<?php echo $this->pagination->create_links(); ?>
 <div class="row">
-	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-hover border-1" style="min-width:1560px;">
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 border-1 table-responsive" id="item-div" style="overflow: auto; padding-left:0px; padding-right:0px; padding-bottom:5px; margin-left:5px; margin-right:5px;">
+		<table class="table table-bordered tableFixHead border-1" style="margin-left: -1px; margin-top: -1px; min-width:1990px;">
 			<thead>
 				<tr>
-					<th class="text-center" style="width:50px;">#</th>
-					<th style="width:100px;">วันที่</th>
-					<th style="width:150px;">User</th>
-					<th style="width:120px;">เลขที่</th>
-					<th style="width:200px;">ลูกค้า</th>
-					<th style="width:100px;">เลขที่ PO</th>
-					<th class="text-right" style="width:120px;">มูลค่า</th>
-					<th class="text-center" style="width:100px;">Preview</th>
-					<th class="text-center" style="width:100px;">สถานะ</th>
-					<th class="text-center" style="width:100px;">ผู้มีสิทธิ์อนุมัติ</th>
-					<th class="text-center" style="width:100px;">การอนุมัติ</th>
-					<th style="width:100px;">ผู้อนุมัติ</th>
-					<th class="text-center" style="width:80px;">SO No.</th>
-					<th class="text-center" style="width:80px;">SO Status</th>
-					<th class="text-center" style="width:80px;">DO Status</th>
-					<th class="text-center" style="width:80px;">Invoice Status</th>
+					<th class="fix-width-50 text-center fix-no fix-header">#</th>
+					<th class="fix-width-100 fix-date fix-header">วันที่</th>
+					<th class="fix-width-120 fix-code fix-header">เลขที่</th>
+					<th class="fix-width-100 fix-cust fix-header">รหัสลูกค้า</th>
+					<th class="fix-width-250 fix-name fix-header">ลูกค้า</th>
+					<th class="fix-width-100">เลขที่ PO</th>
+					<th class="fix-width-120 text-right">มูลค่า</th>
+					<th class="fix-width-100 text-center">Preview</th>
+					<th class="fix-width-100 text-center">สถานะ</th>
+					<th class="fix-width-100 text-center">ผู้มีสิทธิ์อนุมัติ</th>
+					<th class="fix-width-100 text-center">การอนุมัติ</th>
+					<th class="fix-width-100">ผู้อนุมัติ</th>
+					<th class="fix-width-100 text-center">SO No.</th>
+					<th class="fix-width-100 text-center">SO Status</th>
+					<th class="fix-width-100 text-center">DO Status</th>
+					<th class="fix-width-100 text-center">Invoice Status</th>
+					<th class="min-width-100">User</th>
+					<th class="fix-width-100">STC.</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -188,49 +225,49 @@
 				<?php $no = $this->uri->segment(3) + 1; ?>
 				<?php foreach($data as $rs) : ?>
 					<tr >
-						<td class="middle text-center no"><?php echo $no; ?></td>
-						<td class="middle"><?php echo thai_date($rs->DocDate, FALSE,'/'); ?></td>
-						<td class="middle"><?php echo $rs->uname; ?></td>
-						<td class="middle"><?php echo $rs->code; ?></td>
-						<td class="middle"><?php echo $rs->CardName; ?></td>
+						<td class="middle text-center fix-no no" scope="row"><?php echo $no; ?></td>
+						<td class="middle fix-date" scope="row"><?php echo thai_date($rs->DocDate, FALSE,'/'); ?></td>
+						<td class="middle fix-code" scope="row"><?php echo $rs->code; ?></td>
+						<td class="middle fix-cust" scope="row"><?php echo $rs->CardCode; ?></td>
+						<td class="middle fix-name" scope="row"><?php echo $rs->CardName; ?></td>
 						<td class="middle"><?php echo $rs->NumAtCard; ?></td>
 						<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
-						<td class="middle text-center"><button class="btn btn-xs btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</button></td>
+						<td class="middle text-center"><span class="btn btn-mini btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</span></td>
 						<td class="middle text-center">
 							<?php if($rs->Status == 2) : ?>
-								<button type="button" class="btn btn-xs btn-success btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</button>
+								<button type="button" class="btn btn-mini btn-success btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</button>
 							<?php endif; ?>
 							<?php if($rs->Status == 3) : ?>
-								<button type="button" class="btn btn-xs btn-danger btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Failed</button>
+								<button type="button" class="btn btn-mini btn-danger btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Failed</button>
 							<?php endif; ?>
 							<?php if($rs->Status == 1) : ?>
-								<button type="button" class="btn btn-xs btn-warning btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</button>
+								<button type="button" class="btn btn-mini btn-warning btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</button>
 							<?php endif; ?>
 							<?php if($rs->Status == 0) : ?>
-								<span class="label label-xlg label-danger">Not Export</span>
+								<span class="label label-lg label-danger btn-block">Not Export</span>
 							<?php endif; ?>
 							<?php if($rs->Status == -1) : ?>
-								<span class="label label-xlg label-danger">Canceled</span>
+								<span class="label label-lg label-danger btn-block">Canceled</span>
 							<?php endif; ?>
 						</td>
 						<td class="middle text-center">
 							<?php if($rs->must_approve == 1) : ?>
-								<button class="btn btn-xs btn-primary" onclick="showAuthorize('<?php echo $rs->code; ?>')">Authorizer</button>
+								<button class="btn btn-mini btn-primary" onclick="showAuthorize('<?php echo $rs->code; ?>')">Authorizer</button>
 							<?php endif; ?>
 						</td>
 						<td class="middle text-center">
 							<?php if($rs->must_approve == 1 && $rs->Approved == 'A') : ?>
 								<?php if($rs->Approval_status === 'P') : ?>
-									<span class="label label-xlg label-success btn-block">อนุมัติบางส่วน</span>
+									<span class="label label-lg label-success btn-block">อนุมัติบางส่วน</span>
 								<?php else : ?>
-									<span class="label label-xlg label-success btn-block">อนุมัติ</span>
+									<span class="label label-lg label-success btn-block">อนุมัติ</span>
 								<?php endif; ?>
 							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'P') : ?>
-								<span class="label label-xlg label-warning btn-block">รออนุมัติ</span>
+								<span class="label label-lg label-warning btn-block">รออนุมัติ</span>
 							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'R') : ?>
-								<span class="label label-xlg label-danger btn-block">ไม่อนุมัติ</span>
+								<span class="label label-lg label-danger btn-block">ไม่อนุมัติ</span>
 							<?php else : ?>
-								<span class="label label-xlg label-success btn-block">อนุมัติ</span>
+								<span class="label label-lg label-success btn-block">อนุมัติ</span>
 							<?php endif; ?>
 						</td>
 						<td class="middle"><?php echo $rs->Approver; ?></td>
@@ -244,6 +281,8 @@
 						</td>
 						<td class="middle text-center"><?php echo $rs->DO_Status == 'P' ? 'Partial' : ($rs->DO_Status == 'F' ? 'Full' : '') ; ?></td>
 						<td class="middle text-center"><?php echo $rs->INV_Status == 'P' ? 'Partial' : ($rs->INV_Status == 'F' ? 'Full' : ''); ?></td>
+						<td class="middle"><?php echo $rs->uname; ?></td>
+						<td class="middle"><?php echo sales_team_condition_name($rs->Condition_id); ?></td>
 					</tr>
 					<?php $no++; ?>
 				<?php endforeach; ?>
@@ -299,12 +338,13 @@
 	<tr><td class="th">Currency</td><td>{{currency}} | Rate: {{currencyRate}} </td></tr>
 	<tr><td class="th">วันที่สั่งสินค้า</td><td>{{docDate}}</td></tr>
 	<tr><td class="th">วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
-	<tr><th>Promotion</th><td>{{promotionCode}}  |   {{promotionName}}</td></tr>
+	<tr><td class="th">Promotion</th><td>{{promotionCode}}  |   {{promotionName}}</td></tr>
 	<tr><td class="th">SO No.</td><td>{{SONO}}</td></tr>
 	<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}</td></tr>
 	<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
 	<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
 	<tr><td class="th">Price List</td><td>{{PriceList}}</td></tr>
+	<tr><td class="th">Payment Terms</td><td>{{termName}}</td></tr>
 	<tr><td class="th">Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>
 	</tbody>
 </table>
@@ -334,9 +374,19 @@
 		{{#each items}}
 			{{#if @last}}
 				<tr>
-					<td colspan="8" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
+					<td colspan="7" class="middle text-right"><strong>มูลค่าก่อนส่วนลดท้ายบิล</strong></td>
+					<td class="middle text-right">{{totalBefDi}}</td>
+					<td colspan="6" class="middle text-right"></td>
+				</tr>
+				<tr>
+					<td colspan="7" class="middle text-right"><strong>ส่วนลด [{{DiscPrcnt}} %]</strong></td>
+					<td class="middle text-right">{{DiscSum}}</td>
+					<td colspan="6" class="middle text-right"></td>
+				</tr>
+				<tr>
+					<td colspan="7" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
 					<td class="middle text-right">{{totalAmount}}</td>
-					<td></td><td></td><td></td><td></td><td></td>
+					<td colspan="6" class="middle text-right"></td>
 				</tr>
 			{{else}}
 				<tr>
@@ -478,6 +528,7 @@
 		}, 1000*60*5); //--- reload every 5 minutes
 	});
 </script>
+
 <script src="<?php echo base_url(); ?>scripts/orders/orders.js?v=<?php echo date('YmdH'); ?>"></script>
 
 <?php $this->load->view('include/footer'); ?>
