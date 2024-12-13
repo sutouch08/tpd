@@ -78,8 +78,7 @@ class Step_rule extends PS_Controller
 				$arr = array(
 					'PriceList' => $price_list,
 					'name' => $name,
-					'active' => $active,
-					'highlight' => $highlight,
+					'active' => $active,					
 					'add_by' => $this->_user->id,
 					'date_add' => now()
 				);
