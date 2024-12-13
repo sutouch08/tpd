@@ -7,7 +7,7 @@
   <div class="divider-hidden"></div>
 
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive" style="over-flow:auto;">
-    <table class="table table-bordered border-1" style="min-width:910px;">
+    <table class="table table-bordered border-1" style="min-width:1060px;">
       <thead>
         <tr class="font-size-10">
           <th class="fix-width-50 text-center">
@@ -20,7 +20,8 @@
 					<th class="min-width-200 text-center">Label Text</th>
 					<th class="fix-width-100 text-center">Step Qty</th>
 					<th class="fix-width-100 text-center">Free Qty</th>
-					<th class="fix-width-80 text-center">Status</th>
+					<th class="fix-width-100 text-center">Status</th>
+          <th class="fix-width-80 text-center">Highlight</th>
           <th class="fix-width-80 text-center">Position</th>
           <th class="fix-width-150 text-center">Update by</th>
           <th class="fix-width-150 text-center">Update at</th>
@@ -72,14 +73,20 @@
               placeholder="Free qty" />
 					</td>
           <td class="middle text-center">
+            <select class="width-100" id="active-<?php echo $no; ?>" data-no="<?php echo $no; ?>" data-id="<?php echo $rs->id; ?>" data-value="<?php echo $rs->active; ?>">
+              <option value="1" <?php echo is_selected('1', $rs->active); ?>>Active</option>
+              <option value="0" <?php echo is_selected('0', $rs->active); ?>>Inactive</option>
+            </select>
+					</td>
+          <td class="middle text-center">
             <label>
   						<input type="checkbox"
                 class="ace"
-                id="active-<?php echo $no; ?>"
+                id="highlight-<?php echo $no; ?>"
                 data-no="<?php echo $no; ?>"
                 data-id="<?php echo $rs->id; ?>"
-                data-value="<?php echo $rs->active; ?>"
-                value="<?php echo $rs->active; ?>" <?php echo is_checked('1', $rs->active); ?> />
+                data-value="<?php echo $rs->highlight; ?>"
+                value="<?php echo $rs->highlight; ?>" <?php echo is_checked('1', $rs->highlight); ?> />
               <span class="lbl"></span>
             </label>
 					</td>
@@ -168,14 +175,20 @@
         placeholder="Free qty" />
     </td>
     <td class="middle text-center">
+      <select class="width-100" id="active-{{no}}" data-no="{{no}}" data-id="0" data-value="1">
+        <option value="1">Active</option>
+        <option value="0">Inactive</option>
+      </select>
+    </td>
+    <td class="middle text-center">
       <label>
         <input type="checkbox"
           class="ace"
-          id="active-{{no}}"
+          id="highlight-{{no}}"
           data-no="{{no}}"
           data-id="0"
-          data-value="1"
-          value="1" checked />
+          data-value="0"
+          value="1" />
         <span class="lbl"></span>
       </label>
     </td>

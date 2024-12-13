@@ -431,7 +431,7 @@ class Orders extends PS_Controller
 			{
 				foreach($step as $rs)
 				{
-					$hi = $rs->hilight == 1 ? 'hilight' : '';
+					$hi = $rs->highlight == 1 ? 'highlight' : '';
 
 					$ds .= '<option value="'.$rs->id.'"
 					class="'.$hi.'"

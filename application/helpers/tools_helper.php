@@ -74,9 +74,16 @@ function is_checked($val1, $val2)
 
 
 
-function is_active($val)
+function is_active($val, $showX = TRUE)
 {
-  return $val == 1 ? '<i class="fa fa-check green"></i>' : '<i class="fa fa-times red"></i>';
+	if($val == 1 OR $val == '1')
+	{
+		return '<i class="fa fa-check green"></i>';
+	}
+	else
+	{
+		return $showX ? '<i class="fa fa-times red"></i>' : NULL;
+	}  
 }
 
 

@@ -3,7 +3,7 @@
     padding:3px !important;
   }
 
-  .hilight {
+  .highlight {
     font-style: italic;
     font-weight: bold;
     color: red;

@@ -71,6 +71,7 @@ class Step_rule extends PS_Controller
 			$price_list = $this->input->post('price_list');
 			$price_list_name = $this->input->post('price_list_name');
 			$active = $this->input->post('active') == 1 ? 1 : 0;
+			$highlight = $this->input->post('highlight') == 1 ? 1 : 0;
 
 			if( ! $this->step_rule_model->is_exists_price_list($price_list))
 			{
@@ -78,6 +79,7 @@ class Step_rule extends PS_Controller
 					'PriceList' => $price_list,
 					'name' => $name,
 					'active' => $active,
+					'highlight' => $highlight,
 					'add_by' => $this->_user->id,
 					'date_add' => now()
 				);
@@ -181,6 +183,7 @@ class Step_rule extends PS_Controller
 									'stepQty' => $rs->stepQty,
 									'freeQty' => $rs->freeQty,
 									'active' => $rs->active == 1 ? 1 : 0,
+									'highlight' => $rs->highlight == 1 ? 1 : 0,
 									'position' => empty($rs->position) ? 10 : $rs->position,
 									'date_upd' => now(),
 									'update_by' => $this->_user->id
@@ -200,6 +203,7 @@ class Step_rule extends PS_Controller
 									'stepQty' => $rs->stepQty,
 									'freeQty' => $rs->freeQty,
 									'active' => $rs->active == 1 ? 1 : 0,
+									'highlight' => $rs->highlight == 1 ? 1 : 0,
 									'position' => empty($rs->position) ? 10 : $rs->position,
 									'date_add' => now(),
 									'add_by' => $this->_user->id
@@ -312,7 +316,7 @@ class Step_rule extends PS_Controller
 		{
 			$sc = FALSE;
 			$this->error = get_error_message('required');
-		}		
+		}
 
 		$this->_response($sc);
 	}
