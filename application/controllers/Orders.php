@@ -1271,7 +1271,7 @@ class Orders extends PS_Controller
 		if( ! empty($code))
 		{
 			$doc = $this->orders_model->get($code);
-			$con_id = $doc->CardTeam;
+			$con_id = $doc->Conditon_id;
 
 			if( ! empty($doc))
 			{
