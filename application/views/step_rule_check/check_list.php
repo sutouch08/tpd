@@ -1,19 +1,12 @@
 <?php $this->load->view('include/header'); ?>
 <div class="row">
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
-    <h4 class="title"><i class="fa fa-bolt"></i>&nbsp; <?php echo $this->title; ?></h4>
-  </div>
-  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
-    	<p class="pull-right top-p">
-      <?php if($this->pm->can_add) : ?>
-        <button type="button" class="btn btn-sm btn-success" onclick="goAdd()"><i class="fa fa-plus"></i> New Rule</button>
-      <?php endif; ?>
-      </p>
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5">
+    <h4 class="title"><?php echo $this->title; ?></h4>
   </div>
 </div><!-- End Row -->
 <hr class="padding-5"/>
 <div class="row">
-	<div class="col-lg-3 col-md-3-harf col-sm-3-harf col-xs-6 padding-5">
+	<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 padding-5">
     <label>Price List</label>
     <select class="form-control input-sm" id="price-list">
 			<option value="">Select</option>
@@ -21,7 +14,7 @@
 		</select>
   </div>
 
-	<div class="col-lg-5 col-md-3-harf col-sm-3-harf col-xs-6 padding-5">
+	<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 padding-5">
 		<label>Items</label>
 		<select class="width-100 item-row" id="item">
 			<option value="" data-uom="">Select</option>
