@@ -249,6 +249,28 @@ class User_model extends CI_Model
   }
 
 
+  public function get_all_payment_term_array()
+  {
+    $rs = $this->ms
+    ->select('GroupNum, PymntGroup')
+    ->get('OCTG');
+
+    if($rs->num_rows() > 0)
+    {
+      $ds = array();
+
+      foreach($rs->result() as $rd)
+      {
+        $ds[$rd->GroupNum] = $rd->PymntGroup;
+      }
+
+      return $ds;
+    }
+
+    return NULL;
+  }
+
+
   public function add_user_price_list(array $ds = array())
   {
     return $this->db->insert('user_price_list', $ds);

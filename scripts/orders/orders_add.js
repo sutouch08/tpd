@@ -41,6 +41,9 @@ function changeCustomerList() {
 					text:rs,
 					type:'error'
 				});
+
+				let prevType = type == 'V' ? 'Q' : 'V';
+				$('#cardType').val(prevType);
 			}
 		}
 	})
@@ -844,6 +847,7 @@ function saveAdd() {
 		'saleTeam' : $('#customer option:selected').data('saleteam'),
 		'areaId' : $('#customer option:selected').data('area'),
 		'SlpCode' : $('#customer option:selected').data('sale'),
+		'CardGroup' : $('#customer option:selected').data('department'), //--- department 
 		'PriceList' : $('#priceList').val(),
 		'PayToCode' : $('#billToCode').val(),
 		'BillTo' : $('#BillTo').val(),

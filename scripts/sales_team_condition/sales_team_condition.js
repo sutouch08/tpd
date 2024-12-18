@@ -15,6 +15,10 @@ function goEdit(id) {
 }
 
 
+function viewDetail(id) {
+  window.location.href = HOME + 'view_detail/'+id;
+}
+
 
 function add() {
   clearErrorByClass('e');
@@ -114,7 +118,7 @@ function update() {
     $('#name').hasError('Required');
     return false;
   }
-  
+
   if(h.team_id == "") {
     $('#team-id').hasError('Required');
     return false;

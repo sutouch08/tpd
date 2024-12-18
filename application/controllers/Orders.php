@@ -155,10 +155,13 @@ class Orders extends PS_Controller
 					'GroupNum' => $rs->GroupNum,
 					'Currency' => $rs->Currency,
 					'ECVatGroup' => $rs->ECVatGroup,
+					'SlpCode' => $rs->SlpCode,
 					'Rate' => $rs->Rate,
 					'isControl' => $rs->isControl == 'Y' ? 'Y' : 'N',
-					'saleTeam' => $rs->saleTeam,
-					'areaId' => $rs->areaId
+					'saleTeam' => $rs->saleTeam, //-- U_TPD_BI_SalesTeam
+					'areaId' => $rs->areaId, //--- U_TPD_BI_AreaName
+					'salePerson' => $rs->salePerson, //-- U_SALE_PERSON
+					'department' => $rs->department, //-- U_TPD_BI_Department
 				);
 
 				array_push($ds, $arr);

@@ -1,5 +1,35 @@
 <?php $this->load->view('include/header'); ?>
-<div class="row hidden-print">
+<style>
+	.table > tr > td {
+		padding:8px !important;
+	}
+
+  @media (min-width: 768px) {
+
+    .fix-no {
+      left: -1px;
+      position: sticky;
+    }
+
+    .fix-date {
+      left:39px;
+      position: sticky;
+    }
+
+    .fix-code {
+      left:139px;
+      position: sticky;
+    }
+
+    td[scope=row] {
+      background-color: #f8f8f8;
+      border: 0 !important;
+      outline: solid 1px #dddddd;
+			z-index: 2;
+    }
+  }
+</style>
+<div class="row hidden-print h-row">
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
     <h4 class="title"> <i class="fa fa-bar-chart"></i><?php echo $this->title; ?></h4>
   </div>
@@ -12,7 +42,7 @@
 </div><!-- End Row -->
 <hr class="hidden-print padding-5"/>
 <form class="hidden-print" id="reportForm" method="post" action="<?php echo $this->home; ?>/do_export">
-<div class="row">
+<div class="row f-row">
 	<div class="col-lg-2 col-md-2-harf col-sm-3 col-xs-6 padding-5 margin-bottom-10">
 		<label>วันที่</label>
 		<div class="input-daterange input-group">
@@ -153,29 +183,30 @@
 </form>
 
 <div class="row">
-	<div class="col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-bordered" style="min-width:1900px;">
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive border-1" id="item-div" style="overflow: auto; padding-left:0px; padding-right:0px; padding-bottom:5px; margin-left:5px; margin-right:5px;">
+		<table class="table table-striped table-bordered tableFixHead border-1" style="margin-left: -1px; margin-top: -1px; min-width:2350px;">
 			<thead>
-				<tr>
-					<th class="middle text-center" style="width:20px;">#</th>
-					<th class="middle" style="width:100px;">วันที่</th>
-					<th class="middle" style="width:110px;">เลขที่ออเดอร์</th>
-					<th class="middle" style="width:100px;">Payment Term</th>
-					<th class="middle" style="width:110px;">รหัสลูกค้า</th>
-					<th class="middle" style="width:250px;">ชื่อลูกค้า</th>
-					<th class="middle" style="width:250px;">รายการสินค้า</th>
-					<th class="middle text-right" style="width:100px;">ราคา/หน่วย</th>
-					<th class="middle text-right" style="width:100px;">ราคาพิเศษ/หน่วย</th>
-					<th class="middle text-right" style="width:100px;">ส่วนลด</th>
-					<th class="middle text-right" style="width:100px;">จำนวน</th>
-					<th class="middle text-right" style="width:100px;">มูลค่า</th>
-					<th class="middle" style="width:100px;">ผู้อนุมัติ</th>
-					<th class="middle text-center" style="width:80px;">สถานะ</th>
-					<th class="middle" style="width:100px;">เลขที่ PO</th>
-					<th class="middle" style="width:100px;">เลขที่ SO</th>
-					<th class="middle" style="width:100px;">เลขที่ DO</th>
-					<th class="middle" style="width:100px;">เลขที่ Invoice</th>
-					<th class="middle" style="width:100px;">วันที่ Invoice</th>
+				<tr class="font-size-12">
+					<th class="fix-width-40 text-center fix-header fix-no">#</th>
+					<th class="fix-width-100 text-center fix-header fix-date">วันที่</th>
+					<th class="fix-width-120 text-center fix-header fix-code">เลขที่ออเดอร์</th>
+					<th class="fix-width-150 text-center">Price List</th>
+					<th class="fix-width-150 text-center">Payment Term</th>
+					<th class="fix-width-100 text-center">รหัสลูกค้า</th>
+					<th class="fix-width-250 text-center">ชื่อลูกค้า</th>
+					<th class="fix-width-250 text-center">รายการสินค้า</th>
+					<th class="fix-width-100 text-center">ราคา/หน่วย</th>
+					<th class="fix-width-120 text-center">ราคาพิเศษ/หน่วย</th>
+					<th class="fix-width-100 text-center">ส่วนลด</th>
+					<th class="fix-width-100 text-center">จำนวน</th>
+					<th class="fix-width-100 text-center">มูลค่า</th>
+					<th class="min-width-100 text-center">ผู้อนุมัติ</th>
+					<th class="fix-width-80 text-center" >สถานะ</th>
+					<th class="fix-width-100 text-center">เลขที่ PO</th>
+					<th class="fix-width-100 text-center">เลขที่ SO</th>
+					<th class="fix-width-100 text-center">เลขที่ DO</th>
+					<th class="fix-width-100 text-center">เลขที่ Invoice</th>
+					<th class="fix-width-100 text-center">วันที่ Invoice</th>
 				</tr>
 			</thead>
 			<tbody id="result">
@@ -191,36 +222,37 @@
 <script id="report-template" type="text/x-handlebarsTemplate">
 	{{#each this}}
 		{{#if nodata}}
-			<tr><td colspan="19" class="text-center">--- ไม่พบข้อมูลตามเงื่อนไขที่กำหนด ---</td></tr>
+			<tr><td colspan="20" class="text-center">--- ไม่พบข้อมูลตามเงื่อนไขที่กำหนด ---</td></tr>
 			{{else}}
 				{{#if @last}}
 					<tr>
-						<td colspan="10" class="middle text-right">รวม</td>
+						<td colspan="11" class="middle text-right">รวม</td>
 						<td class="middle text-right">{{totalQty}}</td>
 						<td class="middle text-right">{{totalAmount}}</td>
 						<td colspan="7"></td>
 					</tr>
 				{{else}}
 					<tr>
-						<td class="middle text-center">{{no}}</td>
-						<td class="middle">{{DocDate}}</td>
-						<td class="middle">{{code}}</td>
-						<td class="middle">{{paymentTerm}}</td>
-						<td class="middle">{{CardCode}}</td>
-						<td class="middle">{{CardName}}</td>
-						<td class="middle">{{ItemName}}</td>
-						<td class="middle text-right">{{stdPrice}}</td>
-						<td class="middle text-right">{{SellPrice}}</td>
-						<td class="middle text-right">{{DiscPrcnt}}</td>
-						<td class="middle text-right">{{Qty}}</td>
-						<td class="middle text-right">{{Amount}}</td>
-						<td class="middle">{{Approver}}</td>
-						<td class="middle">{{Approval_status}}</td>
-						<td class="middle">{{PoNo}}</td>
-						<td class="middle">{{SONo}}</td>
-						<td class="middle">{{DoNo}}</td>
-						<td class="middle">{{InvNo}}</td>
-						<td class="middle">{{InvoiceDate}}</td>
+						<td class="text-center fix-no" scope="row">{{no}}</td>
+						<td class="fix-date" scope="row">{{DocDate}}</td>
+						<td class="fix-code" scope="row">{{code}}</td>
+						<td class="">{{priceList}}</td>
+						<td class="">{{paymentTerm}}</td>
+						<td class="">{{CardCode}}</td>
+						<td class="">{{CardName}}</td>
+						<td class="">{{ItemName}}</td>
+						<td class="text-right">{{stdPrice}}</td>
+						<td class="text-right">{{SellPrice}}</td>
+						<td class="text-right">{{DiscPrcnt}}</td>
+						<td class="text-right">{{Qty}}</td>
+						<td class="text-right">{{Amount}}</td>
+						<td class="">{{Approver}}</td>
+						<td class="">{{Approval_status}}</td>
+						<td class="">{{PoNo}}</td>
+						<td class="">{{SONo}}</td>
+						<td class="">{{DoNo}}</td>
+						<td class="">{{InvNo}}</td>
+						<td class="">{{InvoiceDate}}</td>
 					</tr>
 				{{/if}}
 			{{/if}}

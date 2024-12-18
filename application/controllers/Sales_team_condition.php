@@ -45,8 +45,6 @@ class Sales_team_condition extends PS_Controller
 		{
 			foreach($result as $rs)
 			{
-				$rs->member = $this->sales_team_condition_model->count_members($rs->id);
-
 				$apv = "";
 
 				$approver = $this->sales_team_condition_model->get_condition_approver($rs->id);
@@ -353,30 +351,32 @@ class Sales_team_condition extends PS_Controller
 	}
 
 
-	public function get_member($id)
+	public function view_detail($id)
 	{
-		$members = $this->sales_team_condition_model->get_members($id);
+		$rs = $this->sales_team_condition_model->get($id);
 
-		if(!empty($members))
+		if( ! empty($rs))
 		{
-			$ds = array();
+			$rs->approver = $this->sales_team_condition_model->get_condition_approver($id);
+			$condition_area = $this->sales_team_condition_model->get_condition_area($id);
 
-			foreach($members as $rs)
+			$rs->area = array();
+
+			if( ! empty($condition_area))
 			{
-				$arr = array(
-					'uname' => $rs->uname,
-					'emp_name' => $rs->emp_name,
-					'role' => $rs->user_role
-				);
-
-				array_push($ds, $arr);
+				foreach($condition_area as $ar)
+				{
+					$rs->area[$ar->area_id] = $ar->area_id;
+				}
 			}
 
-			echo json_encode($ds);
+			$data['area'] = $this->user_model->get_all_area();
+			$data['data'] = $rs;
+			$this->load->view('sales_team_condition/sales_team_condition_view_detail', $data);
 		}
 		else
 		{
-			echo "No member";
+			$this->error_page();
 		}
 	}
 
@@ -449,7 +449,7 @@ class Sales_team_condition extends PS_Controller
 			'con_team_id'
 		);
 
-		return clear_filter($filter);		
+		return clear_filter($filter);
 	}
 
 }//--- end class

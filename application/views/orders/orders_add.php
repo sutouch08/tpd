@@ -69,7 +69,9 @@
 				data-vat="{{ECVatGroup}}"
 				data-rate="{{Rate}}"
 				data-control="{{isControl}}"
-				data-saleteam="{{saleTeam}}">
+				data-saleteam="{{saleTeam}}"
+				data-saleperson="{{salePerson}}"
+				data-department="{{department}}">
 				{{CardCode}}  {{CardName}}
 			</option>
 		{{/each}}

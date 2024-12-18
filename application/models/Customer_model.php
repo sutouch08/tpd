@@ -26,7 +26,7 @@ class Customer_model extends CI_Model
     $rs = $this->ms
     ->select('C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, C.Currency')
     ->select('C.U_TPD_DrugCon AS isControl, C.U_TPD_BI_SalesTeam AS saleTeam')
-    ->select('C.U_TPD_BI_AreaName AS areaId, V.Rate')
+    ->select('C.U_TPD_BI_AreaName AS areaId, C.U_SALE_PERSON AS salePerson, U_TPD_BI_Department AS department, V.Rate')
     ->from('OCRD AS C')
     ->join('OVTG AS V', 'C.ECVatGroup = V.Code', 'left')
     ->where('C.CardType', 'C')
@@ -52,7 +52,9 @@ class Customer_model extends CI_Model
   {
     //--- V = vat Q = non vat
     $rs = $this->ms
-    ->select('C.CardCode, C.CardName, C.SlpCode, C.ECVatGroup, C.Currency, C.U_TPD_DrugCon AS isControl, U_TPD_BI_SalesTeam AS saleTeam, V.Rate')
+    ->select('C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, C.Currency')
+    ->select('C.U_TPD_DrugCon AS isControl, C.U_TPD_BI_SalesTeam AS saleTeam')
+    ->select('C.U_TPD_BI_AreaName AS areaId, C.U_SALE_PERSON AS salePerson, U_TPD_BI_Department AS department, V.Rate')    
     ->from('OCRD AS C')
     ->join('OVTG AS V', 'C.ECVatGroup = V.Code', 'left')
     ->where('C.CardType', 'C')

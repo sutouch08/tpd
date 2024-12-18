@@ -51,16 +51,15 @@
 
 <div class="row">
 	<div class="col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-hover border-1" style="min-width:1050px;">
+		<table class="table table-striped table-hover border-1" style="min-width:1110px;">
 			<thead>
 				<tr>
+					<th class="fix-width-120 middle"></th>
 					<th class="fix-width-40 middle text-center">#</th>
-					<th class="fix-width-150 middle">Condition Name</th>
+					<th class="fix-width-200 middle">Condition Name</th>
 					<th class="fix-width-150 middle">BI Sales Team</th>
-					<th class="min-width-250 middle">Authorizer</th>
-					<th class="fix-width-250 middle">Area</th>
-					<th class="fix-width-60 middle text-center">Member</th>
-					<th class="fix-width-150 middle text-right"></th>
+					<th class="fix-width-300 middle">Area</th>
+					<th class="min-width-300 middle">Authorizer</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -68,23 +67,20 @@
 				<?php $no = $this->uri->segment(3) + 1; ?>
 				<?php foreach($data as $rs) : ?>
 					<tr>
+						<td class="middle">
+							<button type="button" class="btn btn-mini btn-info" onclick="viewDetail(<?php echo $rs->id; ?>)"><i class="fa fa-eye"></i></button>
+							<?php if($this->pm->can_edit) : ?>
+								<button type="button" class="btn btn-mini btn-warning" onclick="goEdit(<?php echo $rs->id; ?>)"><i class="fa fa-pencil"></i></button>
+							<?php endif; ?>
+							<?php if($this->pm->can_delete) : ?>
+								<button type="button" class="btn btn-mini btn-danger" onclick="getDelete(<?php echo $rs->id; ?>, '<?php echo $rs->name; ?>')"><i class="fa fa-trash"></i></button>
+							<?php endif; ?>
+						</td>
 						<td class="middle text-center no"><?php echo $no; ?></td>
 						<td class="middle"><?php echo $rs->name; ?></td>
 						<td class="middle"><?php echo sales_team_name($rs->team_id); ?></td>
-						<td class="middle"><?php echo $rs->approver_list; ?></td>
 						<td class="middle"><?php echo $rs->area_list; ?></td>
-						<td class="middle text-center"><?php echo number($rs->member); ?></td>
-						</td>
-						<td class="middle text-right">
-							<button type="button" class="btn btn-xs btn-info" onclick="viewMember(<?php echo $rs->id; ?>)">
-								Member
-							</button>
-							<?php if($this->pm->can_edit) : ?>
-							<button type="button" class="btn btn-xs btn-warning" onclick="goEdit(<?php echo $rs->id; ?>)"><i class="fa fa-pencil"></i></button>
-							<?php endif; ?>
-							<?php if($this->pm->can_delete) : ?>
-							<button type="button" class="btn btn-xs btn-danger" onclick="getDelete(<?php echo $rs->id; ?>, '<?php echo $rs->name; ?>')"><i class="fa fa-trash"></i></button>
-							<?php endif; ?>
+						<td class="middle"><?php echo $rs->approver_list; ?></td>
 						</td>
 					</tr>
 					<?php $no++; ?>
@@ -142,6 +138,6 @@
 <script>
 	$('#area-id').select2();
 </script>
-<script src="<?php echo base_url(); ?>scripts/sales_team_condition/sales_team_condition.js"></script>
+<script src="<?php echo base_url(); ?>scripts/sales_team_condition/sales_team_condition.js?v=<?php echo date('Ymd'); ?>"></script>
 
 <?php $this->load->view('include/footer'); ?>

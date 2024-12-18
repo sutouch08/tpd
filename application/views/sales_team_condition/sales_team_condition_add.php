@@ -19,7 +19,7 @@
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="name-error"></div>
   </div>
-	
+
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">BI Sales Team</label>
     <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -117,5 +117,5 @@
 	</script>
 </form>
 
-<script src="<?php echo base_url(); ?>scripts/sales_team_condition/sales_team_condition.js"></script>
+<script src="<?php echo base_url(); ?>scripts/sales_team_condition/sales_team_condition.js?v=<?php echo date('Ymd'); ?>"></script>
 <?php $this->load->view('include/footer'); ?>

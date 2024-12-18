@@ -55,6 +55,7 @@ class Approval_status extends PS_Controller
 
 
 				$priceListName = $this->user_model->get_all_price_list_array();
+				$paymentTermName = $this->user_model->get_all_payment_term_array();
 
 				$totalQty = 0;
 				$totalAmount = 0;
@@ -66,7 +67,8 @@ class Approval_status extends PS_Controller
 						'DocDate' => thai_date($rs->DocDate, FALSE),
 						'code' => $rs->code,
 						'SONo' => $rs->DocNum,
-						'paymentTerm' => (empty($rs->PriceList) ? $rs->promotion_code : $priceListName[$rs->PriceList]),
+						'priceList' => empty($rs->PriceList) ? NULL : ($rs->PriceList == -10 ? "Special Price List" : $priceListName[$rs->PriceList]),
+						'paymentTerm' => empty($paymentTermName[$rs->GroupNum]) ? NULL : $paymentTermName[$rs->GroupNum],
 						'CardCode' => $rs->CardCode,
 						'CardName' => $rs->CardName,
 						'ItemCode' => $rs->ItemCode,

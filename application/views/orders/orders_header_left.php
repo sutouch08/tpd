@@ -28,6 +28,8 @@
                   data-rate="<?php echo $cs->Rate; ?>"
                   data-control="<?php echo $cs->isControl == 'Y' ? 'Y' : 'N'; ?>"
                   data-saleteam="<?php echo $cs->saleTeam; ?>"
+                  data-saleperson="<?php echo $cs->salePerson; ?>"
+                  data-department="<?php echo $cs->department; ?>"
                   data-area="<?php echo $cs->areaId; ?>">
                   <?php echo $cs->CardCode; ?>  <?php echo $cs->CardName; ?>
                 </option>
