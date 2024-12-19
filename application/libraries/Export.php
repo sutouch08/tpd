@@ -65,6 +65,8 @@ class Export
 							'NumAtCard' => get_null($order->NumAtCard),
 							'DocCur' => $order->DocCur,
 							'DocRate' => $order->DocRate,
+              'DiscPrcnt' => $order->DiscPrcnt,
+              'DiscSum' => $order->DiscSum,
 							'DocTotal' => $order->DocTotal,
 							'VatSum' => $order->VatSum,
 							'GroupNum' => $order->GroupNum,

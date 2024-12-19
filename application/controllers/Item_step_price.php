@@ -204,6 +204,7 @@ class Item_step_price extends PS_Controller
 								'Qty' => $rs->Qty,
 								'SellPrice' => $rs->SellPrice,
 								'freeQty' => $rs->freeQty,
+								'position' => $rs->position,
 								'UomCode' => $doc->UomCode,
 								'update_by' => $this->_user->id
 							);

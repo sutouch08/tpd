@@ -364,6 +364,7 @@ function getItemData(code, no) {
 				$('#control-'+no).val(ds.isControl);
 				$('#uom-'+no).val(ds.uom);
 				$('#stdPrice-'+no).val(price);
+				$('#item-'+no).data('price', price);
 				$('#price-'+no).val('');
 				$('#instock-'+no).val(ds.inStock);
 				$('#commit-'+no).val(ds.commit);
@@ -381,6 +382,10 @@ function getItemData(code, no) {
 
 				if(ds.step != '' && ds.step !== null && ds.step != undefined) {
 					$('#step-'+no).html(ds.step);
+				}
+
+				if(ds.stepData != '' && ds.stepData !== null && ds.stepData != undefined) {
+					$('#step-data-'+no).val(JSON.stringify(ds.stepData));
 				}
 
 				$('#qty-'+no).focus();
@@ -502,8 +507,10 @@ function recalVat() {
 	});
 }
 
-
 function recalAmount(no) {
+	let priceList = $('#priceList').val();
+	let stepData = null;
+
 	let vatRate = parseDefault(parseFloat($('#vatRate').val()), 0);
 
 	if($('#VatGroup').val() === "") {
@@ -513,6 +520,37 @@ function recalAmount(no) {
 	let qty = parseDefault(parseFloat($('#qty-'+no).val()), 0);
 	let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
 	let sellPrice = $('#price-'+no).val();
+	let prevPrice = parseDefault(parseFloat($('#item-'+no).data('price')), 0);
+
+	//--- ถ้า special price list ถูกเลือกให้ทำแบบนี้ด้วย
+	if(priceList == 'x') {
+		//--- เปลี่ยนราคาขายต่่อชิ้น และ จำนวนแถม ตาม step price qty
+		let stepVal = $('#step-'+no).val();
+
+		let step = $('#step-data-'+no).val();
+		if(step.length) {
+			stepData = JSON.parse(step);
+			let data = null;
+			let qtt = 0;
+			stepData.forEach(function(item) {
+				if(item.stepQty <= qty && item.stepQty > qtt) {
+					data = item;
+					qtt = item.stepQty;
+				}
+			})
+
+			if(data !== null) {
+				stdPrice = data.stepPrice;
+				$('#stdPrice-'+no).val(data.stepPrice);
+				$('#free-'+no).val(data.freeQty);
+			}
+			else {
+				stdPrice = prevPrice;
+				$('#stdPrice-'+no).val(prevPrice);
+				$('#free-'+no).val(0);
+			}
+		}
+	}
 
 
 
@@ -532,6 +570,37 @@ function recalAmount(no) {
 
 	recalTotal();
 }
+
+
+// function recalAmount(no) {
+// 	let vatRate = parseDefault(parseFloat($('#vatRate').val()), 0);
+//
+// 	if($('#VatGroup').val() === "") {
+// 		vatRate = parseDefault(parseFloat($('#itemVatRate-'+no).val()), 0);
+// 	}
+//
+// 	let qty = parseDefault(parseFloat($('#qty-'+no).val()), 0);
+// 	let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
+// 	let sellPrice = $('#price-'+no).val();
+//
+//
+//
+// 	if(sellPrice != "") {
+// 		let amount = qty * sellPrice;
+// 		let vatamount = get_vat_amount(amount, vatRate);
+// 		$('#amount-'+no).val(amount.toFixed(4));
+// 		$('#vatAmount-'+no).val(vatamount);
+// 		console.log(amount);
+// 	}
+// 	else {
+// 		let amount = qty * stdPrice;
+// 		let vatamount = get_vat_amount(amount, vatRate);
+// 		$('#amount-'+no).val(amount.toFixed(4));
+// 		$('#vatAmount-'+no).val(vatamount);
+// 	}
+//
+// 	recalTotal();
+// }
 
 
 function recalTotal() {
@@ -847,7 +916,7 @@ function saveAdd() {
 		'saleTeam' : $('#customer option:selected').data('saleteam'),
 		'areaId' : $('#customer option:selected').data('area'),
 		'SlpCode' : $('#customer option:selected').data('sale'),
-		'CardGroup' : $('#customer option:selected').data('department'), //--- department 
+		'CardGroup' : $('#customer option:selected').data('department'), //--- department
 		'PriceList' : $('#priceList').val(),
 		'PayToCode' : $('#billToCode').val(),
 		'BillTo' : $('#BillTo').val(),
@@ -967,7 +1036,12 @@ function saveAdd() {
 function clearText(no) {
 	$('#item-'+no).val('');
 	$('#itemCode-'+no).val('');
+	$('#step-'+no).html('<option value="">Select</option>');
+	$('#step-data-'+no).val('');
 	$('#uom-'+no).val('');
+	$('#qty-'+no).val('');
+	$('#free-'+no).val('');
+	$('#amount-'+no).val('');
 	$('#stdPrice-'+no).val('');
 	$('#price-'+no).val('');
 	$('#instock-'+no).val('');
@@ -976,6 +1050,9 @@ function clearText(no) {
 	$('#itemVatCode-'+no).val('');
 	$('#itemVatRate-'+no).val('');
 	$('#whsCode-'+no).val('');
+
+	recalAmount(no);
+	$('#item-'+no).focus();
 }
 
 

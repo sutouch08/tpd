@@ -86,8 +86,9 @@
             <input type="hidden" class="item-vat-code" id="itemVatCode-1" data-no="1">
             <input type="hidden" class="item-vat-rate" id="itemVatRate-1" dta-no="1">
             <input type="hidden" class="whs" id="whsCode-1" data-no="1">
+            <input type="hidden" id="step-data-1" data-no="1">
             <div class="input-group width-100">
-              <input type="text" class="form-control input-sm input-item-code" id="item-1" data-no="1" />
+              <input type="text" class="form-control input-sm input-item-code" id="item-1" data-no="1" data-price="0" />
               <span class="input-group-addon" onclick="clearText(1)">x</span>
             </div>
           </td>
@@ -133,6 +134,7 @@
       <input type="hidden" class="item-vat-code" id="itemVatCode-{{no}}" data-no="{{no}}">
       <input type="hidden" class="item-vat-rate" id="itemVatRate-{{no}}" dta-no="{{no}}">
       <input type="hidden" class="whs" id="whsCode-{{no}}" data-no="{{no}}">
+      <input type="hidden" id="step-data-{{no}}" data-no="{{no}}">
       <div class="input-group width-100">
         <input type="text" class="form-control input-sm input-item-code" id="item-{{no}}" data-no="{{no}}" />
         <span class="input-group-addon" onclick="clearText({{no}})">x</span>

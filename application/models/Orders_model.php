@@ -134,9 +134,9 @@ class Orders_model extends CI_Model
 
   function count_rows(array $ds = array())
   {
-    if(isset($ds['is_promotion']) && $ds['is_promotion'] !== 'all')
+    if(isset($ds['con_id']) && $ds['con_id'] !== 'all')
     {
-      $this->db->where('is_promotion', $ds['is_promotion']);
+      $this->db->where('condition_id', $ds['con_id']);
     }
 
     if( ! empty($ds['WebCode']))
@@ -291,9 +291,9 @@ class Orders_model extends CI_Model
   function get_list(array $ds = array(), $perpage = 20, $offset = 0)
   {
 
-    if(isset($ds['is_promotion']) && $ds['is_promotion'] !== 'all')
+    if(isset($ds['con_id']) && $ds['con_id'] !== 'all')
     {
-      $this->db->where('is_promotion', $ds['is_promotion']);
+      $this->db->where('condition_id', $ds['con_id']);
     }
 
     if( ! empty($ds['WebCode']))
@@ -459,7 +459,7 @@ class Orders_model extends CI_Model
     if( ! empty($price_list))
     {
       $rs = $this->ms->select('ListName')->where('ListNum', $price_list)->get('OPLN');
-      
+
       if($rs->num_rows() === 1)
       {
         return $rs->row()->ListName;

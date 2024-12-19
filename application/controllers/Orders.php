@@ -27,7 +27,7 @@ class Orders extends PS_Controller
 	public function index()
 	{
 		$filter = array(
-			'is_promotion' => get_filter('is_promotion', 'so_is_promotion', 'all'),
+			'con_id' => get_filter('con_id', 'so_con_id', 'all'),
 			'WebCode' => get_filter('WebCode', 'so_WebCode', ''),
 			'DocNum' => get_filter('DocNum', 'so_DocNum', ''),
 			'DeliveryNo' => get_filter('DeliveryNo', 'so_DeliveryNo', ''),
@@ -510,26 +510,35 @@ class Orders extends PS_Controller
 								'whsCode' => $item->dfWhsCode,
 								'is_sale_discount' => $item->U_TPD_DiscSale == 'Y' ? 'Y' : 'N',
 								'isControl' => $item->U_BEX_Controll == 'Controlled' ? 'Y' : 'N',
-								'step' => NULL
+								'step' => NULL,
+								'stepData' => NULL
 							);
 
 							if( ! empty($step))
 							{
 								$stx = '<option value="">Select</option>';
+								$da = array();
 
 								foreach($step as $st)
 								{
 									$stx .= '<option value="'.$st->id.'"
 										data-no="'.$no.'"
 										data-item="'.$st->ItemCode.'"
-										data-force="1"
+										data-force="0"
 										data-stepqty="'.$st->Qty.'"
 										data-price="'.$st->SellPrice.'"
 										data-uom="'.$st->UomCode.'"
 										data-freeqty="'.$st->freeQty.'">'.$st->Qty.' '.$st->UomCode.' @'.number($st->SellPrice, 2).($st->freeQty > 0 ? ' free : '.$st->freeQty : '').'</option>';
+
+										$da[] = array(
+											'stepQty' => $st->Qty,
+											'stepPrice' => $st->SellPrice,
+											'freeQty' => $st->freeQty
+										);
 								}
 
 								$arr['step'] = $stx;
+								$arr['stepData'] = $da;
 							}
 						}
 						else

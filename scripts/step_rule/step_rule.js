@@ -106,6 +106,7 @@ function save() {
       let stepQty = parseDefault(parseInt($('#step-qty-'+no).val()), 0);
       let freeQty = parseDefault(parseInt($('#free-qty-'+no).val()), 0);
       let active = $('#active-'+no).val();
+      let force = $('#force-'+no).is(':checked') ? 1 : 0;
       let highlight = $('#highlight-'+no).is(':checked') ? 1 : 0;
       let position = parseDefault(parseInt($('#pos-'+no).val()), 0);
 
@@ -130,6 +131,7 @@ function save() {
         'stepQty' : stepQty,
         'freeQty' : freeQty,
         'active' : active,
+        'is_force' : force,
         'highlight' : highlight,
         'position' : position
       };

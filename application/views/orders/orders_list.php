@@ -44,16 +44,12 @@
 <?php $hide = $this->disSale ? "" : 'hide'; ?>
 
 <div class="row h-row">
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
-    <h3 class="title">
-      <?php echo $this->title; ?>
-    </h3>
-    </div>
-    <div class="col-lg-6 col-md-6 col-sm-6 col-xs-4 padding-5">
-    	<p class="pull-right top-p">
-        <button type="button" class="btn btn-sm btn-success" onclick="goAdd()"><i class="fa fa-plus"></i> New Order</button>
-      </p>
-    </div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5" style="padding-top:5px;">
+		<h3 class="title"> <?php echo $this->title; ?></h3>
+	</div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5 text-right">
+		<button type="button" class="btn btn-white btn-success top-btn" onclick="goAdd()"><i class="fa fa-plus"></i> New Order</button>
+	</div>
 </div><!-- End Row -->
 <hr class="padding-5"/>
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
@@ -110,14 +106,12 @@
 		</div>
 
 		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-			<label class="search-label">Promotion</label>
-			<select class="form-control input-sm" name="is_promotion" onchange="getSearch()">
+			<label class="search-label">Team condition</label>
+			<select class="form-control input-sm" name="con_id" onchange="getSearch()">
 				<option value="all">ทั้งหมด</option>
-				<option value="1" <?php echo is_selected('1', $is_promotion); ?>>โปรโมชั่น</option>
-				<option value="0" <?php echo is_selected('0', $is_promotion); ?>>ไม่ใช่โปรโมชั่น</option>
+				<?php echo select_sales_team_condition($con_id); ?>
 			</select>
 		</div>
-
 
 		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">สถานะ</label>
@@ -173,7 +167,7 @@
 
 		<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
 			<label class="search-label">วันที่</label>
-			<div class="input-daterange input-group">
+			<div class="input-daterange input-group width-100">
 				<input type="text" class="form-control input-sm width-50 from-date text-center" id="fromDate" name="fromDate" value="<?php echo $fromDate; ?>" placeholder="From" readonly/>
 				<input type="text" class="form-control input-sm width-50 to-date text-center" id="toDate" name="toDate" value="<?php echo $toDate; ?>" placeholder="To" readonly />
 			</div>

@@ -37,7 +37,7 @@
 <hr class="padding-5 margin-top-15 margin-bottom-15">
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive" style="over-flow:auto;">
-	<table class="table table-bordered border-1" style="min-width:1000px;">
+	<table class="table table-bordered border-1" style="min-width:1080px;">
 		<thead>
 			<tr class="font-size-10">
 				<th class="fix-width-50 text-center">#</th>
@@ -45,6 +45,7 @@
 				<th class="fix-width-100 text-center">Step Qty</th>
 				<th class="fix-width-100 text-center">Free Qty</th>
 				<th class="fix-width-80 text-center">Status</th>
+				<th class="fix-width-80 text-center">Force</th>
 				<th class="fix-width-80 text-center">Highlight</th>
 				<th class="fix-width-80 text-center">Position</th>
 				<th class="fix-width-150 text-center">Update by</th>
@@ -61,6 +62,7 @@
 				<td class="middle text-center"><?php echo number($rs->stepQty); ?></td>
 				<td class="middle text-center"><?php echo number($rs->freeQty); ?></td>
 				<td class="middle text-center"><?php echo is_active($rs->active); ?></td>
+				<td class="middle text-center"><?php echo is_active($rs->is_force, FALSE); ?></td>
 				<td class="middle text-center"><?php echo is_active($rs->highlight, FALSE); ?></td>
 				<td class="middle text-center"><?php echo $rs->position; ?></td>
 				<td class="middle text-center">

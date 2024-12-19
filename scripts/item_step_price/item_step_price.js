@@ -98,6 +98,7 @@ function save() {
       let stepQty = parseDefault(parseFloat($('#step-qty-'+no).val()), 0);
       let sellPrice = parseDefault(parseFloat($('#sell-price-'+no).val()), 0);
       let freeQty = parseDefault(parseFloat($('#free-qty-'+no).val()), 0);
+      let pos = parseDefault(parseFloat($('#pos-'+no).val()), 10);
       let active = $('#active-'+no).is(':checked') ? 1 : 0;
 
       if(stepQty > 0 && sellPrice > 0) {
@@ -120,11 +121,12 @@ function save() {
           'step_id' : id,
           'Qty' : stepQty,
           'SellPrice' : sellPrice,
-          'freeQty' : freeQty
+          'freeQty' : freeQty,
+          'position' : pos
         };
 
         h.rows.push(row);
-      }      
+      }
     });
   }
 

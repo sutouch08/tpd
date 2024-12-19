@@ -78,7 +78,7 @@ class Step_rule extends PS_Controller
 				$arr = array(
 					'PriceList' => $price_list,
 					'name' => $name,
-					'active' => $active,					
+					'active' => $active,
 					'add_by' => $this->_user->id,
 					'date_add' => now()
 				);
@@ -184,6 +184,7 @@ class Step_rule extends PS_Controller
 									'active' => $rs->active == 1 ? 1 : 0,
 									'highlight' => $rs->highlight == 1 ? 1 : 0,
 									'position' => empty($rs->position) ? 10 : $rs->position,
+									'is_force' => $rs->is_force == 1 ? 1 : 0,
 									'date_upd' => now(),
 									'update_by' => $this->_user->id
 								);
@@ -204,6 +205,7 @@ class Step_rule extends PS_Controller
 									'active' => $rs->active == 1 ? 1 : 0,
 									'highlight' => $rs->highlight == 1 ? 1 : 0,
 									'position' => empty($rs->position) ? 10 : $rs->position,
+									'is_force' => $rs->is_force == 1 ? 1 : 0,
 									'date_add' => now(),
 									'add_by' => $this->_user->id
 								);
