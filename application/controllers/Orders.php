@@ -986,7 +986,7 @@ class Orders extends PS_Controller
 
 				$can_approve = $this->can_approve($doc);
 
-				$termName = $doc->term_id == -10 ? 'Customer Default' : (empty($doc->term_id) ? 'ไม่ระบุ' : $this->payment_term_discount_model->get_name($doc->team_id));
+				$termName = $doc->term_id == -10 ? 'Customer Default' : (empty($doc->term_id) ? 'ไม่ระบุ' : $this->payment_term_discount_model->get_name($doc->term_id));
 
 				$ds = array(
 					'orderCode' => $doc->code,
@@ -1084,9 +1084,9 @@ class Orders extends PS_Controller
 								'qty' => number($rs->Qty, 2),
 								'free' => number($rs->freeQty, 2),
 								'uom' => $rs->UomCode,
-								'stdPrice' => number($rs->stdPrice, 4),
-								'sellPrice' => number($rs->SellPrice, 4),
-								'amount' => number($rs->LineTotal, 4),
+								'stdPrice' => number($rs->stdPrice, 2),
+								'sellPrice' => number($rs->SellPrice, 2),
+								'amount' => number($rs->LineTotal, 2),
 								'dis' => $rs->discount_sales == 1 ? '<i class="fa fa-check blue"></i>' : '',
 								'lineText' => $rs->LineText,
 								'openQty' => round($open_qty, 2),
@@ -1108,8 +1108,8 @@ class Orders extends PS_Controller
 					$arr = array(
 						'totalBefDi' => number($doc->DocTotal + $doc->DiscSum, 2),
 						'DiscPrcnt' => $doc->DiscPrcnt,
-						'DiscSum' => number($doc->DiscSum, 4),
-						'totalAmount' => number($doc->DocTotal, 4)
+						'DiscSum' => number($doc->DiscSum, 2),
+						'totalAmount' => number($doc->DocTotal, 2)
 					);
 
 					array_push($ds['items'], $arr);
