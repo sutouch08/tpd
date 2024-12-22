@@ -72,6 +72,9 @@
 				<?php foreach($data as $rs) : ?>
 					<tr>
 						<td class="middle">
+							<button type="button" class="btn btn-minier btn-info" onclick="viewDetail(<?php echo $rs->id; ?>)">
+								<i class="fa fa-eye"></i>
+							</button>
 							<?php if($this->pm->can_edit) : ?>
 								<button type="button" class="btn btn-minier btn-warning" onclick="goEdit(<?php echo $rs->id; ?>)">
 									<i class="fa fa-pencil"></i>

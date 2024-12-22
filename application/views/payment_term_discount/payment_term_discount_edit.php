@@ -44,6 +44,67 @@
   </div>
 
 	<div class="form-group">
+    <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Price List</label>
+    <div class="col-lg-5 col-md-6 col-sm-6 col-xs-12 table-responsive">
+			<table class="table table-striped table-bordered border-1" style="margin-bottom:0px;">
+				<thead>
+					<tr>
+						<th class="fix-width-50 text-center">#</th>
+						<th class="">Price List</th>
+						<th class="fix-width-50 text-center">
+							<label>
+								<input type="checkbox" class="ace" id="chk-all">
+								<span class="lbl"></span>
+							</label>
+						</th>
+					</tr>
+				</thead>
+				<tbody>
+					<?php if( ! empty($priceList)) : ?>
+						<?php $no = 1; ?>
+						<?php foreach($priceList as $ps)  : ?>
+							<tr>
+								<td class="text-center"><?php echo $no; ?></td>
+								<td><?php echo $ps->name; ?></td>
+								<td class="text-center">
+									<label>
+										<input type="checkbox"
+										class="ace chk"
+										name="priceList[<?php echo $ps->id; ?>]"
+										id="priceList-<?php echo $ps->id; ?>"
+										value="<?php echo $ps->id; ?>"
+										data-name="<?php echo $ps->name; ?>" <?php echo empty($term_price_list[$ps->id]) ? "" : "checked" ;?> />
+										<span class="lbl"></span>
+									</label>
+								</td>
+							</tr>
+							<?php $no++; ?>
+						<?php endforeach; ?>
+					<?php endif; ?>
+
+					<tr>
+						<td class="text-center"><?php echo $no; ?></td>
+						<td>Specail Price List</td>
+						<td class="text-center">
+							<label>
+								<input type="checkbox"
+								class="ace chk"
+								id="priceList-x"
+								value="x"
+								data-name="Specail Price List" <?php echo empty($term_price_list['x']) ? "" : "checked" ;?> />
+								<span class="lbl"></span>
+							</label>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+    </div>
+		<div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12 grey">
+			กำหนดว่า Payment term นี้ จะสามารถใช้กับ Price List ใดได้บ้าง
+		</div>
+  </div>
+
+	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Position</label>
 		<div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
 			<select class="width-100" id="position">

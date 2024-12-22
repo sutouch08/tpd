@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 class Approve_rule extends PS_Controller{
 	public $menu_code = 'APPROVE_RULE';
 	public $menu_group_code = 'ADMIN';
-	public $title = 'Approval rule';
+	public $title = 'Exception rule';
 
   public function __construct()
   {
@@ -18,8 +18,6 @@ class Approve_rule extends PS_Controller{
 
   public function index()
   {
-		$this->title = "Approval rule - List";
-
 		$filter = array(
 			'code' => get_filter('code', 'ar_code', ''),
 			'conditions' => get_filter('conditions', 'ar_conditions', 'all'),
@@ -56,8 +54,6 @@ class Approve_rule extends PS_Controller{
 
 	public function add_new()
 	{
-		$this->title = "Approval rule - Add";
-
 		if($this->pm->can_add)
 		{
 			$ds['code'] = $this->get_new_code();
@@ -117,9 +113,7 @@ class Approve_rule extends PS_Controller{
 
 
 	public function edit($id)
-	{
-		$this->title = "Approve rule - Edit";
-
+	{		
 		if($this->pm->can_edit)
 		{
 			$rs = $this->approve_rule_model->get($id);

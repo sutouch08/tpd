@@ -16,9 +16,9 @@
 	<div class="form-group margin-top-30">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Payment Terms</label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-			<select class="width-100 e" id="payment-term">
+			<select class="width-100 e" id="payment-term" disabled>
 				<option value="">Select</option>
-				<?php echo select_payment_term(); ?>
+				<?php echo select_payment_term($doc->GroupNum); ?>
 			</select>
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="payment-term-error"></div>
@@ -27,7 +27,7 @@
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Name</label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-			<input type="text" id="name" class="width-100 e" maxlength="100" value=""  />
+			<input type="text" id="name" class="width-100 e" maxlength="100" value="<?php echo $doc->name; ?>" disabled />
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="name-error"></div>
   </div>
@@ -36,7 +36,7 @@
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Discount</label>
     <div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-12">
 			<div class="input-group width-100">
-				<input type="number" id="disc" class="width-100 text-center e" value="0.00"  />
+				<input type="number" id="disc" class="width-100 text-center e" value="<?php echo $doc->DiscPrcnt; ?>"  disabled/>
 				<span class="input-group-addon">%</span>
 			</div>
     </div>
@@ -51,47 +51,27 @@
 					<tr>
 						<th class="fix-width-50 text-center">#</th>
 						<th class="">Price List</th>
-						<th class="fix-width-50 text-center">
-							<label>
-								<input type="checkbox" class="ace" id="chk-all">
-								<span class="lbl"></span>
-							</label>
-						</th>
+						<th class="fix-width-50 text-center">Active</th>
 					</tr>
 				</thead>
 				<tbody>
-					<?php if(!empty($priceList)) : ?>
+					<?php if( ! empty($priceList)) : ?>
 						<?php $no = 1; ?>
 						<?php foreach($priceList as $ps)  : ?>
+							<?php $active = empty($term_price_list[$ps->id]) ? 0 : 1; ?>
 							<tr>
 								<td class="text-center"><?php echo $no; ?></td>
 								<td><?php echo $ps->name; ?></td>
-								<td class="text-center">
-									<label>
-										<input type="checkbox"
-										class="ace chk"
-										name="priceList[<?php echo $ps->id; ?>]"
-										id="priceList-<?php echo $ps->id; ?>"
-										value="<?php echo $ps->id; ?>" data-name="<?php echo $ps->name; ?>">
-										<span class="lbl"></span>
-									</label>
-								</td>
+								<td class="text-center"><?php echo is_active($active, FALSE); ?></td>
 							</tr>
 							<?php $no++; ?>
 						<?php endforeach; ?>
 					<?php endif; ?>
+					<?php $active = empty($term_price_list['x']) ? 0 : 1; ?>
 					<tr>
 						<td class="text-center"><?php echo $no; ?></td>
 						<td>Specail Price List</td>
-						<td class="text-center">
-							<label>
-								<input type="checkbox"
-								class="ace chk"
-								id="priceList-x"
-								value="x" data-name="Specail Price List">
-								<span class="lbl"></span>
-							</label>
-						</td>
+						<td class="text-center"><?php echo is_active($active, FALSE); ?></td>
 					</tr>
 				</tbody>
 			</table>
@@ -105,16 +85,16 @@
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Position</label>
 		<div class="col-lg-1 col-md-2 col-sm-2 col-xs-12">
 			<select class="width-100" id="position">
-				<option value="1">1</option>
-				<option value="2">2</option>
-				<option value="3">3</option>
-				<option value="4">4</option>
-				<option value="5">5</option>
-				<option value="6">6</option>
-				<option value="7">7</option>
-				<option value="8">8</option>
-				<option value="9">9</option>
-				<option value="10" selected>10</option>
+				<option value="1" <?php echo is_selected($doc->position, '1'); ?>>1</option>
+				<option value="2" <?php echo is_selected($doc->position, '2'); ?>>2</option>
+				<option value="3" <?php echo is_selected($doc->position, '3'); ?>>3</option>
+				<option value="4" <?php echo is_selected($doc->position, '4'); ?>>4</option>
+				<option value="5" <?php echo is_selected($doc->position, '5'); ?>>5</option>
+				<option value="6" <?php echo is_selected($doc->position, '6'); ?>>6</option>
+				<option value="7" <?php echo is_selected($doc->position, '7'); ?>>7</option>
+				<option value="8" <?php echo is_selected($doc->position, '8'); ?>>8</option>
+				<option value="9" <?php echo is_selected($doc->position, '9'); ?>>9</option>
+				<option value="10" <?php echo is_selected($doc->position, '10'); ?>>10</option>
 			</select>
     </div>
   </div>
@@ -123,7 +103,7 @@
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
 			<label>
-				<input type="checkbox" class="ace" id="allow-change" value="1"/>
+				<input type="checkbox" class="ace" id="allow-change" value="1" <?php echo is_checked('1', $doc->canChange); ?> />
 				<span class="lbl">&nbsp; &nbsp;Allow Change</span>
 			</label>
     </div>
@@ -133,19 +113,20 @@
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
 			<label>
-				<input type="checkbox" class="ace" id="active" value="1" checked/>
+				<input type="checkbox" class="ace" id="active" value="1" <?php echo is_checked('1', $doc->active); ?>/>
 				<span class="lbl">&nbsp; &nbsp;Active</span>
 			</label>
     </div>
   </div>
 
+	<input type="hidden" id="id" value="<?php echo $doc->id; ?>" />
 	<div class="divider-hidden"></div>
 	<div class="divider-hidden"></div>
 	<div class="divider-hidden"></div>
 
   <div class="form-group">
     <div class="col-lg-6 col-md-7 col-sm-7 col-xs-12 text-right">
-    <button type="button" class="btn btn-sm btn-success btn-100" id="btn-save" onclick="add()">Add</button>
+    <button type="button" class="btn btn-sm btn-success btn-100" id="btn-save" onclick="update()">Update</button>
     </div>
   </div>
 </div>

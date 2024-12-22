@@ -21,6 +21,16 @@ function viewDetail(id) {
 }
 
 
+$('#chk-all').change(function() {
+  if($(this).is(':checked')) {
+    $('.chk').prop('checked', true);
+  }
+  else {
+    $('.chk').prop('checked', false);
+  }
+});
+
+
 function add() {
   clearErrorByClass('e');
 
@@ -31,7 +41,8 @@ function add() {
     'DiscPrcnt' : parseDefault(parseFloat($('#disc').val()), 0),
     'position' : $('#position').val(),
     'canChange' : $('#allow-change').is(':checked') ? 1 : 0,
-    'active' : $('#active').is(':checked') ? 1 : 0
+    'active' : $('#active').is(':checked') ? 1 : 0,
+    'priceList' : []
   };
 
 
@@ -49,6 +60,12 @@ function add() {
     $('#disc').hasError('Discount must between 0 - 100');
     return false;
   }
+
+  $('.chk').each(function() {
+    if($(this).is(':checked')) {
+      h.priceList.push($(this).val());
+    }
+  });
 
   load_in();
 
@@ -111,7 +128,8 @@ function update() {
     'DiscPrcnt' : parseDefault(parseFloat($('#disc').val()), 0),
     'position' : $('#position').val(),
     'canChange' : $('#allow-change').is(':checked') ? 1 : 0,
-    'active' : $('#active').is(':checked') ? 1 : 0
+    'active' : $('#active').is(':checked') ? 1 : 0,
+    'priceList' : []
   };
 
 
@@ -129,6 +147,12 @@ function update() {
     $('#disc').hasError('Discount must between 0 - 100');
     return false;
   }
+
+  $('.chk').each(function() {
+    if($(this).is(':checked')) {
+      h.priceList.push($(this).val());
+    }
+  });
 
   load_in();
 

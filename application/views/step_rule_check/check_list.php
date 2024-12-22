@@ -43,12 +43,11 @@
 			<thead>
 				<tr>
 					<th class="fix-width-50 middle text-center">#</th>
-					<th class="fix-width-200 middle">Item Code</th>
-					<th class="min-width-200 middle">Description</th>
+					<th class="min-width-200 middle">Product</th>
 					<th class="fix-width-100 middle text-center">Price</th>
 					<th class="fix-width-100 middle text-center">Qty</th>
 					<th class="fix-width-100 middle text-center">Free</th>
-					<th class="fix-width-100 middle text-center">Average</th>
+					<th class="fix-width-100 middle text-center">Avg/Unit</th>
 					<th class="fix-width-100 middle text-center">Discount</th>
 				</tr>
 			</thead>
@@ -66,7 +65,6 @@
 		{{else}}
 			<tr>
 				<td class="text-center">{{no}}</td>
-				<td class="">{{ItemCode}}</td>
 				<td class="">{{ItemName}}</td>
 				<td class="text-center">{{Price}}</td>
 				<td class="text-center">{{Qty}}</td>

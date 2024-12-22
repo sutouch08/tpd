@@ -420,7 +420,7 @@ class Orders extends PS_Controller
 	{
 		$sc = TRUE;
 
-		$ds = '<option value="0" data-stepqty="0" data-freeqty="0" data-force="1">เลือก</option>';
+		$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">เลือก</option>';
 
 		$PriceList = $this->input->post('PriceList');
 
@@ -440,6 +440,7 @@ class Orders extends PS_Controller
 					class="'.$hi.'"
 					data-force="'.$rs->is_force.'"
 					data-stepqty="'.$rs->stepQty.'"
+					data-limit="'.$rs->limitQty.'"
 					data-freeqty="'.$rs->freeQty.'">'
 					.$rs->labelText
 					.'</option>';
@@ -460,6 +461,42 @@ class Orders extends PS_Controller
 			'status' => $sc === TRUE ? 'success' : 'failed',
 			'message' => $sc === TRUE ? 'success' : $this->error,
 			'template' => $sc === TRUE ? $ds : NULL
+		);
+
+		echo json_encode($arr);
+	}
+
+
+	public function get_payment_term()
+	{
+		$sc = TRUE;
+
+		$this->load->model('payment_term_discount_model');
+
+		$priceList = $this->input->post('PriceList');
+
+		$termList = $this->payment_term_discount_model->get_term_by_price_list($priceList);
+
+		$ds  = '<option value="">เลือก</option>';
+		$ds .= '<option value="-10" data-groupnum="x" data-pricelist="0" data-disc="0" data-change="0">Customer default</option>';
+
+		if( ! empty($termList))
+		{
+			foreach($termList as $rs)
+			{
+				$ds .= '<option value="'.$rs->id.'"
+				data-groupnum="'.$rs->GroupNum.'"
+				data-pricelist="'.$rs->list_id.'"
+				data-disc="'.$rs->DiscPrcnt.'"
+				data-change="'.$rs->canChange.'"
+				>'.$rs->name.'</option>';
+			}
+		}
+
+		$arr = array(
+			'status' => $sc === TRUE ? 'success' : 'failed',
+			'message' => $sc === TRUE ? 'success' : $this->error,
+			'options' => $sc === TRUE ? $ds : NULL
 		);
 
 		echo json_encode($arr);

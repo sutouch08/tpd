@@ -1,5 +1,5 @@
 <style>
-  .table tr > td {
+  .tableFixHead tr > td {
     padding:3px !important;
   }
 
@@ -101,8 +101,8 @@
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-1" value="" disabled/></td>
-          <td class="middle"><input type="number" class="form-control input-sm text-right input-qty" id="qty-1" data-no="1" value="" onkeyup="recalAmount(1)" disabled/></td>
-          <td class="middle"><input type="number" class="form-control input-sm text-right" id="free-1" value="" disabled/></td>
+          <td class="middle"><input type="number" class="form-control input-sm text-right input-qty e" id="qty-1" data-no="1" value="" onkeyup="recalAmount(1)" disabled/></td>
+          <td class="middle"><input type="number" class="form-control input-sm text-right e" id="free-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm text-center" id="uom-1" value="" disabled /></td>
           <td class="middle">
             <input type="number" class="form-control input-sm text-right" id="stdPrice-1" value="" disabled/>
@@ -136,7 +136,7 @@
       <input type="hidden" class="whs" id="whsCode-{{no}}" data-no="{{no}}">
       <input type="hidden" id="step-data-{{no}}" data-no="{{no}}">
       <div class="input-group width-100">
-        <input type="text" class="form-control input-sm input-item-code" id="item-{{no}}" data-no="{{no}}" />
+        <input type="text" class="form-control input-sm input-item-code e" id="item-{{no}}" data-no="{{no}}" />
         <span class="input-group-addon" onclick="clearText({{no}})">x</span>
       </div>
     </td>
@@ -149,8 +149,8 @@
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-{{no}}" value="" disabled /></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-{{no}}" value="" disabled/></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-{{no}}" value="" disabled/></td>
-    <td class="middle"><input type="number" class="form-control input-sm text-right input-qty" id="qty-{{no}}" data-no="{{no}}" value="" onkeyup="recalAmount({{no}})" disabled/></td>
-    <td class="middle"><input type="number" class="form-control input-sm text-right" id="free-{{no}}" value="" disabled/></td>
+    <td class="middle"><input type="number" class="form-control input-sm text-right input-qty e" id="qty-{{no}}" data-no="{{no}}" value="" onkeyup="recalAmount({{no}})" disabled/></td>
+    <td class="middle"><input type="number" class="form-control input-sm text-right e" id="free-{{no}}" value="" disabled/></td>
     <td class="middle"><input type="text" class="form-control input-sm text-center" id="uom-{{no}}" value="" disabled /></td>
     <td class="middle">
     <input type="number" class="form-control input-sm text-right" id="stdPrice-{{no}}" value="" disabled/>

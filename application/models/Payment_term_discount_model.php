@@ -53,9 +53,12 @@ class Payment_term_discount_model extends CI_Model
 
   public function add(array $ds = array())
   {
-    if(!empty($ds))
+    if( ! empty($ds))
     {
-      return $this->db->insert($this->tb, $ds);
+      if( $this->db->insert($this->tb, $ds))
+      {
+        return $this->db->insert_id();
+      }
     }
 
     return FALSE;
@@ -76,6 +79,57 @@ class Payment_term_discount_model extends CI_Model
   public function delete($id)
   {
     return $this->db->where('id', $id)->delete($this->tb);
+  }
+
+
+  public function add_price_list(array $ds = array())
+  {
+    if( ! empty($ds))
+    {
+      return $this->db->insert('payment_term_price_list', $ds);
+    }
+
+    return FALSE;
+  }
+
+
+  public function drop_term_price_list($term_id)
+  {
+    return $this->db->where('term_id', $term_id)->delete('payment_term_price_list');
+  }
+
+
+  public function get_term_price_list($term_id)
+  {
+    $rs = $this->db->where('term_id', $term_id)->get('payment_term_price_list');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function get_term_by_price_list($priceList)
+  {
+    $rs = $this->db
+    ->select('t.*, p.list_id')
+    ->from('payment_term_price_list AS p')
+    ->join('payment_term_discount AS t', 'p.term_id = t.id', 'left')
+    ->where('p.list_id', $priceList)
+    ->where('t.active', 1)
+    ->order_by('t.position', 'ASC')
+    ->order_by('t.id', 'ASC')
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
   }
 
 

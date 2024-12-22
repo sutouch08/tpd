@@ -49,7 +49,7 @@
         <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
           <select class="width-100 e" name="term" id="term" onchange="toggleDiscount()">
             <option value="">เลือก</option>
-            <?php echo select_payment_term_discount(); ?>
+            <option value="-10" data-groupnum="x" data-disc="0" data-change="0">Customer default</option>
           </select>
         </div>
       </div>

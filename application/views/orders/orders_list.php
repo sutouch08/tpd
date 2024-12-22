@@ -294,7 +294,7 @@
 
 <!--  Add New Address Modal  --------->
 <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="width:80%; min-width:400px;">
+    <div class="modal-dialog" style="width:90%; min-width:400px; max-width:95vw; margin-left:auto; margin-right:auto;">
         <div class="modal-content">
             <div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
@@ -344,24 +344,24 @@
 </table>
 </div>
 <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive" style="max-height:300px; overflow-y:auto;">
-<table class="table table-bordered border-1" style="min-width:1650px;">
+<table class="table table-bordered border-1" style="min-width:1580px;">
 	<thead>
 		<tr>
-			<th class="middle text-center">#</th>
-			<th class="middle text-center" style="width:250px;">รายการสินค้า</th>
-			<th class="middle text-center" style="width:100px;">จำนวน</th>
-			<th class="middle text-center" style="width:100px;">แถม</th>
-			<th class="middle text-center" style="width:100px;">หน่วย</th>
-			<th class="middle text-center" style="width:100px;">ราคา/หน่วย (Term)</th>
-			<th class="middle text-center" style="width:100px;">ราคา(พิเศษ)/หน่วย</th>
-			<th class="middle text-center <?php echo $hide; ?>" style="width:80px;">Discount Sales</th>
-			<th class="middle text-center" style="width:100px;">มูลค่า</th>
-			<th class="middle text-center" style="width:100px;">หมายเหตุ</th>
-			<th class="middle text-center" style="width:100px;">จำนวนค้างส่ง</th>
-			<th class="middle text-center" style="width:100px;">เลขที่ DO</th>
-			<th class="middle text-center" style="width:100px;">เลขที่ Invoice</th>
-			<th class="middle text-center" style="width:100px;">วันที่ Invoice</th>
-			<th class="middle text-center" style="width:200px;">เหตุผลในการ Reject</th>
+			<th class="fix-width-40 middle text-center">#</th>
+			<th class="min-width-250 middle text-center">รายการสินค้า</th>
+			<th class="fix-width-80 middle text-center">จำนวน</th>
+			<th class="fix-width-80 middle text-center">แถม</th>
+			<th class="fix-width-100 middle text-center">หน่วย</th>
+			<th class="fix-width-100 middle text-center">ราคา/หน่วย (Term)</th>
+			<th class="fix-width-100 middle text-center">ราคา(พิเศษ)/หน่วย</th>
+			<th class="fix-width-80 middle text-center <?php echo $hide; ?>">Discount Sales</th>
+			<th class="fix-width-100 middle text-center">มูลค่า</th>
+			<th class="fix-width-100 middle text-center">หมายเหตุ</th>
+			<th class="fix-width-100 middle text-center">จำนวนค้างส่ง</th>
+			<th class="fix-width-100 middle text-center">เลขที่ DO</th>
+			<th class="fix-width-100 middle text-center">เลขที่ Invoice</th>
+			<th class="fix-width-100 middle text-center">วันที่ Invoice</th>
+			<th class="fix-width-200 middle text-center">เหตุผลในการ Reject</th>
 		</tr>
 	</thead>
 	<tbody>

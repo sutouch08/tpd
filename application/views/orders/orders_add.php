@@ -92,46 +92,46 @@
 <script id="preview-template" type="text/x-handlebarsTemplate">
 <table class="table table-bordered border-1" style="margin-bottom:10px;">
 	<tr>
-		<th class="width-30">
+		<td class="width-30">
 		รหัสลูกค้า
 		<label class="pull-right">
 		<input type="checkbox" class="ace check-list" onchange="toggleSubmit()">
 		<span class="lbl"></span>
 		</label>
-		</th>
+		</td>
 		<td>{{customerName}}</td>
 	</tr>
-	<tr><th>เลขที่ใบสั่งสินค้า</th><td>{{orderCode}}</td></tr>
-	<tr><th>ที่อยู่ตามใบกำกับภาษี</th><td>{{billToCode}}  {{billToAddress}}</td></tr>
-	<tr><th>สถานที่ส่งของ</th><td>{{shipToCode}}  {{shipToAddress}}</td></tr>
-	<tr><th>สถานที่จัดส่งเพิ่มเติม</th><td>{{exShipTo}}</td></tr>
-	<tr><th>Currency</th><td>{{currency}} | Rate: {{currencyRate}} </td></tr>
-	<tr><th>วันที่สั่งสินค้า</th><td>{{docDate}}</td></tr>
-	<tr><th>วันที่จัดส่ง</th><td>{{dueDate}}</td></tr>
-	<tr><th>เลขที่ PO</th><td>{{PoNo}}</td></tr>
-	<tr><th>บิลลงวันที่</th><td>{{billOption}}</td></tr>
-	<tr><th>ต้องการใบเสนอราคา</th><td>{{requiredSQ}}</td></tr>
+	<tr><td>เลขที่ใบสั่งสินค้า</td><td>{{orderCode}}</td></tr>
+	<tr><td>ที่อยู่ตามใบกำกับภาษี</td><td>{{billToCode}}  {{billToAddress}}</td></tr>
+	<tr><td>สถานที่ส่งของ</td><td>{{shipToCode}}  {{shipToAddress}}</td></tr>
+	<tr><td>สถานที่จัดส่งเพิ่มเติม</td><td>{{exShipTo}}</td></tr>
+	<tr><td>Currency</td><td>{{currency}} | Rate: {{currencyRate}} </td></tr>
+	<tr><td>วันที่สั่งสินค้า</td><td>{{docDate}}</td></tr>
+	<tr><td>วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
+	<tr><td>เลขที่ PO</td><td>{{PoNo}}</td></tr>
+	<tr><td>บิลลงวันที่</td><td>{{billOption}}</td></tr>
+	<tr><td>ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
 	<tr>
-		<th>
+		<td>
 			PriceList
 			<label class="pull-right">
 				<input type="checkbox" class="ace check-list" onchange="toggleSubmit()">
 				<span class="lbl"></span>
 			</label>
-		</th>
+		</td>
 		<td>{{listName}}</td>
 	</tr>
 	<tr>
-		<th>
+		<td>
 			Payment Terms
 			<label class="pull-right">
 				<input type="checkbox" class="ace check-list" onchange="toggleSubmit()">
 				<span class="lbl"></span>
 			</label>
-		</th>
+		</td>
 		<td>{{termName}}</td>
 	</tr>
-	<tr><th>Remark สำหรับสื่อสารกับ Admin</th><td>{{remark}}</td></tr>
+	<tr><td>Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>
 </table>
 <table class="table table-bordered border-1" style="min-width:100%;">
 	<thead>
@@ -186,11 +186,6 @@
 	</tbody>
 </table>
 </script>
-
-
-
-
-
 
 <script src="<?php echo base_url(); ?>scripts/orders/orders.js?v=<?php echo date('YmdH'); ?>"></script>
 <script src="<?php echo base_url(); ?>scripts/orders/orders_add.js?v=<?php echo date('YmdH'); ?>"></script>

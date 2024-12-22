@@ -104,6 +104,7 @@ function save() {
       let id = $(this).data('id');
       let label = $('#label-'+no).val().trim();
       let stepQty = parseDefault(parseInt($('#step-qty-'+no).val()), 0);
+      let limitQty = parseDefault(parseInt($('#limit-qty-'+no).val()), 0);
       let freeQty = parseDefault(parseInt($('#free-qty-'+no).val()), 0);
       let active = $('#active-'+no).val();
       let force = $('#force-'+no).is(':checked') ? 1 : 0;
@@ -120,8 +121,13 @@ function save() {
         err++;
       }
 
-      if(freeQty <= 0) {
+      if(freeQty < 0) {
         $('#free-qty-'+no).hasError();
+        err++;
+      }
+
+      if(limitQty < 0) {
+        $('#limit-qty-'+no).hasError();
         err++;
       }
 
@@ -130,6 +136,7 @@ function save() {
         'label' : label,
         'stepQty' : stepQty,
         'freeQty' : freeQty,
+        'limitQty' : limitQty,
         'active' : active,
         'is_force' : force,
         'highlight' : highlight,

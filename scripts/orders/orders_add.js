@@ -253,6 +253,7 @@ function checkPriceList() {
 	init();
 
 	getStepTemplate();
+	getTermDropdown();
 }
 
 
@@ -340,6 +341,52 @@ function getStepTemplate() {
 }
 
 
+function getTermDropdown() {
+	let priceList = $('#priceList').val();
+
+	$.ajax({
+		url:HOME + 'get_payment_term',
+		type:'POST',
+		cache:false,
+		data:{
+			'PriceList' : priceList
+		},
+		success:function(rs) {
+			if(isJson(rs)) {
+				let ds = JSON.parse(rs);
+
+				if(ds.status == 'success') {
+					$('#term').html(ds.options);
+				}
+				else {
+					swal({
+						title:'Error !',
+						text:ds.message,
+						type:'error',
+						html:true
+					})
+				}
+			}
+			else {
+				swal({
+					title:'Error!',
+					text:rs,
+					type:'error',
+					html:true
+				})
+			}
+		},
+		error:function(rs) {
+			swal({
+				title:'Error!',
+				text:rs.responseText,
+				type:'error',
+				html:true
+			})
+		}
+	})
+}
+
 function getItemData(code, no) {
 	let priceList = $('#priceList').val();
 
@@ -397,7 +444,8 @@ function getItemData(code, no) {
 					$('#row-'+no).removeClass('control');
 				}
 
-				recalAmount(no);
+				updateStepQty(no);
+				//recalAmount(no);
 			}
 			else {
 				showError(rs);
@@ -551,56 +599,43 @@ function recalAmount(no) {
 			}
 		}
 	}
+	else {
+		let limitQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('limit')), 0);
+		let minQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('stepqty')), 1);
+
+		if(qty < minQty) {
+			$('#qty-'+no).hasError();
+			$('#err-'+no).val(1);
+		}
+		else {
+			$('#qty-'+no).clearError();
+			$('#err-'+no).val(0);
+		}
+
+		if(limitQty > 0 && qty > limitQty) {
+			qty = limitQty;
+			$('#qty-'+no).val(qty);
+		}
+	}
 
 
 
 	if(sellPrice != "") {
 		let amount = qty * sellPrice;
 		let vatamount = get_vat_amount(amount, vatRate);
-		$('#amount-'+no).val(amount.toFixed(4));
+		$('#amount-'+no).val(amount.toFixed(2));
 		$('#vatAmount-'+no).val(vatamount);
 		console.log(amount);
 	}
 	else {
 		let amount = qty * stdPrice;
 		let vatamount = get_vat_amount(amount, vatRate);
-		$('#amount-'+no).val(amount.toFixed(4));
+		$('#amount-'+no).val(amount.toFixed(2));
 		$('#vatAmount-'+no).val(vatamount);
 	}
 
 	recalTotal();
 }
-
-
-// function recalAmount(no) {
-// 	let vatRate = parseDefault(parseFloat($('#vatRate').val()), 0);
-//
-// 	if($('#VatGroup').val() === "") {
-// 		vatRate = parseDefault(parseFloat($('#itemVatRate-'+no).val()), 0);
-// 	}
-//
-// 	let qty = parseDefault(parseFloat($('#qty-'+no).val()), 0);
-// 	let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
-// 	let sellPrice = $('#price-'+no).val();
-//
-//
-//
-// 	if(sellPrice != "") {
-// 		let amount = qty * sellPrice;
-// 		let vatamount = get_vat_amount(amount, vatRate);
-// 		$('#amount-'+no).val(amount.toFixed(4));
-// 		$('#vatAmount-'+no).val(vatamount);
-// 		console.log(amount);
-// 	}
-// 	else {
-// 		let amount = qty * stdPrice;
-// 		let vatamount = get_vat_amount(amount, vatRate);
-// 		$('#amount-'+no).val(amount.toFixed(4));
-// 		$('#vatAmount-'+no).val(vatamount);
-// 	}
-//
-// 	recalTotal();
-// }
 
 
 function recalTotal() {
@@ -628,11 +663,11 @@ function recalTotal() {
 	totalBefVat = totalAmount - totalVat;
 	docTotal = totalAmount;
 
-	$('#totalBefDi').val(addCommas(totalBefDi.toFixed(4)));
-	$('#discSum').val(addCommas(totalDisc.toFixed(4)));
-	$('#totalAmount').val(addCommas(totalBefVat.toFixed(4)));
-	$('#totalVat').val(addCommas(totalVat.toFixed(4)));
-	$('#docTotal').val(addCommas(docTotal.toFixed(4)));
+	$('#totalBefDi').val(addCommas(totalBefDi.toFixed(2)));
+	$('#discSum').val(addCommas(totalDisc.toFixed(2)));
+	$('#totalAmount').val(addCommas(totalBefVat.toFixed(2)));
+	$('#totalVat').val(addCommas(totalVat.toFixed(2)));
+	$('#docTotal').val(addCommas(docTotal.toFixed(2)));
 }
 
 
@@ -697,21 +732,35 @@ function previewOrder() {
 
 	$('.item-code').each(function() {
 		let no = $(this).data('no');
+		let er = 0;
 
 		if($(this).val() != "") {
 			count++;
-			if($('#qty-'+no).val() == "" || $('#qty-'+no).val() == 0) {
-				$('#qty-'+no).addClass('has-error');
+			let qty = parseDefault(parseInt($('#qty-'+no).val()), 0);
+			let minQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('stepqty')), 0);
+			let limitQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('limit')), 0);
+			let freeQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('freeqty')), 0);
+			let free = parseDefault(parseInt($('#free-'+no).val()), 0);
+
+			if(qty == 0 || qty < minQty || (limitQty > 0 && qty > limitQty)) {
+				$('#qty-'+no).hasError();
 				msg = "จำนวนไม่ถูกต้อง";
 				err++;
+				er++;
 			}
-			else {
-				$('#qty-'+no).removeClass('has-error');
+
+			if(freeQty > 0 && free != freeQty) {
+				$('#free-'+no).hasError();
+				msg = "จำนวนแถมไม่ถูกต้อง";
+				err++;
+				er++;
+			}
+
+			if(er == 0) {
+				let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
+				let sellPrice = parseDefault(parseFloat($('#price-'+no).val()), 0);
 
 				if($('#price-'+no).val() != "") {
-					let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
-					let sellPrice = parseDefault(parseFloat($('#price-'+no).val()), 0);
-
 					if(sellPrice < stdPrice) {
 						price_edit++;
 					}
@@ -726,9 +775,9 @@ function previewOrder() {
 					"qty" : addCommas($('#qty-'+no).val()),
 					"free" : addCommas($('#free-'+no).val()),
 					"uom" : $('#uom-'+no).val(),
-					"stdPrice" : addCommas($('#stdPrice-'+no).val()),
-					"sellPrice" : addCommas($('#price-'+no).val()),
-					"amount" : addCommas(amount),
+					"stdPrice" : addCommas(stdPrice.toFixed(2)),
+					"sellPrice" : addCommas(sellPrice.toFixed(2)),
+					"amount" : addCommas(amount.toFixed(2)),
 					"dis" : $('#dis-'+no).is(':checked') ? '<i class="fa fa-check blue"></i>' : ''
 				}
 
@@ -743,10 +792,10 @@ function previewOrder() {
 	totalAmount = totalBefDi - DiscSum;
 
 	let subTotal = {
-		"totalBefDi" : addCommas(totalBefDi),
-		"DiscPrcnt" : DiscPrcnt,
-		"DiscSum" : addCommas(DiscSum),
-		"totalAmount" : addCommas(totalAmount)
+		"totalBefDi" : addCommas(totalBefDi.toFixed(2)),
+		"DiscPrcnt" : DiscPrcnt.toFixed(2),
+		"DiscSum" : addCommas(DiscSum.toFixed(2)),
+		"totalAmount" : addCommas(totalAmount.toFixed(2))
 	}
 
 	items.push(subTotal);
@@ -858,20 +907,57 @@ function toggleSubmit() {
 
 
 function toggleDiscount() {
+	let term_id = $('#term').val();
 	let discPrcnt = parseDefault(parseFloat($('#term option:selected').data('disc')), 0);
-	let canChange = $('#term option:selected').data('change');
 
-	$('#discPrcnt').val(discPrcnt);
+	if(term_id != '-10' && term_id != '') {
+		swal({
+			title:'โปรดทราบ',
+			text:'คุณจำเป็นต้องแจ้งให้ลูกค้าทราบเกี่ยวกับ payment term ที่เลือกนี้ด้วย',
+			type:'warning',
+			showCancelButton:true,
+			confirmButtonText:'รับทราบ',
+			cancelButtonText:'ยกเลิก',
+			closeOnConfirm:true
+		}, function(isConfirm) {
+			if(isConfirm) {
+				let canChange = $('#term option:selected').data('change');
 
-	if(canChange == 1) {
-		$('#discPrcnt').removeAttr('disabled');
-		$('#discPrcnt').focus();
+				$('#discPrcnt').val(discPrcnt);
+
+				if(canChange == 1) {
+					$('#discPrcnt').removeAttr('disabled');
+					$('#discPrcnt').focus();
+				}
+				else {
+					$('#discPrcnt').attr('disabled', 'disabled');
+				}
+
+				recalTotal();
+			}
+			else {
+				$('#term').val("");
+				$('#discPrcnt').attr('disabled', 'disabled');
+				$('#discPrcnt').val(0);
+				recalTotal();
+			}
+		})
 	}
 	else {
-		$('#discPrcnt').attr('disabled', 'disabled');
-	}
+		let canChange = $('#term option:selected').data('change');
 
-	recalTotal();
+		$('#discPrcnt').val(discPrcnt);
+
+		if(canChange == 1) {
+			$('#discPrcnt').removeAttr('disabled');
+			$('#discPrcnt').focus();
+		}
+		else {
+			$('#discPrcnt').attr('disabled', 'disabled');
+		}
+
+		recalTotal();
+	}
 }
 
 

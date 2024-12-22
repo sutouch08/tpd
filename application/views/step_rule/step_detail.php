@@ -7,7 +7,7 @@
   <div class="divider-hidden"></div>
 
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive" style="over-flow:auto;">
-    <table class="table table-bordered border-1" style="min-width:1140px;">
+    <table class="table table-bordered border-1" style="min-width:1240px;">
       <thead>
         <tr class="font-size-10">
           <th class="fix-width-50 text-center">
@@ -19,6 +19,7 @@
 					<th class="fix-width-50 text-center">#</th>
 					<th class="min-width-200 text-center">Label Text</th>
 					<th class="fix-width-100 text-center">Step Qty</th>
+          <th class="fix-width-100 text-center">Limit Qty</th>
 					<th class="fix-width-100 text-center">Free Qty</th>
 					<th class="fix-width-100 text-center">Status</th>
           <th class="fix-width-80 text-center">Force</th>
@@ -62,6 +63,16 @@
               data-value="<?php echo $rs->stepQty; ?>"
               value="<?php echo $rs->stepQty; ?>"
               placeholder="Step qty" />
+					</td>
+          <td class="middle">
+						<input type="number"
+              class="form-control input-sm text-right limit-qty e"
+              id="limit-qty-<?php echo $no; ?>"
+              data-no="<?php echo $no; ?>"
+              data-id="<?php echo $rs->id; ?>"
+              data-value="<?php echo $rs->limitQty; ?>"
+              value="<?php echo $rs->limitQty; ?>"
+              placeholder="Limit qty" />
 					</td>
 					<td class="middle">
             <input type="number"
@@ -176,6 +187,16 @@
         data-value=""
         value=""
         placeholder="Step qty" />
+    </td>
+    <td class="middle">
+      <input type="number"
+        class="form-control input-sm text-right limit-qty e"
+        id="limit-qty-{{no}}"
+        data-no="{{no}}"
+        data-id="0"
+        data-value=""
+        value=""
+        placeholder="Limit qty" />
     </td>
     <td class="middle">
       <input type="number"

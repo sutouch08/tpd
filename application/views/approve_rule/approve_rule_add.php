@@ -52,7 +52,7 @@
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="sale-team-error"></div>
   </div>
 
-	<div class="form-group">
+	<div class="form-group hide">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right"></label>
     <div class="col-lg-4 col-md-6 col-sm-6 col-xs-12">
 			<label>

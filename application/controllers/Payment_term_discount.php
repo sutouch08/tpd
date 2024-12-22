@@ -51,7 +51,8 @@ class Payment_term_discount extends PS_Controller
 	{
 		if($this->pm->can_add)
 		{
-			$this->load->view('payment_term_discount/payment_term_discount_add');
+			$ds['priceList'] = $this->user_model->get_all_price_list();
+			$this->load->view('payment_term_discount/payment_term_discount_add', $ds);
 		}
 		else
 		{
@@ -84,10 +85,40 @@ class Payment_term_discount extends PS_Controller
 						'date_add' => now()
 					);
 
-					if( ! $this->payment_term_discount_model->add($arr))
+					$this->db->trans_begin();
+
+					$id = $this->payment_term_discount_model->add($arr);
+
+					if( ! $id )
 					{
 						$sc = FALSE;
 						$this->error = get_error_message('insert');
+					}
+
+					if($sc === TRUE && ! empty($ds->priceList))
+					{
+						foreach($ds->priceList as $list_id)
+						{
+							$arr = array(
+								'term_id' => $id,
+								'list_id' => $list_id
+							);
+
+							if( ! $this->payment_term_discount_model->add_price_list($arr))
+							{
+								$sc = FALSE;
+								$this->error = "Failed to add price list";
+							}
+						}
+					}
+
+					if($sc === TRUE)
+					{
+						$this->db->trans_commit();
+					}
+					else
+					{
+						$this->db->trans_rollback();
 					}
 				}
 				else
@@ -121,6 +152,20 @@ class Payment_term_discount extends PS_Controller
 			if( ! empty($doc))
 			{
 				$data['doc'] = $doc;
+				$data['priceList'] = $this->user_model->get_all_price_list();
+				$term_price_list = $this->payment_term_discount_model->get_term_price_list($doc->id);
+				$TPL = array();
+
+				if( ! empty($term_price_list))
+				{
+					foreach($term_price_list as $p)
+					{
+						$TPL[$p->list_id] = $p->list_id;
+					}
+				}
+
+				$data['term_price_list'] = $TPL;
+
 				$this->load->view('payment_term_discount/payment_term_discount_edit', $data);
 			}
 			else
@@ -159,10 +204,48 @@ class Payment_term_discount extends PS_Controller
 						'date_upd' => now()
 					);
 
+					$this->db->trans_begin();
+
 					if( ! $this->payment_term_discount_model->update($ds->id, $arr))
 					{
 						$sc = FALSE;
 						$this->error = get_error_message('update');
+					}
+
+					if($sc === TRUE)
+					{
+						//---- delete current price list
+						if( ! $this->payment_term_discount_model->drop_term_price_list($ds->id))
+						{
+							$sc = FALSE;
+							$this->error = "Failed to drop current price list";
+						}
+					}
+
+					if($sc === TRUE && ! empty($ds->priceList))
+					{
+						foreach($ds->priceList as $list_id)
+						{
+							$arr = array(
+								'term_id' => $ds->id,
+								'list_id' => $list_id
+							);
+
+							if( ! $this->payment_term_discount_model->add_price_list($arr))
+							{
+								$sc = FALSE;
+								$this->error = "Failed add price list";
+							}
+						}
+					}
+
+					if($sc === TRUE)
+					{
+						$this->db->trans_commit();
+					}
+					else
+					{
+						$this->db->trans_rollback();
 					}
 				}
 				else
@@ -184,6 +267,36 @@ class Payment_term_discount extends PS_Controller
 		}
 
 		$this->_response($sc);
+	}
+
+
+	public function view_detail($id)
+	{
+		$doc = $this->payment_term_discount_model->get($id);
+
+		if( ! empty($doc))
+		{
+			$data['doc'] = $doc;
+			$data['priceList'] = $this->user_model->get_all_price_list();
+			$term_price_list = $this->payment_term_discount_model->get_term_price_list($doc->id);
+			$TPL = array();
+
+			if( ! empty($term_price_list))
+			{
+				foreach($term_price_list as $p)
+				{
+					$TPL[$p->list_id] = $p->list_id;
+				}
+			}
+
+			$data['term_price_list'] = $TPL;
+
+			$this->load->view('payment_term_discount/payment_term_discount_view_detail', $data);
+		}
+		else
+		{
+			$this->error_page();
+		}
 	}
 
 

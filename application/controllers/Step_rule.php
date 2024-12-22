@@ -180,6 +180,7 @@ class Step_rule extends PS_Controller
 								$arr = array(
 									'labelText' => $rs->label,
 									'stepQty' => $rs->stepQty,
+									'limitQty' => $rs->limitQty,
 									'freeQty' => $rs->freeQty,
 									'active' => $rs->active == 1 ? 1 : 0,
 									'highlight' => $rs->highlight == 1 ? 1 : 0,
@@ -201,6 +202,7 @@ class Step_rule extends PS_Controller
 									'PriceList' => $ds->price_list,
 									'labelText' => $rs->label,
 									'stepQty' => $rs->stepQty,
+									'limitQty' => $rs->limitQty,
 									'freeQty' => $rs->freeQty,
 									'active' => $rs->active == 1 ? 1 : 0,
 									'highlight' => $rs->highlight == 1 ? 1 : 0,
