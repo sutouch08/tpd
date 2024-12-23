@@ -157,7 +157,7 @@ class Orders extends PS_Controller
 					'ECVatGroup' => $rs->ECVatGroup,
 					'SlpCode' => $rs->SlpCode,
 					'Rate' => $rs->Rate,
-					'isControl' => $rs->isControl == 'Y' ? 'Y' : 'N',
+					'isControl' => $rs->isControl == '1' ? 'Y' : 'N',
 					'saleTeam' => $rs->saleTeam, //-- U_TPD_BI_SalesTeam
 					'areaId' => $rs->areaId, //--- U_TPD_BI_AreaName
 					'salePerson' => $rs->salePerson, //-- U_SALE_PERSON
