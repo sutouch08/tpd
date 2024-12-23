@@ -342,7 +342,7 @@ class Orders extends PS_Controller
 
 			$this->db->where('active', 1);
 
-			if($isControl == 'N')
+			if($isControl == 'Y')
 			{
 				$this->db->where('isControl', 'N');
 			}
@@ -385,7 +385,7 @@ class Orders extends PS_Controller
 			$qr .= "AND OITM.SellItem = 'Y' ";
 			$qr .= "AND OITM.validFor = 'Y' ";
 			$qr .= "AND OITM.ItemCode LIKE 'FG%' ";
-			$qr .= ($isControl == 'Y' ? "" : "AND (OITM.U_BEX_Controll IS NULL OR OITM.U_BEX_Controll != 'Controlled') ");
+			$qr .= ($isControl == 'Y' ? "AND (OITM.U_BEX_Controll IS NULL OR OITM.U_BEX_Controll != 'Controlled') " : "");
 			$qr .= "AND ITM1.PriceList = {$priceList} ";
 			$qr .= "AND ITM1.Price > 0 ";
 
