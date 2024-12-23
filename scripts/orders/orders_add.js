@@ -51,8 +51,6 @@ function changeCustomerList() {
 
 
 $('#customer').change(function() {
-	init();
-
 	let isControl = $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N';
 
 	if(isControl == 'N') {
@@ -63,6 +61,8 @@ $('#customer').change(function() {
 			}
 		})
 	}
+
+	init();
 });
 
 
