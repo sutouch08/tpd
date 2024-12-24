@@ -101,7 +101,6 @@ class Item_model extends CI_Model
   }
 
 
-
   public function get_item_group_list()
   {
     $rs = $this->ms
@@ -149,18 +148,6 @@ class Item_model extends CI_Model
 
     return 0;
 	}
-
-
-  public function get_warranty_template($ItemCode)
-  {
-    $rs = $this->ms->select('WarrntTmpl')->where('ItemCode', $ItemCode)->get('OITM');
-    if($rs->num_rows() === 1)
-    {
-      return $rs->row()->WarrntTmpl;
-    }
-
-    return NULL;
-  }
 
 
   public function getValidDetail($ItemCode)

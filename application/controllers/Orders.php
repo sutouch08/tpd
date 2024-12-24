@@ -342,10 +342,10 @@ class Orders extends PS_Controller
 
 			$this->db->where('active', 1);
 
-			if($isControl == 'Y')
-			{
-				$this->db->where('isControl', 'N');
-			}
+			// if($isControl == 'Y')
+			// {
+			// 	$this->db->where('isControl', 'N');
+			// }
 
 			if($txt != '*')
 			{
@@ -363,9 +363,47 @@ class Orders extends PS_Controller
 
 			if($rs->num_rows() > 0)
 			{
+				$items = array();
+
 				foreach($rs->result() as $rd)
 				{
-					$sc[] = $rd->ItemName .' | '. $rd->ItemCode;
+					$items[] = $rd->ItemCode;
+				}
+
+				if( ! empty($items))
+				{
+					$this->ms
+					->select('ItemCode, ItemName, U_BEX_Controll')
+					->where('SellItem', 'Y')
+					->where('validFor', 'Y')
+					->where_in('ItemCode', $items);
+
+					if($isControl == 'Y')
+					{
+						$this->ms
+						->group_start()
+						->where('U_BEX_Controll IS NULL', NULL, FALSE)
+						->or_where('U_BEX_Controll !=', 'Controlled')
+						->group_end();
+					}
+
+					$ro = $this->ms->order_by('ItemName', 'ASC')->limit(20)->get('OITM');
+
+					if($ro->num_rows() > 0)
+			    {
+			      foreach($ro->result() as $rp)
+			      {
+			        $sc[] = $rp->ItemName .' | '. $rp->ItemCode;
+			      }
+			    }
+					else
+					{
+						$sc[] = "Not found";
+					}
+				}
+				else
+				{
+					$sc[] = "Not found";
 				}
 			}
 			else
