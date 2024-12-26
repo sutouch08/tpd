@@ -715,6 +715,7 @@ class Orders extends PS_Controller
 					'SlpCode' => get_null($header->SlpCode),
 					'GroupNum' => $groupNum,
 					'Pricelist' => $header->PriceList == 'x' ? -10 : $header->PriceList,
+					'SpecialPriceList' => $header->SpecialPriceList,
 					'NumAtCard' => get_null($header->NumAtCard),
 					'DocCur' => $header->DocCur,
 					'DocRate' => $header->DocRate,

@@ -18,6 +18,7 @@
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
 			<select class="width-100 e" id="payment-term">
 				<option value="">Select</option>
+				<option value="-10" <?php echo is_selected('0', $doc->GroupNum); ?>>Customer Default</option>
 				<?php echo select_payment_term($doc->GroupNum); ?>
 			</select>
     </div>

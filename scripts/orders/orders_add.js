@@ -1013,6 +1013,7 @@ function saveAdd() {
 		'SlpCode' : $('#customer option:selected').data('sale'),
 		'CardGroup' : $('#customer option:selected').data('department'), //--- department
 		'PriceList' : $('#priceList').val(),
+		'SpecialPriceList' : $('#priceList option:selected').data('spid'),
 		'PayToCode' : $('#billToCode').val(),
 		'BillTo' : $('#BillTo').val(),
 		'ShipToCode' : $('#shipToCode').val(),
