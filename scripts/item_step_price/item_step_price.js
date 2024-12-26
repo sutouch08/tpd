@@ -242,7 +242,7 @@ function toggleActive(option) {
 
 
 function addRow() {
-  let no = parseDefault(parseInt($('#top-row').val()), 0);
+  let no = parseDefault(parseFloat($('#top-row').val()), 0);
 
   let source = $('#row-template').html();
   let ds = {'no' : no};
