@@ -20,24 +20,26 @@ class Customer_model extends CI_Model
     return NULL;
   }
 
+
   public function get_user_customer_list($area_id, $type = "V")
   {
     //--- V = vat Q = non vat
-    $rs = $this->ms
-    ->select('C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, C.Currency')
-    ->select('C.U_TPD_DrugCon AS isControl, C.U_TPD_BI_SalesTeam AS saleTeam')
-    ->select('C.U_TPD_BI_AreaName AS areaId, C.U_SALE_PERSON AS salePerson, U_TPD_BI_Department AS department, V.Rate')
-    ->from('OCRD AS C')
-    ->join('OVTG AS V', 'C.ECVatGroup = V.Code', 'left')
-    ->where('C.CardType', 'C')
-    ->where('C.validFor', 'Y')
-    ->where('C.SlpCode >', 0)
-    ->where('C.U_TPD_BI_AreaName IS NOT NULL', NULL, FALSE)
-    ->where('C.U_TPD_BI_AreaName', $area_id)
-    ->where('C.U_BEX_CUST_VQ', $type."-")
-    ->where('C.U_SALE_PERSON IS NOT NULL', NULL, FALSE)
-    ->order_by('C.CardCode', 'ASC')
-    ->get();
+    $qr  = "SELECT C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, ";
+    $qr .= "C.Currency, C.U_TPD_DrugCon AS isControl, C.U_TPD_BI_SalesTeam AS saleTeam, ";
+    $qr .= "C.U_TPD_BI_AreaName AS areaId, C.U_SALE_PERSON AS salePerson, ";
+    $qr .= "C.U_TPD_BI_Department AS department, V.Rate ";
+    $qr .= "FROM OCRD AS C ";
+    $qr .= "LEFT JOIN OVTG AS V ON C.ECVatGroup = V.Code ";
+    $qr .= "WHERE C.CardType = 'C' ";
+    $qr .= "AND C.validFor = 'Y' ";
+    $qr .= "AND C.SlpCode > 0 ";
+    $qr .= "AND C.U_TPD_BI_AreaName IS NOT NULL ";
+    $qr .= "AND C.U_TPD_BI_AreaName = '{$area_id}' ";
+    $qr .= "AND C.U_SALE_PERSON IS NOT NULL ";
+    $qr .= "AND C.CardCode LIKE '___{$type}%' ";
+    $qr .= "ORDER BY C.CardCode ASC";
+
+    $rs = $this->ms->query($qr);
 
     if($rs->num_rows() > 0)
     {
@@ -51,20 +53,21 @@ class Customer_model extends CI_Model
   public function get_all_user_customer_list($type = "V")
   {
     //--- V = vat Q = non vat
-    $rs = $this->ms
-    ->select('C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, C.Currency')
-    ->select('C.U_TPD_DrugCon AS isControl, C.U_TPD_BI_SalesTeam AS saleTeam')
-    ->select('C.U_TPD_BI_AreaName AS areaId, C.U_SALE_PERSON AS salePerson, U_TPD_BI_Department AS department, V.Rate')    
-    ->from('OCRD AS C')
-    ->join('OVTG AS V', 'C.ECVatGroup = V.Code', 'left')
-    ->where('C.CardType', 'C')
-    ->where('C.validFor', 'Y')
-    ->where('C.SlpCode >', 0)
-    ->where('C.U_TPD_BI_AreaName IS NOT NULL', NULL, FALSE)
-    ->where('C.U_BEX_CUST_VQ', $type."-")
-    ->where('C.U_SALE_PERSON IS NOT NULL', NULL, FALSE)
-    ->order_by('C.CardCode', 'ASC')
-    ->get();
+    $qr  = "SELECT C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, ";
+    $qr .= "C.Currency, C.U_TPD_DrugCon AS isControl, C.U_TPD_BI_SalesTeam AS saleTeam, ";
+    $qr .= "C.U_TPD_BI_AreaName AS areaId, C.U_SALE_PERSON AS salePerson, ";
+    $qr .= "C.U_TPD_BI_Department AS department, V.Rate ";
+    $qr .= "FROM OCRD AS C ";
+    $qr .= "LEFT JOIN OVTG AS V ON C.ECVatGroup = V.Code ";
+    $qr .= "WHERE C.CardType = 'C' ";
+    $qr .= "AND C.validFor = 'Y' ";
+    $qr .= "AND C.SlpCode > 0 ";
+    $qr .= "AND C.U_TPD_BI_AreaName IS NOT NULL ";
+    $qr .= "AND C.U_SALE_PERSON IS NOT NULL ";
+    $qr .= "AND C.CardCode LIKE '___{$type}%' ";
+    $qr .= "ORDER BY C.CardCode ASC";
+
+    $rs = $this->ms->query($qr);
 
     if($rs->num_rows() > 0)
     {
@@ -72,35 +75,6 @@ class Customer_model extends CI_Model
     }
 
     return NULL;
-    //
-    // $qry = "";
-    // $count = 64;
-    // $c = 1;
-    // while($c < $count)
-    // {
-    //   $qry .= $c == 1 ? "OCRD.QryGroup{$c} = 'Y' " : "OR OCRD.QryGroup{$c} = 'Y' ";
-    //   $c++;
-    // }
-    //
-    // $qr  = "SELECT OCRD.CardCode, OCRD.CardName, OCRD.SlpCode, OCRD.ECVatGroup, OCRD.Currency, OVTG.Rate ";
-    // $qr .= "FROM OCRD LEFT JOIN OVTG ON OCRD.ECVatGroup = OVTG.Code ";
-    // $qr .= "WHERE OCRD.CardType = 'C' ";
-    // $qr .= "AND OCRD.validFor = 'Y' ";
-    // if(!empty($qry))
-    // {
-    //   $qr .= "AND ({$qry}) ";
-    // }
-    // $qr .= "AND OCRD.CardCode LIKE '___{$type}%' ";
-    // $qr .= "AND OCRD.U_SALE_PERSON IS NOT NULL ";
-    // $qr .= "ORDER BY OCRD.CardCode ASC";
-    // $rs = $this->ms->query($qr);
-    //
-    // if($rs->num_rows() > 0)
-    // {
-    //   return $rs->result();
-    // }
-    //
-    // return NULL;
   }
 
 
