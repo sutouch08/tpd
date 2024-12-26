@@ -127,17 +127,7 @@
         value="{{no}}" />
       <span class="lbl"></span>
     </td>
-    <td class="middle text-center no">{{no}}</td>    
-    <td class="middle">
-      <input type="text"
-        class="form-control input-sm step-name e"
-        id="step-name-{{no}}"
-        data-no="{{no}}"
-        data-id="0"
-        data-value=""
-        value=""
-        placeholder="Description" />
-    </td>
+    <td class="middle text-center no">{{no}}</td>
     <td class="middle">
       <input type="number"
         class="form-control input-sm text-right step-qty e"

@@ -38,14 +38,14 @@
   <div class="col-lg-6 col-md-6 col-sm-5 col-xs-12">
     <div class="form-horizontal">
       <div class="form-group">
-        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">มูลค่าก่อนส่วนลด</label>
+        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">ราคาสินค้า</label>
         <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right" id="totalBefDi" value="0.00" disabled>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">Payment Term</label>
+        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right red">Payment Term</label>
         <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
           <select class="width-100 e" name="term" id="term" onchange="toggleDiscount()">
             <option value="">เลือก</option>
@@ -68,7 +68,7 @@
       </div>
 
       <div class="form-group">
-        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">มูลค่าหลังส่วนลดก่อนภาษี</label>
+        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษี</label>
         <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right" id="totalAmount" value="0.00" disabled>
         </div>

@@ -34,6 +34,8 @@ function changeCustomerList() {
 				$('#billToCode option').remove();
 				$('#BillTo').val('');
 				$('#slpName').val('');
+
+				checkPriceList();
 			}
 			else {
 				swal({
@@ -357,6 +359,7 @@ function getTermDropdown() {
 
 				if(ds.status == 'success') {
 					$('#term').html(ds.options);
+					$('#discPrcnt').val(0.00);
 				}
 				else {
 					swal({
@@ -1120,9 +1123,15 @@ function saveAdd() {
 
 
 function clearText(no) {
+	let priceList = $('#priceList').val();
 	$('#item-'+no).val('');
 	$('#itemCode-'+no).val('');
-	$('#step-'+no).html('<option value="">Select</option>');
+
+	if(priceList == 'x') {
+		$('#step-'+no).html('<option value="">Select</option>');
+	}
+
+	$('#step-'+no).val('0');
 	$('#step-data-'+no).val('');
 	$('#uom-'+no).val('');
 	$('#qty-'+no).val('');
