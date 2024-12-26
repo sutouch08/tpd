@@ -654,7 +654,7 @@ function recalTotal() {
 		let lineTotal = amount - vatAmount;
 		let discAmount = lineTotal * (discPrcnt * 0.01);
 
-		totalBefDi += lineTotal;
+		totalBefDi += amount;
 		totalDisc += discAmount;
 		totalVat += vatAmount * (1 - (discPrcnt * 0.01));
 		totalAmount += lineTotal - discAmount;
