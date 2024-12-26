@@ -63,7 +63,12 @@ function add() {
 
   $('.chk').each(function() {
     if($(this).is(':checked')) {
-      h.priceList.push($(this).val());
+      let ps = {
+        'id' : $(this).val(),
+        'special_price_id' : $(this).data('spid')
+      };
+
+      h.priceList.push(ps);
     }
   });
 
@@ -150,7 +155,12 @@ function update() {
 
   $('.chk').each(function() {
     if($(this).is(':checked')) {
-      h.priceList.push($(this).val());
+      let ps = {
+        'id' : $(this).val(),
+        'special_price_id' : $(this).data('spid')
+      };
+
+      h.priceList.push(ps);
     }
   });
 

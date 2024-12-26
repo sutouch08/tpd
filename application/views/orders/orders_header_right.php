@@ -23,10 +23,15 @@
             <option value="">เลือก</option>
             <?php if(!empty($priceList)) : ?>
               <?php foreach($priceList as $pl) : ?>
-                <option value="<?php echo $pl->list_id; ?>"><?php echo $pl->list_name; ?></option>
+                <option value="<?php echo $pl->list_id; ?>" data-spid="0"><?php echo $pl->list_name; ?></option>
               <?php endforeach; ?>
             <?php endif; ?>
-            <option value="x">Step เฉพาะและราคาเดียว</option>
+
+            <?php if( ! empty($specialPriceList)) : ?>
+              <?php foreach($specialPriceList as $sp) : ?>
+                <option value="x" data-spid="<?php echo $sp->id; ?>"><?php echo $sp->name; ?></option>
+              <?php endforeach; ?>
+            <?php endif; ?>
           </select>
         </div>
       </div>

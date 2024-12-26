@@ -38,52 +38,51 @@
   <div class="col-lg-6 col-md-6 col-sm-5 col-xs-12">
     <div class="form-horizontal">
       <div class="form-group">
-        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">ราคาสินค้า</label>
-        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
+        <label class="col-lg-8 col-md-6 col-sm-7 col-xs-6 control-label no-padding-right">ราคาสินค้า</label>
+        <div class="col-lg-4 col-md-6 col-sm-5 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right" id="totalBefDi" value="0.00" disabled>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right red">Payment Term</label>
-        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
+        <label class="col-lg-8 col-md-6 col-sm-7 col-xs-6 control-label no-padding-right red">Payment Term</label>
+        <div class="col-lg-4 col-md-6 col-sm-5 col-xs-6 padding-5">
           <select class="width-100 e" name="term" id="term" onchange="toggleDiscount()">
             <option value="">เลือก</option>
-            <option value="-10" data-groupnum="x" data-disc="0" data-change="0">Customer default</option>
           </select>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-lg-5-harf col-md-5 col-sm-3 col-xs-2-harf control-label no-padding-right">ส่วนลด</label>
+        <label class="col-lg-5-harf col-md-3 col-sm-3 col-xs-2-harf control-label no-padding-right">ส่วนลด</label>
         <div class="col-lg-2-harf col-md-3 col-sm-4 col-xs-3-harf padding-5">
           <div class="input-group width-100">
             <input type="number" class="form-control input-sm text-right e" id="discPrcnt" value="0.00" disabled>
             <span class="input-group-addon">%</span>
           </div>
         </div>
-        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
+        <div class="col-lg-4 col-md-6 col-sm-5 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right" id="discSum" value="0.00" disabled>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษี</label>
-        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
+        <label class="col-lg-8 col-md-6 col-sm-7 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษี</label>
+        <div class="col-lg-4 col-md-6 col-sm-5 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right" id="totalAmount" value="0.00" disabled>
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
-        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
+        <label class="col-lg-8 col-md-6 col-sm-7 col-xs-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
+        <div class="col-lg-4 col-md-6 col-sm-5 col-xs-6 padding-5">
           <input type="text" id="totalVat" class="form-control input-sm text-right" value="0.00" disabled />
         </div>
       </div>
 
       <div class="form-group">
-        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">จำนวนเงินรวมทั้งสิ้น</label>
-        <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
+        <label class="col-lg-8 col-md-6 col-sm-7 col-xs-6 control-label no-padding-right">จำนวนเงินรวมทั้งสิ้น</label>
+        <div class="col-lg-4 col-md-6 col-sm-5 col-xs-6 padding-5">
           <input type="text" id="docTotal" class="form-control input-sm text-right" value="0.00" disabled/>
         </div>
       </div>

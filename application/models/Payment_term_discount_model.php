@@ -112,13 +112,14 @@ class Payment_term_discount_model extends CI_Model
   }
 
 
-  public function get_term_by_price_list($priceList)
+  public function get_term_by_price_list($priceList, $sp_id = 0)
   {
     $rs = $this->db
     ->select('t.*, p.list_id')
     ->from('payment_term_price_list AS p')
     ->join('payment_term_discount AS t', 'p.term_id = t.id', 'left')
     ->where('p.list_id', $priceList)
+    ->where('p.special_price_id', $sp_id)
     ->where('t.active', 1)
     ->order_by('t.position', 'ASC')
     ->order_by('t.id', 'ASC')

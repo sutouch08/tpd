@@ -60,8 +60,8 @@
 					</tr>
 				</thead>
 				<tbody>
+					<?php $no = 1; ?>
 					<?php if(!empty($priceList)) : ?>
-						<?php $no = 1; ?>
 						<?php foreach($priceList as $ps)  : ?>
 							<tr>
 								<td class="text-center"><?php echo $no; ?></td>
@@ -70,9 +70,7 @@
 									<label>
 										<input type="checkbox"
 										class="ace chk"
-										name="priceList[<?php echo $ps->id; ?>]"
-										id="priceList-<?php echo $ps->id; ?>"
-										value="<?php echo $ps->id; ?>" data-name="<?php echo $ps->name; ?>">
+										value="<?php echo $ps->id; ?>" data-spid="0">
 										<span class="lbl"></span>
 									</label>
 								</td>
@@ -80,19 +78,24 @@
 							<?php $no++; ?>
 						<?php endforeach; ?>
 					<?php endif; ?>
-					<tr>
-						<td class="text-center"><?php echo $no; ?></td>
-						<td>Specail Price List</td>
-						<td class="text-center">
-							<label>
-								<input type="checkbox"
-								class="ace chk"
-								id="priceList-x"
-								value="x" data-name="Specail Price List">
-								<span class="lbl"></span>
-							</label>
-						</td>
-					</tr>
+
+					<?php if(!empty($specialPriceList)) : ?>
+						<?php foreach($specialPriceList as $sp)  : ?>
+							<tr class="red">
+								<td class="text-center"><?php echo $no; ?></td>
+								<td><?php echo $sp->name; ?></td>
+								<td class="text-center">
+									<label>
+										<input type="checkbox"
+										class="ace chk"
+										value="x" data-spid="<?php echo $sp->id; ?>">
+										<span class="lbl"></span>
+									</label>
+								</td>
+							</tr>
+							<?php $no++; ?>
+						<?php endforeach; ?>
+					<?php endif; ?>
 				</tbody>
 			</table>
     </div>

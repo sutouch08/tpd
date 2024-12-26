@@ -12,6 +12,7 @@ class Payment_term_discount extends PS_Controller
     parent::__construct();
     $this->home = base_url().'payment_term_discount';
 		$this->load->model('payment_term_discount_model');
+		$this->load->model('special_price_list_model');
 		$this->load->helper('orders');
   }
 
@@ -52,6 +53,7 @@ class Payment_term_discount extends PS_Controller
 		if($this->pm->can_add)
 		{
 			$ds['priceList'] = $this->user_model->get_all_price_list();
+			$ds['specialPriceList'] = $this->special_price_list_model->get_all_active();
 			$this->load->view('payment_term_discount/payment_term_discount_add', $ds);
 		}
 		else
@@ -97,11 +99,12 @@ class Payment_term_discount extends PS_Controller
 
 					if($sc === TRUE && ! empty($ds->priceList))
 					{
-						foreach($ds->priceList as $list_id)
+						foreach($ds->priceList as $list)
 						{
 							$arr = array(
 								'term_id' => $id,
-								'list_id' => $list_id
+								'list_id' => $list->id,
+								'special_price_id' => $list->special_price_id
 							);
 
 							if( ! $this->payment_term_discount_model->add_price_list($arr))
@@ -153,6 +156,7 @@ class Payment_term_discount extends PS_Controller
 			{
 				$data['doc'] = $doc;
 				$data['priceList'] = $this->user_model->get_all_price_list();
+				$data['specialPriceList'] = $this->special_price_list_model->get_all_active();
 				$term_price_list = $this->payment_term_discount_model->get_term_price_list($doc->id);
 				$TPL = array();
 
@@ -160,7 +164,7 @@ class Payment_term_discount extends PS_Controller
 				{
 					foreach($term_price_list as $p)
 					{
-						$TPL[$p->list_id] = $p->list_id;
+						$TPL[$p->list_id][$p->special_price_id] = $p->list_id;
 					}
 				}
 
@@ -224,11 +228,12 @@ class Payment_term_discount extends PS_Controller
 
 					if($sc === TRUE && ! empty($ds->priceList))
 					{
-						foreach($ds->priceList as $list_id)
+						foreach($ds->priceList as $list)
 						{
 							$arr = array(
 								'term_id' => $ds->id,
-								'list_id' => $list_id
+								'list_id' => $list->id,
+								'special_price_id' => $list->special_price_id
 							);
 
 							if( ! $this->payment_term_discount_model->add_price_list($arr))

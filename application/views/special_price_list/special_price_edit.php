@@ -77,7 +77,7 @@
 			</thead>
 			<tbody>
 			<?php if( ! empty($details)) : ?>
-				<?php $no = $this->uri->segment(3) + 1; ?>
+				<?php $no = 1; ?>
 				<?php foreach($details as $rs) : ?>
 					<tr>
 						<td class="middle">

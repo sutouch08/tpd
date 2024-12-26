@@ -17,6 +17,7 @@ class Orders extends PS_Controller
 		$this->load->model('customer_model');
 		$this->load->model('sales_team_condition_model');
 		$this->load->model('customer_team_model');
+		$this->load->model('special_price_list_model');
 		$this->load->helper('orders');
 		$this->load->helper('sales_team_condition');
 
@@ -105,7 +106,9 @@ class Orders extends PS_Controller
 				}
 			}
 
+
 			$ds['priceList'] = $priceList;
+			$ds['specialPriceList'] = $this->special_price_list_model->get_all_active();
 			$this->load->view('orders/orders_add', $ds);
 		}
 		else
@@ -330,7 +333,7 @@ class Orders extends PS_Controller
 	}
 
 
-	public function get_item_code_and_name($priceList, $isControl = 'N')
+	public function get_item_code_and_name($priceList, $sp_id = 0, $isControl = 'N')
 	{
 		if(empty($priceList))
 		{
@@ -340,26 +343,27 @@ class Orders extends PS_Controller
 		{
 			$txt = trim($_REQUEST['term']);
 
-			$this->db->where('active', 1);
-
-			// if($isControl == 'Y')
-			// {
-			// 	$this->db->where('isControl', 'N');
-			// }
+			$this->db
+			->select('spi.ItemCode, spi.ItemName')
+			->from('special_price_item AS spi')
+			->join('special_price_list AS spl', 'spi.price_list_id = spl.id', 'left')
+			->where('spi.price_list_id', $sp_id)
+			->where('spi.active', 1)
+			->where('spl.active', 1);
 
 			if($txt != '*')
 			{
 				$this->db
 				->group_start()
-				->like('ItemCode', $txt)
-				->or_like('ItemName', $txt)
+				->like('spi.ItemCode', $txt)
+				->or_like('spi.ItemName', $txt)
 				->group_end();
 			}
 
 			$rs = $this->db
-			->order_by('ItemName', 'ASC')
+			->order_by('spi.ItemName', 'ASC')
 			->limit(20)
-			->get('item_step_price');
+			->get();
 
 			if($rs->num_rows() > 0)
 			{
@@ -462,31 +466,34 @@ class Orders extends PS_Controller
 
 		$PriceList = $this->input->post('PriceList');
 
-		if( ! is_null($PriceList))
+		if( ! is_null($PriceList) )
 		{
-			$this->load->model('step_rule_model');
-
-			$step = $this->step_rule_model->get_active_details($PriceList);
-
-			if( ! empty($step))
+			if($PriceList != 'x')
 			{
-				foreach($step as $rs)
+				$this->load->model('step_rule_model');
+
+				$step = $this->step_rule_model->get_active_details($PriceList);
+
+				if( ! empty($step))
 				{
-					$hi = $rs->highlight == 1 ? 'highlight' : '';
+					foreach($step as $rs)
+					{
+						$hi = $rs->highlight == 1 ? 'highlight' : '';
 
-					$ds .= '<option value="'.$rs->id.'"
-					class="'.$hi.'"
-					data-force="'.$rs->is_force.'"
-					data-stepqty="'.$rs->stepQty.'"
-					data-limit="'.$rs->limitQty.'"
-					data-freeqty="'.$rs->freeQty.'">'
-					.$rs->labelText
-					.'</option>';
+						$ds .= '<option value="'.$rs->id.'"
+						class="'.$hi.'"
+						data-force="'.$rs->is_force.'"
+						data-stepqty="'.$rs->stepQty.'"
+						data-limit="'.$rs->limitQty.'"
+						data-freeqty="'.$rs->freeQty.'">'
+						.$rs->labelText
+						.'</option>';
+					}
 				}
-			}
-			else
-			{
-				$ds = '<option value="0">No Price List</option>';
+				else
+				{
+					$ds = '<option value="0">No Price List</option>';
+				}
 			}
 		}
 		else
@@ -512,11 +519,11 @@ class Orders extends PS_Controller
 		$this->load->model('payment_term_discount_model');
 
 		$priceList = $this->input->post('PriceList');
+		$sp_id = $this->input->post('special_price_id');
 
-		$termList = $this->payment_term_discount_model->get_term_by_price_list($priceList);
+		$termList = $this->payment_term_discount_model->get_term_by_price_list($priceList, $sp_id);
 
 		$ds  = '<option value="">เลือก</option>';
-		$ds .= $priceList == 'x' ? '' : '<option value="-10" data-groupnum="x" data-pricelist="0" data-disc="0" data-change="0">Customer default</option>';
 
 		if( ! empty($termList))
 		{
@@ -546,9 +553,10 @@ class Orders extends PS_Controller
 		$sc = TRUE;
 		$code = trim($this->input->get('code'));
 		$PriceList = $this->input->get('priceList');
+		$sp_id = $this->input->get('special_price_id');
 		$no = $this->input->get('no');
 
-		$this->load->model('item_step_price_model');
+		// $this->load->model('item_step_price_model');
 
 		if( ! empty($code))
 		{
@@ -560,7 +568,7 @@ class Orders extends PS_Controller
 				{
 					//---- special price list
 					//---- ไปดึงข้อมูลจาก table item_step_price
-					$pd = $this->item_step_price_model->get_by_code($code);
+					$pd = $this->special_price_list_model->get_item_by_code($code, $sp_id);
 
 					if( ! empty($pd))
 					{
@@ -568,7 +576,7 @@ class Orders extends PS_Controller
 
 						if( ! empty($item))
 						{
-							$step = $this->item_step_price_model->get_details($pd->id);
+							$step = $this->special_price_list_model->get_item_details($pd->id);
 							$stock = $this->stock_model->get_stock($item->code, $item->dfWhsCode);
 							$whsQty = !empty($stock) ? round($stock->OnHand,2) : 0;
 							$commitQty = !empty($stock) ? round($stock->IsCommited,2) : 0;

@@ -262,10 +262,11 @@ function checkPriceList() {
 function init() {
 	let priceList = $('#priceList').val();
 	priceList = priceList == "" ? 0 : priceList;
+	let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0);
 	let control = $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N';
 
 	$('.input-item-code').autocomplete({
-		source:HOME + 'get_item_code_and_name/'+priceList+'/'+control,
+		source:HOME + 'get_item_code_and_name/'+priceList+'/'+sp_id+'/'+control,
 		autoFocus:true,
 		open:function(event){
 			var $ul = $(this).autocomplete('widget');
@@ -345,13 +346,15 @@ function getStepTemplate() {
 
 function getTermDropdown() {
 	let priceList = $('#priceList').val();
+	let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0)
 
 	$.ajax({
 		url:HOME + 'get_payment_term',
 		type:'POST',
 		cache:false,
 		data:{
-			'PriceList' : priceList
+			'PriceList' : priceList,
+			'special_price_id' : sp_id
 		},
 		success:function(rs) {
 			if(isJson(rs)) {
@@ -392,6 +395,7 @@ function getTermDropdown() {
 
 function getItemData(code, no) {
 	let priceList = $('#priceList').val();
+	let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0);
 
 	load_in();
 
@@ -402,6 +406,7 @@ function getItemData(code, no) {
 		data:{
 			'code' : code,
 			'priceList' : priceList,
+			'special_price_id' : sp_id,
 			'no' : no
 		},
 		success:function(rs) {
@@ -916,10 +921,11 @@ function toggleDiscount() {
 	if(term_id != '-10' && term_id != '') {
 		swal({
 			title:'โปรดทราบ',
-			text:'คุณจำเป็นต้องแจ้งให้ลูกค้าทราบเกี่ยวกับ payment term ที่เลือกนี้ด้วย',
+			text:'คุณได้แจ้งและทำความเข้าใจกับลูกค้าแล้ว<br/>ถึงเงื่อนไขของส่วนลดที่สัมพันธ์กับ Payment term ที่เลือก',
 			type:'warning',
+			html:true,
 			showCancelButton:true,
-			confirmButtonText:'รับทราบ',
+			confirmButtonText:'แจ้งและทำความเข้าใจแล้ว',
 			cancelButtonText:'ยกเลิก',
 			closeOnConfirm:true
 		}, function(isConfirm) {

@@ -10,6 +10,31 @@ class Special_price_list_model extends CI_Model
     parent::__construct();
   }
 
+  public function get_all()
+  {
+    $rs = $this->db->order_by('name', 'ASC')->get($this->tb);
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function get_all_active()
+  {
+    $rs = $this->db->where('active', 1)->order_by('name', 'ASC')->get($this->tb);
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
 
   public function get($id)
   {
@@ -43,10 +68,11 @@ class Special_price_list_model extends CI_Model
   }
 
 
-  public function get_item_by_code($ItemCode, $price_list_id)
+  //--- special price item
+  public function get_item_by_code($itemCode, $price_list_id)
   {
     $rs = $this->db
-    ->where('ItemCode', $ItemCode)
+    ->where('ItemCode', $itemCode)
     ->where('price_list_id', $price_list_id)
     ->get($this->td);
 
@@ -66,19 +92,6 @@ class Special_price_list_model extends CI_Model
     if($rs->num_rows() > 0)
     {
       return $rs->result();
-    }
-
-    return NULL;
-  }
-
-
-  public function get_item_detail($id)
-  {
-    $rs = $this->db->where('id', $id)->get($this->tr);
-
-    if($rs->num_rows() === 1)
-    {
-      return $rs->row();
     }
 
     return NULL;
