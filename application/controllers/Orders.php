@@ -516,7 +516,7 @@ class Orders extends PS_Controller
 		$termList = $this->payment_term_discount_model->get_term_by_price_list($priceList);
 
 		$ds  = '<option value="">เลือก</option>';
-		$ds .= '<option value="-10" data-groupnum="x" data-pricelist="0" data-disc="0" data-change="0">Customer default</option>';
+		$ds .= $priceList == 'x' ? '' : '<option value="-10" data-groupnum="x" data-pricelist="0" data-disc="0" data-change="0">Customer default</option>';
 
 		if( ! empty($termList))
 		{
@@ -596,6 +596,8 @@ class Orders extends PS_Controller
 
 								foreach($step as $st)
 								{
+									$name = empty($st->name) ? $st->Qty.' '.$st->UomCode.' @'.number($st->SellPrice, 2).($st->freeQty > 0 ? ' free : '.$st->freeQty : '') : $st->name;
+
 									$stx .= '<option value="'.$st->id.'"
 										data-no="'.$no.'"
 										data-item="'.$st->ItemCode.'"
@@ -603,7 +605,7 @@ class Orders extends PS_Controller
 										data-stepqty="'.$st->Qty.'"
 										data-price="'.$st->SellPrice.'"
 										data-uom="'.$st->UomCode.'"
-										data-freeqty="'.$st->freeQty.'">'.$st->Qty.' '.$st->UomCode.' @'.number($st->SellPrice, 2).($st->freeQty > 0 ? ' free : '.$st->freeQty : '').'</option>';
+										data-freeqty="'.$st->freeQty.'">'.$name.'</option>';
 
 										$da[] = array(
 											'stepQty' => $st->Qty,

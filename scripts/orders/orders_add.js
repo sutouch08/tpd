@@ -600,8 +600,8 @@ function recalAmount(no) {
 		}
 	}
 	else {
-		let limitQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('limit')), 0);
-		let minQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('stepqty')), 1);
+		let limitQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('limit')), 0);
+		let minQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('stepqty')), 1);
 
 		if(qty < minQty) {
 			$('#qty-'+no).hasError();
@@ -624,14 +624,14 @@ function recalAmount(no) {
 		let amount = qty * sellPrice;
 		let vatamount = get_vat_amount(amount, vatRate);
 		$('#amount-'+no).val(amount.toFixed(2));
-		$('#vatAmount-'+no).val(vatamount);
+		$('#vatAmount-'+no).val(vatamount.toFixed(4));
 		console.log(amount);
 	}
 	else {
 		let amount = qty * stdPrice;
 		let vatamount = get_vat_amount(amount, vatRate);
 		$('#amount-'+no).val(amount.toFixed(2));
-		$('#vatAmount-'+no).val(vatamount);
+		$('#vatAmount-'+no).val(vatamount.toFixed(4));
 	}
 
 	recalTotal();
@@ -639,7 +639,7 @@ function recalAmount(no) {
 
 
 function recalTotal() {
-	var totalBefDi = 0.00; //--- total befor discount but include vat
+	var totalBefDi = 0.00; //--- total befor discount exclude vat
 	var discPrcnt = parseDefault(parseFloat($('#discPrcnt').val()), 0); //--- discount percentage
 	var totalDisc = 0.00; //--- discount amount
 	var totalVat = 0.00; //--- total vat
@@ -650,18 +650,18 @@ function recalTotal() {
 		let no = $(this).data('no');
 		let vatRate = parseDefault(parseFloat($('#itemVatRate-'+no).val()), 0);
 		let amount = parseDefault(parseFloat($('#amount-'+no).val()), 0);
-		let discAmount = amount * (discPrcnt * 0.01);
-		let lineTotal = amount - discAmount; //--- total after discount but include vat
-		let vatAmount = get_vat_amount(lineTotal, vatRate);
+		let vatAmount = parseDefault(parseFloat($('#vatAmount-'+no).val()), 0);
+		let lineTotal = amount - vatAmount;
+		let discAmount = lineTotal * (discPrcnt * 0.01);
 
-		totalBefDi += amount;
+		totalBefDi += lineTotal;
 		totalDisc += discAmount;
-		totalVat += vatAmount;
-		totalAmount += lineTotal;
+		totalVat += vatAmount * (1 - (discPrcnt * 0.01));
+		totalAmount += lineTotal - discAmount;
 	});
 
-	totalBefVat = totalAmount - totalVat;
-	docTotal = totalAmount;
+	totalBefVat = totalAmount;
+	docTotal = totalAmount + totalVat;
 
 	$('#totalBefDi').val(addCommas(totalBefDi.toFixed(2)));
 	$('#discSum').val(addCommas(totalDisc.toFixed(2)));
@@ -736,11 +736,11 @@ function previewOrder() {
 
 		if($(this).val() != "") {
 			count++;
-			let qty = parseDefault(parseInt($('#qty-'+no).val()), 0);
-			let minQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('stepqty')), 0);
-			let limitQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('limit')), 0);
-			let freeQty = parseDefault(parseInt($('#step-'+no+' option:selected').data('freeqty')), 0);
-			let free = parseDefault(parseInt($('#free-'+no).val()), 0);
+			let qty = parseDefault(parseFloat($('#qty-'+no).val()), 0);
+			let minQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('stepqty')), 0);
+			let limitQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('limit')), 0);
+			let freeQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('freeqty')), 0);
+			let free = parseDefault(parseFloat($('#free-'+no).val()), 0);
 
 			if(qty == 0 || qty < minQty || (limitQty > 0 && qty > limitQty)) {
 				$('#qty-'+no).hasError();

@@ -199,6 +199,7 @@ class Item_step_price extends PS_Controller
 						{
 							$arr = array(
 								'step_id' => $doc->id,
+								'name' => $rs->name,
 								'ItemCode' => $doc->ItemCode,
 								'ItemName' => $doc->ItemName,
 								'Qty' => $rs->Qty,

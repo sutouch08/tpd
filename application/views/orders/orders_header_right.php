@@ -26,7 +26,7 @@
                 <option value="<?php echo $pl->list_id; ?>"><?php echo $pl->list_name; ?></option>
               <?php endforeach; ?>
             <?php endif; ?>
-            <option value="x">Specail Price List</option>
+            <option value="x">Step เฉพาะและราคาเดียว</option>
           </select>
         </div>
       </div>

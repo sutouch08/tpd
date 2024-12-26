@@ -38,7 +38,7 @@
   <div class="col-lg-6 col-md-6 col-sm-5 col-xs-12">
     <div class="form-horizontal">
       <div class="form-group">
-        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">มูลค่าก่อนส่วนลด</label>
+        <label class="col-lg-8 col-md-8 col-sm-7 col-xs-6 control-label no-padding-right">มูลค่าก่อนภาษี</label>
         <div class="col-lg-4 col-md-4 col-sm-5 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right" id="totalBefDi" value="0.00" disabled>
         </div>

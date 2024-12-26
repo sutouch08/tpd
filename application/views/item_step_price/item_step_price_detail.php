@@ -7,7 +7,7 @@
   <div class="divider-hidden"></div>
 
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive" style="over-flow:auto;">
-    <table class="table table-bordered border-1" style="min-width:840px;">
+    <table class="table table-bordered border-1" style="min-width:1000px;">
       <thead>
         <tr class="">
           <th class="fix-width-50 text-center">
@@ -16,13 +16,14 @@
               <span class="lbl"></span>
             </label>
           </th>
-					<th class="fix-width-40 text-center">#</th>
+					<th class="fix-width-50 text-center">#</th>
+          <th class="min-width-200">Description</th>
 					<th class="fix-width-100 text-right">Min. Qty</th>
           <th class="fix-width-100 text-right">Sell Price</th>
 					<th class="fix-width-100 text-right">Free Qty</th>
           <th class="fix-width-100 text-right">Position</th>
-          <th class="fix-width-200">Update by</th>
-          <th class="min-width-150">Update at</th>
+          <th class="fix-width-150">Update by</th>
+          <th class="fix-width-150">Update at</th>
         </tr>
       </thead>
       <tbody id="detail-table">
@@ -40,6 +41,16 @@
             <span class="lbl"></span>
 					</td>
 					<td class="middle text-center no"><?php echo $no; ?></td>
+          <td class="middle">
+						<input type="text"
+              class="form-control input-sm step-name e"
+              id="step-name-<?php echo $no; ?>"
+              data-no="<?php echo $no; ?>"
+              data-id="<?php echo $rs->id; ?>"
+              data-value="<?php echo $rs->name; ?>"
+              value="<?php echo $rs->name; ?>"
+              placeholder="Description" />
+					</td>
 					<td class="middle">
 						<input type="number"
               class="form-control input-sm text-right step-qty e"

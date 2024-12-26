@@ -95,6 +95,7 @@ function save() {
   if($('.chk').length) {
     $('.chk').each(function() {
       let no = $(this).data('no');
+      let name = $('#step-name-'+no).val().trim();
       let stepQty = parseDefault(parseFloat($('#step-qty-'+no).val()), 0);
       let sellPrice = parseDefault(parseFloat($('#sell-price-'+no).val()), 0);
       let freeQty = parseDefault(parseFloat($('#free-qty-'+no).val()), 0);
@@ -119,6 +120,7 @@ function save() {
 
         let row = {
           'step_id' : id,
+          'name' : name,
           'Qty' : stepQty,
           'SellPrice' : sellPrice,
           'freeQty' : freeQty,
