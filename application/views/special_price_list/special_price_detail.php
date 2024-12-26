@@ -129,6 +129,16 @@
     </td>
     <td class="middle text-center no">{{no}}</td>
     <td class="middle">
+      <input type="text"
+        class="form-control input-sm step-name e"
+        id="step-name-{{no}}"
+        data-no="{{no}}"
+        data-id="0"
+        data-value=""
+        value=""
+        placeholder="Description" />
+    </td>
+    <td class="middle">
       <input type="number"
         class="form-control input-sm text-right step-qty e"
         id="step-qty-{{no}}"
@@ -157,6 +167,16 @@
         data-value=">"
         value=""
         placeholder="Free qty" />
+    </td>
+
+    <td class="middle text-center">
+      <input type="number"
+        class="form-control input-sm text-center position e"
+        id="pos-{{no}}"
+        data-no="{{no}}"
+        data-id="0"
+        data-value=">"
+        value="" />
     </td>
     <td class="middle text-center"></td>
     <td class="middle text-center"></td>

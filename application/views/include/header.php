@@ -29,19 +29,12 @@
 	</style>
 
 	</head>
-	<body class="no-skin" onload="checkError()">
+	<body class="no-skin">
 		<div id="loader">
         <div class="loader"></div>
 		</div>
 		<div id="loader-backdrop" style="position: fixed; width:100vw; height:100vh; background-color:white; opacity:0.3; display:none; z-index:9;">
-		</div>
-
-		<?php if($this->session->flashdata('error')) : ?>
-							<input type="hidden" id="error" value="<?php echo $this->session->flashdata('error'); ?>" />
-		<?php endif; ?>
-		<?php if($this->session->flashdata('success')) : ?>
-							<input type="hidden" id="success" value="<?php echo $this->session->flashdata('success'); ?>" />
-		<?php endif; ?>
+		</div>		
 		<!-- #section:basics/navbar.layout -->
 		<div id="navbar" class="navbar navbar-default">
 			<script type="text/javascript">

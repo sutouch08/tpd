@@ -13,11 +13,11 @@
 <hr class="padding-5"/>
 
 <div class="row">
-  <div class="col-lg-6 col-md-2-harf col-sm-2-harf col-xs-12 padding-5">
+  <div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
 		<label>Price List Name</label>
 		<input type="text" class="width-100 e" id="name" maxlength="100" autofocus />
 	</div>
-	<div class="col-lg-1-harf col-md-2-harf col-sm-2-harf col-xs-6">
+	<div class="col-lg-2 col-md-2-harf col-sm-2-harf col-xs-6">
 		<label class="display-block">Status</label>
 	   <div class="btn-group width-100">
        <button type="button" class="btn btn-sm width-50 btn-primary" id="btn-active" onclick="toggleActive(1)">Active</button>

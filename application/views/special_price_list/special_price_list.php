@@ -21,7 +21,7 @@
 
 	<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-3 padding-5">
     <label>Status</label>
-    <select class="form-control input-sm filter" name="active">
+    <select class="form-control input-sm filter" name="status">
 			<option value="all">All</option>
 			<option value="1" <?php echo is_selected('1', $status); ?>>Active</option>
 			<option value="0" <?php echo is_selected('0', $status); ?>>Inactive</option>
