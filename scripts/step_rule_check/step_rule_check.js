@@ -95,7 +95,8 @@ function getData() {
 }
 
 function clearData() {
-  $('#price-list').val('');
-  $('#item').val('').trigger('change');
+  $('#price-list').val('0');
   $('#step-table').html('');
+  $('#item').html('<option value="0" data-uom="">Select</option>');
+  $('#item').select2();
 }
