@@ -67,7 +67,7 @@
       </div>
 
       <div class="form-group">
-        <label class="col-lg-8 col-md-6 col-sm-7 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษี</label>
+        <label class="col-lg-8 col-md-6 col-sm-7 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษีมูลค่าเพิ่ม</label>
         <div class="col-lg-4 col-md-6 col-sm-5 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right" id="totalAmount" value="0.00" disabled>
         </div>
@@ -81,7 +81,7 @@
       </div>
 
       <div class="form-group">
-        <label class="col-lg-8 col-md-6 col-sm-7 col-xs-6 control-label no-padding-right">จำนวนเงินรวมทั้งสิ้น</label>
+        <label class="col-lg-8 col-md-6 col-sm-7 col-xs-6 control-label no-padding-right">รวมเงินสุทธิ</label>
         <div class="col-lg-4 col-md-6 col-sm-5 col-xs-6 padding-5">
           <input type="text" id="docTotal" class="form-control input-sm text-right" value="0.00" disabled/>
         </div>

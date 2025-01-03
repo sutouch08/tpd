@@ -8,21 +8,20 @@
 <div class="row">
 	<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12 padding-5">
     <label>Price List</label>
-    <select class="form-control input-sm" id="price-list">
-			<option value="">Select</option>
-			<?php echo select_price_list(); ?>
+    <select class="form-control input-sm" id="price-list" onchange="getItemTemplate()">
+			<option value="0">Select</option>
+		<?php if( ! empty($priceList)) : ?>
+			<?php foreach($priceList as $pl) : ?>
+				<option value="<?php echo $pl->list_id; ?>"><?php echo $pl->list_name; ?></option>
+			<?php endforeach; ?>
+		<?php endif; ?>
 		</select>
   </div>
 
 	<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 padding-5">
 		<label>Items</label>
 		<select class="width-100 item-row" id="item">
-			<option value="" data-uom="">Select</option>
-			<?php if(!empty($items)) : ?>
-				<?php foreach($items as $rs) : ?>
-					<option value="<?php echo $rs->code; ?>" data-uom="<?php echo $rs->UoM; ?>"><?php echo $rs->name; ?></option>
-				<?php endforeach; ?>
-			<?php endif; ?>
+			<option value="0" data-uom="">Select</option>			
 		</select>
   </div>
 
@@ -48,7 +47,7 @@
 					<th class="fix-width-100 middle text-center">Qty</th>
 					<th class="fix-width-100 middle text-center">Free</th>
 					<th class="fix-width-100 middle text-center">Avg/Unit</th>
-					<th class="fix-width-100 middle text-center">Discount</th>
+					<th class="fix-width-100 middle text-center">Benefit in Each Step</th>
 				</tr>
 			</thead>
 			<tbody id="step-table">	</tbody>

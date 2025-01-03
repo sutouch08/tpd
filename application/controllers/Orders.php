@@ -462,7 +462,7 @@ class Orders extends PS_Controller
 	{
 		$sc = TRUE;
 
-		$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">เลือก</option>';
+		$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">No Step</option>';
 
 		$PriceList = $this->input->post('PriceList');
 
@@ -492,7 +492,119 @@ class Orders extends PS_Controller
 				}
 				else
 				{
-					$ds = '<option value="0">No Price List</option>';
+					$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">No Step</option>';
+				}
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = get_error_message('required');
+		}
+
+		$arr = array(
+			'status' => $sc === TRUE ? 'success' : 'failed',
+			'message' => $sc === TRUE ? 'success' : $this->error,
+			'template' => $sc === TRUE ? $ds : NULL
+		);
+
+		echo json_encode($arr);
+	}
+
+
+	public function get_item_template()
+	{
+		$sc = TRUE;
+
+		$ds = '<option value="0">Select</option>';
+
+		$PriceList = $this->input->post('priceList');
+		$isControl = $this->input->post('isControl') == 'Y' ? 'Y' : 'N';
+		$spid = $this->input->post('spid');
+
+		if( ! is_null($PriceList) )
+		{
+			if($PriceList != 'x')
+			{
+
+				$items = $this->item_model->get_items_by_price_list($PriceList, $isControl);
+
+				if( ! empty($items))
+				{
+					foreach($items as $rs)
+					{
+						$ds .= '<option value="'.$rs->code.'">'.$rs->name.'</option>';
+					}
+				}
+				else
+				{
+					$ds = '<option value="0">No Items</option>';
+				}
+			}
+			else
+			{
+				if($spid > 0)
+				{
+					$rs = $this->db
+					->select('spi.ItemCode, spi.ItemName')
+					->from('special_price_item AS spi')
+					->join('special_price_list AS spl', 'spi.price_list_id = spl.id', 'left')
+					->where('spi.price_list_id', $spid)
+					->where('spi.active', 1)
+					->where('spl.active', 1)
+					->order_by('spi.ItemName', 'ASC')
+					->get();
+
+					if($rs->num_rows() > 0)
+					{
+						$items = array();
+
+						foreach($rs->result() as $rd)
+						{
+							$items[] = $rd->ItemCode;
+						}
+
+						if( ! empty($items))
+						{
+							$this->ms
+							->select('ItemCode, ItemName, U_BEX_Controll')
+							->where('SellItem', 'Y')
+							->where('validFor', 'Y')
+							->where_in('ItemCode', $items);
+
+							if($isControl == 'Y')
+							{
+								$this->ms
+								->group_start()
+								->where('U_BEX_Controll IS NULL', NULL, FALSE)
+								->or_where('U_BEX_Controll !=', 'Controlled')
+								->group_end();
+							}
+
+							$ro = $this->ms->order_by('ItemName', 'ASC')->limit(20)->get('OITM');
+
+							if($ro->num_rows() > 0)
+					    {
+								foreach($ro->result() as $rd)
+								{
+									$ds .= '<option value="'.$rd->ItemCode.'">'.$rd->ItemName.'</option>';
+								}
+					    }
+							else
+							{
+								$sc[] = "Not found";
+							}
+						}
+						else
+						{
+							$sc[] = "Not found";
+						}
+					}
+				}
+				else
+				{
+					$sc = FALSE;
+					$this->error = "Invalid special price list";
 				}
 			}
 		}
@@ -1084,12 +1196,15 @@ class Orders extends PS_Controller
 
 
 				$details = $this->orders_model->get_details($code);
+				$totalBefDi = 0;
 
 				if( ! empty($details))
 				{
 					$no = 1;
 					foreach($details as $rs)
 					{
+						$totalBefDi += $rs->LineTotal;
+
 						if($rs->free_item == 0)
 						{
 							$open_qty = (!empty($doc->DocNum) ? $this->orders_model->get_open_qty($doc->code, $rs->ItemCode) : ($rs->freeQty + $rs->Qty));
@@ -1155,10 +1270,12 @@ class Orders extends PS_Controller
 					}
 
 					$arr = array(
-						'totalBefDi' => number($doc->DocTotal + $doc->DiscSum, 2),
+						'totalBefDi' => number($totalBefDi, 2),
 						'DiscPrcnt' => $doc->DiscPrcnt,
 						'DiscSum' => number($doc->DiscSum, 2),
-						'totalAmount' => number($doc->DocTotal, 2)
+						'totalBefVat' => number($doc->DocTotal - $doc->VatSum, 2),
+						'totalVat' => number($doc->VatSum, 2),
+						'docTotal' => number($doc->DocTotal, 2)
 					);
 
 					array_push($ds['items'], $arr);

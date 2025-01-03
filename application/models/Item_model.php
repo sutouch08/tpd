@@ -8,6 +8,44 @@ class Item_model extends CI_Model
   }
 
 
+  public function get_items_by_price_list($priceList, $isControl = 'N')
+  {
+    if($priceList)
+    {
+      $this->ms
+      ->select('OITM.ItemCode AS code, OITM.ItemName AS name')
+      ->select('OITM.SalUnitMsr AS uom, OITM.U_TPD_DiscSale, ITM1.Price AS price')
+      ->select('OITM.DfltWH AS dfWhsCode, OITM.U_BEX_Controll')
+      ->select('OVTG.Code AS VatCode, OVTG.Rate')
+      ->from('OITM')
+      ->join('ITM1', 'ITM1.ItemCode = OITM.ItemCode', 'left')
+      ->join('OVTG', 'OVTG.Code = OITM.VatGourpSa', 'left')
+      ->where('OITM.ItemType', 'I')
+      ->where('OITM.SellItem', 'Y')
+      ->where('OITM.validFor', 'Y')
+      ->where('ITM1.PriceList', $priceList)
+      ->where('ITM1.Price >', 0);
+
+      if($isControl == 'Y')
+      {
+        $this->ms
+        ->group_start()
+        ->where('U_BEX_Controll IS NULL', NULL, FALSE)
+        ->or_where('U_BEX_Controll !=', 'Controlled')
+        ->group_end();
+      }
+
+      $rs = $this->ms->order_by('OITM.ItemName', 'ASC')->get();
+
+      if($rs->num_rows() > 0)
+      {
+        return $rs->result();
+      }
+    }
+
+    return NULL;
+  }
+
   public function get($code, $priceList = NULL)
   {
     if($priceList !== NULL)

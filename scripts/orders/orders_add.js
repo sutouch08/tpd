@@ -64,7 +64,7 @@ $('#customer').change(function() {
 		})
 	}
 
-	init();
+	getItemTemplate();
 });
 
 
@@ -255,37 +255,38 @@ function checkPriceList() {
 	init();
 
 	getStepTemplate();
+	getItemTemplate();
 	getTermDropdown();
 }
 
 
 function init() {
-	let priceList = $('#priceList').val();
-	priceList = priceList == "" ? 0 : priceList;
-	let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0);
-	let control = $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N';
-
-	$('.input-item-code').autocomplete({
-		source:HOME + 'get_item_code_and_name/'+priceList+'/'+sp_id+'/'+control,
-		autoFocus:true,
-		open:function(event){
-			var $ul = $(this).autocomplete('widget');
-			$ul.css('width', 'auto');
-		},
-		close:function(){
-			var data = $(this).val();
-			var arr = data.split(' | ');
-			if(arr.length == 2) {
-				let no = $(this).data("no");
-				$('#itemCode-'+no).val(arr[1]);
-				$(this).val(arr[0]);
-				getItemData(arr[1], no);
-			}
-			else {
-				$(this).val('');
-			}
-		}
-	})
+	// let priceList = $('#priceList').val();
+	// priceList = priceList == "" ? 0 : priceList;
+	// let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0);
+	// let control = $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N';
+	//
+	// $('.input-item-code').autocomplete({
+	// 	source:HOME + 'get_item_code_and_name/'+priceList+'/'+sp_id+'/'+control,
+	// 	autoFocus:true,
+	// 	open:function(event){
+	// 		var $ul = $(this).autocomplete('widget');
+	// 		$ul.css('width', 'auto');
+	// 	},
+	// 	close:function(){
+	// 		var data = $(this).val();
+	// 		var arr = data.split(' | ');
+	// 		if(arr.length == 2) {
+	// 			let no = $(this).data("no");
+	// 			$('#itemCode-'+no).val(arr[1]);
+	// 			$(this).val(arr[0]);
+	// 			getItemData(arr[1], no);
+	// 		}
+	// 		else {
+	// 			$(this).val('');
+	// 		}
+	// 	}
+	// })
 }
 
 
@@ -393,67 +394,53 @@ function getTermDropdown() {
 	})
 }
 
-function getItemData(code, no) {
+
+function getItemTemplate() {
+	let custCode = $('#customer').val();
+	let isControl = $('#customer option:selected').data('control');
 	let priceList = $('#priceList').val();
-	let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0);
+	let spId = $('#priceList option:selected').data('spid');
+
+	if(custCode == "") {
+		$('#item-1').val("0");
+		$('#item-1 option:selected').text('กรุณาเลือกลูกค้า');
+		return false;
+	}
+
+	if(priceList == "") {
+		$('#item-1').val("0");
+		$('#item-1 option:selected').text('กรุณาเลือก Price List');
+		return false;
+	}
 
 	load_in();
 
 	$.ajax({
-		url:HOME + "get_item_data",
-		type:"GET",
+		url:HOME + 'get_item_template',
+		type:"POST",
 		cache:false,
 		data:{
-			'code' : code,
 			'priceList' : priceList,
-			'special_price_id' : sp_id,
-			'no' : no
+			'spid' : spId,
+			'isControl' : isControl
 		},
 		success:function(rs) {
 			load_out();
 
 			if(isJson(rs)) {
 				let ds = JSON.parse(rs);
-				let price = parseFloat(ds.price);
+				if(ds.status === 'success') {
+					$('#item-template').html(ds.template);
 
-				$('#control-'+no).val(ds.isControl);
-				$('#uom-'+no).val(ds.uom);
-				$('#stdPrice-'+no).val(price);
-				$('#item-'+no).data('price', price);
-				$('#price-'+no).val('');
-				$('#instock-'+no).val(ds.inStock);
-				$('#commit-'+no).val(ds.commit);
-				$('#available-'+no).val(ds.available);
-				$('#itemVatCode-'+no).val(ds.vatCode);
-				$('#itemVatRate-'+no).val(ds.vatRate);
-				$('#whsCode-'+no).val(ds.whsCode);
+					$('.input-item-code').each(function() {
+						let no = $(this).data('no');
 
-				if(ds.is_sale_discount == 'Y') {
-					$('#dis-'+no).prop('checked', true);
+						updateSelectItem(no);
+					});
 				}
 				else {
-					$('#dis-'+no).prop('checked', false);
+					showError(ds.message);
 				}
-
-				if(ds.step != '' && ds.step !== null && ds.step != undefined) {
-					$('#step-'+no).html(ds.step);
-				}
-
-				if(ds.stepData != '' && ds.stepData !== null && ds.stepData != undefined) {
-					$('#step-data-'+no).val(JSON.stringify(ds.stepData));
-				}
-
-				$('#qty-'+no).focus();
-
-				if(ds.isControl == 'Y') {
-					$('#row-'+no).addClass('control');
-				}
-				else {
-					$('#row-'+no).removeClass('control');
-				}
-
-				updateStepQty(no);
-				//recalAmount(no);
 			}
 			else {
 				showError(rs);
@@ -464,6 +451,186 @@ function getItemData(code, no) {
 			showError(rs);
 		}
 	})
+}
+
+
+function getItemData(no) {
+	let priceList = $('#priceList').val();
+	let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0);
+	let code = $('#item-'+no).val();
+	if(code != "" && code != "0" && code !== null && code !== undefined) {
+		load_in();
+
+		$.ajax({
+			url:HOME + "get_item_data",
+			type:"GET",
+			cache:false,
+			data:{
+				'code' : code,
+				'priceList' : priceList,
+				'special_price_id' : sp_id,
+				'no' : no
+			},
+			success:function(rs) {
+				load_out();
+
+				if(isJson(rs)) {
+					let ds = JSON.parse(rs);
+					let price = parseFloat(ds.price);
+
+					$('#control-'+no).val(ds.isControl);
+					$('#uom-'+no).val(ds.uom);
+					$('#stdPrice-'+no).val(price);
+					$('#item-'+no).data('price', price);
+					$('#price-'+no).val('');
+					$('#instock-'+no).val(ds.inStock);
+					$('#commit-'+no).val(ds.commit);
+					$('#available-'+no).val(ds.available);
+					$('#itemVatCode-'+no).val(ds.vatCode);
+					$('#itemVatRate-'+no).val(ds.vatRate);
+					$('#whsCode-'+no).val(ds.whsCode);
+					$('#itemCode-'+no).val(code);
+
+					if(ds.is_sale_discount == 'Y') {
+						$('#dis-'+no).prop('checked', true);
+					}
+					else {
+						$('#dis-'+no).prop('checked', false);
+					}
+
+					if(ds.step != '' && ds.step !== null && ds.step != undefined) {
+						$('#step-'+no).html(ds.step);
+					}
+
+					if(ds.stepData != '' && ds.stepData !== null && ds.stepData != undefined) {
+						$('#step-data-'+no).val(JSON.stringify(ds.stepData));
+					}
+
+					$('#qty-'+no).focus();
+
+					if(ds.isControl == 'Y') {
+						$('#row-'+no).addClass('control');
+					}
+					else {
+						$('#row-'+no).removeClass('control');
+					}
+
+					updateStepQty(no);
+					//recalAmount(no);
+				}
+				else {
+					showError(rs);
+				}
+			},
+			error:function(rs) {
+				load_out();
+				showError(rs);
+			}
+		})
+	}
+	else {
+		$('#control-'+no).val("");
+		$('#uom-'+no).val("");
+		$('#stdPrice-'+no).val("");
+		$('#item-'+no).data('price', 0);
+		$('#price-'+no).val('');
+		$('#instock-'+no).val("");
+		$('#commit-'+no).val("");
+		$('#available-'+no).val("");
+		$('#itemVatCode-'+no).val("");
+		$('#itemVatRate-'+no).val("");
+		$('#whsCode-'+no).val("");
+		$('#itemCode-'+no).val("");
+		$('#step-'+no).val(0);
+		$('#qty-'+no).val("");
+		$('#free-'+no).val("");
+		$('#amount-'+no).val("");
+
+		recalAmount(no);
+	}
+}
+
+// function getItemData(code, no) {
+// 	let priceList = $('#priceList').val();
+// 	let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0);
+//
+// 	load_in();
+//
+// 	$.ajax({
+// 		url:HOME + "get_item_data",
+// 		type:"GET",
+// 		cache:false,
+// 		data:{
+// 			'code' : code,
+// 			'priceList' : priceList,
+// 			'special_price_id' : sp_id,
+// 			'no' : no
+// 		},
+// 		success:function(rs) {
+// 			load_out();
+//
+// 			if(isJson(rs)) {
+// 				let ds = JSON.parse(rs);
+// 				let price = parseFloat(ds.price);
+//
+// 				$('#control-'+no).val(ds.isControl);
+// 				$('#uom-'+no).val(ds.uom);
+// 				$('#stdPrice-'+no).val(price);
+// 				$('#item-'+no).data('price', price);
+// 				$('#price-'+no).val('');
+// 				$('#instock-'+no).val(ds.inStock);
+// 				$('#commit-'+no).val(ds.commit);
+// 				$('#available-'+no).val(ds.available);
+// 				$('#itemVatCode-'+no).val(ds.vatCode);
+// 				$('#itemVatRate-'+no).val(ds.vatRate);
+// 				$('#whsCode-'+no).val(ds.whsCode);
+//
+// 				if(ds.is_sale_discount == 'Y') {
+// 					$('#dis-'+no).prop('checked', true);
+// 				}
+// 				else {
+// 					$('#dis-'+no).prop('checked', false);
+// 				}
+//
+// 				if(ds.step != '' && ds.step !== null && ds.step != undefined) {
+// 					$('#step-'+no).html(ds.step);
+// 				}
+//
+// 				if(ds.stepData != '' && ds.stepData !== null && ds.stepData != undefined) {
+// 					$('#step-data-'+no).val(JSON.stringify(ds.stepData));
+// 				}
+//
+// 				$('#qty-'+no).focus();
+//
+// 				if(ds.isControl == 'Y') {
+// 					$('#row-'+no).addClass('control');
+// 				}
+// 				else {
+// 					$('#row-'+no).removeClass('control');
+// 				}
+//
+// 				updateStepQty(no);
+// 				//recalAmount(no);
+// 			}
+// 			else {
+// 				showError(rs);
+// 			}
+// 		},
+// 		error:function(rs) {
+// 			load_out();
+// 			showError(rs);
+// 		}
+// 	})
+// }
+
+
+function updateSelectItem(no) {
+	let template = $('#item-template').html();
+	let ds = {"no" : no};
+	let target = $('#item-'+no);
+	render(template, ds, target);
+
+	$('#item-'+no).select2();
 }
 
 
@@ -479,12 +646,13 @@ function updateStepQty(no) {
 	let priceList = $('#priceList').val();
 	let stepQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('stepqty')), 0);
 	let freeQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('freeqty')), 0);
-	let force = $('#step-'+no+' option:selected').data('force');
 	let price = parseDefault(parseFloat($('#step-'+no+' option:selected').data('price')), 0);
+	let force = $('#step-'+no+' option:selected').data('force');
 
 	if(priceList == 'x') {
 		$('#stdPrice-'+no).val(price);
 	}
+
 
 	$('#qty-'+no).val(stepQty);
 	$('#free-'+no).val(freeQty);
@@ -511,9 +679,10 @@ function addRow() {
 	let source = $('#row-template').html();
 	let output = $('#details-template');
 	render_append(source, data, output);
-	init();
-	$('#itemCode-'+no).focus();
 
+	let sc = $('#item-template').html();
+	let opt = $('#item-'+no);
+	render(sc, data, opt);
 	updateSelectStep(no);
 }
 
@@ -584,14 +753,17 @@ function recalAmount(no) {
 		let stepVal = $('#step-'+no).val();
 
 		let step = $('#step-data-'+no).val();
+
 		if(step.length) {
 			stepData = JSON.parse(step);
 			let data = null;
 			let qtt = 0;
 			stepData.forEach(function(item) {
-				if(item.stepQty <= qty && item.stepQty > qtt) {
+				stepQty = parseDefault(parseFloat(item.stepQty));
+
+				if(stepQty <= qty && stepQty > qtt) {
 					data = item;
-					qtt = item.stepQty;
+					qtt = stepQty;
 				}
 			})
 
@@ -633,7 +805,6 @@ function recalAmount(no) {
 		let vatamount = get_vat_amount(amount, vatRate);
 		$('#amount-'+no).val(amount.toFixed(2));
 		$('#vatAmount-'+no).val(vatamount.toFixed(4));
-		console.log(amount);
 	}
 	else {
 		let amount = qty * stdPrice;
@@ -709,9 +880,11 @@ function previewOrder() {
 	let currency = $('#currency').val();
 	let items = [];
 	let totalBefDi = 0;
+	let totalVat = 0;
+	let totalDisc = 0;
 	let totalAmount = 0;
+	let docTotal = 0;
 	let DiscPrcnt = parseDefault(parseFloat($('#discPrcnt').val()), 0);
-	let DiscSum = 0;
 
 	if(customerCode == "") {
 		$('#customer').hasError();
@@ -775,6 +948,9 @@ function previewOrder() {
 				}
 
 				let amount = parseDefault(parseFloat($('#amount-'+no).val()), 0);
+				let vatAmount = parseDefault(parseFloat($('#vatAmount-'+no).val()), 0);
+				let lineTotal = amount - vatAmount;
+				let discAmount = lineTotal * (DiscPrcnt * 0.01);
 
 				let item = {
 					"no" : runno,
@@ -790,20 +966,29 @@ function previewOrder() {
 				}
 
 				items.push(item);
-				runno++;
+
 				totalBefDi += amount;
+				totalDisc += discAmount;
+				totalVat += vatAmount * (1 - (DiscPrcnt * 0.01));
+				totalAmount += lineTotal - discAmount;
+
+				runno++;
 			}
 		}
 	});
 
-	DiscSum = totalBefDi * (DiscPrcnt * 0.01);
-	totalAmount = totalBefDi - DiscSum;
+	totalBefVat = totalAmount;
+	docTotal = totalAmount + totalVat;
+
+	console.log(docTotal);
 
 	let subTotal = {
 		"totalBefDi" : addCommas(totalBefDi.toFixed(2)),
 		"DiscPrcnt" : DiscPrcnt.toFixed(2),
-		"DiscSum" : addCommas(DiscSum.toFixed(2)),
-		"totalAmount" : addCommas(totalAmount.toFixed(2))
+		"DiscSum" : addCommas(totalDisc.toFixed(2)),
+		"totalBefVat" : addCommas(totalBefVat.toFixed(2)),
+		"totalVat" : addCommas(totalVat.toFixed(2)),
+		"docTotal" : addCommas(docTotal.toFixed(2))
 	}
 
 	items.push(subTotal);
@@ -842,14 +1027,12 @@ function previewOrder() {
 		"items" : items
 	}
 
-	console.log(data);
-
 	$.ajax({
 		url:HOME + 'check_approve',
 		type:'GET',
 		cache:false,
 		data:{
-			'docTotal' : totalAmount,
+			'docTotal' : docTotal,
 			'priceEdit' : price_edit,
 			'customerCode' : customerCode,
 			'saleTeam' : saleTeam,
@@ -1131,11 +1314,11 @@ function saveAdd() {
 
 function clearText(no) {
 	let priceList = $('#priceList').val();
-	$('#item-'+no).val('');
+	$('#item-'+no).val('0').trigger('change');
 	$('#itemCode-'+no).val('');
 
 	if(priceList == 'x') {
-		$('#step-'+no).html('<option value="">Select</option>');
+		$('#step-'+no).html('<option value="0">Select</option>');
 	}
 
 	$('#step-'+no).val('0');

@@ -13,14 +13,67 @@ class Step_rule_check extends PS_Controller
     $this->home = base_url().'step_rule_check';
 		$this->load->model('step_rule_model');
 		$this->load->model('item_model');
+		$this->load->model('orders_model');
 		$this->load->helper('orders');
   }
 
 
 	public function index()
 	{
-		$ds['items'] = $this->item_model->get_item_list();
+		$priceList = $this->user_model->get_user_price_list($this->_user->id);
+
+		if( ! empty($priceList))
+		{
+			foreach($priceList as $rs)
+			{
+				$rs->list_name = $this->orders_model->price_list_name($rs->list_id);
+			}
+		}
+
+		$ds['priceList'] = $priceList;
+		$ds['items'] = NULL;
 		$this->load->view('step_rule_check/check_list', $ds);
+	}
+
+
+	public function get_item_template()
+	{
+		$sc = TRUE;
+
+		$ds = '<option value="0">Select</option>';
+
+		$PriceList = $this->input->post('priceList');
+		$isControl = 'N';
+
+		if( ! is_null($PriceList) )
+		{
+			$items = $this->item_model->get_items_by_price_list($PriceList, $isControl);
+
+			if( ! empty($items))
+			{
+				foreach($items as $rs)
+				{
+					$ds .= '<option value="'.$rs->code.'">'.$rs->name.'</option>';
+				}
+			}
+			else
+			{
+				$ds = '<option value="0">No Items</option>';
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = get_error_message('required');
+		}
+
+		$arr = array(
+			'status' => $sc === TRUE ? 'success' : 'failed',
+			'message' => $sc === TRUE ? 'success' : $this->error,
+			'template' => $sc === TRUE ? $ds : NULL
+		);
+
+		echo json_encode($arr);
 	}
 
 
@@ -63,7 +116,7 @@ class Step_rule_check extends PS_Controller
 							'Qty' => $rs->stepQty,
 							'freeQty' => $rs->freeQty,
 							'avgPrice' => number(round($amount/$allQty, 2),2),
-							'discPrcnt' => round($discPrcnt, 2) * 100
+							'discPrcnt' => number(round($discPrcnt, 2) * 100, 2)
 						);
 
 						$no++;

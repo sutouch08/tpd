@@ -31,7 +31,6 @@
 <input type="hidden" id="default_currency" value="<?php echo getConfig('CURRENCY'); ?>" />
 </form>
 
-
 <!--  Add New Address Modal  --------->
 <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
     <div class="modal-dialog" style="width:80%; min-width:400px;">
@@ -152,7 +151,7 @@
 		{{#each items}}
 			{{#if @last}}
 				<tr>
-					<td colspan="7" class="middle text-right"><strong>มูลค่าก่อนส่วนลดท้ายบิล</strong></td>
+					<td colspan="7" class="middle text-right"><strong>ราคาสินค้า</strong></td>
 					<td class="middle text-right">{{totalBefDi}}</td>
 					<td class="middle text-right"></td>
 				</tr>
@@ -162,8 +161,18 @@
 					<td class="middle text-right"></td>
 				</tr>
 				<tr>
-					<td colspan="7" class="middle text-right"><strong>จำนวนเงินรวมทั้งสิ้น</strong></td>
-					<td class="middle text-right">{{totalAmount}}</td>
+					<td colspan="7" class="middle text-right"><strong>ราคาสุทธิก่อนภาษีมูลค่าเพิ่ม</strong></td>
+					<td class="middle text-right">{{totalBefVat}}</td>
+					<td class="middle text-right"></td>
+				</tr>
+				<tr>
+					<td colspan="7" class="middle text-right"><strong>ภาษีมูลค่าเพิ่ม</strong></td>
+					<td class="middle text-right">{{totalVat}}</td>
+					<td class="middle text-right"></td>
+				</tr>
+				<tr>
+					<td colspan="7" class="middle text-right"><strong>รวมเงินสุทธิ</strong></td>
+					<td class="middle text-right">{{docTotal}}</td>
 					<td class="middle text-right"></td>
 				</tr>
 			{{else}}

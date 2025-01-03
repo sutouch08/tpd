@@ -9,12 +9,23 @@
     color: red;
   }
 
-  tr.control input {
+  /* tr.control input {
     color:red !important;
   }
 
   tr.control select {
     color:red !important;
+  } */
+
+  span.clear {
+    padding:6px 12px;
+    font-size: 14px;
+    font-weight: normal;
+    line-height: 1;
+    color:#555555;
+    text-align: center;
+    background-color: #eeeeee;
+    border:solid 1px #cccccc;
   }
 
   @media (min-width: 768px) {
@@ -29,8 +40,13 @@
       position: sticky;
     }
 
-    .fix-step {
+    .fix-clear {
       left:289px;
+      position: sticky;
+    }
+
+    .fix-step {
+      left:329px;
       position: sticky;
     }
 
@@ -41,7 +57,7 @@
     }
   }
 </style>
-<?php $width = 1401; ?>
+<?php $width = 1441; ?>
 <?php $hide = $this->disSale ? "" : 'hide'; ?>
 <?php $width += $this->disSale ? 80 : 0; ?>
 <?php $width += $this->isAdmin ? 100 : 0; ?>
@@ -60,6 +76,7 @@
         <tr>
           <th class="fix-width-40 middle text-center fix-no fix-header">#</th>
           <th class="fix-width-250 middle text-center fix-item fix-header">รายการสินค้า</th>
+          <th class="fix-width-40 middle text-center fix-clear fix-header"></th>
           <th class="fix-width-150 middle text-center fix-step fix-header">Step</th>
           <th class="fix-width-80 middle text-center">Controlled</th>
           <th class="fix-width-80 middle text-center">In Stock</th>
@@ -88,13 +105,17 @@
             <input type="hidden" class="whs" id="whsCode-1" data-no="1">
             <input type="hidden" id="step-data-1" data-no="1">
             <div class="input-group width-100">
-              <input type="text" class="form-control input-sm input-item-code" id="item-1" data-no="1" data-price="0" />
-              <span class="input-group-addon" onclick="clearText(1)">x</span>
+              <select class="width-100 input-item-code" id="item-1" data-no="1" onchange="getItemData(1)">
+                <option value="0" data-no="1">กรุณาเลือกลูกค้า</option>
+              </select>
             </div>
+          </td>
+          <td class="middle text-center fix-clear" scope="row">
+            <span class="clear pointer" onclick="clearText(1)">x</span>
           </td>
           <td class="middle fix-step" scope="row">
             <select class="form-control input-sm step" id="step-1" data-no="1" onchange="updateStepQty(1)">
-              <option value="">เลือก</option>
+              <option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">No Step</option>
             </select>
           </td>
           <td class="middle"><input type="text" class="form-control input-sm text-center is-control" id="control-1" data-no="1" value="" disabled /></td>
@@ -136,13 +157,16 @@
       <input type="hidden" class="whs" id="whsCode-{{no}}" data-no="{{no}}">
       <input type="hidden" id="step-data-{{no}}" data-no="{{no}}">
       <div class="input-group width-100">
-        <input type="text" class="form-control input-sm input-item-code e" id="item-{{no}}" data-no="{{no}}" />
-        <span class="input-group-addon" onclick="clearText({{no}})">x</span>
+      <select class="width-100 input-item-code e" id="item-{{no}}" data-no="{{no}}" onchange="getItemData({{no}})">
+      </select>
       </div>
+    </td>
+    <td class="middle text-center fix-clear" scope="row">
+      <span class="clear pointer" onclick="clearText({{no}})">x</span>
     </td>
     <td class="middle fix-step" scope="row">
       <select class="form-control input-sm step" id="step-{{no}}" data-no="{{no}}" onchange="updateStepQty({{no}})">
-        <option value="0">เลือก</option>
+        <option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">No Step</option>
       </select>
     </td>
     <td class="middle"><input type="text" class="form-control input-sm text-center is-control" id="control-{{no}}" data-no="{{no}}" value="" disabled /></td>
@@ -167,5 +191,9 @@
 </script>
 
 <script id="step-template" type="text/x-handlebarsTemplate">
-  <option value="0">เลือก</option>
+  <option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">No Step</option>
+</script>
+
+<script id="item-template" type="text/x-handlebarsTemplate">
+  <option value="0">Select Item</option>
 </script>
