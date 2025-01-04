@@ -955,7 +955,7 @@ function previewOrder() {
 				let item = {
 					"no" : runno,
 					"ItemCode" : $(this).val(),
-					"itemName" : $('#item-'+no).val(),
+					"itemName" : $('#item-'+no+' option:selected').data('name'),
 					"qty" : addCommas($('#qty-'+no).val()),
 					"free" : addCommas($('#free-'+no).val()),
 					"uom" : $('#uom-'+no).val(),

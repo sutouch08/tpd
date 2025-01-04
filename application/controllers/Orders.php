@@ -533,7 +533,7 @@ class Orders extends PS_Controller
 				{
 					foreach($items as $rs)
 					{
-						$ds .= '<option value="'.$rs->code.'">'.$rs->name.'</option>';
+						$ds .= '<option value="'.$rs->code.'" data-name="'.$rs->name.'">'.$rs->name.'</option>';
 					}
 				}
 				else
@@ -587,7 +587,7 @@ class Orders extends PS_Controller
 					    {
 								foreach($ro->result() as $rd)
 								{
-									$ds .= '<option value="'.$rd->ItemCode.'">'.$rd->ItemName.'</option>';
+									$ds .= '<option value="'.$rd->ItemCode.'" data-name="'.$rd->ItemName.'">'.$rd->ItemName.'</option>';
 								}
 					    }
 							else
