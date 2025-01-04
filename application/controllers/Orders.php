@@ -462,7 +462,7 @@ class Orders extends PS_Controller
 	{
 		$sc = TRUE;
 
-		$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">No Step</option>';
+		$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">Choose Step</option>';
 
 		$PriceList = $this->input->post('PriceList');
 
@@ -492,7 +492,7 @@ class Orders extends PS_Controller
 				}
 				else
 				{
-					$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">No Step</option>';
+					$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">Choose Step</option>';
 				}
 			}
 		}
@@ -581,7 +581,7 @@ class Orders extends PS_Controller
 								->group_end();
 							}
 
-							$ro = $this->ms->order_by('ItemName', 'ASC')->limit(20)->get('OITM');
+							$ro = $this->ms->order_by('ItemName', 'ASC')->get('OITM');
 
 							if($ro->num_rows() > 0)
 					    {
