@@ -115,7 +115,7 @@
           </td>
           <td class="middle fix-step" scope="row">
             <select class="form-control input-sm step" id="step-1" data-no="1" onchange="updateStepQty(1)">
-              <option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">No Step</option>
+              <option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">Choose Step</option>
             </select>
           </td>
           <td class="middle"><input type="text" class="form-control input-sm text-center is-control" id="control-1" data-no="1" value="" disabled /></td>

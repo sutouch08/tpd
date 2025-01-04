@@ -492,7 +492,7 @@ class Orders extends PS_Controller
 				}
 				else
 				{
-					$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">Choose Step</option>';
+					$ds = '<option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="0">Choose Step</option>';
 				}
 			}
 		}
@@ -711,7 +711,7 @@ class Orders extends PS_Controller
 
 							if( ! empty($step))
 							{
-								$stx = '<option value="">Select</option>';
+								$stx = '<option value="">Choose Step</option>';
 								$da = array();
 
 								foreach($step as $st)

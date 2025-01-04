@@ -1318,7 +1318,7 @@ function clearText(no) {
 	$('#itemCode-'+no).val('');
 
 	if(priceList == 'x') {
-		$('#step-'+no).html('<option value="0">Select</option>');
+		$('#step-'+no).html('<option value="0">Choose Step</option>');
 	}
 
 	$('#step-'+no).val('0');
