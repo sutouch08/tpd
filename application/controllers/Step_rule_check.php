@@ -5,7 +5,7 @@ class Step_rule_check extends PS_Controller
 {
 	public $menu_code = 'PRICECHECK';
 	public $menu_group_code = 'ORDER';
-	public $title = 'ตรวจสอบ Step ราคา';
+	public $title = 'ตรวจสอบราคา ต่อ 1 Unit';
 
   public function __construct()
   {

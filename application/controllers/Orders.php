@@ -1174,7 +1174,8 @@ class Orders extends PS_Controller
 					'Approved' => $doc->Approved,
 					'promotionCode' => $doc->promotion_code,
 					'CanApprove' => $can_approve,
-					'items' => array()
+					'items' => array(),
+					'subTotal' => NULL
 				);
 
 				if($doc->Approved == 'A')
@@ -1265,11 +1266,9 @@ class Orders extends PS_Controller
 
 							$no++;
 						}
-
-
 					}
 
-					$arr = array(
+					$ds['subTotal'] = array(
 						'totalBefDi' => number($totalBefDi, 2),
 						'DiscPrcnt' => $doc->DiscPrcnt,
 						'DiscSum' => number($doc->DiscSum, 2),
@@ -1277,10 +1276,7 @@ class Orders extends PS_Controller
 						'totalVat' => number($doc->VatSum, 2),
 						'docTotal' => number($doc->DocTotal, 2)
 					);
-
-					array_push($ds['items'], $arr);
 				}
-
 			}
 			else
 			{

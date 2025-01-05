@@ -962,6 +962,7 @@ function previewOrder() {
 					"stdPrice" : addCommas(stdPrice.toFixed(2)),
 					"sellPrice" : addCommas(sellPrice.toFixed(2)),
 					"amount" : addCommas(amount.toFixed(2)),
+					"remark" : $('#remark-'+no).val(),
 					"dis" : $('#dis-'+no).is(':checked') ? '<i class="fa fa-check blue"></i>' : ''
 				}
 
@@ -980,8 +981,6 @@ function previewOrder() {
 	totalBefVat = totalAmount;
 	docTotal = totalAmount + totalVat;
 
-	console.log(docTotal);
-
 	let subTotal = {
 		"totalBefDi" : addCommas(totalBefDi.toFixed(2)),
 		"DiscPrcnt" : DiscPrcnt.toFixed(2),
@@ -991,7 +990,7 @@ function previewOrder() {
 		"docTotal" : addCommas(docTotal.toFixed(2))
 	}
 
-	items.push(subTotal);
+	//items.push(subTotal);
 
 	if(count == 0) {
 		warning("ไม่พบรายการสินค้า");
@@ -1024,7 +1023,8 @@ function previewOrder() {
 		"billOption" : $("input[name=billoption]:checked").val(),
 		"requiredSQ" : $('#require-sq').is(':checked') ? 'Y' : 'N',
 		"remark" : $('#remark').val(),
-		"items" : items
+		"items" : items,
+		"subTotal" : subTotal
 	}
 
 	$.ajax({
