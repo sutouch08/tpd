@@ -34,7 +34,7 @@
         <div class="loader"></div>
 		</div>
 		<div id="loader-backdrop" style="position: fixed; width:100vw; height:100vh; background-color:white; opacity:0.3; display:none; z-index:9;">
-		</div>		
+		</div>
 		<!-- #section:basics/navbar.layout -->
 		<div id="navbar" class="navbar navbar-default">
 			<script type="text/javascript">
@@ -52,12 +52,13 @@
 
 				<div class="navbar-header pull-left">
 					<a href="<?php echo base_url(); ?>" class="navbar-brand" style="padding-top:0px; padding-bottom:0px;">
+						<?php if(getConfig('UAT')) : ?>
+							<h4>
+								<?php echo getConfig('COMPANY_NAME'); ?>
+							</h4>
+						<?php else : ?>
 						<img src="<?php echo base_url(); ?>images/company/company-logo.png" height="40" class="hidden-sm hidden-xs">
-						<!--
-						<small>
-							<?php echo getConfig('COMPANY_NAME'); ?>
-						</small>
-						-->
+					<?php endif; ?>
 					</a>
 				</div>
 
