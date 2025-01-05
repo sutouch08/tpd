@@ -2,6 +2,7 @@
 <?php
     $open     = $CLOSE_SYSTEM == 0 ? 'btn-success' : '';
     $close    = $CLOSE_SYSTEM == 1 ? 'btn-danger' : '';
+    $freze    = $CLOSE_SYSTEM == 2 ? 'btn-warning' : '';
     $pwd_on   = $USE_STRONG_PWD == 1 ? 'btn-primary' : '';
     $pwd_off  = $USE_STRONG_PWD == 0 ? 'btn-primary' : '';
     $dis_on   = $USE_DISCSALE == 1 ? 'btn-primary' : '' ;
@@ -14,10 +15,11 @@
     <div class="row">
   	<?php if( $cando === TRUE ): //---- ถ้ามีสิทธิ์ปิดระบบ ---//	?>
     	<div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"><span class="form-control left-label">ปิดระบบ</span></div>
-      <div class="col-lg-2 col-md-3 col-sm-4 col-xs-12">
-      	<div class="btn-group width-100">
-        	<button type="button" class="btn btn-sm <?php echo $open; ?>" style="width:50%;" id="btn-open" onClick="openSystem()">เปิด</button>
-          <button type="button" class="btn btn-sm <?php echo $close; ?>" style="width:50%;" id="btn-close" onClick="closeSystem()">ปิด</button>
+      <div class="col-lg-3 col-md-9 col-sm-9 col-xs-12">
+        <div class="btn-group input-xlarge">
+        	<button type="button" class="btn btn-sm <?php echo $open; ?>" style="width:33%;" id="btn-open" onClick="openSystem()">เปิด</button>
+          <button type="button" class="btn btn-sm <?php echo $close; ?>" style="width:33%;" id="btn-close" onClick="closeSystem()">ปิด</button>
+          <button type="button" class="btn btn-sm <?php echo $freze; ?>" style="width:34%" id="btn-freze" onclick="frezeSystem()">ดูอย่างเดียว</button>
         </div>
 
       	<input type="hidden" name="CLOSE_SYSTEM" id="closed" value="<?php echo $CLOSE_SYSTEM; ?>" />
@@ -70,7 +72,7 @@
     <div class="divider-hidden"></div>
 
     <div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
-      <?php if($this->pm->can_add OR $this->pm->can_edit) : ?>
+      <?php if($this->pm->can_add OR $this->pm->can_edit OR $cando) : ?>
       <button type="button" class="btn btn-sm btn-success" onClick="updateConfig('systemForm')"><i class="fa fa-save"></i> บันทึก</button>
       <?php endif; ?>
     </div>

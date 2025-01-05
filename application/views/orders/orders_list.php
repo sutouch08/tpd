@@ -55,7 +55,9 @@
 		<h3 class="title"> <?php echo $this->title; ?></h3>
 	</div>
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5 text-right">
+	<?php if($this->pm->can_add) : ?>
 		<button type="button" class="btn btn-white btn-success top-btn" onclick="goAdd()"><i class="fa fa-plus"></i> New Order</button>
+	<?php endif; ?>
 	</div>
 </div><!-- End Row -->
 <hr class="padding-5"/>

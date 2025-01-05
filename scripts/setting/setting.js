@@ -56,14 +56,29 @@ function toggleDis(option) {
 }
 
 
-function openSystem() {
-	$('#closed').val(0);
-	$('#btn-close').removeClass('btn-danger');
-	$('#btn-open').addClass('btn-success');
+function openSystem()
+{
+	$("#closed").val(0);
+	$("#btn-close").removeClass('btn-danger');
+	$('#btn-freze').removeClass('btn-warning');
+	$("#btn-open").addClass('btn-success');
 }
 
-function closeSystem() {
-	$('#closed').val(1);
-	$('#btn-open').removeClass('btn-success');
-	$('#btn-close').addClass('btn-danger');
+
+
+function closeSystem()
+{
+	$("#closed").val(1);
+	$("#btn-open").removeClass('btn-success');
+	$('#btn-freze').removeClass('btn-warning');
+	$("#btn-close").addClass('btn-danger');
+}
+
+
+function frezeSystem()
+{
+	$("#closed").val(2);
+	$("#btn-open").removeClass('btn-success');
+	$("#btn-close").removeClass('btn-danger');
+	$('#btn-freze').addClass('btn-warning');
 }

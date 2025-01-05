@@ -38,9 +38,8 @@ function get_permission($menu)
     }
     else
     {
-      if(getConfig('CLOSE_SYSTEM') == 2)
+      if(getConfig('CLOSE_SYSTEM') == 2 && $menu != 'CLOSE_SYSTEM')
       {
-        $pm->can_view = 0;
         $pm->can_add = 0;
         $pm->can_edit = 0;
         $pm->can_delete = 0;
