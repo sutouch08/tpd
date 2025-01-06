@@ -280,5 +280,17 @@ class Special_price_list_model extends CI_Model
     return $count > 0 ? TRUE : FALSE;
   }
 
+
+  public function get_name($id)
+  {
+    $rs = $this->db->select('name')->where('id', $id)->get($this->tb);
+
+    if($rs->num_rows() == 1)
+    {
+      return $rs->row()->name;
+    }
+
+    return NULL;
+  }
 }
 ?>

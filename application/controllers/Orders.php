@@ -1116,11 +1116,7 @@ class Orders extends PS_Controller
 			if($priceEdit)
 			{
 				$message = "ในกรณีราคาต่ำกว่า Price list ต้องผ่านการอนุมัติ";
-			}
-			else if(empty($team_id))
-			{
-				$message = "ในกรณีเป็นลูกค้าต่างประเทศ ต้องผ่านการอนุมัติ";
-			}
+			}			
 			else
 			{
 				$message = "ในกรณีจำนวนเงินสูงกว่าที่กำหนดต้องผ่านการอนุมัติ";
@@ -1166,7 +1162,7 @@ class Orders extends PS_Controller
 					'docDate' => thai_date($doc->DocDate, FALSE),
 					'dueDate' => thai_date($doc->DocDueDate, FALSE),
 					'PoNo' => $doc->NumAtCard,
-					'PriceList' => empty($doc->PriceList) ? "-" : ($doc->PriceList == -10 ? 'Special Price List' : $this->orders_model->price_list_name($doc->PriceList)),
+					'PriceList' => empty($doc->PriceList) ? "-" : ($doc->PriceList == -10 ? $this->special_price_list_model->get_name($doc->SpecialPriceList) : $this->orders_model->price_list_name($doc->PriceList)),
 					'termName' => $termName,
 					'billOption' => $doc->BillDate == 1 ? 'Y' : 'N',
 					'requiredSQ' => $doc->requireSQ == 1 ? 'Y' : 'N',
