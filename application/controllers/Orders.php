@@ -811,7 +811,7 @@ class Orders extends PS_Controller
 			{
 				$priceEdit = FALSE; //--- หากมีการแก้ไขราคา ตำกว่า stdPrice ตรงนี้จะเป็น TRUE;
 				$code = $this->get_new_code();
-				$groupNum = $header->term == '-10' ? $header->CustomerGroupNum : $header->GroupNum; //-- CustomerGroupNum = groupNum by customer
+				$groupNum = $header->GroupNum == '-10' ? $header->CustomerGroupNum : $header->GroupNum; //-- CustomerGroupNum = groupNum by customer
 				$con_id = $this->sales_team_condition_model->get_condition_id($header->saleTeam, $header->areaId);
 
 				$arr = array(
@@ -1116,7 +1116,7 @@ class Orders extends PS_Controller
 			if($priceEdit)
 			{
 				$message = "ในกรณีราคาต่ำกว่า Price list ต้องผ่านการอนุมัติ";
-			}			
+			}
 			else
 			{
 				$message = "ในกรณีจำนวนเงินสูงกว่าที่กำหนดต้องผ่านการอนุมัติ";

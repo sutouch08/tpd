@@ -69,7 +69,7 @@ class Export
               'DiscSum' => $order->DiscSum,
 							'DocTotal' => $order->DocTotal,
 							'VatSum' => $order->VatSum,
-							'GroupNum' => $order->GroupNum == -10 ? NULL : $order->GroupNum,
+							'GroupNum' => $order->GroupNum,
 							'SlpCode' => $order->SlpCode,
 							'OwnerCode' => $order->OwnerCode,
 							'U_BEX_TYPE' => $order->CardType,
