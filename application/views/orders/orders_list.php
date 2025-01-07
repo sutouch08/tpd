@@ -233,7 +233,7 @@
 						<td class="middle fix-code" scope="row"><?php echo $rs->code; ?></td>
 						<td class="middle fix-cust" scope="row"><?php echo $rs->CardCode; ?></td>
 						<td class="middle fix-name" scope="row"><?php echo $rs->CardName; ?></td>
-						<td class="middle"><?php echo $rs->NumAtCard; ?></td>
+						<td class="middle" style="overflow-wrap:break-word;"><?php echo $rs->NumAtCard; ?></td>
 						<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
 						<td class="middle text-center"><span class="btn btn-mini btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</span></td>
 						<td class="middle text-center">
