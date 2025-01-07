@@ -812,7 +812,8 @@ class Orders extends PS_Controller
 				$priceEdit = FALSE; //--- หากมีการแก้ไขราคา ตำกว่า stdPrice ตรงนี้จะเป็น TRUE;
 				$code = $this->get_new_code();
 				$groupNum = $header->GroupNum == '-10' ? $header->CustomerGroupNum : $header->GroupNum; //-- CustomerGroupNum = groupNum by customer
-				$con_id = $this->sales_team_condition_model->get_condition_id($header->saleTeam, $header->areaId);
+				$team_id = empty($this->_user->team_id) ? $header->saleTeam : $this->_user->team_id;
+				$con_id = $this->sales_team_condition_model->get_condition_id($team_id, $header->areaId);
 
 				$arr = array(
 					'code' => $code,
@@ -852,7 +853,7 @@ class Orders extends PS_Controller
 					'user_id' => $this->_user->id,
 					'uname' => $this->_user->uname,
 					'area_id' => $header->areaId,
-					'team_id' => (empty($this->_user->team_id) ? $header->saleTeam : $this->_user->team_id),
+					'team_id' => $team_id,
 					'term_id' => $header->term
 				);
 
