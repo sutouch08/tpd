@@ -86,7 +86,13 @@
 									</a>
 								</li>
 								<li class="divider"></li>
-
+								<li>
+									<a href="JavaScript:window.location.reload(true)">
+										<i class="ace-icon fa fa-bolt"></i>
+										Clear cache
+									</a>
+								</li>
+								<li class="divider"></li>
 								<li>
 									<a href="<?php echo base_url(); ?>authentication/logout">
 										<i class="ace-icon fa fa-power-off"></i>

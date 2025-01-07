@@ -122,14 +122,14 @@
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-1" value="" disabled/></td>
-          <td class="middle"><input type="number" class="form-control input-sm text-right input-qty e" id="qty-1" data-no="1" value="" onkeyup="recalAmount(1)" disabled/></td>
+          <td class="middle"><input type="number" class="form-control input-sm text-right input-qty e" id="qty-1" data-no="1" value="" onchange="recalAmount(1)" disabled/></td>
           <td class="middle"><input type="number" class="form-control input-sm text-right e" id="free-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm text-center" id="uom-1" value="" disabled /></td>
           <td class="middle">
-            <input type="number" class="form-control input-sm text-right" id="stdPrice-1" value="" disabled/>
+            <input type="number" class="form-control input-sm text-right e" id="stdPrice-1" value="" disabled/>
             <input type="hidden" id="vatAmount-1" value="0.00">
           </td>
-          <td class="middle"><input type="number" class="form-control input-sm text-right" id="price-1" value="" onkeyup="recalAmount(1)"/></td>
+          <td class="middle"><input type="number" class="form-control input-sm text-right e" id="price-1" value="" onkeyup="recalAmount(1)"/></td>
           <td class="middle text-center <?php echo $hide; ?>"><label><input type="checkbox" class="ace dis" id="dis-1" value="1" /><span class="lbl"></span></lable></td>
           <td class="middle"><input type="number" class="form-control input-sm text-right" id="amount-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm" id="remark-1" maxlength="100" value="" /></td>
@@ -173,14 +173,14 @@
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-{{no}}" value="" disabled /></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-{{no}}" value="" disabled/></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-{{no}}" value="" disabled/></td>
-    <td class="middle"><input type="number" class="form-control input-sm text-right input-qty e" id="qty-{{no}}" data-no="{{no}}" value="" onkeyup="recalAmount({{no}})" disabled/></td>
+    <td class="middle"><input type="number" class="form-control input-sm text-right input-qty e" id="qty-{{no}}" data-no="{{no}}" value="" onchange="recalAmount({{no}})" disabled/></td>
     <td class="middle"><input type="number" class="form-control input-sm text-right e" id="free-{{no}}" value="" disabled/></td>
     <td class="middle"><input type="text" class="form-control input-sm text-center" id="uom-{{no}}" value="" disabled /></td>
     <td class="middle">
-    <input type="number" class="form-control input-sm text-right" id="stdPrice-{{no}}" value="" disabled/>
+    <input type="number" class="form-control input-sm text-right e" id="stdPrice-{{no}}" value="" disabled/>
     <input type="hidden" id="vatAmount-{{no}}" value="0.00">
     </td>
-    <td class="middle"><input type="number" class="form-control input-sm text-right" id="price-{{no}}" value="" onkeyup="recalAmount({{no}})"/></td>
+    <td class="middle"><input type="number" class="form-control input-sm text-right e" id="price-{{no}}" value="" onkeyup="recalAmount({{no}})"/></td>
     <td class="middle text-center <?php echo $hide; ?>"><label><input type="checkbox" class="ace dis" id="dis-{{no}}" value="1" /><span class="lbl"></span></lable></td>
     <td class="middle"><input type="number" class="form-control input-sm text-right" id="amount-{{no}}" value="" disabled/></td>
     <td class="middle"><input type="text" class="form-control input-sm" id="remark-{{no}}" maxlength="100" value="" /></td>

@@ -1,6 +1,3 @@
-window.addEventListener('load', () => {
-	init();
-});
 
 //----  get new customer list
 function changeCustomerList() {
@@ -252,41 +249,9 @@ function checkPriceList() {
 		addRow();
 	}
 
-	init();
-
 	getStepTemplate();
 	getItemTemplate();
 	getTermDropdown();
-}
-
-
-function init() {
-	// let priceList = $('#priceList').val();
-	// priceList = priceList == "" ? 0 : priceList;
-	// let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0);
-	// let control = $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N';
-	//
-	// $('.input-item-code').autocomplete({
-	// 	source:HOME + 'get_item_code_and_name/'+priceList+'/'+sp_id+'/'+control,
-	// 	autoFocus:true,
-	// 	open:function(event){
-	// 		var $ul = $(this).autocomplete('widget');
-	// 		$ul.css('width', 'auto');
-	// 	},
-	// 	close:function(){
-	// 		var data = $(this).val();
-	// 		var arr = data.split(' | ');
-	// 		if(arr.length == 2) {
-	// 			let no = $(this).data("no");
-	// 			$('#itemCode-'+no).val(arr[1]);
-	// 			$(this).val(arr[0]);
-	// 			getItemData(arr[1], no);
-	// 		}
-	// 		else {
-	// 			$(this).val('');
-	// 		}
-	// 	}
-	// })
 }
 
 
@@ -550,79 +515,6 @@ function getItemData(no) {
 	}
 }
 
-// function getItemData(code, no) {
-// 	let priceList = $('#priceList').val();
-// 	let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0);
-//
-// 	load_in();
-//
-// 	$.ajax({
-// 		url:HOME + "get_item_data",
-// 		type:"GET",
-// 		cache:false,
-// 		data:{
-// 			'code' : code,
-// 			'priceList' : priceList,
-// 			'special_price_id' : sp_id,
-// 			'no' : no
-// 		},
-// 		success:function(rs) {
-// 			load_out();
-//
-// 			if(isJson(rs)) {
-// 				let ds = JSON.parse(rs);
-// 				let price = parseFloat(ds.price);
-//
-// 				$('#control-'+no).val(ds.isControl);
-// 				$('#uom-'+no).val(ds.uom);
-// 				$('#stdPrice-'+no).val(price);
-// 				$('#item-'+no).data('price', price);
-// 				$('#price-'+no).val('');
-// 				$('#instock-'+no).val(ds.inStock);
-// 				$('#commit-'+no).val(ds.commit);
-// 				$('#available-'+no).val(ds.available);
-// 				$('#itemVatCode-'+no).val(ds.vatCode);
-// 				$('#itemVatRate-'+no).val(ds.vatRate);
-// 				$('#whsCode-'+no).val(ds.whsCode);
-//
-// 				if(ds.is_sale_discount == 'Y') {
-// 					$('#dis-'+no).prop('checked', true);
-// 				}
-// 				else {
-// 					$('#dis-'+no).prop('checked', false);
-// 				}
-//
-// 				if(ds.step != '' && ds.step !== null && ds.step != undefined) {
-// 					$('#step-'+no).html(ds.step);
-// 				}
-//
-// 				if(ds.stepData != '' && ds.stepData !== null && ds.stepData != undefined) {
-// 					$('#step-data-'+no).val(JSON.stringify(ds.stepData));
-// 				}
-//
-// 				$('#qty-'+no).focus();
-//
-// 				if(ds.isControl == 'Y') {
-// 					$('#row-'+no).addClass('control');
-// 				}
-// 				else {
-// 					$('#row-'+no).removeClass('control');
-// 				}
-//
-// 				updateStepQty(no);
-// 				//recalAmount(no);
-// 			}
-// 			else {
-// 				showError(rs);
-// 			}
-// 		},
-// 		error:function(rs) {
-// 			load_out();
-// 			showError(rs);
-// 		}
-// 	})
-// }
-
 
 function updateSelectItem(no) {
 	let template = $('#item-template').html();
@@ -720,7 +612,6 @@ function get_vat_amount(amount, vat) {
 		return re_vat;
 	}
 
-
 	return 0;
 }
 
@@ -751,32 +642,17 @@ function recalAmount(no) {
 	if(priceList == 'x') {
 		//--- เปลี่ยนราคาขายต่่อชิ้น และ จำนวนแถม ตาม step price qty
 		let stepVal = $('#step-'+no).val();
+		let stepQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('stepqty')), 0);
 
-		let step = $('#step-data-'+no).val();
-
-		if(step.length) {
-			stepData = JSON.parse(step);
-			let data = null;
-			let qtt = 0;
-			stepData.forEach(function(item) {
-				stepQty = parseDefault(parseFloat(item.stepQty));
-
-				if(stepQty <= qty && stepQty > qtt) {
-					data = item;
-					qtt = stepQty;
-				}
-			})
-
-			if(data !== null) {
-				stdPrice = data.stepPrice;
-				$('#stdPrice-'+no).val(data.stepPrice);
-				$('#free-'+no).val(data.freeQty);
-			}
-			else {
-				stdPrice = prevPrice;
-				$('#stdPrice-'+no).val(prevPrice);
-				$('#free-'+no).val(0);
-			}
+		if(stepQty > qty) {
+			$('#qty-'+no).hasError();
+			$('#err-'+no).val(1);
+			showError('จำนวนต้องไม่น้อยกว่า จำนวนขั้นต่ำของ step ที่เลือก');
+			//$('#qty-'+no).val(stepQty);
+		}
+		else {
+			$('#qty-'+no).clearError();
+			$('#err-'+no).val(0);
 		}
 	}
 	else {
@@ -786,6 +662,7 @@ function recalAmount(no) {
 		if(qty < minQty) {
 			$('#qty-'+no).hasError();
 			$('#err-'+no).val(1);
+			showError("จำนวนต้องไม่น้อยกว่า step ที่เลือก");
 		}
 		else {
 			$('#qty-'+no).clearError();
@@ -797,8 +674,6 @@ function recalAmount(no) {
 			$('#qty-'+no).val(qty);
 		}
 	}
-
-
 
 	if(sellPrice != "") {
 		let amount = qty * sellPrice;
@@ -922,6 +797,8 @@ function previewOrder() {
 			let limitQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('limit')), 0);
 			let freeQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('freeqty')), 0);
 			let free = parseDefault(parseFloat($('#free-'+no).val()), 0);
+			let stdPrice = parseDefault(parseFloat($('#stdPrice-'+no).val()), 0);
+			let price = parseDefault(parseFloat($('#price-'+no).val()), 0);
 
 			if(qty == 0 || qty < minQty || (limitQty > 0 && qty > limitQty)) {
 				$('#qty-'+no).hasError();
@@ -933,6 +810,13 @@ function previewOrder() {
 			if(freeQty > 0 && free != freeQty) {
 				$('#free-'+no).hasError();
 				msg = "จำนวนแถมไม่ถูกต้อง";
+				err++;
+				er++;
+			}
+
+			if(stdPrice == 0 && price == 0) {
+				$('#stdPrice-'+no).hasError();
+				msg = "ราคาไม่ถูกต้อง";
 				err++;
 				er++;
 			}
