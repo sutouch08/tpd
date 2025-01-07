@@ -90,15 +90,22 @@ class Sales_team_condition_model extends CI_Model
   }
 
 
-  public function get_condition_id($team_id, $area_id)
+  public function get_condition_id($team_id, $area_id = NULL)
   {
-    $rs = $this->db
-    ->select('c.id')
-    ->from('area_condition AS a')
-    ->join('sales_team_condition AS c', 'a.condition_id = c.id', 'left')
-    ->where('c.team_id', $team_id)
-    ->where('a.area_id', $area_id)
-    ->get();
+    if( ! empty($area_id))
+    {
+      $rs = $this->db
+      ->select('c.id')
+      ->from('area_condition AS a')
+      ->join('sales_team_condition AS c', 'a.condition_id = c.id', 'left')
+      ->where('c.team_id', $team_id)
+      ->where('a.area_id', $area_id)
+      ->get();
+    }
+    else
+    {
+      $rs = $this->db->select('id')->where('team_id', $team_id)->get($this->tb);
+    }
 
     if($rs->num_rows() > 0)
     {

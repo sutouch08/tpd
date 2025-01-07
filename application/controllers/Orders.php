@@ -813,7 +813,8 @@ class Orders extends PS_Controller
 				$code = $this->get_new_code();
 				$groupNum = $header->GroupNum == '-10' ? $header->CustomerGroupNum : $header->GroupNum; //-- CustomerGroupNum = groupNum by customer
 				$team_id = empty($this->_user->team_id) ? $header->saleTeam : $this->_user->team_id;
-				$con_id = $this->sales_team_condition_model->get_condition_id($team_id, $header->areaId);
+				$area_id = $this->_user->role == 'salesAdmin' ? NULL : $header->areaId; //--- ถ้าเป็น sales admin ให้ใช้ team_id ในการดึง condition อย่่างเดียว
+				$con_id = $this->sales_team_condition_model->get_condition_id($team_id, $area_id);
 
 				$arr = array(
 					'code' => $code,
