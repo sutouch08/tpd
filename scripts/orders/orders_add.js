@@ -576,6 +576,7 @@ function addRow() {
 	let opt = $('#item-'+no);
 	render(sc, data, opt);
 	updateSelectStep(no);
+	$('#item-'+no).select2();
 }
 
 
