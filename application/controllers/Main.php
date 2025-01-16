@@ -83,21 +83,20 @@ class Main extends PS_Controller
 			if(!empty($report))
 			{
 				$no = 1;
-
-
-				$priceListName = $this->user_model->get_all_price_list_array();
-
+				// $priceListName = $this->user_model->get_all_price_list_array();				
+				$terms = $this->user_model->get_all_payment_term_array();
 				$totalQty = 0;
 				$totalAmount = 0;
 
 				foreach($report as $rs)
 				{
+
 					$arr = array(
 						'no' => $no,
 						'DocDate' => thai_date($rs->DocDate, FALSE),
 						'code' => $rs->code,
 						'SONo' => $rs->DocNum,
-						'paymentTerm' => (empty($rs->PriceList) ? $rs->promotion_code : $priceListName[$rs->PriceList]),
+						'paymentTerm' => empty($terms[$rs->GroupNum]) ? "-" : $terms[$rs->GroupNum],
 						'CardCode' => $rs->CardCode,
 						'CardName' => $rs->CardName,
 						'ItemCode' => $rs->ItemCode,
