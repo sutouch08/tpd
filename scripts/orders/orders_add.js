@@ -50,17 +50,6 @@ function changeCustomerList() {
 
 
 $('#customer').change(function() {
-	let isControl = $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N';
-
-	if(isControl == 'N') {
-		$('.is-control').each(function() {
-			if($(this).val() == 'Y') {
-				let no = $(this).data('no');
-				$('#row-'+no).remove();
-			}
-		})
-	}
-
 	getItemTemplate();
 });
 
