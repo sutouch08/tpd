@@ -160,6 +160,7 @@ class Orders extends PS_Controller
 					'ECVatGroup' => $rs->ECVatGroup,
 					'SlpCode' => $rs->SlpCode,
 					'Rate' => $rs->Rate,
+					'customerType' => $rs->customer_type, //--- U_TPD_RA_DrugType, 1 - 4
 					'isControl' => $rs->isControl == '1' ? 'Y' : 'N',
 					'saleTeam' => $rs->saleTeam, //-- U_TPD_BI_SalesTeam
 					'areaId' => $rs->areaId, //--- U_TPD_BI_AreaName
@@ -519,15 +520,16 @@ class Orders extends PS_Controller
 		$ds = '<option value="0">Select</option>';
 
 		$PriceList = $this->input->post('priceList');
-		$isControl = $this->input->post('isControl') == 'Y' ? 'Y' : 'N';
+		$customer_type = $this->input->post('customer_type');
 		$spid = $this->input->post('spid');
+
+		$item_type = item_type_array($customer_type); //--tools_helper  return item_type as array like ['01', '02', '09'];
 
 		if( ! is_null($PriceList) )
 		{
 			if($PriceList != 'x')
 			{
-
-				$items = $this->item_model->get_items_by_price_list($PriceList, $isControl);
+				$items = $this->item_model->get_items_by_price_list($PriceList, $item_type);
 
 				if( ! empty($items))
 				{
@@ -567,19 +569,11 @@ class Orders extends PS_Controller
 						if( ! empty($items))
 						{
 							$this->ms
-							->select('ItemCode, ItemName, U_BEX_Controll')
+							->select('ItemCode, ItemName, U_TPD_DrugType')
 							->where('SellItem', 'Y')
 							->where('validFor', 'Y')
-							->where_in('ItemCode', $items);
-
-							if($isControl == 'Y')
-							{
-								$this->ms
-								->group_start()
-								->where('U_BEX_Controll IS NULL', NULL, FALSE)
-								->or_where('U_BEX_Controll !=', 'Controlled')
-								->group_end();
-							}
+							->where_in('ItemCode', $items)
+							->where_in('U_TPD_DrugType', $item_type);
 
 							$ro = $this->ms->order_by('ItemName', 'ASC')->get('OITM');
 
@@ -705,6 +699,7 @@ class Orders extends PS_Controller
 								'whsCode' => $item->dfWhsCode,
 								'is_sale_discount' => $item->U_TPD_DiscSale == 'Y' ? 'Y' : 'N',
 								'isControl' => $item->U_BEX_Controll == 'Controlled' ? 'Y' : 'N',
+								'DrugType' => $item->U_TPD_DrugType,
 								'step' => NULL,
 								'stepData' => NULL
 							);
@@ -771,7 +766,8 @@ class Orders extends PS_Controller
 							'available' => $available,
 							'whsCode' => $item->dfWhsCode,
 							'is_sale_discount' => $item->U_TPD_DiscSale == 'Y' ? 'Y' : 'N',
-							'isControl' => $item->U_BEX_Controll == 'Controlled' ? 'Y' : 'N'
+							'isControl' => $item->U_BEX_Controll == 'Controlled' ? 'Y' : 'N',
+							'DrugType' => $item->U_TPD_DrugType
 						);
 					}
 					else

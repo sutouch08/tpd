@@ -26,6 +26,7 @@
                   data-sale="<?php echo $cs->SlpCode; ?>"
                   data-vat="<?php echo $cs->ECVatGroup; ?>"
                   data-rate="<?php echo $cs->Rate; ?>"
+                  data-type="<?php echo $cs->customer_type; ?>"
                   data-control="<?php echo $cs->isControl == '1' ? 'Y' : 'N'; ?>"
                   data-saleteam="<?php echo $cs->saleTeam; ?>"
                   data-saleperson="<?php echo $cs->salePerson; ?>"

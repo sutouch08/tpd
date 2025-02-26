@@ -67,7 +67,7 @@
 				data-sale="{{SlpCode}}"
 				data-vat="{{ECVatGroup}}"
 				data-rate="{{Rate}}"
-				data-control="{{isControl}}"
+				data-type="{{customerType}}"			
 				data-saleteam="{{saleTeam}}"
 				data-saleperson="{{salePerson}}"
 				data-department="{{department}}">

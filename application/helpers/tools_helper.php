@@ -1,4 +1,16 @@
 <?php
+function item_type_array($customer_type)
+{
+	$ds = array(
+		'1' => ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'],
+		'2' => ['09', '10'],
+		'3' => ['02', '03', '04', '05', '06', '07', '08', '09', '10'],
+		'4' => ['02', '03', '04', '09', '10']
+	);
+
+	return isset($ds[$customer_type]) ? $ds[$customer_type] : ['xx'];
+}
+
 
 function get_condition_sign($condition)
 {

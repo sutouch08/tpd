@@ -363,6 +363,7 @@ function getTermDropdown() {
 function getItemTemplate() {
 	let custCode = $('#customer').val();
 	let isControl = $('#customer option:selected').data('control');
+	let type = $('#customer option:selected').data('type');
 	let priceList = $('#priceList').val();
 	let spId = $('#priceList option:selected').data('spid');
 
@@ -387,7 +388,8 @@ function getItemTemplate() {
 		data:{
 			'priceList' : priceList,
 			'spid' : spId,
-			'isControl' : isControl
+			'isControl' : isControl,
+			'customer_type' : type
 		},
 		success:function(rs) {
 			load_out();

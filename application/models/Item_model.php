@@ -8,14 +8,14 @@ class Item_model extends CI_Model
   }
 
 
-  public function get_items_by_price_list($priceList, $isControl = 'N')
+  public function get_items_by_price_list($priceList, array $item_type = array())
   {
     if($priceList)
     {
       $this->ms
       ->select('OITM.ItemCode AS code, OITM.ItemName AS name')
       ->select('OITM.SalUnitMsr AS uom, OITM.U_TPD_DiscSale, ITM1.Price AS price')
-      ->select('OITM.DfltWH AS dfWhsCode, OITM.U_BEX_Controll')
+      ->select('OITM.DfltWH AS dfWhsCode, OITM.U_TPD_DrugType')
       ->select('OVTG.Code AS VatCode, OVTG.Rate')
       ->from('OITM')
       ->join('ITM1', 'ITM1.ItemCode = OITM.ItemCode', 'left')
@@ -23,17 +23,9 @@ class Item_model extends CI_Model
       ->where('OITM.ItemType', 'I')
       ->where('OITM.SellItem', 'Y')
       ->where('OITM.validFor', 'Y')
+      ->where_in('OITM.U_TPD_DrugType', $item_type)
       ->where('ITM1.PriceList', $priceList)
       ->where('ITM1.Price >', 0);
-
-      if($isControl == 'Y')
-      {
-        $this->ms
-        ->group_start()
-        ->where('U_BEX_Controll IS NULL', NULL, FALSE)
-        ->or_where('U_BEX_Controll !=', 'Controlled')
-        ->group_end();
-      }
 
       $rs = $this->ms->order_by('OITM.ItemName', 'ASC')->get();
 
@@ -53,7 +45,7 @@ class Item_model extends CI_Model
       $rs = $this->ms
       ->select('OITM.ItemCode AS code, OITM.ItemName AS name')
       ->select('OITM.SalUnitMsr AS uom, OITM.U_TPD_DiscSale, ITM1.Price AS price')
-      ->select('OITM.DfltWH AS dfWhsCode, OITM.U_BEX_Controll')
+      ->select('OITM.DfltWH AS dfWhsCode, OITM.U_BEX_Controll, OITM.U_TPD_DrugType')
       ->select('OVTG.Code AS VatCode, OVTG.Rate')
       ->from('OITM')
       ->join('ITM1', 'ITM1.ItemCode = OITM.ItemCode', 'left')
@@ -78,7 +70,7 @@ class Item_model extends CI_Model
   {
     $rs = $this->ms
     ->select('OITM.ItemCode AS code, OITM.ItemName AS name')
-    ->select('OITM.SalUnitMsr AS uom, OITM.DfltWH AS dfWhsCode, OITM.U_TPD_DiscSale, OITM.U_BEX_Controll')
+    ->select('OITM.SalUnitMsr AS uom, OITM.DfltWH AS dfWhsCode, OITM.U_TPD_DiscSale, OITM.U_BEX_Controll, OITM.U_TPD_DrugType')
     ->select('OVTG.Code AS VatCode, OVTG.Rate')
     ->from('OITM')
     ->join('OVTG', 'OVTG.Code = OITM.VatGourpSa', 'left')
