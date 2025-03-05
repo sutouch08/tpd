@@ -23,9 +23,13 @@ class Item_model extends CI_Model
       ->where('OITM.ItemType', 'I')
       ->where('OITM.SellItem', 'Y')
       ->where('OITM.validFor', 'Y')
-      ->where_in('OITM.U_TPD_DrugType', $item_type)
       ->where('ITM1.PriceList', $priceList)
       ->where('ITM1.Price >', 0);
+
+      if( ! empty($item_type))
+      {
+        $this->ms->where_in('OITM.U_TPD_DrugType', $item_type);
+      }
 
       $rs = $this->ms->order_by('OITM.ItemName', 'ASC')->get();
 

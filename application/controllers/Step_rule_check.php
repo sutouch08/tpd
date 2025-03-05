@@ -43,11 +43,10 @@ class Step_rule_check extends PS_Controller
 		$ds = '<option value="0">Select</option>';
 
 		$PriceList = $this->input->post('priceList');
-		$isControl = 'N';
 
 		if( ! is_null($PriceList) )
 		{
-			$items = $this->item_model->get_items_by_price_list($PriceList, $isControl);
+			$items = $this->item_model->get_items_by_price_list($PriceList);
 
 			if( ! empty($items))
 			{
