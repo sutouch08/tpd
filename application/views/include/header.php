@@ -33,8 +33,7 @@
 		<div id="loader">
         <div class="loader"></div>
 		</div>
-		<div id="loader-backdrop" style="position: fixed; width:100vw; height:100vh; background-color:white; opacity:0.3; display:none; z-index:9;">
-		</div>
+		<div id="loader-backdrop" style="position: fixed; width:100vw; height:100vh; background-color:white; opacity:0.3; display:none; z-index:9;"></div>
 		<!-- #section:basics/navbar.layout -->
 		<div id="navbar" class="navbar navbar-default">
 			<script type="text/javascript">
@@ -62,7 +61,7 @@
 					</a>
 				</div>
 
-					<?php $this->load->view('include/top_menu'); ?>
+					<?php //$this->load->view('include/top_menu'); ?>
 				<div class="navbar-buttons navbar-header pull-right" role="navigation">
 					<ul class="nav ace-nav">
 
@@ -131,18 +130,7 @@
 				<div class="main-content-inner">
 					<div id="sidebar2" class="sidebar h-sidebar navbar-collapse collapse" data-sidebar="true" data-sidebar-scoll="true"
 					data-sidebar-hover="true" aria-expanded="false" style="height:1px;">
-      <!-- second sidebar, horizontal -->
-
     			</div>
 					<div class="page-content">
 
-								<!-- PAGE CONTENT BEGINS -->
-
-								<?php
-								//--- if user don't have permission to access this page then deny_page;
-								//_can_view_page($this->pm->can_view);
-									if($this->pm->can_view == 0)
-									{
-										$this->load->view('deny_page');
-									}
-								?>
+			<?php if($this->pm->can_view == 0) { $this->load->view('deny_page'); }	?>

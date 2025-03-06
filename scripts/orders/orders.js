@@ -1,30 +1,5 @@
 var HOME = BASE_URL + 'orders/';
 
-window.addEventListener('load', () => {
-	resizeDisplay();
-})
-
-window.addEventListener('resize', () => {
-	resizeDisplay();
-});
-
-function resizeDisplay() {
-  let minHeight = 400;
-	let height = $(window).height();
-  let footerHeight = $('.footer-content').height();
-	let pageContentHeight = height - footerHeight - 45 - 50;
-  let titleHeight = $('.h-row').height();
-  let filterHeight = $('.f-row').height();
-  let paginationHeight = $('#pagination').height();
-  let hrHeight = 10 + 10 + 20;
-	let itemTableHeight = pageContentHeight - (titleHeight + filterHeight + paginationHeight + hrHeight);
-
-  itemTableHeight = itemTableHeight < minHeight ? minHeight : itemTableHeight;
-
-	$('.page-content').css('height', pageContentHeight + 'px');
-	$('#item-div').css('height', itemTableHeight + 'px');
-}
-
 function doApprove() {
   var code = $('#code').val();
   $.ajax({
