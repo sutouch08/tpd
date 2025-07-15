@@ -13,6 +13,7 @@ class Approval_status extends PS_Controller
     $this->home = base_url().'report/approval_status';
 		$this->load->model('approver_model');
 		$this->load->model('report/order_report_model');
+		$this->load->model('special_price_list_model');
   }
 
 
@@ -67,7 +68,7 @@ class Approval_status extends PS_Controller
 						'DocDate' => thai_date($rs->DocDate, FALSE),
 						'code' => $rs->code,
 						'SONo' => $rs->DocNum,
-						'priceList' => empty($rs->PriceList) ? NULL : ($rs->PriceList == -10 ? "Special Price List" : $priceListName[$rs->PriceList]),
+						'priceList' => empty($rs->PriceList) ? NULL : ($rs->PriceList == -10 ? $this->special_price_list_model->get_name($rs->SpecialPriceList) : $priceListName[$rs->PriceList]),
 						'paymentTerm' => empty($paymentTermName[$rs->GroupNum]) ? NULL : $paymentTermName[$rs->GroupNum],
 						'CardCode' => $rs->CardCode,
 						'CardName' => $rs->CardName,
@@ -209,43 +210,45 @@ class Approval_status extends PS_Controller
 			$this->excel->getActiveSheet()->setCellValue('A6', 'ลำดับ');
 			$this->excel->getActiveSheet()->setCellValue('B6', 'วันที่ออเดอร์');
 			$this->excel->getActiveSheet()->setCellValue('C6', 'เลขที่ออเดอร์');
-			$this->excel->getActiveSheet()->setCellValue('D6', 'Payment Term');
-			$this->excel->getActiveSheet()->setCellValue('E6', 'รหัสลูกค้า');
-			$this->excel->getActiveSheet()->setCellValue('F6', 'ชื่อลูกค้า');
-			$this->excel->getActiveSheet()->setCellValue('G6', 'รายการสินค้า');
-			$this->excel->getActiveSheet()->setCellValue('H6', 'ราคา/หน่วย');
-			$this->excel->getActiveSheet()->setCellValue('I6', 'ราคาพิเศษ/หน่วย');
-			$this->excel->getActiveSheet()->setCellValue('J6', 'ส่วนลด');
-			$this->excel->getActiveSheet()->setCellValue('K6', 'จำนวน');
-			$this->excel->getActiveSheet()->setCellValue('L6', 'มูลค่า');
-			$this->excel->getActiveSheet()->setCellValue('M6', 'ผู้อนุมัติ');
-			$this->excel->getActiveSheet()->setCellValue('N6', 'สถานะ');
-			$this->excel->getActiveSheet()->setCellValue('O6', 'เลขที่ PO');
-			$this->excel->getActiveSheet()->setCellValue('P6', 'เลขที่ SO');
-			$this->excel->getActiveSheet()->setCellValue('Q6', 'เลขที่ DO');
-			$this->excel->getActiveSheet()->setCellValue('R6', 'เลขที่ Invoice');
-			$this->excel->getActiveSheet()->setCellValue('S6', 'วันที่ Invoice');
+			$this->excel->getActiveSheet()->setCellValue('D6', 'Price List');
+			$this->excel->getActiveSheet()->setCellValue('E6', 'Payment Term');
+			$this->excel->getActiveSheet()->setCellValue('F6', 'รหัสลูกค้า');
+			$this->excel->getActiveSheet()->setCellValue('G6', 'ชื่อลูกค้า');
+			$this->excel->getActiveSheet()->setCellValue('H6', 'รายการสินค้า');
+			$this->excel->getActiveSheet()->setCellValue('I6', 'ราคา/หน่วย');
+			$this->excel->getActiveSheet()->setCellValue('J6', 'ราคาพิเศษ/หน่วย');
+			$this->excel->getActiveSheet()->setCellValue('K6', 'ส่วนลด');
+			$this->excel->getActiveSheet()->setCellValue('L6', 'จำนวน');
+			$this->excel->getActiveSheet()->setCellValue('M6', 'มูลค่า');
+			$this->excel->getActiveSheet()->setCellValue('N6', 'ผู้อนุมัติ');
+			$this->excel->getActiveSheet()->setCellValue('O6', 'สถานะ');
+			$this->excel->getActiveSheet()->setCellValue('P6', 'เลขที่ PO');
+			$this->excel->getActiveSheet()->setCellValue('Q6', 'เลขที่ SO');
+			$this->excel->getActiveSheet()->setCellValue('R6', 'เลขที่ DO');
+			$this->excel->getActiveSheet()->setCellValue('S6', 'เลขที่ Invoice');
+			$this->excel->getActiveSheet()->setCellValue('T6', 'วันที่ Invoice');
 
 
 			//---- กำหนดความกว้างของคอลัมภ์
 	    $this->excel->getActiveSheet()->getColumnDimension('B')->setWidth(15);
 	    $this->excel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
 	    $this->excel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
-	    $this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
-	    $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(40);
-	    $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(10);
-	    $this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(15);
-	    $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(20);
-	    $this->excel->getActiveSheet()->getColumnDimension('J')->setWidth(15);
+			$this->excel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+	    $this->excel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+	    $this->excel->getActiveSheet()->getColumnDimension('G')->setWidth(40);
+	    $this->excel->getActiveSheet()->getColumnDimension('H')->setWidth(10);
+	    $this->excel->getActiveSheet()->getColumnDimension('I')->setWidth(15);
+	    $this->excel->getActiveSheet()->getColumnDimension('J')->setWidth(20);
 	    $this->excel->getActiveSheet()->getColumnDimension('K')->setWidth(15);
 	    $this->excel->getActiveSheet()->getColumnDimension('L')->setWidth(15);
-	    $this->excel->getActiveSheet()->getColumnDimension('M')->setWidth(20);
-	    $this->excel->getActiveSheet()->getColumnDimension('N')->setWidth(15);
-	    $this->excel->getActiveSheet()->getColumnDimension('O')->setWidth(20);
+	    $this->excel->getActiveSheet()->getColumnDimension('M')->setWidth(15);
+	    $this->excel->getActiveSheet()->getColumnDimension('N')->setWidth(20);
+	    $this->excel->getActiveSheet()->getColumnDimension('O')->setWidth(15);
 	    $this->excel->getActiveSheet()->getColumnDimension('P')->setWidth(20);
 	    $this->excel->getActiveSheet()->getColumnDimension('Q')->setWidth(20);
 	    $this->excel->getActiveSheet()->getColumnDimension('R')->setWidth(20);
-			$this->excel->getActiveSheet()->getColumnDimension('S')->setWidth(20);
+	    $this->excel->getActiveSheet()->getColumnDimension('S')->setWidth(20);
+			$this->excel->getActiveSheet()->getColumnDimension('T')->setWidth(20);
 
 			$row = 7;
 
@@ -254,6 +257,7 @@ class Approval_status extends PS_Controller
 				$no = 1;
 
 				$priceListName = $this->user_model->get_all_price_list_array();
+				$paymentTermName = $this->user_model->get_all_payment_term_array();
 
 				foreach($report as $rs)
 				{
@@ -262,69 +266,37 @@ class Approval_status extends PS_Controller
 	        $d		= date('d', strtotime($rs->DocDate));
 	        $date = PHPExcel_Shared_Date::FormattedPHPToExcel($y, $m, $d);
 
-					//--- ลำดับ
+					$pName = empty($rs->PriceList) ? NULL : ($rs->PriceList == -10 ? $this->special_price_list_model->get_name($rs->SpecialPriceList) : $priceListName[$rs->PriceList]);
+					$tName = empty($paymentTermName[$rs->GroupNum]) ? NULL : $paymentTermName[$rs->GroupNum];
+
 	        $this->excel->getActiveSheet()->setCellValue('A'.$row, $no);
-
-	        //--- วันที่เอกสาร
 	        $this->excel->getActiveSheet()->setCellValue('B'.$row, $date);
-
-	        //--- เลขที่เอกสาร (SO)
 	        $this->excel->getActiveSheet()->setCellValue('C'.$row, $rs->code);
-
-	        //--- เลขที่อ้างอิง
-	        $this->excel->getActiveSheet()->setCellValue('D'.$row, (empty($rs->PriceList) ? $rs->promotion_code : $priceListName[$rs->PriceList]));
-
-	        //--- เลขที่จัดส่ง
-	        $this->excel->getActiveSheet()->setCellValue('E'.$row, $rs->CardCode);
-
-	        //--- ชือผู้รับสินค้า
-	        $this->excel->getActiveSheet()->setCellValue('F'.$row, $rs->CardName);
-
-	        //--- ที่อยู่บรรทัดที่ 1
-	        $this->excel->getActiveSheet()->setCellValue('G'.$row, $rs->ItemName);
-
-	        //--- ที่อยู่บรรทัดที่ 2
-	        $this->excel->getActiveSheet()->setCellValue('H'.$row, $rs->stdPrice);
-
-	        //--- อำเภอ / เขต
-	        $this->excel->getActiveSheet()->setCellValue('I'.$row, $rs->SellPrice);
-
-	        //--- จังหวัด
-	        $this->excel->getActiveSheet()->setCellValue('J'.$row, $rs->DiscPrcnt);
-
-	        //--- รหัรหัสไปรษณีย์
-	        $this->excel->getActiveSheet()->setCellValue('K'.$row, round($rs->Qty, 2));
-
-	        //--- เบอร์โทรศัพท์
-	        $this->excel->getActiveSheet()->setCellValue('L'.$row, round($rs->LineTotal, 2));
-	        //--- ช่องทางการขาย
-	        $this->excel->getActiveSheet()->setCellValue('M'.$row, $rs->Approver);
-
-	        //--- ช่องทางการชำระเงิน
-	        $this->excel->getActiveSheet()->setCellValue('N'.$row, $this->approval_status_label($rs->Approved, $rs->Approval_status));
-
-	        //--- รหัสสินค้า
-	        $this->excel->getActiveSheet()->setCellValue('O'.$row, $rs->NumAtCard);
-
-	        //--- ราคาสินค้า
-	        $this->excel->getActiveSheet()->setCellValue('P'.$row, $rs->DocNum);
-
-	        //--- จำนวน
-	        $this->excel->getActiveSheet()->setCellValue('Q'.$row, $rs->DeliveryNo);
-
-	        //--- ส่วนลดรวมเป้นจำนวนเงิน
-	        $this->excel->getActiveSheet()->setCellValue('R'.$row, $rs->InvoiceNo);
-
-	        //--- ยอดเงินรวม
-	        $this->excel->getActiveSheet()->setCellValue('S'.$row, !empty($rs->InvoiceDate) ? thai_date($rs->InvoiceDate) : "");
+					$this->excel->getActiveSheet()->setCellValue('D'.$row, $pName);
+	        $this->excel->getActiveSheet()->setCellValue('E'.$row, $tName);
+	        $this->excel->getActiveSheet()->setCellValue('F'.$row, $rs->CardCode);
+	        $this->excel->getActiveSheet()->setCellValue('G'.$row, $rs->CardName);
+	        $this->excel->getActiveSheet()->setCellValue('H'.$row, $rs->ItemName);
+	        $this->excel->getActiveSheet()->setCellValue('I'.$row, $rs->stdPrice);
+	        $this->excel->getActiveSheet()->setCellValue('J'.$row, $rs->SellPrice);
+	        $this->excel->getActiveSheet()->setCellValue('K'.$row, $rs->DiscPrcnt);
+	        $this->excel->getActiveSheet()->setCellValue('L'.$row, round($rs->Qty, 2));
+	        $this->excel->getActiveSheet()->setCellValue('M'.$row, round($rs->LineTotal, 2));
+	        $this->excel->getActiveSheet()->setCellValue('N'.$row, $rs->Approver);
+	        $this->excel->getActiveSheet()->setCellValue('O'.$row, $this->approval_status_label($rs->Approved, $rs->Approval_status));
+	        $this->excel->getActiveSheet()->setCellValue('P'.$row, $rs->NumAtCard);
+	        $this->excel->getActiveSheet()->setCellValue('Q'.$row, $rs->DocNum);
+	        $this->excel->getActiveSheet()->setCellValue('R'.$row, $rs->DeliveryNo);
+	        $this->excel->getActiveSheet()->setCellValue('S'.$row, $rs->InvoiceNo);
+	        $this->excel->getActiveSheet()->setCellValue('T'.$row, !empty($rs->InvoiceDate) ? thai_date($rs->InvoiceDate) : "");
 
 					$row++;
 					$no++;
 				}
 
-				$this->excel->getActiveSheet()->getStyle('H7:I'.$row)->getNumberFormat()->setFormatCode("#,##0.00");
-				$this->excel->getActiveSheet()->getStyle('K7:L'.$row)->getNumberFormat()->setFormatCode("#,##0.00");
-				$this->excel->getActiveSheet()->getStyle('H6:L6')->getAlignment()->setHorizontal('right');
+				$this->excel->getActiveSheet()->getStyle('I7:K'.$row)->getNumberFormat()->setFormatCode("#,##0.00");
+				$this->excel->getActiveSheet()->getStyle('L7:M'.$row)->getNumberFormat()->setFormatCode("#,##0.00");
+				$this->excel->getActiveSheet()->getStyle('I6:M6')->getAlignment()->setHorizontal('right');
 			}
 
 			setToken($token);
