@@ -976,7 +976,7 @@ class Orders extends PS_Controller
 
 
 						//---- check order approval exception by rule
-						if(! $this->must_approve($con_id, $header->docTotal, $priceEdit))
+						if(! $this->must_approve($con_id, $header->docTotal, $priceEdit, $header->PriceList))
 						{
 							$arr = array(
 								"must_approve" => 0,
@@ -1079,11 +1079,35 @@ class Orders extends PS_Controller
 	}
 
 
-	public function must_approve($con_id, $docTotal, $pricelist = FALSE)
+	public function must_approve($con_id, $docTotal, $priceEdit = FALSE, $priceList = NULL)
 	{
 		$this->load->model('approve_rule_model');
+		$mapl = [];
 
-		$rule = empty($con_id) ? NULL : $this->approve_rule_model->get_exception_rule($con_id, $docTotal, $pricelist);
+		if( ! empty($priceList))
+		{
+			$mustApprovePriceList = getConfig('MUST_APPROVE_PRICE_LIST');
+
+			if( ! empty($mustApprovePriceList))
+			{
+				$map = explode(',', $mustApprovePriceList);
+
+				if(count($map) > 0)
+				{
+					foreach($map as $pid) {
+						$pid = trim($pid);
+						$mapl[$pid] = $pid;
+					}
+				}
+
+				if( ! empty($mapl[$priceList]))
+				{
+					return TRUE;
+				}
+			}
+		}
+
+		$rule = empty($con_id) ? NULL : $this->approve_rule_model->get_exception_rule($con_id, $docTotal, $priceEdit);
 		//---- order must approve by default
 		//--- if exception rule exists order no need to approve
 		if( ! empty($rule))

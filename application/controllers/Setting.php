@@ -21,6 +21,7 @@ class Setting extends PS_Controller{
 		$groups = array('Company', 'Document', 'SAP', 'System');
 
 		$ds = array();
+
 		foreach($groups as $rs)
 		{
 			 $group = $this->config_model->get_config_by_group($rs);
@@ -33,6 +34,8 @@ class Setting extends PS_Controller{
 				 }
 			 }
 		}
+
+		$ds['priceList'] = $this->user_model->get_all_price_list();
 
 		$this->load->view('setting/configs', $ds);
 
