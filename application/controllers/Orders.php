@@ -869,11 +869,11 @@ class Orders extends PS_Controller
 
 							$item = $header->PriceList == 'x' ? $this->item_model->get_item($rs->ItemCode) : $this->item_model->get($rs->ItemCode, $header->PriceList);
 
-							if(! empty($item))
+							if( ! empty($item))
 							{
 
 								$sellPrice = $header->PriceList == 'x' ? $rs->SellPrice : ($rs->SellPrice == "" ? $item->price : $rs->SellPrice);
-								$stdPrice = $header->PriceList == 'x' ? $rs->SellPrice : $item->price;
+								$stdPrice = $header->PriceList == 'x' ? $rs->stdPrice : $item->price;
 
 								if(! empty($header->VatGroup))
 								{
