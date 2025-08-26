@@ -454,11 +454,18 @@ class Orders_model extends CI_Model
 
 
 
-  public function price_list_name($price_list)
+  public function price_list_name($price_list, $special_price_list = NULL)
   {
     if( ! empty($price_list))
     {
-      $rs = $this->ms->select('ListName')->where('ListNum', $price_list)->get('OPLN');
+      if($price_list < 0 && ! empty($special_price_list))
+      {
+        $rs = $this->db->select('name AS ListName')->where('id', $special_price_list)->get('special_price_list');
+      }
+      else
+      {
+        $rs = $this->ms->select('ListName')->where('ListNum', $price_list)->get('OPLN');
+      }
 
       if($rs->num_rows() === 1)
       {

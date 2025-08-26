@@ -48,7 +48,7 @@ class Export
 
 					if($sc === TRUE)
 					{
-            $price_list = $this->ci->orders_model->price_list_name($order->PriceList);
+            $price_list = $this->ci->orders_model->price_list_name($order->PriceList, $order->SpecialPriceList);
 						//--- header data
 						$arr = array(
 							'U_WEB_ORNO' => $order->code,
