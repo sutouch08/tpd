@@ -725,6 +725,7 @@ function previewOrder() {
 	let runno = 1;
 	let msg = "";
 	let price_edit = 0;
+	let shipToWarning = 0;
 
 	//--- check valid data
 	let customerCode = $('#customer').val();
@@ -732,6 +733,7 @@ function previewOrder() {
 	let saleTeam = $('#customer option:selected').data('saleteam');
 	let areaId = $('#customer option:selected').data('area');
 	let shipToCode = $('#shipToCode').val();
+	let isDefaultShipTo = $('#shipToCode option:selected').data('default');
 	let shipToAddress = $('#ShipTo').val();
 	let billToCode = $('#billToCode').val();
 	let billToAddress = $('#BillTo').val();
@@ -742,7 +744,7 @@ function previewOrder() {
 	let docDate = $('#DocDate').val();
 	let dueDate = $('#DocDueDate').val();
 	let PoNo = $('#PoNo').val();
-	let exShipTo = $('#exShipTo').val();
+	let exShipTo = $('#exShipTo').val().trim();
 	let currencyRate = $('#currencyRate').val();
 	let currency = $('#currency').val();
 	let items = [];
@@ -752,6 +754,10 @@ function previewOrder() {
 	let totalAmount = 0;
 	let docTotal = 0;
 	let DiscPrcnt = parseDefault(parseFloat($('#discPrcnt').val()), 0);
+
+	if(isDefaultShipTo == 'N' || exShipTo.length) {
+		shipToWarning = 1;
+	}
 
 	if(customerCode == "") {
 		$('#customer').hasError();
@@ -884,6 +890,7 @@ function previewOrder() {
 		"customerCode" : customerCode,
 		"customerName" : customerName,
 		"shipToCode" : shipToCode,
+		"isDefaultShipTo" : isDefaultShipTo,
 		"shipToAddress" : shipToAddress,
 		"billToCode" : billToCode,
 		"billToAddress" : billToAddress,
@@ -900,19 +907,83 @@ function previewOrder() {
 		"requiredSQ" : $('#require-sq').is(':checked') ? 'Y' : 'N',
 		"remark" : $('#remark').val(),
 		"items" : items,
-		"subTotal" : subTotal
+		"subTotal" : subTotal,
+		"docTotal" : docTotal,
+		"priceEdit" : price_edit,
+		"saleTeam" : saleTeam,
+		"areaId" : areaId
 	}
 
+	if(shipToWarning == 1) {
+		swal({
+			title:'โปรดทราบ',
+			text:'มีการเปลี่ยนแปลงสถานที่จัดส่ง โปรดรออนุมัติ',
+			type:'info',
+			html:true,
+			confirmButtonText:'รับทราบ',
+			closeOnConfirm:true
+		}, function() {
+			checkApprove(data);
+		})
+	}
+	else {
+		checkApprove(data);
+	}
+
+	// $.ajax({
+	// 	url:HOME + 'check_approve',
+	// 	type:'GET',
+	// 	cache:false,
+	// 	data:{
+	// 		'docTotal' : docTotal,
+	// 		'priceEdit' : price_edit,
+	// 		'customerCode' : customerCode,
+	// 		'saleTeam' : saleTeam,
+	// 		'areaId' : areaId
+	// 	},
+	// 	success:function(rs) {
+	// 		if(rs == 'pass') {
+	// 			var source = $('#preview-template').html();
+	// 			var output = $('#result');
+	//
+	// 			render(source, data, output);
+	//
+	// 			$('#previewModal').modal('show');
+	// 		}
+	// 		else {
+	// 			swal({
+	// 		    title:'',
+	// 		    text:rs,
+	// 		    type:'warning',
+	// 		    showCancelButton: true,
+	// 				confirmButtonText: 'ดำเนินการต่อ',
+	// 				cancelButtonText: 'กลับไปแก้ไข',
+	// 				closeOnConfirm: true
+	// 		  },function(){
+	// 				setTimeout(() => {
+	// 					var source = $('#preview-template').html();
+	// 					var output = $('#result');
+	// 					render(source, data, output);
+	// 					$('#previewModal').modal('show');
+	// 				}, 100);
+	// 		  })
+	// 		}
+	// 	}
+	// })
+}
+
+
+function checkApprove(data) {
 	$.ajax({
 		url:HOME + 'check_approve',
 		type:'GET',
 		cache:false,
 		data:{
-			'docTotal' : docTotal,
-			'priceEdit' : price_edit,
-			'customerCode' : customerCode,
-			'saleTeam' : saleTeam,
-			'areaId' : areaId
+			'docTotal' : data.docTotal,
+			'priceEdit' : data.price_edit,
+			'customerCode' : data.customerCode,
+			'saleTeam' : data.saleTeam,
+			'areaId' : data.areaId
 		},
 		success:function(rs) {
 			if(rs == 'pass') {
@@ -944,7 +1015,6 @@ function previewOrder() {
 		}
 	})
 }
-
 
 function warning(msg) {
 	swal({
@@ -1062,7 +1132,7 @@ function saveAdd() {
 	$('#previewModal').modal('hide');
 
 	var ds = {
-		//---- Right column
+		//---- left column
 		'CardCode' : $('#customer').val(),  //****** required
 		'CardName' : $('#customer option:selected').data('name'),
 		'CustomerGroupNum' : $('#customer option:selected').data('groupnum'),
@@ -1076,8 +1146,9 @@ function saveAdd() {
 		'PayToCode' : $('#billToCode').val(),
 		'BillTo' : $('#BillTo').val(),
 		'ShipToCode' : $('#shipToCode').val(),
+		'isDefaultShipTo' : $('#shipToCode option:selected').data('default'),
 		'ShipTo' : $('#ShipTo').val(),
-		'exShipTo' : $('#exShipTo').val(),
+		'exShipTo' : $('#exShipTo').val().trim(),
 		'VatGroup' : $('#VatGroup').val(),
 		'VatRate' : $('#vatRate').val(),
 		'CardType' : $('#cardType').val(),

@@ -192,19 +192,25 @@ class Orders extends PS_Controller
 			if( ! empty($addr))
 			{
 				$ds = array();
+
+				$i = 1;
+
 				foreach($addr as $adr)
 				{
 					$arr = array(
-						'code' => get_empty_text($adr->Address)
+						'code' => get_empty_text($adr->Address),
+						'is_default' => $i === 1 ? 'Y' : 'N'
 					);
 
 					array_push($ds, $arr);
+					$i++;
 				}
 			}
 			else
 			{
 				$arr = array(
-					'code' => ""
+					'code' => "",
+					'is_default' => 'Y'
 				);
 
 				array_push($ds, $arr);
@@ -974,9 +980,11 @@ class Orders extends PS_Controller
 
 						} //--- end foreach details
 
+						$mustApprove = (isset($header->isDefaultShipTo) && $header->isDefaultShipTo == 'N') ? TRUE : FALSE;
+						$mustApprove = $mustApprove == TRUE ? TRUE : (empty($header->exShipTo) ? FALSE : TRUE);
 
 						//---- check order approval exception by rule
-						if(! $this->must_approve($con_id, $header->docTotal, $priceEdit, $header->PriceList))
+						if($mustApprove === FALSE && ! $this->must_approve($con_id, $header->docTotal, $priceEdit, $header->PriceList))
 						{
 							$arr = array(
 								"must_approve" => 0,

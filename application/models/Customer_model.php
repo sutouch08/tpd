@@ -54,7 +54,7 @@ class Customer_model extends CI_Model
   {
     //--- V = vat Q = non vat
     $qr  = "SELECT C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, ";
-    $qr .= "C.Currency, C.U_TPD_DrugCon AS isControl, C.U_TPD_RA_DrugType AS customer_type, C.U_TPD_BI_SalesTeam AS saleTeam, ";    
+    $qr .= "C.Currency, C.U_TPD_DrugCon AS isControl, C.U_TPD_RA_DrugType AS customer_type, C.U_TPD_BI_SalesTeam AS saleTeam, ";
     $qr .= "C.U_TPD_BI_AreaName AS areaId, C.U_SALE_PERSON AS salePerson, ";
     $qr .= "C.U_TPD_BI_Department AS department, V.Rate ";
     $qr .= "FROM OCRD AS C ";
@@ -105,6 +105,8 @@ class Customer_model extends CI_Model
     ->select('Address')
     ->where('AdresType', 'S')
     ->where('CardCode', $CardCode)
+    ->order_by('CardCode', 'ASC')
+    ->order_by('Address', 'ASC')
     ->get('CRD1');
 
     if($rs->num_rows() > 0)

@@ -78,7 +78,7 @@
 
 <script id="ship-to-template" type="text/x-handlebarsTemplate">
 		{{#each this}}
-			<option value="{{code}}">{{code}}</option>
+			<option value="{{code}}" data-default="{{is_default}}">{{code}}</option>
 		{{/each}}
 </script>
 
