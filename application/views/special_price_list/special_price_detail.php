@@ -1,29 +1,42 @@
+<style>
+  .tableFixHead {
+    margin-top:-1px;
+    margin-left:-1px;    
+  }
+  .tableFixHead thead th {
+    outline: 0;
+  }
+
+  .fix-header {
+    outline:0;
+  }
+</style>
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5">
-    <button type="button" class="btn btn-sm btn-info btn-100" onclick="addRow()">Add Row</button>
-    <button type="button" class="btn btn-sm btn-danger btn-100" onclick="removeRow()">Delete Row</button>
+    <button type="button" class="btn btn-xs btn-info btn-50" onclick="addRow()">Add Row</button>
+    <button type="button" class="btn btn-xs btn-danger btn-50" onclick="removeRow()">Delete Row</button>
   </div>
 
   <div class="divider-hidden"></div>
 
-  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive" style="over-flow:auto;">
-    <table class="table table-bordered border-1" style="min-width:1000px;">
+  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0 table-responsive border-1" style="height:300px; overflow-y:scroll;">
+    <table class="table table-striped tableFixHead tableNarrow border-1" style="min-width:830px;">
       <thead>
-        <tr class="">
-          <th class="fix-width-50 text-center">
+        <tr>
+          <th class="fix-width-40 text-center fix-header">
             <label>
               <input type="checkbox" class="ace" id="check-all" onchange="checkAll()">
               <span class="lbl"></span>
             </label>
           </th>
-					<th class="fix-width-50 text-center">#</th>
-          <th class="min-width-200">Description</th>
-					<th class="fix-width-100 text-right">Min. Qty</th>
-          <th class="fix-width-100 text-right">Sell Price</th>
-					<th class="fix-width-100 text-right">Free Qty</th>
-          <th class="fix-width-100 text-right">Position</th>
-          <th class="fix-width-150">Update by</th>
-          <th class="fix-width-150">Update at</th>
+					<th class="fix-width-40 text-center fix-header">#</th>
+          <th class="min-width-150 fix-header">Description</th>
+					<th class="fix-width-80 text-right fix-header">Min. Qty</th>
+          <th class="fix-width-80 text-right fix-header">Sell Price</th>
+					<th class="fix-width-80 text-right fix-header">Free Qty</th>
+          <th class="fix-width-80 text-right fix-header">Position</th>
+          <th class="fix-width-150 fix-header">Update by</th>
+          <th class="fix-width-130 fix-header">Update at</th>
         </tr>
       </thead>
       <tbody id="detail-table">

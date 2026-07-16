@@ -1,25 +1,5 @@
 <?php
 
-function select_price_list($id = NULL)
-{
-  $ds = "";
-  $ci =& get_instance();
-  $ci->load->model('user_model');
-
-  $list = $ci->user_model->get_all_price_list();
-
-  if( ! empty($list))
-  {
-    foreach($list as $rs)
-    {
-      $ds .= '<option value="'.$rs->id.'" '.is_selected($id, $rs->id).'>'.$rs->name.'</option>';
-    }
-  }
-
-  return $ds;
-}
-
-
 function select_payment_term_discount($id = NULL)
 {
   $ds = "<option value=\"-10\" data-groupnum=\"x\" data-disc=\"0\" data-change=\"0\"".is_selected($id, '-10').">Customer default</option>";
@@ -100,7 +80,7 @@ function get_rejectbox($id, $status = 'P', $can_approve = FALSE, $no = "")
 {
   $sc = "";
 
-  if($status = 'P')
+  if($status == 'P')
   {
     if($can_approve)
     {
@@ -110,4 +90,6 @@ function get_rejectbox($id, $status = 'P', $can_approve = FALSE, $no = "")
 
   return $sc;
 }
+
+
  ?>

@@ -3,9 +3,24 @@
 <style>
 	.form-group {
 		margin-bottom: 5px;
+		margin-left: 0px !important;
 	}
-	.input-icon > .ace-icon {
+
+	.input-icon>.ace-icon {
 		z-index: 1;
+	}
+
+	td.checked {
+		background-color: #f0ffea;
+	}
+
+	tr.checked {
+		background-color: #f0ffea;
+	}
+
+	.sap-label {
+		padding-top: 7px;
+		border-bottom: 1px solid #ddd;
 	}
 </style>
 <?php $hide = $this->disSale ? "" : 'hide'; ?>
@@ -21,46 +36,104 @@
 		</p>
 	</div>
 </div><!-- End Row -->
-<hr class="padding-5"/>
+<hr class="padding-5" />
 <form id="addForm" method="post" action="<?php echo $this->home; ?>/add">
-<?php $this->load->view('orders/orders_add_header'); ?>
-<?php $this->load->view('orders/orders_add_detail'); ?>
-<?php $this->load->view('orders/orders_add_footer'); ?>
+	<?php $this->load->view('orders/orders_add_header'); ?>
+	<?php $this->load->view('orders/orders_add_detail'); ?>
+	<?php $this->load->view('orders/orders_add_footer'); ?>
 
-<input type="hidden" id="sale_id" value="<?php echo $this->_user->sale_id; ?>" />
-<input type="hidden" id="default_currency" value="<?php echo getConfig('CURRENCY'); ?>" />
+	<input type="hidden" id="sale_id" value="<?php echo $this->_user->sale_id; ?>" />
+	<input type="hidden" id="default_currency" value="<?php echo getConfig('CURRENCY'); ?>" />
 </form>
+
+<input type="hidden" id="show-warning" value="<?php echo getConfig('WARNING_ORDER'); ?>" />
+<input type="hidden" id="warning-message" value="<?php echo escapeQuote(getConfig('WARNING_ORDER_MESSAGE')); ?>" />
 
 <!--  Add New Address Modal  --------->
 <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="width:90vw; max-width:95vw;">
-        <div class="modal-content">
-            <div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;" >ตรวจสอบข้อมูล</h4>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="result">
+	<div class="modal-dialog" style="width:90vw; max-width:95vw;">
+		<div class="modal-content">
+			<div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;">ตรวจสอบข้อมูล</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="result">
 
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-md btn-danger pull-left" onClick="dismiss('previewModal')" >Cancel</button>
-								<button type="button" class="btn btn-md btn-success pull-right" id="btn-submit" disabled  onclick="saveAdd()">Submit</button>
-            </div>
-        </div>
-    </div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-md btn-danger pull-left" onClick="dismiss('previewModal')">Cancel</button>
+				<button type="button" class="btn btn-md btn-success pull-right" id="btn-submit" disabled onclick="saveAdd()">Submit</button>
+			</div>
+		</div>
+	</div>
 </div>
+
+<div class="modal fade" id="creditDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="width:350px; max-width: 90vw;">
+		<div class="modal-content">
+			<div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;">รายละเอียดเครดิต</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="credit-detail-table">
+
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-md btn-default" onClick="dismiss('creditDetailModal')">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script id="credit-detail-template" type="text/x-handlebarsTemplate">
+	<h4 class="title-xs text-center" style="margin-top:0px; margin-bottom:10px;">{{CardCode}}</h4>
+	<table class="table table-bordered border-1" style="margin-bottom:0px;">
+		<tr>
+			<td class="width-50 middle">Credit Limit (1)</td>
+			<td class="middle text-right">{{CreditLine}}</td>
+		</tr>
+		<tr>
+			<td class="middle">Account Balance (2)</td>
+			<td class="middle text-right">{{Balance}}</td>
+		</tr>
+		<tr>
+			<td class="middle">Delivered (3)</td>
+			<td class="middle text-right">{{DNotesBal}}</td>
+		</tr>
+		<tr>
+			<td class="middle">Sales Orders (4)</td>
+			<td class="middle text-right">{{OrdersBal}}</td>
+		</tr>
+		<tr>
+			<td class="middle">Web Orders (5)</td>
+			<td class="middle text-right">{{OrderUsed}}</td>
+		</tr>
+		<tr>
+			<td class="middle">
+			Available Credit <br/>
+			(1) - (2) - (3) - (4) - (5)
+			</td>	
+			<td class="middle text-right">{{CreditBalance}}</td>
+		</tr>
+	</table>
+</script>
 
 
 <script id="customer-template" type="text/x-handlebarsTemplate">
-		<option value="">Select Customer ({{this.count}})</option>
+	<option value="">Select Customer ({{this.count}})</option>
 		{{#each this.data}}
 			<option value="{{CardCode}}"
 				data-code="{{CardCode}}"
 				data-name="{{CardName}}"
+				data-hcode="{{CustCode}}"
 				data-groupnum="{{GroupNum}}"
 				data-area="{{areaId}}"
 				data-currency="{{Currency}}"
@@ -70,22 +143,23 @@
 				data-type="{{customerType}}"
 				data-saleteam="{{saleTeam}}"
 				data-saleperson="{{salePerson}}"
-				data-department="{{department}}">
+				data-department="{{department}}"
+				data-regular="{{regular}}">
 				{{CardCode}}  {{CardName}}
 			</option>
 		{{/each}}
 </script>
 
 <script id="ship-to-template" type="text/x-handlebarsTemplate">
-		{{#each this}}
-			<option value="{{code}}" data-default="{{is_default}}">{{code}}</option>
-		{{/each}}
+	{{#each this}}
+		<option value="{{code}}" data-default="{{is_default}}">{{code}}</option>
+	{{/each}}
 </script>
 
 <script id="bill-to-template" type="text/x-handlebarsTemplate">
-		{{#each this}}
-			<option value="{{code}}">{{code}}</option>
-		{{/each}}
+	{{#each this}}
+		<option value="{{code}}">{{code}}</option>
+	{{/each}}
 </script>
 
 <script id="preview-template" type="text/x-handlebarsTemplate">
@@ -94,11 +168,11 @@
 			<td class="width-30">
 			รหัสลูกค้า
 			<label class="pull-right">
-			<input type="checkbox" class="ace check-list" onchange="toggleSubmit()">
+			<input type="checkbox" class="ace check-list" data-id="check-cust" onchange="toggleSubmit()">
 			<span class="lbl"></span>
 			</label>
 			</td>
-			<td>{{customerName}}</td>
+			<td id="check-cust">{{customerName}}</td>
 		</tr>
 		<tr><td>เลขที่ใบสั่งสินค้า</td><td>{{orderCode}}</td></tr>
 		<tr><td>ที่อยู่ตามใบกำกับภาษี</td><td>{{billToCode}}  {{billToAddress}}</td></tr>
@@ -106,29 +180,47 @@
 		<tr><td>สถานที่จัดส่งเพิ่มเติม</td><td>{{exShipTo}}</td></tr>
 		<tr><td>Currency</td><td>{{currency}} | Rate: {{currencyRate}} </td></tr>
 		<tr><td>วันที่สั่งสินค้า</td><td>{{docDate}}</td></tr>
-		<tr><td>วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
-		<tr><td>เลขที่ PO</td><td>{{PoNo}}</td></tr>
+		<tr><td>วันที่จัดส่ง</td><td>{{docDueDate}}</td></tr>			
+		<tr>
+			<td>เลขที่ PO
+				<label class="pull-right">
+				<input type="checkbox" class="ace check-list" data-id="check-po" onchange="toggleSubmit()">
+				<span class="lbl"></span>
+				</label>
+			</td>
+			<td id="check-po">{{PoNo}}</td>
+		</tr>
 		<tr><td>บิลลงวันที่</td><td>{{billOption}}</td></tr>
 		<tr><td>ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
 		<tr>
 			<td>
 				PriceList
 				<label class="pull-right">
-					<input type="checkbox" class="ace check-list" onchange="toggleSubmit()">
+					<input type="checkbox" class="ace check-list" data-id="check-price" onchange="toggleSubmit()">
 					<span class="lbl"></span>
 				</label>
 			</td>
-			<td>{{listName}}</td>
+			<td id="check-price">{{listName}}</td>
 		</tr>
 		<tr>
 			<td>
 				Payment Terms
 				<label class="pull-right">
-					<input type="checkbox" class="ace check-list" onchange="toggleSubmit()">
+					<input type="checkbox" class="ace check-list" data-id="check-term" onchange="toggleSubmit()">
 					<span class="lbl"></span>
 				</label>
 			</td>
-			<td>{{termName}}</td>
+			<td id="check-term">{{termName}}</td>
+		</tr>
+		<tr>
+			<td>
+				Credit Limit
+				<label class="pull-right">
+					<input type="checkbox" class="ace check-list" data-id="check-credit" onchange="toggleSubmit()">
+					<span class="lbl"></span>
+				</label>
+			</td>
+			<td id="check-credit">{{{creditMessage}}}</td>
 		</tr>
 		<tr><td>Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>
 	</table>
@@ -151,7 +243,7 @@
 			</thead>
 			<tbody>
 				{{#each items}}
-					<tr>
+					<tr id="check-item-{{no}}">
 						<td class="middle text-center">{{no}}</td>
 						<td class="middle">{{itemName}}</td>
 						<td class="middle text-right">{{qty}}</td>
@@ -163,7 +255,7 @@
 						<td class="middle text-right">{{amount}}</td>
 						<td class="middle">{{remark}}</td>
 						<td class="middle text-center">
-							<label><input type="checkbox" class="ace check-list" onchange="toggleSubmit()"><span class="lbl"></span></label>
+							<label><input type="checkbox" class="ace check-list" data-id="check-item-{{no}}" onchange="toggleSubmit()"><span class="lbl"></span></label>
 						</td>
 					</tr>
 				{{/each}}

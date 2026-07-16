@@ -1,16 +1,8 @@
 <?php $this->load->view('include/header'); ?>
 <div class="row">
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
-    <h4 class="title"><i class="fa fa-bolt"></i>&nbsp; <?php echo $this->title; ?></h4>
-  </div>
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
-		<p class="pull-right top-p">
-			<button type="button" class="btn btn-sm btn-warning" onclick="goBack()"><i class="fa fa-arrow-left"></i> Back</button>
-			<?php if($this->pm->can_edit) : ?>
-				<button type="button" class="btn btn-white btn-warning" onclick="goEdit(<?php echo $doc->PriceList; ?>)"><i class="fa fa-pencil"></i> Edit</button>
-			<?php endif; ?>
-		</p>
-	</div>
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5">
+    <h4 class="title"><?php echo $this->title; ?></h4>
+  </div>	
 </div><!-- End Row -->
 
 <hr class="padding-5"/>
@@ -18,17 +10,15 @@
 <div class="row">
   <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12 padding-5">
 		<label>Price List</label>
-		<select class="form-control input-sm e" id="price-list" disabled>
-      <option value="">Select</option>
-      <?php echo select_price_list($doc->PriceList); ?>
-    </select>
+		<input type="text" class="form-control input-sm" value="<?php echo price_list_name($doc->PriceList); ?>" disabled/>
+		</select>		
 	</div>
-	<div class="col-lg-6 col-md-7-harf col-sm-7-harf col-xs-12 padding-5">
+	<div class="col-lg-8 col-md-8 col-sm-7-harf col-xs-12 padding-5">
 		<label>Description</label>
 		<input type="text" class="form-control input-sm e" value="<?php echo $doc->name; ?>" disabled/>
 	</div>
 
-	<div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-12 padding-5">
+	<div class="col-lg-1 col-md-1 col-sm-1-harf col-xs-12 padding-5">
 		<label>Status</label>
 		<input type="text" class="form-control input-sm text-center" value="<?php echo $doc->active == 1 ? 'Active' : 'Inactive'; ?>" disabled/>
 	</div>
@@ -36,18 +26,18 @@
 
 <hr class="padding-5 margin-top-15 margin-bottom-15">
 <div class="row">
-	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive" style="over-flow:auto;">
-	<table class="table table-bordered border-1" style="min-width:1080px;">
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive" style="overflow:auto;">
+	<table class="table table-bordered tableNarrow border-1" style="min-width:800px;">
 		<thead>
-			<tr class="font-size-10">
-				<th class="fix-width-50 text-center">#</th>
-				<th class="min-width-200 text-center">Label Text</th>
-				<th class="fix-width-100 text-center">Step Qty</th>
-				<th class="fix-width-100 text-center">Free Qty</th>
-				<th class="fix-width-80 text-center">Status</th>
-				<th class="fix-width-80 text-center">Force</th>
-				<th class="fix-width-80 text-center">Highlight</th>
-				<th class="fix-width-80 text-center">Position</th>
+			<tr>
+				<th class="fix-width-40 text-center">#</th>
+				<th class="min-width-100 text-center">Label Text</th>
+				<th class="fix-width-80 text-center">Step Qty</th>
+				<th class="fix-width-80 text-center">Free Qty</th>
+				<th class="fix-width-50 text-center">Status</th>
+				<th class="fix-width-50 text-center">Force</th>
+				<th class="fix-width-50 text-center">Highlight</th>
+				<th class="fix-width-50 text-center">Position</th>
 				<th class="fix-width-150 text-center">Update by</th>
 				<th class="fix-width-150 text-center">Update at</th>
 			</tr>

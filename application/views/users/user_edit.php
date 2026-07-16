@@ -18,7 +18,7 @@
 	<div class="form-group">
     <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Username</label>
     <div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
-			<input type="text" name="uname" id="uname" class="width-100 e" maxlength="50" value="<?php echo $user->uname; ?>" onkeyup="validCode(this)" disabled />
+			<input type="text" name="uname" id="uname" class="width-100 e" maxlength="50" value="<?php echo $user->uname; ?>" onkeyup="validCode(this)" />
     </div>
 		<div class="help-block col-xs-12 col-sm-reset inline red" id="uname-error"></div>
   </div>
@@ -224,8 +224,8 @@
 	<div class="divider-hidden"></div>
 
   <div class="form-group">
-    <div class="col-lg-7 col-md-9 col-sm-9 col-xs-12 text-right">
-    <button type="button" class="btn btn-sm btn-success btn-100" id="btn-save" onclick="update()">Update</button>
+    <div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
+    	<button type="button" class="btn btn-sm btn-success btn-100 btn-xs-block" id="btn-save" onclick="update()">Update</button>
     </div>
   </div>
 

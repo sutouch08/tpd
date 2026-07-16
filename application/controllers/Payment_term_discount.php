@@ -12,7 +12,10 @@ class Payment_term_discount extends PS_Controller
     parent::__construct();
     $this->home = base_url().'payment_term_discount';
 		$this->load->model('payment_term_discount_model');
+		$this->load->model('price_list_model');
 		$this->load->model('special_price_list_model');
+		$this->load->helper('price_list');
+		$this->load->helper('special_price_list');
 		$this->load->helper('orders');
   }
 
@@ -52,7 +55,7 @@ class Payment_term_discount extends PS_Controller
 	{
 		if($this->pm->can_add)
 		{
-			$ds['priceList'] = $this->user_model->get_all_price_list();
+			$ds['priceList'] = $this->price_list_model->get_all();
 			$ds['specialPriceList'] = $this->special_price_list_model->get_all_active();
 			$this->load->view('payment_term_discount/payment_term_discount_add', $ds);
 		}
@@ -281,22 +284,13 @@ class Payment_term_discount extends PS_Controller
 
 		if( ! empty($doc))
 		{
-			$data['doc'] = $doc;
-			$data['priceList'] = $this->user_model->get_all_price_list();
-			$term_price_list = $this->payment_term_discount_model->get_term_price_list($doc->id);
-			$TPL = array();
+			$ds = array(
+				'doc' => $doc,
+				'term_list' => $this->payment_term_discount_model->get_term_price_details($doc->id),
+				'special_term_list' => $this->payment_term_discount_model->get_term_special_price_details($doc->id)
+			);
 
-			if( ! empty($term_price_list))
-			{
-				foreach($term_price_list as $p)
-				{
-					$TPL[$p->list_id] = $p->list_id;
-				}
-			}
-
-			$data['term_price_list'] = $TPL;
-
-			$this->load->view('payment_term_discount/payment_term_discount_view_detail', $data);
+			$this->load->view('payment_term_discount/payment_term_discount_view_detail', $ds);
 		}
 		else
 		{
@@ -318,6 +312,43 @@ class Payment_term_discount extends PS_Controller
 				{
 					$sc = FALSE;
 					$this->error = "Failed to delete payment term List";
+				}
+			}
+			else
+			{
+				$sc = FALSE;
+				$this->error = get_error_message('permission');
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = get_error_message('required');
+		}
+
+		$this->_response($sc);
+	}
+
+	public function set_active()
+	{
+		$sc = TRUE;
+		$id = $this->input->post('id');
+		$active = $this->input->post('active');
+
+		if( ! empty($id))
+		{
+			if($this->pm->can_edit)
+			{
+				$arr = array(
+					'active' => $active,
+					'update_by' => $this->_user->id,
+					'date_upd' => now()
+				);
+
+				if( ! $this->payment_term_discount_model->update($id, $arr))
+				{
+					$sc = FALSE;
+					$this->error = get_error_message('update');
 				}
 			}
 			else

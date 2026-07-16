@@ -209,4 +209,29 @@ function uname($id)
   return NULL;
 }
 
+function emp_name($uname)
+{
+  $ci =& get_instance();
+
+  if( ! empty($uname))
+  {
+    return $ci->user_model->get_name($uname);
+  }
+
+  return NULL;
+}
+
+
+function emp_name_by_id($id)
+{
+  $ci =& get_instance();
+
+  if( ! empty($id))
+  {
+    return $ci->user_model->get_name_by_id($id);
+  }
+
+  return NULL;
+}
+
  ?>

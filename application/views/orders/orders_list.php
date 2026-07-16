@@ -1,51 +1,64 @@
 <?php $this->load->view('include/header'); ?>
 
 <style>
-	.table > tr > td {
-		padding:8px !important;
+	.table>tbody>tr>td {
+		padding: 5px !important;
+		font-size: 12px !important;
+	}
+
+	.table>thead>tr>th {
+		padding: 5px !important;
+		text-align: center;
+		font-size: 12px !important;
 	}
 
 	.form-group {
 		margin-bottom: 5px;
 	}
-	.input-icon > .ace-icon {
+
+	.input-icon>.ace-icon {
 		z-index: 1;
 	}
 
-  @media (min-width: 768px) {
+	.label.btn-block {
+		padding: 3px 0px;
+		font-size: 12px;
+	}
 
-    .fix-no {
-      left: -1px;
-      position: sticky;
-    }
+	@media (min-width: 768px) {
 
-    .fix-date {
-      left:49px;
-      position: sticky;
-    }
+		.fix-no {
+			left: 0px;
+			position: sticky;
+		}
 
-    .fix-code {
-      left:149px;
-      position: sticky;
-    }
+		.fix-date {
+			left: 40px;
+			position: sticky;
+		}
+
+		.fix-code {
+			left: 170px;
+			position: sticky;
+		}
+
+		.fix-user {
+			left: 270px;
+			position: sticky;
+		}
 
 		.fix-cust {
-			left:269px;
+			left: 370px;
 			position: sticky;
 		}
 
-		.fix-name {
-			left:369px;
-			position: sticky;
-		}
-
-    td[scope=row] {
-      background-color: #f8f8f8;
-      border: 0 !important;
-      outline: solid 1px #dddddd;
+		td[scope=row] {
+			background-color: #ffffff;
+			border: 0 !important;
+			outline: solid 1px #dddddd;
 			z-index: 2;
-    }
-  }
+		}
+	}
 </style>
 
 <?php $hide = $this->disSale ? "" : 'hide'; ?>
@@ -55,12 +68,12 @@
 		<h3 class="title"> <?php echo $this->title; ?></h3>
 	</div>
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5 text-right">
-	<?php if($this->pm->can_add) : ?>
-		<button type="button" class="btn btn-white btn-success top-btn" onclick="goAdd()"><i class="fa fa-plus"></i> New Order</button>
-	<?php endif; ?>
+		<?php if ($this->pm->can_add) : ?>
+			<button type="button" class="btn btn-white btn-success top-btn" onclick="goAdd()"><i class="fa fa-plus"></i> New Order</button>
+		<?php endif; ?>
 	</div>
 </div><!-- End Row -->
-<hr class="padding-5"/>
+<hr class="padding-5" />
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
 	<div class="row f-row">
 		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
@@ -177,7 +190,7 @@
 		<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
 			<label class="search-label">วันที่</label>
 			<div class="input-daterange input-group width-100">
-				<input type="text" class="form-control input-sm width-50 from-date text-center" id="fromDate" name="fromDate" value="<?php echo $fromDate; ?>" placeholder="From" readonly/>
+				<input type="text" class="form-control input-sm width-50 from-date text-center" id="fromDate" name="fromDate" value="<?php echo $fromDate; ?>" placeholder="From" readonly />
 				<input type="text" class="form-control input-sm width-50 to-date text-center" id="toDate" name="toDate" value="<?php echo $toDate; ?>" placeholder="To" readonly />
 			</div>
 		</div>
@@ -199,101 +212,106 @@
 <?php echo $this->pagination->create_links(); ?>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 border-1 table-responsive" id="item-div" style="overflow: auto; padding-left:0px; padding-right:0px; padding-bottom:5px; margin-left:5px; margin-right:5px;">
-		<table class="table table-bordered tableFixHead border-1" style="margin-left: -1px; margin-top: -1px; min-width:1990px;">
+		<table class="table table-bordered tableFixHead border-1" style="margin-left: -1px; margin-top: -1px; min-width:1730px;">
 			<thead>
 				<tr>
-					<th class="fix-width-50 text-center fix-no fix-header">#</th>
-					<th class="fix-width-100 fix-date fix-header">วันที่</th>
-					<th class="fix-width-120 fix-code fix-header">เลขที่</th>
-					<th class="fix-width-100 fix-cust fix-header">รหัสลูกค้า</th>
-					<th class="fix-width-250 fix-name fix-header">ลูกค้า</th>
-					<th class="fix-width-100">เลขที่ PO</th>
-					<th class="fix-width-120 text-right">มูลค่า</th>
-					<th class="fix-width-100 text-center">Preview</th>
-					<th class="fix-width-100 text-center">สถานะ</th>
-					<th class="fix-width-100 text-center">ผู้มีสิทธิ์อนุมัติ</th>
-					<th class="fix-width-100 text-center">การอนุมัติ</th>
+					<th class="fix-width-40 text-center fix-no fix-header">#</th>
+					<th class="fix-width-130 fix-date fix-header">วันที่</th>
+					<th class="fix-width-100 fix-code fix-header">เลขที่ WebOrder</th>
+					<th class="fix-width-100 fix-user fix-header">User</th>
+					<th class="fix-width-90 text-center fix-cust fix-header">รหัสลูกค้า</th>
+					<th class="fix-width-250">ลูกค้า</th>
+					<th class="fix-width-120">เลขที่ PO</th>
+					<th class="fix-width-100 text-right">มูลค่า</th>
+					<th class="fix-width-70 text-center">Preview</th>
+					<th class="fix-width-70 text-center">สถานะ</th>
+					<th class="fix-width-80 text-center">ผู้มีสิทธิ์อนุมัติ</th>
+					<th class="fix-width-80 text-center">การอนุมัติ</th>
 					<th class="fix-width-100">ผู้อนุมัติ</th>
-					<th class="fix-width-100 text-center">SO No.</th>
-					<th class="fix-width-100 text-center">SO Status</th>
-					<th class="fix-width-100 text-center">DO Status</th>
-					<th class="fix-width-100 text-center">Invoice Status</th>
-					<th class="min-width-100">User</th>
-					<th class="fix-width-100">STC.</th>
+					<th class="fix-width-80 text-center">เลขที่ SO (SAP)</th>
+					<th class="fix-width-80 text-center">SO Status</th>
+					<th class="fix-width-80 text-center">DO Status</th>
+					<th class="fix-width-80 text-center">Invoice Status</th>
+					<th class="fix-width-80 text-center">STC.</th>
 				</tr>
 			</thead>
 			<tbody>
 
-			<?php if(!empty($data)) : ?>
-				<?php $no = $this->uri->segment(3) + 1; ?>
-				<?php foreach($data as $rs) : ?>
-					<tr >
-						<td class="middle text-center fix-no no" scope="row"><?php echo $no; ?></td>
-						<td class="middle fix-date" scope="row"><?php echo thai_date($rs->DocDate, FALSE,'/'); ?></td>
-						<td class="middle fix-code" scope="row"><?php echo $rs->code; ?></td>
-						<td class="middle fix-cust" scope="row"><?php echo $rs->CardCode; ?></td>
-						<td class="middle fix-name" scope="row"><?php echo $rs->CardName; ?></td>
-						<td class="middle" style="overflow-wrap:break-word;"><?php echo $rs->NumAtCard; ?></td>
-						<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
-						<td class="middle text-center"><span class="btn btn-mini btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</span></td>
-						<td class="middle text-center">
-							<?php if($rs->Status == 2) : ?>
-								<button type="button" class="btn btn-mini btn-success btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</button>
-							<?php endif; ?>
-							<?php if($rs->Status == 3) : ?>
-								<button type="button" class="btn btn-mini btn-danger btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Failed</button>
-							<?php endif; ?>
-							<?php if($rs->Status == 1) : ?>
-								<button type="button" class="btn btn-mini btn-warning btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</button>
-							<?php endif; ?>
-							<?php if($rs->Status == 0) : ?>
-								<span class="label label-lg label-danger btn-block">Not Export</span>
-							<?php endif; ?>
-							<?php if($rs->Status == -1) : ?>
-								<span class="label label-lg label-danger btn-block">Canceled</span>
-							<?php endif; ?>
-						</td>
-						<td class="middle text-center">
-							<?php if($rs->must_approve == 1) : ?>
-								<button class="btn btn-mini btn-primary" onclick="showAuthorize('<?php echo $rs->code; ?>')">Authorizer</button>
-							<?php endif; ?>
-						</td>
-						<td class="middle text-center">
-							<?php if($rs->must_approve == 1 && $rs->Approved == 'A') : ?>
-								<?php if($rs->Approval_status === 'P') : ?>
-									<span class="label label-lg label-success btn-block">อนุมัติบางส่วน</span>
+				<?php if (!empty($data)) : ?>
+					<?php $no = $this->uri->segment(3) + 1; ?>
+					<?php foreach ($data as $rs) : ?>
+						<?php $credit_issue = ($rs->credit_issue == 1 && $rs->credit_approval != 'A') ? 1 : 0; ?>
+						<tr class="<?php echo $credit_issue ? 'red' : ''; ?>" title="<?php echo $credit_issue ? 'Credit Issue' : ''; ?>">
+							<td class="middle text-center fix-no no" scope="row"><?php echo $no; ?></td>
+							<td class="middle text-center fix-date" scope="row">
+								<?php echo thai_date($rs->date_add, TRUE, '/'); ?>
+							</td>
+							<td class="middle fix-code" scope="row">
+								<?php echo $rs->code; ?> <?php echo $credit_issue ? '<i class="fa fa-exclamation-triangle" title="Credit Issue"></i>' : ''; ?>
+							</td>
+							<td class="middle fix-user" scope="row"><?php echo $rs->uname; ?></td>
+							<td class="middle text-center fix-cust" scope="row"><?php echo $rs->CardCode; ?></td>
+							<td class="middle"><?php echo $rs->CardName; ?></td>
+							<td class="middle" style="overflow-wrap:break-word;"><?php echo $rs->NumAtCard; ?></td>
+							<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
+							<td class="middle text-center"><span class="btn btn-minier btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</span></td>
+							<td class="middle text-center">
+								<?php if ($rs->Status == 2) : ?>
+									<button type="button" class="btn btn-minier btn-success btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</button>
+								<?php endif; ?>
+								<?php if ($rs->Status == 3) : ?>
+									<button type="button" class="btn btn-minier btn-danger btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Failed</button>
+								<?php endif; ?>
+								<?php if ($rs->Status == 1) : ?>
+									<button type="button" class="btn btn-minier btn-warning btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</button>
+								<?php endif; ?>
+								<?php if ($rs->Status == 0) : ?>
+									<span class="label label-md label-danger btn-block" style="font-size: 11px; padding-top: 3px;">Not Export</span>
+								<?php endif; ?>
+								<?php if ($rs->Status == -1) : ?>
+									<span class="label label-md label-danger btn-block" style="font-size: 11px; padding-top: 3px;">Canceled</span>
+								<?php endif; ?>
+							</td>
+							<td class="middle text-center">
+								<?php if ($rs->must_approve == 1) : ?>
+									<button class="btn btn-minier btn-primary" onclick="showAuthorize('<?php echo $rs->code; ?>')">Authorizer</button>
+								<?php endif; ?>
+							</td>
+							<td class="middle text-center">
+								<?php if ($rs->must_approve == 1 && $rs->Approved == 'A') : ?>
+									<?php if ($rs->Approval_status === 'P') : ?>
+										<span class="label label-lg label-success btn-block">อนุมัติบางส่วน</span>
+									<?php else : ?>
+										<span class="label label-lg label-success btn-block">อนุมัติ</span>
+									<?php endif; ?>
+								<?php elseif ($rs->must_approve == 1 && $rs->Approved == 'P') : ?>
+									<span class="label label-lg label-warning btn-block">รออนุมัติ</span>
+								<?php elseif ($rs->must_approve == 1 && $rs->Approved == 'R') : ?>
+									<span class="label label-lg label-danger btn-block">ไม่อนุมัติ</span>
 								<?php else : ?>
 									<span class="label label-lg label-success btn-block">อนุมัติ</span>
 								<?php endif; ?>
-							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'P') : ?>
-								<span class="label label-lg label-warning btn-block">รออนุมัติ</span>
-							<?php elseif($rs->must_approve == 1 && $rs->Approved == 'R') : ?>
-								<span class="label label-lg label-danger btn-block">ไม่อนุมัติ</span>
-							<?php else : ?>
-								<span class="label label-lg label-success btn-block">อนุมัติ</span>
-							<?php endif; ?>
-						</td>
-						<td class="middle"><?php echo $rs->Approver; ?></td>
-						<td class="middle text-center"><?php echo $rs->DocNum; ?></td>
-						<td class="middle text-center">
-							<?php if($rs->SO_Status == 'D') : ?>
-								<span class="red">Cancelled</span>
-							<?php else : ?>
-							<?php echo $rs->SO_Status == 'C' ? 'Closed' : ($rs->SO_Status == 'O' ? 'Open' : ''); ?>
-							<?php endif; ?>
-						</td>
-						<td class="middle text-center"><?php echo $rs->DO_Status == 'P' ? 'Partial' : ($rs->DO_Status == 'F' ? 'Full' : '') ; ?></td>
-						<td class="middle text-center"><?php echo $rs->INV_Status == 'P' ? 'Partial' : ($rs->INV_Status == 'F' ? 'Full' : ''); ?></td>
-						<td class="middle"><?php echo $rs->uname; ?></td>
-						<td class="middle"><?php echo sales_team_condition_name($rs->Condition_id); ?></td>
+							</td>
+							<td class="middle"><?php echo $rs->Approver; ?></td>
+							<td class="middle text-center"><?php echo $rs->DocNum; ?></td>
+							<td class="middle text-center">
+								<?php if ($rs->SO_Status == 'D') : ?>
+									<span class="red">Cancelled</span>
+								<?php else : ?>
+									<?php echo $rs->SO_Status == 'C' ? 'Closed' : ($rs->SO_Status == 'O' ? 'Open' : ''); ?>
+								<?php endif; ?>
+							</td>
+							<td class="middle text-center"><?php echo $rs->DO_Status == 'P' ? 'Partial' : ($rs->DO_Status == 'F' ? 'Full' : ''); ?></td>
+							<td class="middle text-center"><?php echo $rs->INV_Status == 'P' ? 'Partial' : ($rs->INV_Status == 'F' ? 'Full' : ''); ?></td>
+							<td class="middle"><?php echo sales_team_condition_name($rs->Condition_id); ?></td>
+						</tr>
+						<?php $no++; ?>
+					<?php endforeach; ?>
+				<?php else : ?>
+					<tr>
+						<td colspan="15" class="middle text-center">ไม่พบรายการ</td>
 					</tr>
-					<?php $no++; ?>
-				<?php endforeach; ?>
-			<?php else : ?>
-				<tr>
-					<td colspan="15" class="middle text-center">ไม่พบรายการ</td>
-				</tr>
-			<?php endif; ?>
+				<?php endif; ?>
 			</tbody>
 		</table>
 	</div>
@@ -303,34 +321,34 @@
 
 <!--  Add New Address Modal  --------->
 <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="width:90%; min-width:400px; max-width:95vw; margin-left:auto; margin-right:auto;">
-        <div class="modal-content">
-            <div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;" >Preview Order</h4>
-            </div>
-            <div class="modal-body">
-							<div class="row">
-                <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive" id="result">
+	<div class="modal-dialog" style="width:90%; min-width:400px; max-width:95vw; margin-left:auto; margin-right:auto;">
+		<div class="modal-content">
+			<div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;">Preview Order</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive" id="result">
 
-                </div>
-              </div>
-            </div>
+					</div>
+				</div>
+			</div>
 
-            <div class="modal-footer">
-							<button type="button" class="btn btn-sm btn-success pull-left hide" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
-							<button type="button" class="btn btn-sm btn-danger pull-left hide" style="margin-left:25%;" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>
-							<button type="button" class="btn btn-sm btn-primary pull-left hide" id="btn-temp" onclick="sendToSAP()">Send To Temp</button>
-              <button type="button" class="btn btn-sm btn-danger pull-right" id="btn-close" onClick="dismiss('previewModal')" >Close</button>
-            </div>
-        </div>
-    </div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-success pull-left hide" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
+				<button type="button" class="btn btn-sm btn-danger pull-left hide" style="margin-left:25%;" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>
+				<button type="button" class="btn btn-sm btn-primary pull-left hide" id="btn-temp" onclick="sendToSAP()">Send To Temp</button>
+				<button type="button" class="btn btn-sm btn-danger pull-right" id="btn-close" onClick="dismiss('previewModal')">Close</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <input type="hidden" id="OrderCode" value="">
 
 
-<script id="preview-template" type="text/x-handlebarsTemplate">
+<script id="previewx-template" type="text/x-handlebarsTemplate">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0">
 		<table class="table table-striped table-bordered border-1" style="margin-bottom:10px;">
 			<tbody>
@@ -441,82 +459,200 @@
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 		{{#if ApproveBy}} {{ApproveBy}} {{/if}}
 	</div>
+</script>
 
+<script id="preview-template" type="text/x-handlebarsTemplate">
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0">
+		<table class="table table-striped table-bordered border-1" style="margin-bottom:10px;">
+			<tbody>
+			<tr><td class="th fix-width-250">เลขที่ใบสั่งสินค้า</td><td>{{orderCode}}</td></tr>
+			<tr><td class="th">User</td><td>{{user}}</td></tr>
+			<tr><td class="th">รหัสลูกค้า</td><td>{{customerName}}</td></tr>
+			<tr><td class="th">ที่อยู่ตามใบกำกับภาษี</td><td>{{billToCode}} | {{billToAddress}}</td></tr>
+			<tr><td class="th">สถานที่ส่งของ</td><td>{{shipToCode}} | {{shipToAddress}}</td></tr>
+			<tr><td class="th">สถานที่จัดส่งเพิ่มเติม</td><td>{{exShipTo}}</td></tr>
+			<tr><td class="th">Currency</td><td>{{currency}} | Rate: {{currencyRate}} </td></tr>
+			<tr><td class="th">วันที่สั่งสินค้า</td><td>{{docDate}}</td></tr>
+			<tr><td class="th">วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
+			<tr><td class="th">Promotion</th><td>{{promotionCode}}  |   {{promotionName}}</td></tr>
+			<tr><td class="th">SO No.</td><td>{{SONO}}</td></tr>
+			<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}</td></tr>
+			<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
+			<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
+			<tr><td class="th">Price List</td><td>{{PriceList}}</td></tr>
+			<tr><td class="th">Payment Terms</td><td>{{termName}}</td></tr>
+			<tr><td class="th">Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>
+			</tbody>
+		</table>
+	</div>
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 border-1 padding-0 table-responsive" style="max-height:300px; overflow:auto;">
+		<table class="table table-bordered border-1" style="min-width:1580px; margin-bottom:0px;">
+			<thead>
+				<tr>
+					<th class="fix-width-40 middle text-center">#</th>
+					<th class="min-width-250 middle text-center">รายการสินค้า</th>
+					<th class="fix-width-80 middle text-center">จำนวน</th>
+					<th class="fix-width-80 middle text-center">แถม</th>
+					<th class="fix-width-100 middle text-center">หน่วย</th>
+					<th class="fix-width-100 middle text-center">ราคา/หน่วย (Term)</th>
+					<th class="fix-width-100 middle text-center">ราคา(พิเศษ)/หน่วย</th>
+					<th class="fix-width-80 middle text-center <?php echo $hide; ?>">Discount Sales</th>
+					<th class="fix-width-100 middle text-center">มูลค่า</th>
+					<th class="fix-width-100 middle text-center">หมายเหตุ</th>
+					<th class="fix-width-100 middle text-center">จำนวนค้างส่ง</th>
+					<th class="fix-width-100 middle text-center">เลขที่ DO</th>
+					<th class="fix-width-100 middle text-center">เลขที่ Invoice</th>
+					<th class="fix-width-100 middle text-center">วันที่ Invoice</th>
+					<th class="fix-width-200 middle text-center">เหตุผลในการ Reject</th>
+				</tr>
+			</thead>
+			<tbody>
+				{{#each items}}
+					<tr>
+						<td class="middle text-center">
+							{{{checkbox}}}
+						</td>
+						<td class="middle">{{itemName}}</td>
+						<td class="middle text-right">{{qty}}</td>
+						<td class="middle text-right">{{free}}</td>
+						<td class="middle text-center">{{uom}}</td>
+						<td class="middle text-right">{{stdPrice}}</td>
+						<td class="middle text-right">{{sellPrice}}</td>
+						<td class="middle text-center <?php echo $hide; ?>">{{{dis}}}</td>
+						<td class="middle text-right">{{amount}}</td>
+						<td class="middle">{{lineText}}</td>
+						<td class="middle text-right">{{openQty}}</td>
+						<td class="middle text-center">{{{DoNo}}}</td>
+						<td class="middle text-center">{{{InvNo}}}</td>
+						<td class="middle text-center">{{{InvDate}}}</td>
+						<td class="middle">{{{rejectbox}}}</td>
+					</tr>
+				{{/each}}
+			</tbody>
+		</table>
+	</div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px;">
+		{{#if creditIssue}}
+			<h4 class="red text-right hidden-xs">รอการอนุมัติเครดิต</h4>
+			<h4 class="red text-center visible-xs">รอการอนุมัติเครดิต</h4>
+		{{/if}}		
+	</div>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px;">
+		<div class="form-horizontal">
+			<div class="form-group">
+				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ราคาสินค้า</label>
+				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalBefDi}}" readonly>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ส่วนลด [{{subTotal.DiscPrcnt}} %]</label>
+				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+					<input type="text" class="form-control input-sm text-right" value="{{subTotal.DiscSum}}" readonly>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษีมูลค่าเพิ่ม</label>
+				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalBefVat}}" readonly>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
+				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalVat}}" readonly>
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">รวมเงินสุทธิ</label>
+				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+					<input type="text" class="form-control input-sm text-right" value="{{subTotal.docTotal}}" readonly>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+		{{#if ApproveBy}} {{ApproveBy}} {{/if}}
+	</div>
 </script>
 
 
 
 
-
 <div class="modal fade" id="authorizer-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="max-width:400px;">
-        <div class="modal-content">
-            <div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;" ></h4>
-            </div>
-            <div class="modal-body">
-              <div class="row">
-                <div class="col-md-12 col-sm-12 col-xs-12">
-									<table class="table table-striped table-bordered border-1">
-										<thead>
-											<tr>
-												<th class="width-40">Username</th>
-												<th class="width-60">Employee</th>
-											</tr>
-										</thead>
-										<tbody id="authorizer-table">
+	<div class="modal-dialog" style="max-width:400px;">
+		<div class="modal-content">
+			<div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;"></h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-md-12 col-sm-12 col-xs-12">
+						<table class="table table-striped table-bordered border-1">
+							<thead>
+								<tr>
+									<th class="width-40">Username</th>
+									<th class="width-60">Employee</th>
+								</tr>
+							</thead>
+							<tbody id="authorizer-table">
 
-										</tbody>
-									</table>
-                </div>
-              </div>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-sm btn-primary" onClick="dismiss('authorizer-modal')" >Close</button>
-            </div>
-        </div>
-    </div>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-sm btn-primary" onClick="dismiss('authorizer-modal')">Close</button>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script id="authorizer-template" type="text/x-handlebarsTemplate">
-{{#each this}}
-	{{#if nodata}}
-		<tr>
-			<td colspan="2" class="text-center"> ---- No Authorizer ----</td>
-		</tr>
+	{{#each this}}
+		{{#if nodata}}
+			<tr>
+				<td colspan="2" class="text-center"> ---- No Authorizer ----</td>
+			</tr>
 		{{else}}
-		<tr>
-			<td>{{uname}}</td><td>{{emp_name}}
-		</tr>
+			<tr>
+				<td>{{uname}}</td>
+				<td>{{emp_name}}
+			</tr>
 		{{/if}}
-{{/each}}
+	{{/each}}
 </script>
 
 
 
 
 <div class="modal fade" id="tempModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-    <div class="modal-dialog" style="max-width:800px;">
-        <div class="modal-content">
-            <div class="modal-header" style="padding-bottom:0px;">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <h4 class="modal-title" style="font-size: 24px; font-weight: bold; padding-bottom: 10px; color:#428bca; border-bottom:solid 2px #428bca">Sales Sales Order Temp Status</h4>
-            </div>
-            <div class="modal-body" style="padding-top:5px;">
-            <div class="row">
-              <div class="col-sm-12 col-xs-12" id="temp-table">
+	<div class="modal-dialog" style="max-width:800px;">
+		<div class="modal-content">
+			<div class="modal-header" style="padding-bottom:0px;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" style="font-size: 24px; font-weight: bold; padding-bottom: 10px; color:#428bca; border-bottom:solid 2px #428bca">Sales Sales Order Temp Status</h4>
+			</div>
+			<div class="modal-body" style="padding-top:5px;">
+				<div class="row">
+					<div class="col-sm-12 col-xs-12" id="temp-table">
 
-              </div>
-            </div>
+					</div>
+				</div>
 
-        </div>
-    </div>
-  </div>
+			</div>
+		</div>
+	</div>
 </div>
 
 <script id="temp-template" type="text/x-handlebarsTemplate">
-  <input type="hidden" id="U_WEB_ORNO" value="{{U_WEB_ORNO}}"/>
+	<input type="hidden" id="U_WEB_ORNO" value="{{U_WEB_ORNO}}"/>
   <table class="table table-bordered" style="margin-bottom:0px;">
     <tbody style="font-size:16px;">
       <tr><td class="width-30">Web Order</td><td class="width-70">{{U_WEB_ORNO}}</td></tr>
@@ -541,16 +677,15 @@
 </script>
 
 <style>
-	.table > tr > td {
+	.table>tr>td {
 		white-space: nowrap;
 	}
 </style>
 <script>
-
 	$(document).ready(function() {
 		setTimeout(function() {
 			window.location.reload();
-		}, 1000*60*5); //--- reload every 5 minutes
+		}, 1000 * 60 * 5); //--- reload every 5 minutes
 	});
 </script>
 

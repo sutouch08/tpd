@@ -20,8 +20,7 @@ class Approver extends PS_Controller{
 
 		$filter = array(
 			'uname' => get_filter('uname', 'ap_uname', ''),
-			'emp_name' => get_filter('emp_name', 'ap_emp_name', ''),
-			'amount' => get_filter('amount', 'ap_amount', ''),
+			'emp_name' => get_filter('emp_name', 'ap_emp_name', ''),			
 			'status' => get_filter('status', 'ap_status', 'all')
 		);
 
@@ -72,7 +71,7 @@ class Approver extends PS_Controller{
 		{
 			$ds = json_decode($this->input->post('data'));
 
-			if( ! empty($ds) && ! empty($ds->uname) && ! empty($ds->amount))
+			if( ! empty($ds) && ! empty($ds->uname) && ! empty($ds->max_amount))
 			{
 				$user = $this->user_model->get_user_by_uname($ds->uname);
 
@@ -85,8 +84,9 @@ class Approver extends PS_Controller{
 							'user_id' => $user->id,
 							'uname' => $user->uname,
 							'emp_name' => $user->emp_name,
-							'amount' => $ds->amount,
-							'status' => $ds->status,
+							'min_amount' => (empty($ds->min_amount) OR $ds->min_amount < 0) ? 0 : floatval($ds->min_amount),
+							'amount' => floatval($ds->max_amount),
+							'status' => $ds->status == 1 ? 1 : 0,
 							'date_add' => now(),
 							'add_by' => $this->_user->id
 						);
@@ -159,11 +159,12 @@ class Approver extends PS_Controller{
 		{
 			$ds = json_decode($this->input->post('data'));
 
-			if( ! empty($ds) && ! empty($ds->id) && ! empty($ds->amount))
+			if( ! empty($ds) && ! empty($ds->id) && ! empty($ds->max_amount))
 			{
 				$arr = array(
-					'amount' => $ds->amount,
-					'status' => $ds->status,
+					'min_amount' => (empty($ds->min_amount) OR $ds->min_amount < 0) ? 0 : floatval($ds->min_amount),
+					'amount' => floatval($ds->max_amount),
+					'status' => $ds->status == 1 ? 1 : 0,
 					'date_upd' => now(),
 					'update_by' => $this->_user->id
 				);
@@ -250,6 +251,37 @@ class Approver extends PS_Controller{
 		$this->_response($sc);
 	}
 
+
+	public function set_active()
+	{
+		$sc = TRUE;
+		$id = $this->input->post('id');
+		$active = $this->input->post('active');
+
+		if($this->pm->can_edit)
+		{
+			if( ! empty($id))
+			{
+				if( ! $this->approver_model->update($id, ['status' => $active]))
+				{
+					$sc = FALSE;
+					$this->error = "Failed to update status";
+				}
+			}
+			else
+			{
+				$sc = FALSE;
+				$this->error = "Missing required parameter";
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = "Missing Permission";
+		}
+
+		$this->_response($sc);
+	}
 
 	public function clear_filter()
 	{

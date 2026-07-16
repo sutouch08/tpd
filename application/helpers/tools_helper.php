@@ -6,14 +6,7 @@ function item_type_array($customer_type)
 		'2' => ['09', '10'],
 		'3' => ['02', '03', '04', '05', '06', '07', '08', '09', '10'],
 		'4' => ['02', '03', '04', '09', '10']
-	);
-
-	// $ds = array(
-	// 	'1' => ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'],
-	// 	'2' => ['09', '10'],
-	// 	'3' => ['03', '04', '07', '08', '10'],
-	// 	'4' => ['03', '04', '10']
-	// );
+	);	
 
 	return isset($ds[$customer_type]) ? $ds[$customer_type] : ['xx'];
 }
@@ -46,10 +39,9 @@ function get_condition_sign($condition)
 }
 
 
-
 function setToken($token)
 {
-	$CI =& get_instance();
+	$ci =& get_instance();
 	$cookie = array(
 		'name' => 'file_download_token',
 		'value' => $token,
@@ -57,7 +49,7 @@ function setToken($token)
 		'path' => '/'
 	);
 
-	return $CI->input->set_cookie($cookie);
+	return $ci->input->set_cookie($cookie);
 }
 
 
@@ -76,14 +68,10 @@ function limitText($str, $length)
 }
 
 
-
-
 function is_selected($val, $select)
 {
   return $val == $select ? 'selected' : '';
 }
-
-
 
 
 function is_checked($val1, $val2)
@@ -92,17 +80,25 @@ function is_checked($val1, $val2)
 }
 
 
-
-function is_active($val, $showX = TRUE)
+function is_active($val, $showIcon = TRUE)
 {
-	if($val == 1 OR $val == '1')
+	$val = strtolower(strval($val));
+	$icon = "";
+
+	if (($val === '1' || $val === 'y'))
 	{
-		return '<i class="fa fa-check green"></i>';
+		$icon = '<i class="fa fa-check fa-lg green" title="Active"></i>';
+	}
+	else if ($val === '-1')
+	{
+		$icon = '<i class="fa fa-minus-circle fa-lg red" title="Deleted"></i>';
 	}
 	else
 	{
-		return $showX ? '<i class="fa fa-times red"></i>' : NULL;
+		$icon = $showIcon ? '<i class="fa fa-times fa-lg red" title="Inactive"></i>' : '';
 	}
+
+	return $icon;
 }
 
 
@@ -110,17 +106,17 @@ function is_active($val, $showX = TRUE)
 
 function get_filter($postName, $cookieName, $defaultValue = "")
 {
-  $CI =& get_instance();
+  $ci =& get_instance();
   $sc = '';
 
-  if($CI->input->post($postName) !== NULL)
+  if($ci->input->post($postName) !== NULL)
   {
-    $sc = $CI->input->post($postName);
-    $CI->input->set_cookie(array('name' => $cookieName, 'value' => $sc, 'expire' => 3600 , 'path' => '/'));
+    $sc = $ci->input->post($postName);
+    $ci->input->set_cookie(array('name' => $cookieName, 'value' => $sc, 'expire' => 3600 , 'path' => '/'));
   }
-  else if($CI->input->cookie($cookieName) !== NULL)
+  else if($ci->input->cookie($cookieName) !== NULL)
   {
-    $sc = $CI->input->cookie($cookieName);
+    $sc = $ci->input->cookie($cookieName);
   }
   else
   {
@@ -169,8 +165,8 @@ function set_rows($value = 20)
     'expire' => 259200,
     'path' => '/'
   );
-  $CI =& get_instance();
-  return $CI->input->set_cookie($arr);
+  $ci =& get_instance();
+  return $ci->input->set_cookie($arr);
 }
 
 
@@ -179,8 +175,8 @@ function set_rows($value = 20)
 
 function get_rows()
 {
-  $CI =& get_instance();
-  return $CI->input->cookie('rows') === NULL ? 20 : $CI->input->cookie('rows');
+  $ci =& get_instance();
+  return $ci->input->cookie('rows') === NULL ? 20 : $ci->input->cookie('rows');
 }
 
 
@@ -202,8 +198,8 @@ function ac_format($val, $digit = 0)
 
 function getConfig($code)
 {
-  $CI =& get_instance();
-  $rs = $CI->db->select('value')->where('code', $code)->get('config');
+  $ci =& get_instance();
+  $rs = $ci->db->select('value')->where('code', $code)->get('config');
   if($rs->num_rows() == 1)
   {
     return $rs->row()->value;
@@ -304,19 +300,37 @@ function add_vat($amount, $vat = NULL)
 
 
 
-function set_error($message)
+function set_error_message($message)
 {
-  $CI =& get_instance();
-  $CI->session->set_flashdata('error', $message);
+  $ci =& get_instance();
+  $ci->session->set_flashdata('error', $message);
 }
 
 
 function set_message($message)
 {
-  $CI =& get_instance();
-  $CI->session->set_flashdata('success', $message);
+  $ci =& get_instance();
+  $ci->session->set_flashdata('success', $message);
 }
 
+function set_error($key, $name = "data")
+{
+	$error = array(
+		'insert' => "Insert {$name} failed.",
+		'update' => "Update {$name} failed.",
+		'delete' => "Delete {$name} failed.",
+		'permission' => "You don't have permission to perform this operation.",
+		'required' => "Missing required parameter.",
+		'exists' => "'{$name}' already exists.",
+		'status' => "Invalid document status",
+		'notfound' => "Document number not found",
+		'transection' => "Unable to delete {$name} because transections exists or link to other module."
+	);
+
+	$ci = &get_instance();
+
+	$ci->error = (!empty($error[$key]) ? $error[$key] : $key);
+}
 
 
 function get_error_message($key, $name = "data")
@@ -367,6 +381,11 @@ function is_true($value)
 	return FALSE;
 }
 
+
+function escapeQuote($text)
+{
+	return $text === NULL ? '' : trim(str_replace('"', '&quot;', $text));
+}
 
 
 function pagination_config( $base_url, $total_rows = 0, $perpage = 20, $segment = 3)

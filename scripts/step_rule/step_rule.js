@@ -1,102 +1,152 @@
-var HOME = BASE_URL + "step_rule/";
-
+var HOME = `${BASE_URL}step_rule/`;
+var click = 0;
 
 function goBack() {
   window.location.href = HOME;
 }
 
 
-function goAdd() {
-  window.location.href = HOME + 'add_new';
+function addNew() {
+  window.location.href = `${HOME}add_new`;
 }
 
 
-function goEdit(id) {
-  window.location.href = HOME + 'edit/'+id;
+function edit(id) {
+  window.location.href = `${HOME}edit/${id}`;
 }
 
 
 function viewDetail(id) {
-  window.location.href = HOME + 'view_detail/'+id;
+  const url = `${HOME}view_detail/${id}?nomenu&nonavbar`;
+  const width = 1000;
+  const height = 600;
+  const left = (screen.width - width) / 2;
+  const top = 100;
+  window.open(url, '_blank', `width=${width}, height=${height}, left=${left}, top=${top}, scrollbars=yes`);
+}
+
+function changeURL(id, tab) {
+  var url = `${HOME}edit/${id}/${tab}`;
+  var stObj = { stage: 'stage' };
+  window.history.pushState(stObj, 'step_rule', url);
 }
 
 
 function add() {
-  $('.e').removeClass('has-error');
+  if(click == 0) {
+    click = 1;
+    
+    clearErrorByClass('e');
 
-  let priceList = $('#price-list').val();
-  let priceName = $('#price-list option:selected').text();
-  let name = $('#name').val().trim();
-  let active = $('#active').val();
+    let h = {
+      'price_list' : $('#price-list').val(),
+      'price_list_name' : $('#price-list option:selected').text(),
+      'name' : $('#name').val().trim(),
+      'active' : $('input[name="active"]:checked').val()
+    }
 
-  if(priceList == "") {
-    $('#price-list').addClass('has-error');
-    return false;
+    if(h.price_list == "") {
+      $('#price-list').hasError('Please select price list');
+      click = 0;
+      return false;
+    }
+
+    if(h.name.length == 0) {
+      $('#name').hasError('Please enter description');
+      click = 0;
+      return false;
+    }
+
+    $.ajax({
+      url:`${HOME}is_exists/${h.price_list}`,
+      type:'GET',
+      cache:false,
+      success:function(rs) {
+        if(rs.trim() !== 'exists') {
+          $.ajax({
+            url: `${HOME}add`,
+            type: 'POST',
+            cache: false,
+            data: {
+              'data': JSON.stringify(h)
+            },
+            success: function (rs) {
+              load_out();
+              click = 0;
+              if (rs.trim() == 'success') {
+                edit(h.price_list);
+              }
+              else {
+                showError(rs);
+              }
+            },
+            error: function (rs) {
+              showError(rs);
+            }
+          });
+        }
+        else {
+          $('#price-list').hasError('Price list already exists');
+          click = 0;
+          return false;          
+        }
+      }
+    });     
+  }  
+}
+
+
+function update() {
+  clearErrorByClass('e');
+
+  let h = {
+    'price_list' : $('#price-list').val(),
+    'price_list_name' : $('#price-list-name').val(),
+    'name' : $('#name').val().trim(),
+    'active' : $('input[name="active"]:checked').val()
   }
 
-  if(name.length == 0) {
-    $('#name').addClass('has-error');
+  if(h.name.length == 0) {
+    $('#name').hasError('Please enter description');
     return false;
   }
 
   $.ajax({
-    url:HOME + 'add',
-    type:'POST',
-    cache:false,
-    data:{
-      'price_list' : priceList,
-      'price_list_name' : priceName,
-      'name' : name,
-      'active' : active
+    url: `${HOME}update`,
+    type: 'POST',
+    cache: false,
+    data: {
+      'data': JSON.stringify(h)
     },
-    success:function(rs) {
+    success: function (rs) {
       if(rs.trim() == 'success') {
-        goEdit(priceList);
+        swal({
+          title: 'Success',
+          type: 'success',
+          timer: 1000
+        });
       }
       else {
-        swal({
-          title:'Error!',
-          text:rs,
-          type:'error',
-          html:true
-        })
+        showError(rs);
       }
     },
-    error:function(rs) {
-      swal({
-        title:'Error!',
-        text:rs.reaponseText,
-        type:'error',
-        html:true
-      })
+    error: function (rs) {
+      showError(rs);
     }
-  })
+  });
 }
 
 
-function save() {
-  $('.e').removeClass('has-error');
 
+function update_details() {
+  clearErrorByClass('e');
   let err = 0;
 
-  let d = {
-    'price_list' : $('#price-list').val(),
-    'price_list_name' : $('#price-list option:selected').text(),
-    'name' : $('#name').val().trim(),
-    'active' : $('#active').val(),
+  let d = {    
+    'price_list' : $('#price-list').val(),    
     'rows' : [],
     'delete_rows' : []
-  }
-
-  if(d.price_list == "") {
-    $('#price-list').addClass('has-error');
-    return false;
-  }
-
-  if(d.name.length == 0) {
-    $('#name').addClass('has-error');
-    return false;
-  }
+  }  
 
   if($('.chk').length) {
     $('.chk').each(function() {
@@ -158,7 +208,7 @@ function save() {
   load_in();
 
   $.ajax({
-    url:HOME + 'save',
+    url:`${HOME}update_details`,
     type:'POST',
     cache:false,
     data:{
@@ -179,22 +229,12 @@ function save() {
         }, 1200);
       }
       else {
-        swal({
-          title:'Error!',
-          text:rs,
-          type:'error',
-          html:true
-        })
+        showError(rs);
+
       }
     },
-    error:function(rs) {
-      load_out();
-      swal({
-        title:'Error!',
-        text:rs.responseText,
-        type:'error',
-        html:true
-      })
+    error:function(rs) {      
+      showError(rs);
     }
   })
 }
@@ -213,7 +253,7 @@ function getDelete(id, name){
     html:true
   },function(){
     $.ajax({
-      url: HOME + 'delete',
+      url: `${HOME}delete`,
       type:'POST',
       cache:false,
       data:{
@@ -225,7 +265,7 @@ function getDelete(id, name){
             title:'Success',
             text:'Price list has been deleted',
             type:'success',
-            time: 1000
+            timer: 1000
           });
 
           setTimeout(function(){
@@ -233,30 +273,36 @@ function getDelete(id, name){
           }, 1200)
         }
         else {
-          swal({
-            title:'Error!',
-            text:rs,
-            type:'error'
-          });
+          showError(rs);
         }
+      },
+      error:function(rs){
+        showError(rs);
       }
     })
   })
 }
 
 
-function toggleActive(option) {
-  $('#active').val(option);
-
-  if(option == 1) {
-    $('#btn-active').addClass('btn-primary');
-    $('#btn-inactive').removeClass('btn-danger');
-  }
-
-  if(option == 0) {
-    $('#btn-inactive').addClass('btn-danger');
-    $('#btn-active').removeClass('btn-primary');
-  }
+function toggleActive(id, el) {
+  let active = $(el).is(':checked') ? 1 : 0;
+  $.ajax({
+    url: `${HOME}set_active`,
+    type: 'POST',
+    cache: false,
+    data: {
+      'id': id,
+      'active': active
+    },
+    success: function(rs) {
+      if(rs != 'success') {
+        showError(rs);
+      }
+    },
+    error: function(rs) {
+      showError(rs);
+    }
+  });
 }
 
 

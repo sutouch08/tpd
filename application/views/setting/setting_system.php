@@ -1,12 +1,12 @@
 <div class="tab-pane fade" id="system">
 <?php
-    $open     = $CLOSE_SYSTEM == 0 ? 'btn-success' : '';
-    $close    = $CLOSE_SYSTEM == 1 ? 'btn-danger' : '';
-    $freze    = $CLOSE_SYSTEM == 2 ? 'btn-warning' : '';
-    $pwd_on   = $USE_STRONG_PWD == 1 ? 'btn-primary' : '';
-    $pwd_off  = $USE_STRONG_PWD == 0 ? 'btn-primary' : '';
-    $dis_on   = $USE_DISCSALE == 1 ? 'btn-primary' : '' ;
-    $dis_off  = $USE_DISCSALE == 0 ? 'btn-primary' : '';
+    $open = $CLOSE_SYSTEM == 0 ? 'btn-success' : '';
+    $close = $CLOSE_SYSTEM == 1 ? 'btn-danger' : '';
+    $freze = $CLOSE_SYSTEM == 2 ? 'btn-warning' : '';
+    $pwd_on = $USE_STRONG_PWD == 1 ? 'btn-primary' : '';
+    $pwd_off = $USE_STRONG_PWD == 0 ? 'btn-primary' : '';
+    $dis_on = $USE_DISCSALE == 1 ? 'btn-primary' : '' ;
+    $dis_off = $USE_DISCSALE == 0 ? 'btn-primary' : '';
     $pm = get_permission('CLOSE_SYSTEM');
     $cando = ($pm->can_add + $pm->can_edit) > 0 ? TRUE : FALSE;
 ?>

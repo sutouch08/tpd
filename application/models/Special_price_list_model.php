@@ -4,6 +4,7 @@ class Special_price_list_model extends CI_Model
   private $tb = "special_price_list";
   private $td = "special_price_item";
   private $tr = "special_price_item_detail";
+  private $tc = "special_price_list_customer_group";
 
   public function __construct()
   {
@@ -26,6 +27,50 @@ class Special_price_list_model extends CI_Model
   public function get_all_active()
   {
     $rs = $this->db->where('active', 1)->order_by('name', 'ASC')->get($this->tb);
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+  public function get_active_by_type($type_id)
+  {
+    $rs = $this->db
+    ->where('active', 1)
+    ->where('type_id', $type_id)
+    ->where('start_date <=', date('Y-m-d 00:00:00'))
+    ->where('end_date >=', date('Y-m-d 23:59:59'))
+    ->order_by('name', 'ASC')
+    ->get($this->tb);
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function get_active_customer_list_by_type($type_id, array $groupIds = array())
+  {
+    $rs = $this->db
+    ->select('sp.id, sp.name')
+    ->from($this->tb.' AS sp')
+    ->join($this->tc.' AS c', 'sp.id = c.price_list_id', 'left')
+    ->where('sp.active', 1)
+    ->where('sp.type_id', $type_id)
+    ->where('sp.start_date <=', date('Y-m-d 00:00:00'))
+    ->where('sp.end_date >=', date('Y-m-d 23:59:59'))
+    ->group_start()
+    ->where_in('c.customer_group_id', $groupIds)
+    ->or_where('sp.all_customer', 1)
+    ->group_end()
+    ->order_by('sp.name', 'ASC')
+    ->get();
 
     if($rs->num_rows() > 0)
     {
@@ -84,6 +129,21 @@ class Special_price_list_model extends CI_Model
     return NULL;
   }
 
+  public function get_item_id($itemCode, $price_list_id)
+  {
+    $rs = $this->db
+    ->select('id')
+    ->where('ItemCode', $itemCode)
+    ->where('price_list_id', $price_list_id)
+    ->get($this->td);
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->id;
+    }
+
+    return NULL;
+  }
 
   public function get_item_details($id)
   {
@@ -112,6 +172,36 @@ class Special_price_list_model extends CI_Model
 
     return NULL;
   }
+
+  public function get_price_list_customer_groups($price_list_id)
+  {
+    $rs = $this->db->where('price_list_id', $price_list_id)->get($this->tc);    
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function add_price_list_customer_group(array $ds = array())
+  {
+    if( ! empty($ds))
+    {
+      return $this->db->insert($this->tc, $ds);
+    }
+
+    return FALSE;
+  }
+
+
+  public function delete_price_list_customer_groups($price_list_id)
+  {
+    return $this->db->where('price_list_id', $price_list_id)->delete($this->tc);
+  }
+  
 
   //--- add price list
   public function add(array $ds = array())
@@ -226,13 +316,28 @@ class Special_price_list_model extends CI_Model
       $this->db->like('name', $ds['name']);
     }
 
+    if( isset($ds['type']) && $ds['type'] != "all")
+    {
+      $this->db->where('type_id', $ds['type']);
+    }
+
+    if(isset($ds['from_date']) && !empty($ds['from_date']))
+    {
+      $this->db->where('start_date >=', from_date($ds['from_date']));
+    }
+
+    if(isset($ds['to_date']) && !empty($ds['to_date']))
+    {
+      $this->db->where('end_date <=', to_date($ds['to_date']));
+    }
+
     if(isset($ds['status']) && $ds['status'] != "all")
     {
       $this->db->where('active', $ds['status']);
     }
 
     $this->db->limit($limit, $offset);
-
+    
     $rs = $this->db->get($this->tb);
 
     if($rs->num_rows() > 0)
@@ -254,6 +359,21 @@ class Special_price_list_model extends CI_Model
     if(isset($ds['status']) && $ds['status'] != "all")
     {
       $this->db->where('active', $ds['status']);
+    }
+
+    if(isset($ds['type']) && $ds['type'] != "all")
+    {
+      $this->db->where('type_id', $ds['type']);
+    }
+
+    if(isset($ds['from_date']) && !empty($ds['from_date']))
+    {
+      $this->db->where('start_date >=', from_date($ds['from_date']));
+    }
+
+    if(isset($ds['to_date']) && !empty($ds['to_date']))
+    {
+      $this->db->where('end_date <=', to_date($ds['to_date']));
     }
 
     return $this->db->count_all_results($this->tb);

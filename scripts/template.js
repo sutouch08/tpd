@@ -63,7 +63,6 @@ function clear_error(el, label){
 	label.text('');
 }
 
-
 function isDate(txtDate){
 	var currVal = txtDate;
 	if(currVal == '')
@@ -246,6 +245,24 @@ function parseDefault(value, def) {
 	return value;
 }
 
+function parseDefaultInt(value, def) {
+	let intValue = parseInt(value);
+	if(isNaN(intValue)) {
+		return def; //--- return default value
+	}
+
+	return intValue;
+}
+
+function parseDefaultFloat(value, def) {
+	let floatValue = parseFloat(value);
+	if(isNaN(floatValue)) {
+		return def; //--- return default value
+	}
+	
+	return floatValue;
+}
+
 //--- return discount array
 function parseDiscount(discount_label, price)
 {
@@ -308,22 +325,24 @@ function clearFilter() {
 }
 
 
-function sort(field){
-	var el = $("#sort_"+field);
-	var sort_by = "";
+const sort = (field) => {
+	const el = document.getElementById(`sort-${field}`);
+	const isDesc = el.classList.contains('sorting_desc');
+	const sortBy = isDesc ? 'ASC' : 'DESC';
+	const sortClass = isDesc ? 'sorting_asc' : 'sorting_desc';
 
-	sort_by = el.hasClass('sorting_desc') ? 'ASC' : 'DESC';
-	sort_class = el.hasClass('sorting_desc') ? 'sorting_asc' : 'sorting_desc';
+	document.querySelectorAll('.sorting').forEach(item => {
+		item.classList.remove('sorting_desc', 'sorting_asc');
+	});
 
-	$('.sorting').removeClass('sorting_desc');
-	$('.sorting').removeClass('sorting_asc');
+	el.classList.add(sortClass);
 
-	el.addClass(sort_class);
-	$('#sort_by').val(sort_by);
-	$('#order_by').val(field);
+	document.getElementById('sort_by').value = sortBy;
+	document.getElementById('order_by').value = field;
 
 	getSearch();
-}
+};
+
 
 
 function generateUID() {
@@ -416,4 +435,25 @@ function is_true(val) {
     default :
       return false;
   }
+}
+
+function refresh() {
+	window.location.reload();
+}
+
+async function validateRemote(url, data = {}) {
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		});
+
+		return (await response.text()).trim();
+	} catch (err) {
+		console.error('Validation error:', err);
+		return 'error';
+	}
 }

@@ -1,67 +1,82 @@
-<div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 padding-5">
-    <div class="form-horizontal">
-
-      <div class="form-group">
-        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-6 control-label no-padding-right">Username</label>
-        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-          <input type="text" id="username" class="form-control input-sm" value="<?php echo $this->_user->uname; ?>" disabled/>
-        </div>
+<div class="col-lg-3-harf col-md-4-harf col-sm-5 col-xs-12 padding-5">
+  <div class="form-horizontal">
+    <div class="form-group">
+      <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sap-label">Username</label>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-right-12">
+        <input type="text" id="username" class="form-control input-sm" value="<?php echo $this->_user->uname; ?>" disabled />
       </div>
-
-
-      <div class="form-group">
-        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">Order No.</label>
-        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-          <input type="text" id="code" class="form-control input-sm" value="<?php echo $code; ?>" disabled/>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">Price List</label>
-        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-          <select class="width-100 e" name="priceList" id="priceList" onchange="checkPriceList()">
-            <option value="">เลือก</option>
-            <?php if(!empty($priceList)) : ?>
-              <?php foreach($priceList as $pl) : ?>
-                <option value="<?php echo $pl->list_id; ?>" data-spid="0"><?php echo $pl->list_name; ?></option>
-              <?php endforeach; ?>
-            <?php endif; ?>
-
-            <?php if( ! empty($specialPriceList)) : ?>
-              <?php foreach($specialPriceList as $sp) : ?>
-                <option value="x" data-spid="<?php echo $sp->id; ?>"><?php echo $sp->name; ?></option>
-              <?php endforeach; ?>
-            <?php endif; ?>
-          </select>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">วันที่สั่งสินค้า</label>
-        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-          <span class="input-icon input-icon-right width-100">
-          <input type="text" id="DocDate" class="form-control input-sm text-center e" value="<?php echo date('d-m-Y'); ?>" disabled/>
-          <i class="ace-icon fa fa-calendar-o"></i>
-          </span>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">วันที่ต้องการจัดส่ง</label>
-        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-          <span class="input-icon input-icon-right width-100">
-          <input type="text" id="DocDueDate" class="form-control input-sm text-center e" value="<?php echo date('d-m-Y', strtotime(shift_date(now(), 3, TRUE))); ?>" readonly/>
-          <i class="ace-icon fa fa-calendar-o"></i>
-          </span>
-        </div>
-      </div>
-
-      <div class="form-group">
-        <label class="col-lg-7 col-md-7 col-sm-7 col-xs-12 control-label no-padding-right">เลขที่ PO</label>
-        <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12">
-          <input type="text" id="PoNo" class="form-control input-sm e" value=""/>
-        </div>
-      </div>
-
     </div>
+
+    <div class="form-group">
+      <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sap-label">Order No.</label>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-right-12">
+        <input type="text" id="code" class="form-control input-sm" value="<?php echo $code; ?>" disabled />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sap-label">เลขที่ PO</label>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-right-12">
+        <div class="input-group">
+          <input type="text" id="PoNo" class="form-control input-sm e" value="" />
+          <span class="input-group-btn">
+            <button type="button" class="btn btn-xs btn-info btn-45" title="Attach PO file" onclick="getUploadFile()"><i class="fa fa-upload"></i></button>
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-lg-3 col-md-3 col-sm-3 col-xs-6 sap-label">Price List</label>
+      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-right-0">
+        <select class="width-100" id="price-list-type" onchange="changePriceListType()">
+          <option value="all">All</option>
+          <?php echo select_price_list_type(); ?>
+        </select>
+      </div>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-right-12">
+        <select class="width-100 e" name="priceList" id="priceList" onchange="checkPriceList()">
+          <option value="">Select</option>
+          <?php if (!empty($priceList)) : ?>
+            <?php foreach ($priceList as $label => $list) : ?>
+              <optgroup label="<?php echo $label; ?>">
+                <?php foreach ($list as $pl) : ?>
+                  <option value="<?php echo $pl->id; ?>" data-spid="<?php echo $pl->spid; ?>"><?php echo $pl->name; ?></option>
+                <?php endforeach; ?>
+              </optgroup>
+            <?php endforeach; ?>
+          <?php endif; ?>
+        </select>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sap-label">วันที่สั่งสินค้า</label>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-right-12">
+        <span class="input-icon input-icon-right width-100">
+          <input type="text" id="DocDate" class="form-control input-sm text-center e" value="<?php echo date('d-m-Y'); ?>" disabled />
+          <i class="ace-icon fa fa-calendar-o"></i>
+        </span>
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sap-label">วันที่ต้องการจัดส่ง</label>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-right-12">
+        <span class="input-icon input-icon-right width-100">
+          <input type="text" id="DocDueDate" class="form-control input-sm text-center e" value="<?php echo date('d-m-Y', strtotime(shift_date(now(), 3, TRUE))); ?>" readonly />
+          <i class="ace-icon fa fa-calendar-o"></i>
+        </span>
+      </div>
+    </div>
+
+    <?php if ($this->isAdmin) : ?>
+      <div class="form-group">
+        <label class="col-lg-6 col-md-4-harf col-sm-4-harf col-xs-6 sap-label">Sale Employee</label>
+        <div class="col-lg-6 col-md-7-harf col-sm-7-harf col-xs-6">
+          <input type="text" class="width-100" id="slpName" disabled />
+        </div>
+      </div>
+    <?php endif; ?>
+  </div>
 </div>

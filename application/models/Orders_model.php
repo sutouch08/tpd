@@ -9,6 +9,91 @@ class Orders_model extends CI_Model
     parent::__construct();
   }
 
+  public function get_overdue_amount($CardCode, $CustCode = NULL)
+  {
+    $day = 1;
+    $this->ms->select_sum('OINV.DocTotal')->select_sum('OINV.PaidToDate')->from('OINV');
+
+    if( ! empty($CustCode))
+    {
+      $this->ms
+        ->join('OCRD', 'OINV.CardCode = OCRD.CardCode', 'left')
+        ->where('OCRD.U_TPD_CUST_HCode', $CustCode)
+        ->where('OINV.DocTotal >', 'OINV.PaidToDate', FALSE)
+        ->where("DATEADD(day,{$day}, OINV.DocDueDate) < ", "GETDATE()", FALSE);
+    }
+    else 
+    {
+      $this->ms
+        ->where('CardCode', $CardCode)
+        ->where('DocTotal >', 'PaidToDate', FALSE)
+        ->where("DATEADD(day,{$day}, DocDueDate) < ", "GETDATE()", FALSE);
+    }
+
+    $rs = $this->ms->get();
+    
+    if($rs->num_rows() === 1)
+    {
+      $row = $rs->row();
+      return $row->DocTotal - $row->PaidToDate;
+    }
+
+    return 0;
+  }
+
+  public function is_over_due($cardCode, $custCode = NULL)
+  {
+    $day = 1;
+
+    $this->ms->from('OINV');
+
+    if( ! empty($custCode))
+    {
+      $this->ms
+        ->join('OCRD', 'OINV.CardCode = OCRD.CardCode', 'left')
+        ->where('OCRD.U_TPD_CUST_HCode', $custCode)
+        ->where('OINV.DocTotal >', 'OINV.PaidToDate', FALSE)
+        ->where("DATEADD(day,{$day}, OINV.DocDueDate) < ", "GETDATE()", FALSE);
+    }
+    else 
+    {
+      $this->ms
+        ->where('CardCode', $cardCode)
+        ->where('DocTotal >', 'PaidToDate', FALSE)
+        ->where("DATEADD(day,{$day}, DocDueDate) < ", "GETDATE()", FALSE);
+    }
+
+    return $this->ms->count_all_results() > 0 ? TRUE : FALSE;    
+  }
+
+
+  public function get_credit_used_amount($CardCode, $CustCode = NULL)
+  {
+    $this->db
+    ->select_sum('DocTotal', 'credit_used')
+    ->where_in('status', array('0', '1', '3'))
+    ->where('Approved !=', 'R')
+    ->where('credit_approval !=', 'R');
+    
+    if( ! empty($CustCode))
+    {
+      $this->db->where('CustCode', $CustCode);
+    }
+    else
+    {
+      $this->db->where('CardCode', $CardCode);
+    }
+
+    $rs = $this->db->get($this->tb);
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->credit_used;
+    }
+
+    return 0;
+  }
+
 
   public function get($code)
   {

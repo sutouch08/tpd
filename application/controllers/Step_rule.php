@@ -12,7 +12,8 @@ class Step_rule extends PS_Controller
     parent::__construct();
     $this->home = base_url().'step_rule';
 		$this->load->model('step_rule_model');
-		$this->load->helper('orders');
+		$this->load->helper('price_list');
+		//$this->load->helper('orders');
   }
 
 
@@ -64,36 +65,39 @@ class Step_rule extends PS_Controller
 	public function add()
 	{
 		$sc = TRUE;
+		$ds = json_decode($this->input->post('data'));
 
 		if($this->pm->can_add)
 		{
-			$name = trim($this->input->post('name'));
-			$price_list = $this->input->post('price_list');
-			$price_list_name = $this->input->post('price_list_name');
-			$active = $this->input->post('active') == 1 ? 1 : 0;
-			$highlight = $this->input->post('highlight') == 1 ? 1 : 0;
-
-			if( ! $this->step_rule_model->is_exists_price_list($price_list))
+			if( ! empty($ds) && ! empty($ds->price_list) && ! empty($ds->name))
 			{
-				$arr = array(
-					'PriceList' => $price_list,
-					'name' => $name,
-					'active' => $active,
-					'add_by' => $this->_user->id,
-					'date_add' => now()
-				);
+				if( ! $this->step_rule_model->is_exists_price_list($ds->price_list))
+				{
+					$arr = array(
+						'PriceList' => $ds->price_list,
+						'name' => trim($ds->name),
+						'active' => $ds->active == 1 ? 1 : 0,
+						'add_by' => $this->_user->id,
+						'date_add' => now()
+					);
 
-				if( ! $this->step_rule_model->add($arr))
+					if( ! $this->step_rule_model->add($arr))
+					{
+						$sc = FALSE;
+						$this->error = get_error_message('insert');
+					}
+				}
+				else
 				{
 					$sc = FALSE;
-					$this->error = get_error_message('insert');
+					$this->error = "Price List {$ds->price_list_name} already exists";
 				}
 			}
 			else
 			{
 				$sc = FALSE;
-				$this->error = "Price List {$price_list_name} already exists";
-			}
+				$this->error = get_error_message('required');
+			}			
 		}
 		else
 		{
@@ -105,7 +109,7 @@ class Step_rule extends PS_Controller
 	}
 
 
-	public function edit($price_list)
+	public function edit($price_list, $tab = 'info')
 	{
 		if($this->pm->can_add OR $this->pm->can_edit)
 		{
@@ -113,9 +117,13 @@ class Step_rule extends PS_Controller
 
 			if( ! empty($doc))
 			{
-				$data['doc'] = $doc;
-				$data['details'] = $this->step_rule_model->get_details($price_list);
-				$this->load->view('step_rule/step_rule_edit', $data);
+				$ds = array(
+					'tab' => $tab,
+					'doc' => $doc,
+					'details' => $this->step_rule_model->get_details($price_list)
+				);
+				
+				$this->load->view('step_rule/step_rule_edit', $ds);
 			}
 			else
 			{
@@ -129,23 +137,19 @@ class Step_rule extends PS_Controller
 	}
 
 
-	public function save()
+	public function update()
 	{
 		$sc = TRUE;
-
+		$ds = json_decode($this->input->post('data'));
 
 		if($this->pm->can_add OR $this->pm->can_edit)
 		{
-			$ds = json_decode($this->input->post('data'));
-
-			if( ! empty($ds))
+			if( ! empty($ds) && ! empty($ds->price_list) && ! empty($ds->name))
 			{
 				$doc = $this->step_rule_model->get($ds->price_list);
 
 				if( ! empty($doc))
 				{
-					$this->db->trans_begin();
-
 					$arr = array(
 						'name' => trim($ds->name),
 						'active' => $ds->active == 1 ? 1 : 0,
@@ -158,7 +162,44 @@ class Step_rule extends PS_Controller
 						$sc = FALSE;
 						$this->error = get_error_message('update');
 					}
+				}
+				else
+				{
+					$sc = FALSE;
+					$this->error = get_error_message('notfound');
+				}
+			}
+			else
+			{
+				$sc = FALSE;
+				$this->error = get_error_message('required');
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = get_error_message('permission');
+		}
+		
+		$this->_response($sc);
+	}
 
+	public function update_details()
+	{
+		$sc = TRUE;
+
+		if($this->pm->can_add OR $this->pm->can_edit)
+		{
+			$ds = json_decode($this->input->post('data'));
+
+			if( ! empty($ds))
+			{
+				$doc = $this->step_rule_model->get($ds->price_list);
+
+				if( ! empty($doc))
+				{
+					$this->db->trans_begin();
+					
 					//--- delete select rows
 					if($sc === TRUE && ! empty($ds->delete_rows))
 					{
@@ -322,6 +363,57 @@ class Step_rule extends PS_Controller
 		}
 
 		$this->_response($sc);
+	}
+
+
+	public function set_active()
+	{
+		$sc = TRUE;
+		$id = $this->input->post('id');
+		$active = $this->input->post('active');
+
+		if( ! empty($id))
+		{
+			if($this->pm->can_edit)
+			{
+				$arr = array(
+					'active' => $active,
+					'update_by' => $this->_user->id,
+					'date_upd' => now()
+				);
+
+				if( ! $this->step_rule_model->update($id, $arr))
+				{
+					$sc = FALSE;
+					$this->error = get_error_message('update');
+				}
+			}
+			else
+			{
+				$sc = FALSE;
+				$this->error = get_error_message('permission');
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = get_error_message('required');
+		}
+
+		$this->_response($sc);
+	}
+
+
+	public function is_exists($price_list)
+	{
+		if($this->step_rule_model->is_exists_price_list($price_list))
+		{
+			echo 'exists';
+		}
+		else
+		{
+			echo 'not exists';
+		}
 	}
 
 

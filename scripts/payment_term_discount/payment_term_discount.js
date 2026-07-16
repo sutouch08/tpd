@@ -1,4 +1,4 @@
-var HOME = BASE_URL + "payment_term_discount/";
+var HOME = `${BASE_URL}payment_term_discount/`;
 
 
 function goBack() {
@@ -6,29 +6,44 @@ function goBack() {
 }
 
 
-function goAdd() {
-  window.location.href = HOME + 'add_new';
+function addNew() {
+  window.location.href = `${HOME}add_new`;
 }
 
 
-function goEdit(id) {
-  window.location.href = HOME + 'edit/'+id;
+function edit(id) {
+  window.location.href = `${HOME}edit/${id}`;
 }
 
 
 function viewDetail(id) {
-  window.location.href = HOME + 'view_detail/'+id;
+  const url = `${HOME}view_detail/${id}?nomenu&nonavbar`;
+  const width = 1000;
+  const height = 750;
+  const left = (screen.width - width) / 2;
+  const top = (screen.height - height) / 2;
+
+  window.open(url, '_blank', `width=${width},height=${height},left=${left},top=${top}`);  
+}
+
+function toggleCheckSpecialPriceListAll(el) {
+  if(el.checked) {
+    $('.sp-chk').prop('checked', true);
+  }
+  else {
+    $('.sp-chk').prop('checked', false);
+  }
 }
 
 
-$('#chk-all').change(function() {
-  if($(this).is(':checked')) {
-    $('.chk').prop('checked', true);
+function toggleCheckPriceListAll(el) {
+  if(el.checked) {
+    $('.pl-chk').prop('checked', true);
   }
   else {
-    $('.chk').prop('checked', false);
+    $('.pl-chk').prop('checked', false);
   }
-});
+}
 
 
 function add() {
@@ -41,10 +56,9 @@ function add() {
     'DiscPrcnt' : parseDefault(parseFloat($('#disc').val()), 0),
     'position' : $('#position').val(),
     'canChange' : $('#allow-change').is(':checked') ? 1 : 0,
-    'active' : $('#active').is(':checked') ? 1 : 0,
+    'active' : $('input[name="active"]:checked').val(),
     'priceList' : []
   };
-
 
   if(h.GroupNum == "") {
     $('#payment-term').hasError('Required');
@@ -75,7 +89,7 @@ function add() {
   load_in();
 
   $.ajax({
-    url:HOME + 'add',
+    url:`${HOME}add`,
     type:'POST',
     cache:false,
     data:{
@@ -87,14 +101,14 @@ function add() {
       if(rs.trim() == 'success') {
         swal({
           title:'Success',
-          text:'สร้างรายการสำเร็จ ต้องการส่างรายการอื่นต่อหรือไม่ ?',
+          text:'สร้างรายการสำเร็จ ต้องการสร้างรายการอื่นต่อหรือไม่ ?',
           type:'success',
           showCancelButton:true,
           confirmButtonText:'Yes',
           cancelButtonText:'No'
         }, function(isConfirm) {
           if(isConfirm) {
-            goAdd();
+            addNew();
           }
           else {
             goBack();
@@ -102,21 +116,11 @@ function add() {
         })
       }
       else {
-        swal({
-          title:'Error!',
-          text:rs,
-          type:'error',
-          html:true
-        })
+        showError(rs);
       }
     },
     error:function(rs) {
-      swal({
-        title:'Error!',
-        text:rs.reaponseText,
-        type:'error',
-        html:true
-      })
+      showError(rs);
     }
   })
 }
@@ -133,10 +137,9 @@ function update() {
     'DiscPrcnt' : parseDefault(parseFloat($('#disc').val()), 0),
     'position' : $('#position').val(),
     'canChange' : $('#allow-change').is(':checked') ? 1 : 0,
-    'active' : $('#active').is(':checked') ? 1 : 0,
+    'active' : $('input[name="active"]:checked').val(),
     'priceList' : []
   };
-
 
   if(h.GroupNum == "") {
     $('#payment-term').hasError('Required');
@@ -167,7 +170,7 @@ function update() {
   load_in();
 
   $.ajax({
-    url:HOME + 'update',
+    url:`${HOME}update`,
     type:'POST',
     cache:false,
     data:{
@@ -184,21 +187,11 @@ function update() {
         });
       }
       else {
-        swal({
-          title:'Error!',
-          text:rs,
-          type:'error',
-          html:true
-        })
+        showError(rs);
       }
     },
     error:function(rs) {
-      swal({
-        title:'Error!',
-        text:rs.reaponseText,
-        type:'error',
-        html:true
-      })
+      showError(rs);
     }
   })
 }
@@ -206,18 +199,18 @@ function update() {
 
 function getDelete(id, name){
   swal({
-    title:'Are sure ?',
+    title:'Are you sure ?',
     text:'Do you really want to delete '+ name +' ? <br/> This process cannot be undone.',
     type:'warning',
     showCancelButton: true,
     confirmButtonColor: '#FA5858',
     confirmButtonText: 'Delete',
-    cancelButtonText: 'Cancle',
+    cancelButtonText: 'Cancel',
     closeOnConfirm: false,
     html:true
   },function(){
     $.ajax({
-      url: HOME + 'delete',
+      url: `${HOME}delete`,
       type:'POST',
       cache:false,
       data:{
@@ -229,7 +222,7 @@ function getDelete(id, name){
             title:'Success',
             text:'Payment Term list has been deleted',
             type:'success',
-            time: 1000
+            timer: 1000
           });
 
           setTimeout(function(){
@@ -246,4 +239,29 @@ function getDelete(id, name){
       }
     })
   })
+}
+
+
+function toggleActive(id, el) {
+  let active = el.checked ? 1 : 0;
+
+  $.ajax({
+    url: `${HOME}set_active`,
+    type: 'POST',
+    cache: false,
+    data: {
+      'id': id,
+      'active': active
+    },
+    success: function (rs) {
+      load_out();
+      if (rs.trim() != 'success') {
+        showError(rs);
+        el.checked = !el.checked;
+      }
+    },
+    error: function (rs) {
+      showError(rs);
+    }
+  });
 }

@@ -108,12 +108,6 @@ class Approver_model extends CI_Model
       $this->db->like('emp_name', $ds['emp_name']);
     }
 
-
-    if($ds['amount'] != "")
-    {
-      $this->db->like('amount', $ds['amount']);
-    }
-
     if($ds['status'] != 'all')
     {
       $this->db->where('status', $ds['status']);
@@ -133,12 +127,7 @@ class Approver_model extends CI_Model
     if($ds['emp_name'] !="")
     {
       $this->db->like('emp_name', $ds['emp_name']);
-    }
-
-    if($ds['amount'] != "")
-    {
-      $this->db->like('amount', $ds['amount']);
-    }
+    }    
 
     if($ds['status'] != 'all')
     {

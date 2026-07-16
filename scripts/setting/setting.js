@@ -55,6 +55,21 @@ function toggleDis(option) {
 	}
 }
 
+function toggleWarning(option) {
+	$('#warning').val(option);
+
+	if(option == 1) {
+		$('#btn-warning-on').addClass('btn-primary');
+		$('#btn-warning-off').removeClass('btn-primary');
+		return;
+	}
+	else
+	{
+		$('#btn-warning-on').removeClass('btn-primary');
+		$('#btn-warning-off').addClass('btn-primary');
+	}
+}
+
 
 function openSystem()
 {

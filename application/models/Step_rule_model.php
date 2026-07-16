@@ -189,7 +189,7 @@ class Step_rule_model extends CI_Model
 
     if(isset($ds['status']) && $ds['status'] != "all")
     {
-      $this->db->where('status', $ds['status']);
+      $this->db->where('active', $ds['status']);
     }
 
     $this->db->limit($limit, $offset);
@@ -220,7 +220,7 @@ class Step_rule_model extends CI_Model
 
     if(isset($ds['status']) && $ds['status'] != "all")
     {
-      $this->db->where('status', $ds['status']);
+      $this->db->where('active', $ds['status']);
     }
 
     return $this->db->count_all_results($this->tb);

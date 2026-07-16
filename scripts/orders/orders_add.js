@@ -54,6 +54,53 @@ $('#customer').change(function() {
 });
 
 
+function getCustomerData() {
+	let source = $('#price-list-source').val();
+	getAddress();
+	getCreditData();
+	changePriceListType();	
+}
+
+function getCreditData() {
+	let code = $('#customer').val();
+
+	$.ajax({
+		url:`${HOME}get_credit_data`,
+		type:'GET',
+		cache:false,
+		data:{
+			'CardCode' : code
+		},
+		success:function(rs) {			
+			if(isJson(rs)) {
+				let ds = JSON.parse(rs);
+
+				if(ds.status == 'success') {
+					let balance = addCommas(ds.data.CreditBalance.toFixed(2));
+					$('#credit-balance').val(balance);
+					$('#is-regular').val(ds.data.isRegular);
+
+					if(ds.data.isRegular == 1) {
+						$('#customer-label').html('<span class="label label-success arrowed">ลูกค้าประจำ</span>');
+					}
+					else {
+						$('#customer-label').html('<span class="label label-danger arrowed">ลูกค้าไม่ประจำ</span>');
+					}
+				}
+				else {
+					showError(ds.message);
+				}
+			}
+			else {
+				showError(rs);
+			}
+		},
+		error:function(rs) {
+			showError(rs);
+		}
+	});
+}
+
 function getAddress() {
 	//--- update vatcode
 	let code = $('#customer').val();
@@ -726,6 +773,8 @@ function previewOrder() {
 	let msg = "";
 	let price_edit = 0;
 	let shipToWarning = 0;
+	let creditDiff = 0; 
+	let creditIssue = 0; //--- ติดเครดิต limit หรือไม่ 0 = ไม่ติด, 1 = ติด  (ติดเมื่อ  CreditDiff > 0)
 
 	//--- check valid data
 	let customerCode = $('#customer').val();
@@ -753,7 +802,9 @@ function previewOrder() {
 	let totalDisc = 0;
 	let totalAmount = 0;
 	let docTotal = 0;
-	let DiscPrcnt = parseDefault(parseFloat($('#discPrcnt').val()), 0);
+	let DiscPrcnt = parseDefaultFloat($('#discPrcnt').val(), 0);
+	let isRegular = parseDefaultInt($('#is-regular').val(), 0);
+	let creditBalance = parseDefaultFloat(removeCommas($('#credit-balance').val()), 0);
 
 	if(isDefaultShipTo == 'N' || exShipTo.length) {
 		shipToWarning = 1;
@@ -863,6 +914,14 @@ function previewOrder() {
 	totalBefVat = totalAmount;
 	docTotal = totalAmount + totalVat;
 
+	creditDiff = (creditBalance - docTotal) * (-1);
+	creditDiff = creditDiff > 0 ? (creditDiff > docTotal ? docTotal : creditDiff) : 0;
+	creditIssue = creditDiff > 0 ? 1 : 0;
+
+	creditBalanceNumber = addCommas((creditBalance - docTotal).toFixed(2));
+	creditDiffNumber = creditDiff > 0 ? addCommas(creditDiff.toFixed(2)) : 0;
+	creditMessage = creditIssue == 1 ? `<span class="red">เครดิตคงเหลือไม่เพียงพอ ขาด ${creditDiffNumber}</span>` : `<span class="green">เครดิตคงเหลือ ${creditBalanceNumber}</span>`;
+
 	let subTotal = {
 		"totalBefDi" : addCommas(totalBefDi.toFixed(2)),
 		"DiscPrcnt" : DiscPrcnt.toFixed(2),
@@ -911,7 +970,12 @@ function previewOrder() {
 		"docTotal" : docTotal,
 		"priceEdit" : price_edit,
 		"saleTeam" : saleTeam,
-		"areaId" : areaId
+		"areaId" : areaId,
+		"creditBalance" : creditBalance,
+		"creditDiff" : creditDiff,
+		"creditIssue" : creditIssue,
+		"creditMessage" : creditMessage,
+		"isRegular" : isRegular
 	}
 
 	if(shipToWarning == 1) {
@@ -928,48 +992,7 @@ function previewOrder() {
 	}
 	else {
 		checkApprove(data);
-	}
-
-	// $.ajax({
-	// 	url:HOME + 'check_approve',
-	// 	type:'GET',
-	// 	cache:false,
-	// 	data:{
-	// 		'docTotal' : docTotal,
-	// 		'priceEdit' : price_edit,
-	// 		'customerCode' : customerCode,
-	// 		'saleTeam' : saleTeam,
-	// 		'areaId' : areaId
-	// 	},
-	// 	success:function(rs) {
-	// 		if(rs == 'pass') {
-	// 			var source = $('#preview-template').html();
-	// 			var output = $('#result');
-	//
-	// 			render(source, data, output);
-	//
-	// 			$('#previewModal').modal('show');
-	// 		}
-	// 		else {
-	// 			swal({
-	// 		    title:'',
-	// 		    text:rs,
-	// 		    type:'warning',
-	// 		    showCancelButton: true,
-	// 				confirmButtonText: 'ดำเนินการต่อ',
-	// 				cancelButtonText: 'กลับไปแก้ไข',
-	// 				closeOnConfirm: true
-	// 		  },function(){
-	// 				setTimeout(() => {
-	// 					var source = $('#preview-template').html();
-	// 					var output = $('#result');
-	// 					render(source, data, output);
-	// 					$('#previewModal').modal('show');
-	// 				}, 100);
-	// 		  })
-	// 		}
-	// 	}
-	// })
+	}	
 }
 
 
@@ -1031,6 +1054,10 @@ function toggleSubmit() {
 	$('.check-list').each(function() {
 			if(! $(this).is(":checked")) {
 				uncheck++;
+				$('#' + $(this).data('id')).removeClass('checked');
+			}
+			else {
+				$('#' + $(this).data('id')).addClass('checked');
 			}
 	})
 
@@ -1133,8 +1160,9 @@ function saveAdd() {
 
 	var ds = {
 		//---- left column
-		'CardCode' : $('#customer').val(),  //****** required
+		'CardCode' : $('#customer').val().trim(),  //****** required
 		'CardName' : $('#customer option:selected').data('name'),
+		'CustCode' : $('#customer option:selected').data('hcode'),
 		'CustomerGroupNum' : $('#customer option:selected').data('groupnum'),
 		'isControl' : $('#customer option:selected').data('control') == 'Y' ? 'Y' : 'N',
 		'saleTeam' : $('#customer option:selected').data('saleteam'),
@@ -1171,9 +1199,17 @@ function saveAdd() {
 		'TotalAfDisc' : parseDefault(parseFloat(removeCommas($('#totalAmount').val())), 0),
 		'totalVat' : parseDefault(parseFloat(removeCommas($('#totalVat').val())), 0),
 		'docTotal' : parseDefault(parseFloat(removeCommas($('#docTotal').val())), 0),
-		'is_discount_sales' : 0
+		'is_discount_sales' : 0,
+		'isRegular' : parseDefaultInt($('#is-regular').val(), 0),
+		'creditIssue' : 0,
+		'creditDiff' : 0
 	}
 
+	creditBalance = parseDefaultFloat(removeCommas($('#credit-balance').val()), 0);
+	creditDiff = (creditBalance - ds.docTotal) * (-1);
+	creditDiff = creditDiff > 0 ? (creditDiff > ds.docTotal ? ds.docTotal : creditDiff) : 0;
+	ds.creditDiff = creditDiff;
+	ds.creditIssue = creditDiff > 0 ? 1 : 0;
 
 	var details = [];
 
@@ -1221,6 +1257,39 @@ function saveAdd() {
 		}
 	}); //--- end each function
 
+	// let header = JSON.stringify(ds);
+	// let line = JSON.stringify(details);
+
+	let showWarning = $('#show-warning').val();
+
+	if(showWarning == 1) {
+		setTimeout(() => {
+			swal({
+				title: 'คำเตือน',
+				text: $('#warning-message').val(),
+				type: 'info',
+				html: true,
+				showCancelButton: true,
+				confirmButtonText: 'รับทราบ',
+				cancelButtonText: 'กลับไปแก้ไข',
+				closeOnConfirm: true
+			}, function (isConfirm) {
+				if (isConfirm) {
+					add(ds, details);
+				}
+				else {
+					$('#previewModal').modal('show');
+				}
+			});
+		}, 200);
+		
+	}
+	else {
+		add(ds, details);
+	}
+}
+
+function add(ds, details) {
 
 	load_in();
 
@@ -1288,7 +1357,6 @@ function clearText(no) {
 }
 
 
-
 $('.autosize').autosize({append: "\n"});
 
 function wordCount(el, no) {
@@ -1300,3 +1368,77 @@ function wordCount(el, no) {
 $('#discPrcnt').keyup(function() {
 	recalTotal();
 })
+
+
+function getCreditBalanceDetails() {
+	let code = $('#customer').val();
+
+	if(code != "") {
+		load_in();
+		$.ajax({
+			url:`${HOME}get_credit_data`,
+			type:'GET',
+			cache:false,
+			data:{
+				'CardCode' : code
+			},
+			success:function(rs) {
+				load_out();
+				
+				if(isJson(rs)) {
+					let ds = JSON.parse(rs);
+					let data = ds.data;
+					data.CreditBalance = addCommas(parseDefault(parseFloat(data.CreditBalance), 0).toFixed(2));
+					data.CreditLine = addCommas(parseDefault(parseFloat(data.CreditLine), 0).toFixed(2));
+					data.OrderUsed = addCommas(parseDefault(parseFloat(data.OrderUsed), 0).toFixed(2));
+					data.Balance = addCommas(parseDefault(parseFloat(data.Balance), 0).toFixed(2));
+					data.DNotesBal = addCommas(parseDefault(parseFloat(data.DNotesBal), 0).toFixed(2));
+					data.OrdersBal = addCommas(parseDefault(parseFloat(data.OrdersBal), 0).toFixed(2));
+
+					let source = $('#credit-detail-template').html();
+					let output = $('#credit-detail-table');
+					render(source, data, output);
+					$('#creditDetailModal').modal('show');
+				}
+				else {
+					showError(rs);
+				}				
+			},
+			error:function(rs) {				
+				showError(rs);
+			}
+		});
+	}
+}
+
+function changePriceListType() {
+	let pType = $('#price-list-type').val();
+	let customer = $('#customer').val();
+			
+	load_in();
+
+	$.ajax({
+		url:`${HOME}get_price_list_by_type`,
+		type:'POST',
+		cache:false,
+		data:{
+			'CardCode' : customer,
+			'type' : pType
+		},
+		success:function(rs) {
+			load_out();
+			if(isJson(rs)) {
+				let ds = JSON.parse(rs);
+				$('#priceList').html(ds.priceList);		
+				$('#priceList').val('').trigger('change');
+				checkPriceList();
+			}
+			else {
+				showError(rs);
+			}
+		},
+		error:function(rs) {
+			showError(rs);
+		}
+	})
+}

@@ -14,20 +14,20 @@ function goBack() {
 
 function goAdd() {
   load_in();
-  window.location.href = HOME + 'add_new';
+  window.location.href = `${HOME}add_new`;
 }
 
 
 function goEdit(id) {
   load_in();
-  window.location.href = HOME + 'edit/'+id;
+  window.location.href = `${HOME}edit/${id}`;
 }
 
 
 
 function goReset(id)
 {
-  window.location.href = HOME + 'reset_password/'+id;
+  window.location.href = `${HOME}reset_password/${id}`;
 }
 
 
@@ -48,7 +48,7 @@ function getDelete(id, uname){
       cache:false,
       data:{
         'id' : id,
-        'uname' : name
+        'uname' : uname
       },
       success:function(rs){
         if(rs == 'success'){
@@ -149,7 +149,7 @@ function add() {
   load_in();
 
   $.ajax({
-    url:HOME + 'add',
+    url: `${HOME}add`,
     type:'POST',
     cache:false,
     data:{
@@ -190,7 +190,7 @@ function add() {
 }
 
 
-function update() {
+async function update() {
   clearErrorByClass('e');
   uname_error = 0;
   emp_error = 0;
@@ -200,6 +200,7 @@ function update() {
 
   let h = {
     'id' : $('#id').val(),
+    'uname' : $('#uname').val().trim(),
     'emp_id' : $('#emp').val(),
     'emp_name' : $('#emp option:selected').text(),
     'sale_id' : $('#saleman').val(),
@@ -214,28 +215,32 @@ function update() {
     'price_list' : []
   };
 
+  if(h.uname.length == 0) {
+    $('#uname').hasError('Required');
+    uname_error++;
+  }
 
   if(h.emp_id == '') {
     $('#emp').hasError('Required');
-    emp_error = 1;
+    emp_error++;
   }
 
   if(h.ugroup == '') {
     $('#ugroup').hasError('Required');
-    ugroup_error = 1;
+    ugroup_error++;
   }
 
   if(h.role == 'sales' && h.area_id == '') {
     $('#area').hasError('Required when User Role = Sales');
-    area_error = 1;
+    area_error++;
   }
 
   if(h.role == 'sales' && h.sale_id == '') {
     $('#sale-team').hasError('Required when User Role = Sales');
-    team_error = 1;
+    team_error++;
   }
 
-  let error = emp_error + ugroup_error + area_error + team_error;
+  let error = uname_error + emp_error + ugroup_error + area_error + team_error;  
 
   if( error > 0) {
     return false;
@@ -252,7 +257,7 @@ function update() {
   load_in();
 
   $.ajax({
-    url:HOME + 'update',
+    url: `${HOME}update`,
     type:'POST',
     cache:false,
     data:{
@@ -269,34 +274,26 @@ function update() {
         });
       }
       else {
-        swal({
-          title:'Error!',
-          text:rs,
-          type:'error'
-        })
+        showError(rs);
       }
     },
-    error:function(xhr) {
-      load_out();
-      swal({
-        title:"Error",
-        text:"Error-"+xhr.responseText,
-        type:"error",
-        html:true
-      });
+    error:function(rs) {      
+      showError(rs);
     }
   })
 }
 
 
 function check_uname() {
+  let id = $('#id').val();
   let uname = $('#uname').val().trim();
 
   $.ajax({
-    url:HOME + 'is_exists_uname',
+    url: `${HOME}is_exists_uname`,
     type:'POST',
     cache:false,
     data:{
+      'id' : id,
       'uname' : uname
     },
     success:function(rs) {
@@ -382,7 +379,7 @@ function reset_password() {
   load_in();
 
   $.ajax({
-    url:HOME + 'change_password',
+    url: `${HOME}change_password`,
     type:'POST',
     cache:false,
     data:{
@@ -533,3 +530,26 @@ $('#team-all').change(function() {
     $('.team').prop('checked', false);
   }
 });
+
+
+function toggleActive(id, el) {
+  let active = $(el).is(':checked') ? 1 : 0;
+
+  $.ajax({
+    url: `${HOME}set_active`,
+    type:'POST',
+    cache:false,
+    data:{
+      'id' : id,
+      'active' : active
+    },
+    success:function(rs) {
+      if(rs.trim() !== 'success') {
+        showError(rs);
+      }
+    },
+    error:function(rs) {
+      showError(rs);
+    }
+  })
+}

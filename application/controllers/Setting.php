@@ -18,7 +18,7 @@ class Setting extends PS_Controller{
 
   public function index()
   {
-		$groups = array('Company', 'Document', 'SAP', 'System');
+		$groups = array('Company', 'Document', 'SAP', 'System', 'Order');
 
 		$ds = array();
 

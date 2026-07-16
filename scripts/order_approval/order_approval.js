@@ -1,0 +1,297 @@
+var HOME = `${BASE_URL}order_approval/`;
+var ORDER = `${BASE_URL}orders/`;
+
+function goBack() {
+  window.location.href = HOME;
+}
+
+function showAuthorize(code) {
+  $.ajax({
+    url: `${ORDER}get_authorizer`,
+    type: 'GET',
+    cache: false,
+    data: {
+      'code': code
+    },
+    success: function (rs) {
+      if (isJson(rs)) {
+        let source = $('#authorizer-template').html();
+        let data = $.parseJSON(rs);
+        let output = $('#authorizer-table');
+
+        render(source, data, output);
+
+        $('#authorizer-modal').modal('show');
+      }
+      else {
+        swal({
+          title: "Error!",
+          text: rs,
+          type: 'error'
+        })
+      }
+    }
+  })
+}
+
+
+function preview(code, status) {
+  load_in();
+
+  $('#OrderCode').val(code);
+
+  $.ajax({
+    url: `${ORDER}get_detail`,
+    type: 'GET',
+    cache: false,
+    data: {
+      'code': code
+    },
+    success: function (rs) {
+      load_out();
+      if (isJson(rs)) {
+
+        let source = $('#preview-template').html();
+        let data = $.parseJSON(rs);
+        let output = $('#result');
+
+        if (data.Approved == 'P') {
+          if (data.CanApprove == true) {
+            $('#btn-approve').removeClass('hide');
+            $('#btn-reject').removeClass('hide');
+          }
+          else {
+            $('#btn-approve').addClass('hide');
+            $('#btn-reject').addClass('hide');
+          }
+
+          $('#btn-temp').addClass('hide');
+        }
+        else {
+          $('#btn-approve').addClass('hide');
+          $('#btn-reject').addClass('hide');
+
+          if (data.Approved == 'A') {
+            $('#btn-temp').removeClass('hide');
+          }
+        }
+
+        render(source, data, output);
+
+        $('#previewModal').modal('show');
+      }
+      else {
+        swal({
+          title: "Error!",
+          text: rs,
+          type: 'error'
+        })
+      }
+    }
+  })
+}
+
+function doApprove() {
+  let code = $('#OrderCode').val();
+  let check = 0;
+  let err = 0;
+  let items = [];
+
+  $('.check-item').each(function() {
+    let id = $(this).val();
+    if($(this).is(':checked')) {
+      let item = {"id" : id, "status" : "A"}
+      items.push(item);
+      $('#reject-item-'+ id).removeClass('has-error');
+      check++;
+    }
+    else {
+      let reject_text = $('#reject-item-'+ id).val();
+      if(reject_text.length) {
+        let item = {"id" : id, "status" : "R", "reject_text" : reject_text }
+        items.push(item);
+      }
+      else {
+        $('#reject-item-'+id).addClass('has-error');
+        err++;
+      }
+    }
+  });
+
+  if(err > 0) {
+    swal({
+      title:'Required',
+      text:'กรุณาระบุเหตุผลในการ Reject ทุกรายการที่ไม่อนุมัติ',
+      type:'warning'
+    });
+
+    return false;
+  }
+
+  if(check > 0) {
+    $('#previewModal').modal('hide');
+
+    load_in();
+
+    $.ajax({
+      url: `${ORDER}do_approve`,
+      type:'POST',
+      cache:false,
+      data:{
+        'code' : code,
+        'items' : JSON.stringify(items)
+      },
+      success:function(rs) {
+        load_out();
+        var rs = $.trim(rs);
+        if(rs === 'success') {
+          swal({
+            title:"Success",
+            type:'success',
+            timer:1000
+          });
+
+          setTimeout(function() {
+            window.location.reload();
+          }, 1200);
+        }
+        else {
+          swal({
+            title:"Error!",
+            text: rs,
+            type:'error'
+          });
+        }
+      }
+    });
+  }
+  else {
+    return false;
+  }
+}
+
+
+
+
+function doReject() {
+
+  let code = $('#OrderCode').val();
+  let check = 0;
+  let err = 0;
+  let count = 0;
+  let items = [];
+
+  $('.check-item').each(function() {
+    if($(this).is(':checked')) {
+      let id = $(this).val();
+      let reject_text = $("#reject-item-"+id).val();
+      if(reject_text.length) {
+        items.push({"id" : id, "reject_text" : reject_text});
+        $('#reject-item-'+id).removeClass('has-error');
+      }
+      else {
+        $('#reject-item-'+id).addClass('has-error');
+        err++;
+      }
+
+      check++;
+    }
+
+    count++;
+  });
+
+
+  if(check == count) {
+    if(err > 0) {
+      swal({
+        title:'Required',
+        text:'กรุณาระบุเหตุผลในการ Reject ทุกรายการ',
+        type:'warning'
+      });
+
+      return false;
+    }
+
+    $('#previewModal').modal('hide');
+
+    load_in();
+
+    $.ajax({
+      url: `${ORDER}do_reject`,
+      type:'POST',
+      cache:false,
+      data:{
+        'code' : code,
+        'items' : JSON.stringify(items)
+      },
+      success:function(rs) {
+        load_out();
+        var rs = $.trim(rs);
+        if(rs === 'success') {
+          swal({
+            title:"Success",
+            type:'success',
+            timer:1000
+          });
+
+          setTimeout(function() {
+            window.location.reload();
+          }, 1200);
+        }
+        else {
+          swal({
+            title:"Error!",
+            text: rs,
+            type:'error'
+          });
+        }
+      }
+    });
+  }
+  else {
+    swal({
+      title:"",
+      text:"กรุณาเลือกรายการทั้งหมด",
+      type:"warning"
+    });
+    return false;
+  }
+}
+
+
+function toggleApprove() {
+  let check = 0;
+
+  $('.check-item').each(function(){
+    if($(this).is(':checked')) {
+      check++;
+    }
+  });
+
+  if(check == 0) {
+    $('#btn-approve').attr('disabled', 'disabled');
+    $('#btn-reject').attr('disabled', 'disabled');
+  }
+  else {
+    if(check > 0) {
+      $('#btn-approve').removeAttr('disabled');
+      $('#btn-reject').removeAttr('disabled');
+    }
+  }
+}
+
+
+$("#fromDate").datepicker({
+	dateFormat: 'dd-mm-yy',
+	onClose: function(ds){
+		$("#toDate").datepicker("option", "minDate", ds);
+	}
+});
+
+$("#toDate").datepicker({
+	dateFormat: 'dd-mm-yy',
+	onClose: function(ds){
+		$("#fromDate").datepicker("option", "maxDate", ds);
+	}
+});
+

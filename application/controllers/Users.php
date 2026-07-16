@@ -12,6 +12,7 @@ class Users extends PS_Controller
     parent::__construct();
     $this->home = base_url().'users';
 		$this->load->model('sales_team_model');
+		$this->load->model('price_list_model');
 		$this->load->helper('sales_team_condition');
   }
 
@@ -106,7 +107,7 @@ class Users extends PS_Controller
 		{
 			$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
 			$ds['sale_list'] = $this->user_model->get_all_slp();
-			$ds['price_list'] = $this->user_model->get_all_price_list();
+			$ds['price_list'] = $this->price_list_model->get_all();
 			$ds['sales_team'] = $this->sales_team_model->get_all();
 
 			$this->load->view('users/user_add', $ds);
@@ -214,9 +215,10 @@ class Users extends PS_Controller
 	public function is_exists_uname()
 	{
 		$sc = TRUE;
+		$id = $this->input->post('id');
 		$uname = trim($this->input->post('uname'));
 
-		if($this->user_model->is_exists_uname($uname))
+		if($this->user_model->is_exists_uname($uname, $id))
 		{
 			$sc = FALSE;
 			$this->error = "Username already exists";
@@ -224,7 +226,6 @@ class Users extends PS_Controller
 
 		$this->_response($sc);
 	}
-
 
 
 	public function edit($id)
@@ -237,13 +238,14 @@ class Users extends PS_Controller
 			{
 
 				$user_price_list = $this->user_model->get_user_price_list($id);
+
 				$pl = array();
 
 				if( ! empty($user_price_list))
 				{
 					foreach($user_price_list as $ps)
 					{
-						$pl[$ps->list_id] = $ps->list_id;
+						$pl[$ps->id] = $ps->id;
 					}
 				}
 
@@ -266,7 +268,7 @@ class Users extends PS_Controller
 				$ds['strong_pwd'] = getConfig('USE_STRONG_PWD');
 				$ds['emp_list'] = $this->user_model->get_all_employee();
 				$ds['sale_list'] = $this->user_model->get_all_slp();
-				$ds['price_list'] = $this->user_model->get_all_price_list();
+				$ds['price_list'] = $this->price_list_model->get_all();
 				$ds['sales_team'] = $this->sales_team_model->get_all();
 
 				$this->load->view('users/user_edit', $ds);
@@ -293,77 +295,96 @@ class Users extends PS_Controller
 
 			if( ! empty($ds) && ! empty($ds->id) && ! empty($ds->emp_id) && ! empty($ds->ugroup))
 			{
-				$arr = array(
-					'emp_name' => get_null($ds->emp_name),
-					'emp_id' => get_null($ds->emp_id),
-					'sale_id' => get_null($ds->sale_id),
-					'sale_name' => empty($ds->sale_id) ? NULL : $ds->sale_name,
-					'ugroup_id' => $ds->ugroup,
-					'area_id' => $ds->area_id,
-					'team_id' => get_null($ds->team_id),
-					'status' => $ds->status,
-					'bi_link' => $ds->bi,
-					'role' => $ds->role,
-					'date_upd' => now(),
-					'update_by' => $this->_user->id
-				);
-
-				if( ! $this->user_model->update($ds->id, $arr))
+				if($this->user_model->is_exists_uname($ds->uname, $ds->id))
 				{
 					$sc = FALSE;
-					$this->error = "Failed to update user data";
+					$this->error = "Username already exists";
 				}
 
 				if($sc === TRUE)
 				{
-					//--- drop user price list
-					if( ! $this->user_model->drop_user_price_list($ds->id))
+					$this->db->trans_begin();
+
+					$arr = array(
+						'uname' => $ds->uname,
+						'emp_name' => get_null($ds->emp_name),
+						'emp_id' => get_null($ds->emp_id),
+						'sale_id' => get_null($ds->sale_id),
+						'sale_name' => empty($ds->sale_id) ? NULL : $ds->sale_name,
+						'ugroup_id' => $ds->ugroup,
+						'area_id' => $ds->area_id,
+						'team_id' => get_null($ds->team_id),
+						'status' => $ds->status,
+						'bi_link' => $ds->bi,
+						'role' => $ds->role,
+						'date_upd' => now(),
+						'update_by' => $this->_user->id
+					);
+
+					if (! $this->user_model->update($ds->id, $arr))
 					{
 						$sc = FALSE;
-						$this->error = "Update user success but failed to remove previous user price list";
+						$this->error = "Failed to update user data";
 					}
 
-					if($sc === TRUE && ! empty($ds->price_list))
+					if ($sc === TRUE)
 					{
-						foreach($ds->price_list as $rs)
+						//--- drop user price list
+						if (! $this->user_model->drop_user_price_list($ds->id))
 						{
-							$arr = array(
-								'user_id' => $ds->id,
-								'list_id' => $rs->id,
-								'list_name' => $rs->name
-							);
+							$sc = FALSE;
+							$this->error = "Update user success but failed to remove previous user price list";
+						}
 
-							$this->user_model->add_user_price_list($arr);
+						if ($sc === TRUE && ! empty($ds->price_list))
+						{
+							foreach ($ds->price_list as $rs)
+							{
+								$arr = array(
+									'user_id' => $ds->id,
+									'list_id' => $rs->id,
+									'list_name' => $rs->name
+								);
+
+								$this->user_model->add_user_price_list($arr);
+							}
 						}
 					}
-				}
 
-
-				if($sc === TRUE)
-				{
-					//--- drop exists user_condition
-					if( ! $this->user_model->drop_user_team($ds->id))
+					if ($sc === TRUE)
 					{
-						$sc = FALSE;
-						$this->error = "Update user success but failed to remove previous user team lead";
-					}
-
-					//--- insert new user_team
-					if($sc === TRUE && ! empty($ds->team))
-					{
-						foreach($ds->team as $rs)
+						//--- drop exists user_condition
+						if (! $this->user_model->drop_user_team($ds->id))
 						{
-							$arr = array(
-							'user_id' => $ds->id,
-							'team_id' => $rs->id,
-							'user_role' => "Lead"
-							);
+							$sc = FALSE;
+							$this->error = "Update user success but failed to remove previous user team lead";
+						}
 
-							$this->user_model->add_user_team($arr);
-							// $this->user_model->add_user_condition($arr);
+						//--- insert new user_team
+						if ($sc === TRUE && ! empty($ds->team))
+						{
+							foreach ($ds->team as $rs)
+							{
+								$arr = array(
+									'user_id' => $ds->id,
+									'team_id' => $rs->id,
+									'user_role' => "Lead"
+								);
+
+								$this->user_model->add_user_team($arr);								
+							}
 						}
 					}
-				}
+
+					if($sc === TRUE)
+					{
+						$this->db->trans_commit();
+					}
+					else 
+					{
+						$this->db->trans_rollback();
+					}
+				}				
 			}
 			else
 			{
@@ -380,6 +401,36 @@ class Users extends PS_Controller
 		$this->_response($sc);
 	}
 
+
+	public function set_active()
+	{
+		$sc = TRUE;
+
+		if($this->pm->can_edit)
+		{
+			$id = $this->input->post('id');
+			$active = $this->input->post('active');
+
+			$arr = array(
+				'status' => $active,
+				'date_upd' => now(),
+				'update_by' => $this->_user->id
+			);
+
+			if( ! $this->user_model->update($id, $arr))
+			{
+				$sc = FALSE;
+				$this->error = "Update failed";
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = get_error_message('permission');
+		}
+
+		$this->_response($sc);
+	}
 
 	public function delete()
 	{
@@ -482,7 +533,6 @@ class Users extends PS_Controller
 	}
 
 
-
 	public function change_password()
 	{
 		$sc = TRUE;
@@ -532,15 +582,13 @@ class Users extends PS_Controller
 	}
 
 
-
 	public function get_sale_name($id)
 	{
 		$name = $this->user_model->get_saleman_name($id);
 		return $name;
 	}
 
-
-
+	
 	public function clear_filter()
 	{
 		$filter = array(

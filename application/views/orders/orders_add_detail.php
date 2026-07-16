@@ -78,7 +78,7 @@
           <th class="fix-width-250 middle text-center fix-item fix-header">รายการสินค้า</th>
           <th class="fix-width-40 middle text-center fix-clear fix-header"></th>
           <th class="fix-width-150 middle text-center fix-step fix-header">Step</th>
-          <th class="fix-width-80 middle text-center">Controlled</th>
+          <th class="fix-width-80 middle text-center hide">Controlled</th>
           <th class="fix-width-80 middle text-center">In Stock</th>
           <th class="fix-width-80 middle text-center">Committed</th>
           <th class="fix-width-80 middle text-center">Available</th>
@@ -118,7 +118,7 @@
               <option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">Choose Step</option>
             </select>
           </td>
-          <td class="middle"><input type="text" class="form-control input-sm text-center is-control" id="control-1" data-no="1" value="" disabled /></td>
+          <td class="middle hide"><input type="text" class="form-control input-sm text-center is-control" id="control-1" data-no="1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-1" value="" disabled/></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-1" value="" disabled/></td>
@@ -169,7 +169,7 @@
         <option value="0" data-stepqty="0" data-limit="0" data-freeqty="0" data-force="1">No Step</option>
       </select>
     </td>
-    <td class="middle"><input type="text" class="form-control input-sm text-center is-control" id="control-{{no}}" data-no="{{no}}" value="" disabled /></td>
+    <td class="middle hide"><input type="text" class="form-control input-sm text-center is-control" id="control-{{no}}" data-no="{{no}}" value="" disabled /></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-{{no}}" value="" disabled /></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-{{no}}" value="" disabled/></td>
     <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-{{no}}" value="" disabled/></td>

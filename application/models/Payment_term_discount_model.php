@@ -112,6 +112,38 @@ class Payment_term_discount_model extends CI_Model
   }
 
 
+  public function get_term_price_details($term_id)
+  {
+    $rs = $this->db
+    ->where('term_id', $term_id)
+    ->where('list_id !=', 'x')    
+    ->get('payment_term_price_list');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
+  public function get_term_special_price_details($term_id)
+  {
+    $rs = $this->db
+    ->where('term_id', $term_id)
+    ->where('list_id', 'x')    
+    ->get('payment_term_price_list');
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
+
   public function get_term_by_price_list($priceList, $sp_id = 0)
   {
     $rs = $this->db

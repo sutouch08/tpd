@@ -60,6 +60,11 @@ class PS_Controller extends CI_Controller
     return $this->load->view('page_error');
   }
 
+  public function page_error()
+  {
+    $this->load->view('page_error');
+  } 
+
 
   public function _get_user_team($user_id)
   {
