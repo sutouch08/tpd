@@ -252,7 +252,15 @@
 							<td class="middle fix-user" scope="row"><?php echo $rs->uname; ?></td>
 							<td class="middle text-center fix-cust" scope="row"><?php echo $rs->CardCode; ?></td>
 							<td class="middle"><?php echo $rs->CardName; ?></td>
-							<td class="middle" style="overflow-wrap:break-word;"><?php echo $rs->NumAtCard; ?></td>
+							<td class="middle">
+								<?php if($rs->has_file) : ?>
+									<span class="label label-info label-white middle width-100 pointer" style="text-align: left;" onclick="openFile('<?php echo $rs->file_name; ?>')">
+										<i class="fa fa-paperclip"></i>&nbsp; <?php echo $rs->NumAtCard; ?>
+									</span>
+								<?php else : ?>
+									<?php echo $rs->NumAtCard; ?>
+								<?php endif; ?>									
+							</td>
 							<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
 							<td class="middle text-center"><span class="btn btn-minier btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</span></td>
 							<td class="middle text-center">
@@ -347,120 +355,6 @@
 
 <input type="hidden" id="OrderCode" value="">
 
-
-<script id="previewx-template" type="text/x-handlebarsTemplate">
-	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0">
-		<table class="table table-striped table-bordered border-1" style="margin-bottom:10px;">
-			<tbody>
-			<tr><td class="th fix-width-250">เลขที่ใบสั่งสินค้า</td><td>{{orderCode}}</td></tr>
-			<tr><td class="th">User</td><td>{{user}}</td></tr>
-			<tr><td class="th">รหัสลูกค้า</td><td>{{customerName}}</td></tr>
-			<tr><td class="th">ที่อยู่ตามใบกำกับภาษี</td><td>{{billToCode}} | {{billToAddress}}</td></tr>
-			<tr><td class="th">สถานที่ส่งของ</td><td>{{shipToCode}} | {{shipToAddress}}</td></tr>
-			<tr><td class="th">สถานที่จัดส่งเพิ่มเติม</td><td>{{exShipTo}}</td></tr>
-			<tr><td class="th">Currency</td><td>{{currency}} | Rate: {{currencyRate}} </td></tr>
-			<tr><td class="th">วันที่สั่งสินค้า</td><td>{{docDate}}</td></tr>
-			<tr><td class="th">วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
-			<tr><td class="th">Promotion</th><td>{{promotionCode}}  |   {{promotionName}}</td></tr>
-			<tr><td class="th">SO No.</td><td>{{SONO}}</td></tr>
-			<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}</td></tr>
-			<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
-			<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
-			<tr><td class="th">Price List</td><td>{{PriceList}}</td></tr>
-			<tr><td class="th">Payment Terms</td><td>{{termName}}</td></tr>
-			<tr><td class="th">Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>
-			</tbody>
-		</table>
-	</div>
-	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 border-1 padding-0 table-responsive" style="max-height:300px; overflow:auto;">
-		<table class="table table-bordered border-1" style="min-width:1580px; margin-bottom:0px;">
-			<thead>
-				<tr>
-					<th class="fix-width-40 middle text-center">#</th>
-					<th class="min-width-250 middle text-center">รายการสินค้า</th>
-					<th class="fix-width-80 middle text-center">จำนวน</th>
-					<th class="fix-width-80 middle text-center">แถม</th>
-					<th class="fix-width-100 middle text-center">หน่วย</th>
-					<th class="fix-width-100 middle text-center">ราคา/หน่วย (Term)</th>
-					<th class="fix-width-100 middle text-center">ราคา(พิเศษ)/หน่วย</th>
-					<th class="fix-width-80 middle text-center <?php echo $hide; ?>">Discount Sales</th>
-					<th class="fix-width-100 middle text-center">มูลค่า</th>
-					<th class="fix-width-100 middle text-center">หมายเหตุ</th>
-					<th class="fix-width-100 middle text-center">จำนวนค้างส่ง</th>
-					<th class="fix-width-100 middle text-center">เลขที่ DO</th>
-					<th class="fix-width-100 middle text-center">เลขที่ Invoice</th>
-					<th class="fix-width-100 middle text-center">วันที่ Invoice</th>
-					<th class="fix-width-200 middle text-center">เหตุผลในการ Reject</th>
-				</tr>
-			</thead>
-			<tbody>
-				{{#each items}}
-					<tr>
-						<td class="middle text-center">
-							{{{checkbox}}}
-						</td>
-						<td class="middle">{{itemName}}</td>
-						<td class="middle text-right">{{qty}}</td>
-						<td class="middle text-right">{{free}}</td>
-						<td class="middle text-center">{{uom}}</td>
-						<td class="middle text-right">{{stdPrice}}</td>
-						<td class="middle text-right">{{sellPrice}}</td>
-						<td class="middle text-center <?php echo $hide; ?>">{{{dis}}}</td>
-						<td class="middle text-right">{{amount}}</td>
-						<td class="middle">{{lineText}}</td>
-						<td class="middle text-right">{{openQty}}</td>
-						<td class="middle text-center">{{{DoNo}}}</td>
-						<td class="middle text-center">{{{InvNo}}}</td>
-						<td class="middle text-center">{{{InvDate}}}</td>
-						<td class="middle">{{{rejectbox}}}</td>
-					</tr>
-				{{/each}}
-			</tbody>
-		</table>
-	</div>
-	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top:20px; padding-right:7px;">
-		<div class="form-horizontal">
-			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">ราคาสินค้า</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
-					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalBefDi}}" readonly>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">ส่วนลด [{{subTotal.DiscPrcnt}} %]</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
-					<input type="text" class="form-control input-sm text-right" value="{{subTotal.DiscSum}}" readonly>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษีมูลค่าเพิ่ม</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
-					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalBefVat}}" readonly>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
-					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalVat}}" readonly>
-				</div>
-			</div>
-
-			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">รวมเงินสุทธิ</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
-					<input type="text" class="form-control input-sm text-right" value="{{subTotal.docTotal}}" readonly>
-				</div>
-			</div>
-		</div>
-	</div>
-	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
-		{{#if ApproveBy}} {{ApproveBy}} {{/if}}
-	</div>
-</script>
-
 <script id="preview-template" type="text/x-handlebarsTemplate">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0">
 		<table class="table table-striped table-bordered border-1" style="margin-bottom:10px;">
@@ -476,7 +370,7 @@
 			<tr><td class="th">วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
 			<tr><td class="th">Promotion</th><td>{{promotionCode}}  |   {{promotionName}}</td></tr>
 			<tr><td class="th">SO No.</td><td>{{SONO}}</td></tr>
-			<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}</td></tr>
+			<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}  {{{fileName}}}</td></tr>
 			<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
 			<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
 			<tr><td class="th">Price List</td><td>{{PriceList}}</td></tr>

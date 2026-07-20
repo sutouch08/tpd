@@ -227,5 +227,26 @@ class Step_rule_model extends CI_Model
   }
 
 
+  public function get_user_price_list($user_id)
+  {
+    $rs = $this->db
+    ->select('pl.id, pl.name')
+    ->from('price_list AS pl')
+    ->join('user_price_list AS upl', 'upl.list_id = pl.id', 'left')
+    ->join('step_rule AS sr', 'sr.PriceList = pl.id', 'left')
+    ->where('upl.user_id', $user_id)
+    ->where('pl.active', 1)
+    ->where('sr.active', 1)    
+    ->where('upl.list_id IS NOT NULL')
+    ->where('pl.active', 1)
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }  
 }
 ?>

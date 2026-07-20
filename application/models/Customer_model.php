@@ -259,7 +259,7 @@ class Customer_model extends CI_Model
 
   public function get_user_customer_list($area_id, $type = 'V')
   {
-    $rs = $this->db
+    $this->db
     ->select('CardCode, CardName, GroupNum, SlpCode, ECVatGroup, Currency, U_TPD_DrugCon AS isControl')
     ->select('U_TPD_RA_DrugType AS customer_type, U_TPD_BI_SalesTeam AS saleTeam, U_TPD_BI_AreaName AS areaId')
     ->select('U_SALE_PERSON AS salePerson, U_TPD_BI_Department AS department, vatRate AS Rate, CustCode, isRegular')
@@ -267,8 +267,14 @@ class Customer_model extends CI_Model
     ->where('SlpCode >', 0)
     ->where('U_TPD_BI_AreaName IS NOT NULL', NULL, FALSE)
     ->where('U_TPD_BI_AreaName', $area_id)
-    ->where('U_SALE_PERSON IS NOT NULL', NULL, FALSE)
-    ->where('custType', $type)
+    ->where('U_SALE_PERSON IS NOT NULL', NULL, FALSE);
+
+    if($type !== 'all')
+    {
+      $this->db->where('custType', $type);
+    }
+
+    $rs = $this->db
     ->order_by('CardCode', 'ASC')
     ->get($this->tb);
 
@@ -280,48 +286,26 @@ class Customer_model extends CI_Model
     return NULL;
   }
 
-  // public function get_user_customer_list($area_id, $type = "V")
-  // {
-  //   //--- V = vat Q = non vat
-  //   $qr  = "SELECT C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, ";
-  //   $qr .= "C.Currency, C.U_TPD_DrugCon AS isControl, C.U_TPD_RA_DrugType AS customer_type, C.U_TPD_BI_SalesTeam AS saleTeam, ";
-  //   $qr .= "C.U_TPD_BI_AreaName AS areaId, C.U_SALE_PERSON AS salePerson, ";
-  //   $qr .= "C.U_TPD_BI_Department AS department, V.Rate ";
-  //   $qr .= "FROM OCRD AS C ";
-  //   $qr .= "LEFT JOIN OVTG AS V ON C.ECVatGroup = V.Code ";
-  //   $qr .= "WHERE C.CardType = 'C' ";
-  //   $qr .= "AND C.validFor = 'Y' ";
-  //   $qr .= "AND C.SlpCode > 0 ";
-  //   $qr .= "AND C.U_TPD_BI_AreaName IS NOT NULL ";
-  //   $qr .= "AND C.U_TPD_BI_AreaName = '{$area_id}' ";
-  //   $qr .= "AND C.U_SALE_PERSON IS NOT NULL ";
-  //   $qr .= "AND C.CardCode LIKE '___{$type}%' ";
-  //   $qr .= "ORDER BY C.CardCode ASC";
-
-  //   $rs = $this->ms->query($qr);
-
-  //   if ($rs->num_rows() > 0)
-  //   {
-  //     return $rs->result();
-  //   }
-
-  //   return NULL;
-  // }
-
 
   public function get_all_user_customer_list($type = 'V')
   {
-    $rs = $this->db
+    $this->db
     ->select('CardCode, CardName, GroupNum, SlpCode, ECVatGroup, Currency, U_TPD_DrugCon AS isControl')
     ->select('U_TPD_RA_DrugType AS customer_type, U_TPD_BI_SalesTeam AS saleTeam, U_TPD_BI_AreaName AS areaId')
     ->select('U_SALE_PERSON AS salePerson, U_TPD_BI_Department AS department, vatRate AS Rate, CustCode, isRegular')
     ->where('validFor', 'Y')
     ->where('SlpCode >', 0)
     ->where('U_TPD_BI_AreaName IS NOT NULL', NULL, FALSE)
-    ->where('U_SALE_PERSON IS NOT NULL', NULL, FALSE)
-    ->where('custType', $type)
+    ->where('U_SALE_PERSON IS NOT NULL', NULL, FALSE);
+
+    if($type !== 'all')
+    {
+      $this->db->where('custType', $type);
+    }
+
+    $rs = $this->db
     ->order_by('CardCode', 'ASC')
-    ->get($this->tb);
+    ->get($this->tb);    
 
     if($rs->num_rows() > 0)
     {
@@ -330,33 +314,7 @@ class Customer_model extends CI_Model
 
     return NULL;
   }
-
-  // public function get_all_user_customer_list($type = "V")
-  // {
-  //   //--- V = vat Q = non vat
-  //   $qr  = "SELECT C.CardCode, C.CardName, C.GroupNum, C.SlpCode, C.ECVatGroup, ";
-  //   $qr .= "C.Currency, C.U_TPD_DrugCon AS isControl, C.U_TPD_RA_DrugType AS customer_type, C.U_TPD_BI_SalesTeam AS saleTeam, ";
-  //   $qr .= "C.U_TPD_BI_AreaName AS areaId, C.U_SALE_PERSON AS salePerson, ";
-  //   $qr .= "C.U_TPD_BI_Department AS department, V.Rate ";
-  //   $qr .= "FROM OCRD AS C ";
-  //   $qr .= "LEFT JOIN OVTG AS V ON C.ECVatGroup = V.Code ";
-  //   $qr .= "WHERE C.CardType = 'C' ";
-  //   $qr .= "AND C.validFor = 'Y' ";
-  //   $qr .= "AND C.SlpCode > 0 ";
-  //   $qr .= "AND C.U_TPD_BI_AreaName IS NOT NULL ";
-  //   $qr .= "AND C.U_SALE_PERSON IS NOT NULL ";
-  //   $qr .= "AND C.CardCode LIKE '___{$type}%' ";
-  //   $qr .= "ORDER BY C.CardCode ASC";
-
-  //   $rs = $this->ms->query($qr);
-
-  //   if ($rs->num_rows() > 0)
-  //   {
-  //     return $rs->result();
-  //   }
-
-  //   return NULL;
-  // }
+  
 
   public function count_rows(array $ds = array())
   {

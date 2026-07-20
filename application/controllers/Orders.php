@@ -1018,6 +1018,8 @@ class Orders extends PS_Controller
 		$sc = TRUE;
 		$header = json_decode($this->input->post('header'));
 		$details = json_decode($this->input->post('details'));
+		$file = isset($_FILES['uploadFile']) ? $_FILES['uploadFile'] : NULL;
+		$up = 1; //--- 1 = upload file success, 0 = upload file fail
 		$dfWhsCode = getConfig('DEFAULT_WAREHOUSE');
 
 		if (! empty($header))
@@ -1260,6 +1262,39 @@ class Orders extends PS_Controller
 				{
 					$this->db->trans_rollback();
 				}
+
+				if($sc === TRUE && ! empty($file))
+				{
+					$this->load->library('upload');
+					$path = $this->config->item('upload_path') . 'order_po/';					
+
+					$config = array(
+						'upload_path' => $path,
+						'allowed_types' => 'jpg|jpeg|png|pdf',						
+						'max_size' => 5120,
+						'overwrite' => TRUE
+					);
+
+					$this->upload->initialize($config);
+
+					if( ! $this->upload->do_upload('uploadFile'))
+					{
+						$sc = FALSE;
+						$up = 0;
+						$this->error = "Create order success but upload file failed : " . $this->upload->display_errors();
+					}
+					else 
+					{						
+						$arr = array(
+							'has_file' => 1,
+							'file_name' => $this->upload->data('file_name'),
+							'file_type' => $this->upload->data('file_ext'),
+							'file_size' => $this->upload->data('file_size')
+						);
+
+						$this->orders_model->update($code, $arr);
+					}
+				}
 			}
 			else
 			{
@@ -1273,7 +1308,14 @@ class Orders extends PS_Controller
 			$this->error = "Missing Header Data";
 		}
 
-		$this->_response($sc);
+		$arr = array(
+			'status' => $sc === TRUE ? 'success' : 'failed',
+			'message' => $sc === TRUE ? 'success' : $this->error,
+			'code' => $sc === TRUE ? $code : NULL,
+			'upload' => $up
+		);
+		
+		echo json_encode($arr);
 	}
 
 
@@ -1428,6 +1470,7 @@ class Orders extends PS_Controller
 					'docDate' => thai_date($doc->DocDate, FALSE),
 					'dueDate' => thai_date($doc->DocDueDate, FALSE),
 					'PoNo' => $doc->NumAtCard,
+					'fileName' => $doc->has_file ? '&nbsp;&nbsp; <span class="label label-info label-white pointer" onclick="openFile(\'' . $doc->file_name . '\')"><i class="fa fa-paperclip"></i>' . $doc->file_name . '</span>' : NULL,
 					'PriceList' => empty($doc->PriceList) ? "-" : ($doc->PriceList == -10 ? $this->special_price_list_model->get_name($doc->SpecialPriceList) : $this->orders_model->price_list_name($doc->PriceList)),
 					'termName' => $termName,
 					'billOption' => $doc->BillDate == 1 ? 'Y' : 'N',
@@ -2017,6 +2060,27 @@ class Orders extends PS_Controller
 		$this->_response($sc);
 	}
 
+
+	public function open_file($filename)
+	{
+		$path = $this->config->item('upload_path') . 'order_po/' . $filename;
+
+		if (!file_exists($path))
+		{
+			show_404();
+			return;
+		}
+
+		// Detect MIME type automatically
+		$mime = mime_content_type($path);
+
+		// Force browser to display file inline
+		header('Content-Type: ' . $mime);
+		header('Content-Disposition: inline; filename="' . $filename . '"');
+		header('Content-Length: ' . filesize($path));
+
+		readfile($path);
+	}
 
 	public function clear_filter()
 	{

@@ -12,7 +12,7 @@
 			<option value="0">Select</option>
 		<?php if( ! empty($priceList)) : ?>
 			<?php foreach($priceList as $pl) : ?>
-				<option value="<?php echo $pl->list_id; ?>"><?php echo $pl->list_name; ?></option>
+				<option value="<?php echo $pl->id; ?>"><?php echo $pl->name; ?></option>
 			<?php endforeach; ?>
 		<?php endif; ?>
 		</select>
@@ -38,7 +38,7 @@
 
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped table-bordered border-1" style="min-width:950px;">
+		<table class="table table-striped table-bordered tableNarrow border-1" style="min-width:950px;">
 			<thead>
 				<tr>
 					<th class="fix-width-50 middle text-center">#</th>
@@ -47,7 +47,7 @@
 					<th class="fix-width-100 middle text-center">Qty</th>
 					<th class="fix-width-100 middle text-center">Free</th>
 					<th class="fix-width-100 middle text-center">Avg/Unit</th>
-					<th class="fix-width-100 middle text-center">Benefit in Each Step</th>
+					<th class="fix-width-130 middle text-center">Benefit in Each Step</th>
 				</tr>
 			</thead>
 			<tbody id="step-table">	</tbody>

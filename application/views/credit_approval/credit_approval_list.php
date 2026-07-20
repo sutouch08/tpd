@@ -80,7 +80,7 @@
 				<tr>
 					<th class="fix-width-40 text-center">#</th>
 					<th class="fix-width-100">Actions</th>
-					<th class="fix-width-70">สถานะ</th>
+					<th class="fix-width-80">สถานะ</th>
 					<th class="fix-width-40 text-center">Overdue</th>
 					<th class="fix-width-40 text-center">Files</th>
 					<th class="fix-width-130">วันที่</th>
@@ -152,11 +152,11 @@
 
 <script>
 	$('#user-id').select2();
-	// $(document).ready(function() {
-	//   setTimeout(function() {
-	//     window.location.reload();
-	//   }, 1000 * 60 * 5); //--- reload every 5 minutes
-	// });
+	$(document).ready(function() {
+	  setTimeout(function() {
+	    window.location.reload();
+	  }, 1000 * 60 * 5); //--- reload every 5 minutes
+	});
 </script>
 
 <script src="<?php echo base_url(); ?>scripts/credit_approval/credit_approval.js?v=<?php echo date('YmdH'); ?>"></script>

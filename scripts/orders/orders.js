@@ -1,80 +1,76 @@
-var HOME = BASE_URL + 'orders/';
+var HOME = `${BASE_URL}orders/`;
 
-function doApprove() {
-  var code = $('#code').val();
-  $.ajax({
-    url:HOME + 'approve',
-    type:'POST',
-    cache:false,
-    data:{
-      'code' : code
-    },
-    success:function(rs) {
-      var rs = $.trim(rs);
-      if(rs === 'success') {
-        swal({
-          title:'Success',
-          type:'success',
-          timer:1000
-        });
+// function doApprove() {
+//   var code = $('#code').val();
+//   $.ajax({
+//     url:HOME + 'approve',
+//     type:'POST',
+//     cache:false,
+//     data:{
+//       'code' : code
+//     },
+//     success:function(rs) {
+//       var rs = $.trim(rs);
+//       if(rs === 'success') {
+//         swal({
+//           title:'Success',
+//           type:'success',
+//           timer:1000
+//         });
 
-        setTimeout(function(){
-          window.location.reload();
-        }, 1200);
-      }
-      else {
-        swal({
-          title:'Error',
-          text:rs,
-          type:'error'
-        })
-      }
-    }
-  })
-}
+//         setTimeout(function(){
+//           window.location.reload();
+//         }, 1200);
+//       }
+//       else {
+//         swal({
+//           title:'Error',
+//           text:rs,
+//           type:'error'
+//         })
+//       }
+//     }
+//   })
+// }
 
+// function doReject() {
+//   var code = $('#code').val();
+//   $.ajax({
+//     url:HOME + 'reject',
+//     type:'POST',
+//     cache:false,
+//     data:{
+//       'code' : code
+//     },
+//     success:function(rs) {
+//       var rs = $.trim(rs);
+//       if(rs === 'success') {
+//         swal({
+//           title:'Success',
+//           type:'success',
+//           timer:1000
+//         });
 
-
-function doReject() {
-  var code = $('#code').val();
-  $.ajax({
-    url:HOME + 'reject',
-    type:'POST',
-    cache:false,
-    data:{
-      'code' : code
-    },
-    success:function(rs) {
-      var rs = $.trim(rs);
-      if(rs === 'success') {
-        swal({
-          title:'Success',
-          type:'success',
-          timer:1000
-        });
-
-        setTimeout(function(){
-          window.location.reload();
-        }, 1200);
-      }
-      else {
-        swal({
-          title:'Error',
-          text:rs,
-          type:'error'
-        })
-      }
-    }
-  })
-}
-
-
+//         setTimeout(function(){
+//           window.location.reload();
+//         }, 1200);
+//       }
+//       else {
+//         swal({
+//           title:'Error',
+//           text:rs,
+//           type:'error'
+//         })
+//       }
+//     }
+//   })
+// }
 
 function sendToSAP() {
   var code = $('#OrderCode').val();
   load_in();
   $.ajax({
-    url:HOME + 'sendToSAP',
+    url:`${HOME}sendToSAP`,
     type:'POST',
     cache:false,
     data:{
@@ -102,7 +98,6 @@ function sendToSAP() {
   })
 }
 
-
 function goBack(){
   window.location.href = HOME;
 }
@@ -121,25 +116,18 @@ function leave(){
   });
 }
 
-
 function goAdd(){
   load_in();
-  window.location.href = HOME + 'add_new';
+  window.location.href = `${HOME}add_new`;
 }
-
 
 function goEdit(code){
-  window.location.href = HOME + 'edit/'+code;
+  window.location.href = `${HOME}edit/${code}`;
 }
-
-
 
 function goDetail(code){
-	window.location.href = HOME + 'view_detail/'+code;
+	window.location.href = `${HOME}view_detail/${code}`;
 }
-
-
-
 
 function preview(code, status) {
   load_in();
@@ -147,7 +135,7 @@ function preview(code, status) {
   $('#OrderCode').val(code);
 
   $.ajax({
-    url:HOME + 'get_detail',
+    url:`${HOME}get_detail`,
     type:'GET',
     cache:false,
     data:{
@@ -197,12 +185,9 @@ function preview(code, status) {
   })
 }
 
-
-
-
 function showAuthorize(code) {
   $.ajax({
-    url:HOME + 'get_authorizer',
+    url:`${HOME}get_authorizer`,
     type:'GET',
     cache:false,
     data:{
@@ -229,10 +214,7 @@ function showAuthorize(code) {
   })
 }
 
-
-
 function doApprove() {
-
   let code = $('#OrderCode').val();
   let check = 0;
   let err = 0;
@@ -275,7 +257,7 @@ function doApprove() {
     load_in();
 
     $.ajax({
-      url:HOME + 'do_approve',
+      url:`${HOME}do_approve`,
       type:'POST',
       cache:false,
       data:{
@@ -310,9 +292,6 @@ function doApprove() {
     return false;
   }
 }
-
-
-
 
 function doReject() {
 
@@ -358,7 +337,7 @@ function doReject() {
     load_in();
 
     $.ajax({
-      url:HOME + 'do_reject',
+      url:`${HOME}do_reject`,
       type:'POST',
       cache:false,
       data:{
@@ -399,7 +378,6 @@ function doReject() {
   }
 }
 
-
 function toggleApprove() {
   let check = 0;
 
@@ -421,39 +399,6 @@ function toggleApprove() {
   }
 }
 
-
-// function toggleApprove() {
-//   let check = 0;
-//   let count = 0;
-//
-//   $('.check-item').each(function(){
-//     if($(this).is(':checked')) {
-//       check++;
-//     }
-//
-//     count++;
-//   });
-//
-//   if(check == 0) {
-//     $('#btn-approve').attr('disabled', 'disabled');
-//     $('#btn-reject').attr('disabled', 'disabled');
-//   }
-//   else {
-//     if(check > 0) {
-//       $('#btn-approve').removeAttr('disabled');
-//     }
-//
-//     if(check == count) {
-//       $('#btn-reject').removeAttr('disabled');
-//     }
-//     else {
-//       $('#btn-reject').attr('disabled', 'disabled');
-//     }
-//   }
-// }
-
-
-
 $("#fromDate").datepicker({
 	dateFormat: 'dd-mm-yy',
 	onClose: function(ds){
@@ -468,17 +413,13 @@ $("#toDate").datepicker({
 	}
 });
 
-
 $('#DocDueDate').datepicker({
   dateFormat:'dd-mm-yy'
 });
 
-
-
-
 function viewDetail(code) {
   $.ajax({
-    url:HOME + 'get_temp_data',
+    url:`${HOME}get_temp_data`,
     type:'GET',
     data:{
       'code' : code //--- U_WEBORDER
@@ -505,14 +446,13 @@ function viewDetail(code) {
   })
 }
 
-
 function removeTemp() {
   $('#tempModal').modal('hide');
 
   var code = $('#U_WEB_ORNO').val();
 
   $.ajax({
-    url:HOME + 'remove_temp',
+    url:`${HOME}remove_temp`,
     type:'POST',
     data:{
       'code' : code
@@ -545,7 +485,6 @@ function closeModal(name) {
   $('#'+name).modal('hide');
 }
 
-
 function cancleOrder() {
   $('#tempModal').modal('hide');
 
@@ -563,7 +502,7 @@ function cancleOrder() {
   }, function() {
       load_in();
       $.ajax({
-        url:HOME + 'cancle_order',
+        url:`${HOME}cancle_order`,
         type:'POST',
         data:{
           'code' : code
@@ -597,4 +536,13 @@ function cancleOrder() {
       })
   });
 
+}
+
+function openFile(fileName) {
+  let width = 1000;
+  let height = 600;
+  let left = (screen.width - width) / 2;
+  let top = (screen.height - height) / 2;
+  let target = `${HOME}open_file/${fileName}?nomenu&nonavbar`;
+  window.open(target, "_blank", `width=${width}, height=${height}, left=${left}, top=${top}`);
 }

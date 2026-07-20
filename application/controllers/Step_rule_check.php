@@ -20,20 +20,27 @@ class Step_rule_check extends PS_Controller
 
 	public function index()
 	{
-		$priceList = $this->user_model->get_user_price_list($this->_user->id);
-
-		if( ! empty($priceList))
-		{
-			foreach($priceList as $rs)
-			{
-				$rs->list_name = $this->orders_model->price_list_name($rs->list_id);
-			}
-		}
-
-		$ds['priceList'] = $priceList;
+		$ds['priceList'] = $this->step_rule_model->get_user_price_list($this->_user->id);
 		$ds['items'] = NULL;
 		$this->load->view('step_rule_check/check_list', $ds);
 	}
+
+	// public function index()
+	// {
+	// 	$priceList = $this->user_model->get_user_price_list($this->_user->id);
+
+	// 	if( ! empty($priceList))
+	// 	{
+	// 		foreach($priceList as $rs)
+	// 		{
+	// 			$rs->list_name = $this->orders_model->price_list_name($rs->list_id);
+	// 		}
+	// 	}
+
+	// 	$ds['priceList'] = $priceList;
+	// 	$ds['items'] = NULL;
+	// 	$this->load->view('step_rule_check/check_list', $ds);
+	// }
 
 
 	public function get_item_template()

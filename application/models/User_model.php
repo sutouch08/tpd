@@ -321,7 +321,7 @@ class User_model extends CI_Model
   public function get_user_price_list($user_id)
   {
     $rs = $this->db
-      ->select('pl.id, pl.name, upl.user_id')
+      ->select('pl.id, upl.list_id, pl.name, upl.user_id')
       ->from('user_price_list AS upl')
       ->join('price_list AS pl', 'upl.list_id = pl.id', 'left')
       ->where('pl.active', 1)

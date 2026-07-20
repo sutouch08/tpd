@@ -806,6 +806,9 @@ function previewOrder() {
 	let isRegular = parseDefaultInt($('#is-regular').val(), 0);
 	let creditBalance = parseDefaultFloat(removeCommas($('#credit-balance').val()), 0);
 
+	const uploadFile = document.getElementById('uploadFile');
+	const file = uploadFile.files[0];
+
 	if(isDefaultShipTo == 'N' || exShipTo.length) {
 		shipToWarning = 1;
 	}
@@ -831,6 +834,12 @@ function previewOrder() {
 	if(term == "") {
 		$('#term').hasError();
 		warning("กรุณาเลือก Payment Term");
+		return false;
+	}
+
+	if(file && PoNo.length == 0) {
+		$('#PoNo').hasError();
+		warning("กรุณากรอกเลขที่ใบสั่งซื้อ");
 		return false;
 	}
 
@@ -958,6 +967,7 @@ function previewOrder() {
 		"docDate" : docDate,
 		"dueDate" : dueDate,
 		"PoNo" : PoNo,
+		"filename" : file ? ' &nbsp;&nbsp; <span class="label label-info label-white middle"><i class="fa fa-file-o"></i>&nbsp; Attached file : ' + file.name + '</span>' : '',
 		"priceList" : priceList,
 		"termName" : termName,
 		"listName" : listName,
@@ -1290,41 +1300,66 @@ function saveAdd() {
 }
 
 function add(ds, details) {
+	const uploadFile = document.getElementById('uploadFile');
+	const file = uploadFile.files[0];
+	const fd = new FormData();
+
+	fd.append('header', JSON.stringify(ds));
+	fd.append('details', JSON.stringify(details));
+
+	if(file) {
+		fd.append('uploadFile', file);		
+	}
 
 	load_in();
 
 	$.ajax({
-		url:HOME + 'add',
-		type:'POST',
-		cache:false,
-		data:{
-			"header" : JSON.stringify(ds),
-			"details" : JSON.stringify(details)
-		},
+		url: `${HOME}add`,
+		type:'POST',		
+		data:fd,
+		processData: false,
+		contentType: false,
 		success:function(rs) {
 			load_out();
-			var rs = $.trim(rs);
-			if(rs === 'success') {
-				swal({
-					title:'Success',
-					type:'success',
-					timer:1000
-				});
+			
+			if(isJson(rs)) {
+				var ds = JSON.parse(rs);
 
-				setTimeout(function(){
-					goBack();
-				}, 1200);
+				if(ds.status == 'success') {
+					swal({
+						title:'Success',
+						type:'success',
+						timer:1000
+					});
+
+					setTimeout(() => {
+						goBack();
+					}, 1200);
+				}
+				else {
+					if(ds.upload == 0) {
+						swal({
+							title:'Upload Failed',
+							text:'Create order success but upload file failed',
+							type:'info',
+							html:true
+						},function() {
+							goBack();
+						});
+					}
+					else {
+						showError(rs);
+					}
+				}
 			}
 			else {
-				swal({
-					title:'Error!',
-					text:rs,
-					type:'error'
-				});
+				showError(rs);
 			}
+		},
+		error:function(rs) {
+			showError(rs);
 		}
-	})
-
+	});
 }
 
 

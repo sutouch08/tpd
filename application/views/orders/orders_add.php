@@ -41,6 +41,7 @@
 	<?php $this->load->view('orders/orders_add_header'); ?>
 	<?php $this->load->view('orders/orders_add_detail'); ?>
 	<?php $this->load->view('orders/orders_add_footer'); ?>
+	<?php $this->load->view('orders/attach_file_modal'); ?>
 
 	<input type="hidden" id="sale_id" value="<?php echo $this->_user->sale_id; ?>" />
 	<input type="hidden" id="default_currency" value="<?php echo getConfig('CURRENCY'); ?>" />
@@ -163,7 +164,7 @@
 </script>
 
 <script id="preview-template" type="text/x-handlebarsTemplate">
-	<table class="table table-bordered border-1" style="margin-bottom:10px;">
+	<table class="table table-striped table-bordered tableNarrow border-1" style="margin-bottom:10px;">
 		<tr>
 			<td class="width-30">
 			รหัสลูกค้า
@@ -188,7 +189,7 @@
 				<span class="lbl"></span>
 				</label>
 			</td>
-			<td id="check-po">{{PoNo}}</td>
+			<td id="check-po">{{PoNo}} {{{filename}}}</td>
 		</tr>
 		<tr><td>บิลลงวันที่</td><td>{{billOption}}</td></tr>
 		<tr><td>ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
@@ -225,7 +226,7 @@
 		<tr><td>Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>
 	</table>
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0 border-1" style="max-height:300px; overflow:auto;">
-		<table class="table table-bordered border-1" style="min-width:1000px; margin-bottom:0px;">
+		<table class="table table-bordered border-1 tableNarrow" style="min-width:1000px; margin-bottom:0px;">
 			<thead>
 				<tr>
 					<th class="fix-width-50 middle text-center">#</th>

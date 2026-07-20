@@ -926,6 +926,7 @@ class Special_price_list extends PS_Controller
 		$this->_response($sc);
 	}
 
+
 	public function setActive()
 	{
 		$sc = TRUE;
@@ -946,6 +947,7 @@ class Special_price_list extends PS_Controller
 
 		echo $sc === TRUE ? 'success' : 'failed';
 	}
+
 
 	public function setActiveItem()
 	{

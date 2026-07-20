@@ -162,11 +162,11 @@
 
 <script>
 	$('#user-id').select2();
-	// $(document).ready(function() {
-	//   setTimeout(function() {
-	//     window.location.reload();
-	//   }, 1000 * 60 * 5); //--- reload every 5 minutes
-	// });
+	$(document).ready(function() {
+	  setTimeout(function() {
+	    window.location.reload();
+	  }, 1000 * 60 * 5); //--- reload every 5 minutes
+	});
 </script>
 
 <script src="<?php echo base_url(); ?>scripts/request_payment_order/request_payment_order.js?v=<?php echo date('Ymd'); ?>"></script>

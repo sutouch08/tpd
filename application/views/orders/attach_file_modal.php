@@ -6,12 +6,12 @@
 
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-        <h4 class="modal-title" id="importModalLabel">Attach File(s)</h4>
+        <h4 class="modal-title" id="importModalLabel">Import Customers</h4>
       </div>
 
       <div class="modal-body">
         <form id="upload-form" name="upload-form" method="post" enctype="multipart/form-data">
-          <input type="file" class="hide" name="uploadFile[]" id="uploadFile" accept=".jpg,.jpeg,.png,.pdf" multiple />
+          <input type="file" class="hide" name="uploadFile" id="uploadFile" accept=".jpg,.jpeg,.png,.pdf" />
           <input type="hidden" name="555" />
 
           <!-- Drop Zone -->
@@ -33,24 +33,33 @@
             </button>
           </div>
           <div id="import-file-info-flex-helper" style="display:none;"></div>
+
+          <!-- Progress Bar -->
+          <div id="import-progress-wrap" style="display:none; margin-top:16px;">
+            <div class="progress">
+              <div id="import-progress-bar" class="progress-bar progress-bar-striped active" role="progressbar" style="width:0%"></div>
+            </div>
+            <div class="progress-label" id="import-progress-label" style="font-size:11px; color:#6c757d; text-align:right;">Uploading...</div>
+          </div>
         </form>
       </div>
 
       <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">
+        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="clearImportFile()">
           <i class="fa fa-times"></i> Cancel
         </button>
-        <button type="button" class="btn btn-success" id="btn-do-import" onclick="uploadfile()">
-          <i class="fa fa-cloud-upload"></i> Import
+        <button type="button" class="btn btn-success" id="btn-do-import" onclick="acceptFile()">
+          <i class="fa fa-upload"></i> OK
         </button>
       </div>
+
     </div>
   </div>
 </div>
 
 <script>
   function showImportModal() {
-    clearImportFile();
+    //clearImportFile();
     $('#import-modal').modal('show');
   }
 
@@ -73,37 +82,19 @@
   const uploadFile = document.getElementById('uploadFile');
 
   uploadFile.addEventListener('change', function() {
-    const files = this.files;
-
-    if (files.length === 0) {
-      return;
-    }
-
-    if (files.length > 5) {
-      swal("เลือกไฟล์มากเกินไป", "สามารถนำเข้าได้สูงสุดครั้งละ 5 ไฟล์", "warning");
-      this.value = '';
-      return;
-    }
-
-    // ตรวจขนาดไฟล์แต่ละไฟล์
-    for (let i = 0; i < files.length; i++) {
-      if (files[i].size > 5000000) {
-        swal("ไฟล์ใหญ่เกินไป", "ไฟล์ต้องมีขนาดไม่เกิน 5 MB ต่อไฟล์", "error");
+    if (this.files.length > 0) {
+      const file = this.files[0];
+      if (file.size > 5000000) {
+        swal("ขนาดไฟล์ใหญ่เกินไป", "ไฟล์แนบต้องมีขนาดไม่เกิน 5 MB", "error");
         this.value = '';
-        return;
+        return false;
       }
+      document.getElementById('import-file-name').textContent = file.name;
+      document.getElementById('import-file-size').textContent = formatBytes(file.size);
+      document.getElementById('import-file-info').style.display = 'flex';
+      document.getElementById('import-drop-zone').style.display = 'none';
     }
-
-    // แสดงชื่อไฟล์ทั้งหมด
-    let list = '';
-    for (let i = 0; i < files.length; i++) {
-      list += `<div>${files[i].name} (${formatBytes(files[i].size)})</div>`;
-    }
-
-    document.getElementById('import-file-name').innerHTML = list;
-    document.getElementById('import-file-info').style.display = 'flex';
-    document.getElementById('import-drop-zone').style.display = 'none';
-  }); 
+  });
 
   // Drag & Drop
   const dropZone = document.getElementById('import-drop-zone');
@@ -127,41 +118,46 @@
     }
   });
 
-  async function uploadfile() {
-    const code = $('#payment-order-code').val().trim();
-    const files = uploadFile.files;
+  function acceptFile() {
+    const file = uploadFile.files[0];
+    if (file) {
+      $('#import-modal').modal('hide');
+    }
+  }
 
-    if (files.length === 0) {
+  async function uploadfile() {
+    const id = $('#id').val();
+    const file = uploadFile.files[0];
+
+    if (!file) {
       swal("กรุณาเลือกไฟล์ก่อน", "", "warning");
       return false;
     }
 
     const fd = new FormData();
-
-    for (let i = 0; i < files.length; i++) {
-      fd.append('uploadFile[]', files[i]);
-    }
+    fd.append('uploadFile', file);
 
     load_in();
     document.getElementById('btn-do-import').disabled = true;
 
-    const url = `${HOME}upload_file/${code}`;
+    // Animate progress bar with XHR for real progress
+    const url = `${HOME}import_details/${id}`;
+
     const xhr = new XMLHttpRequest();
 
     xhr.addEventListener('load', function() {
-      //hidePreloader();
       load_out();
       document.getElementById('btn-do-import').disabled = false;
 
       const result = xhr.responseText;
+
       $('#import-modal').modal('hide');
 
       if (isJson(result)) {
         const res = JSON.parse(result);
         if (res.status === 'success') {
           swal({
-            title: 'นำเข้าเรียบร้อยแล้ว',
-            text: res.message,
+            title: 'Success',
             type: 'success',
             html: true
           }, function() {
@@ -176,21 +172,11 @@
     });
 
     xhr.addEventListener('error', function() {
-      load_out();
       document.getElementById('btn-do-import').disabled = false;
       swal("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้", "error");
     });
 
     xhr.open('POST', url);
     xhr.send(fd);
-  }
-
-
-  function showPreloader() {
-    document.getElementById('import-preloader').style.display = 'flex';
-  }
-
-  function hidePreloader() {
-    document.getElementById('import-preloader').style.display = 'none';
   }
 </script>

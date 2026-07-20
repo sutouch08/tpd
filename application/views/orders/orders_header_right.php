@@ -20,7 +20,7 @@
         <div class="input-group">
           <input type="text" id="PoNo" class="form-control input-sm e" value="" />
           <span class="input-group-btn">
-            <button type="button" class="btn btn-xs btn-info btn-45" title="Attach PO file" onclick="getUploadFile()"><i class="fa fa-upload"></i></button>
+            <button type="button" class="btn btn-xs btn-info btn-45" title="Attach PO file" onclick="showImportModal()"><i class="fa fa-paperclip fa-flip-horizontal fa-lg"></i></button>
           </span>
         </div>
       </div>
