@@ -96,7 +96,7 @@
 <?php echo $this->pagination->create_links(); ?>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped tableNarrow border-1" style="min-width:1000px; margin-bottom:0px;">
+		<table class="table table-striped tableNarrow border-1" style="min-width:1060px; margin-bottom:0px;">
 			<thead>
 				<tr>
 					<th class="fix-width-100">Actions</th>
@@ -108,7 +108,7 @@
 					<th class="min-width-200">ลูกค้า</th>
 					<th class="fix-width-120">เลขที่ PO</th>
 					<th class="fix-width-100 text-right">มูลค่า</th>
-					<th class="fix-width-60 text-center">STC.</th>
+					<th class="fix-width-120">STC.</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -129,7 +129,7 @@
 							<td class="middle"><?php echo $rs->CardName; ?></td>
 							<td class="middle"><?php echo $rs->NumAtCard; ?></td>
 							<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
-							<td class="middle text-center"><?php echo sales_team_condition_name($rs->Condition_id); ?></td>
+							<td class="middle"><?php echo sales_team_condition_name($rs->Condition_id); ?></td>
 						</tr>
 						<?php $no++; ?>
 					<?php endforeach; ?>
