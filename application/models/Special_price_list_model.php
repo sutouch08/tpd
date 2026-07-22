@@ -158,6 +158,25 @@ class Special_price_list_model extends CI_Model
   }
 
 
+  public function get_details_by_item($price_list_id, $itemCode)
+  {
+    $rs = $this->db
+    ->select('d.*')
+    ->from($this->tr.' AS d')
+    ->join($this->td.' AS i', 'd.step_id = i.id', 'left')
+    ->where('i.price_list_id', $price_list_id)
+    ->where('i.ItemCode', $itemCode)
+    ->order_by('d.id', 'ASC')
+    ->get();
+
+    if($rs->num_rows() > 0)
+    {
+      return $rs->result();
+    }
+
+    return NULL;
+  }
+
   public function get_details($id)
   {
     $rs = $this->db

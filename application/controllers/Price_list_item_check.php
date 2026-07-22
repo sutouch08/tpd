@@ -34,21 +34,7 @@ class Price_list_item_check extends PS_Controller
       $ds['customer'] = $this->customer_model->get_user_customer_list($this->_user->area_id, "all");
     }
 
-    $PL = [];
-
-    $priceList = $this->user_model->get_user_price_list($this->_user->id);
-
-    if (! empty($priceList))
-    {
-      foreach ($priceList as $pl)
-      {
-        $PL['Standard'][] = (object) array(
-          'id' => $pl->id,
-          'spid' => 0,
-          'name' => $pl->name
-        );
-      }
-    }
+    $PL = [];    
 
     $type = $this->price_list_type_model->get_all();
 
@@ -85,21 +71,7 @@ class Price_list_item_check extends PS_Controller
     $html = "<option value=\"\">Select</option>";
     $PL = [];
     $groupIds = [0];
-    $tp = [];
-
-    $priceList = $this->user_model->get_user_price_list($this->_user->id);
-
-    if (! empty($priceList))
-    {
-      foreach ($priceList as $pl)
-      {
-        $PL['Standard'][] = (object) array(
-          'id' => $pl->id,
-          'spid' => 0,
-          'name' => $pl->name
-        );
-      }
-    }
+    $tp = [];   
 
     if( ! empty($cardCode))
     {
@@ -297,85 +269,36 @@ class Price_list_item_check extends PS_Controller
     
 
     if (! empty($PriceList) && ! empty($code))
-    {
-      $priceList = $PriceList == 'x' ? NULL : $PriceList;
-      $item = $this->item_model->get($code, $priceList);
+    {      
+      $item = $this->item_model->get_item($code);
 
       if (! empty($item))
       {
-        if($PriceList != 'x')
+        if ($spid > 0)
         {
-          $price = round($item->price, 2);
-          $step = $this->step_rule_model->get_active_details($priceList);
+          $step = $this->special_price_list_model->get_details_by_item($spid, $code);
           $no = 1;
 
-          if( ! empty($step))
+          if (! empty($step))
           {
             foreach ($step as $rs)
-            {
-              $allQty = ($rs->stepQty + $rs->freeQty);
-              $amount = $rs->stepQty * $price;
-              $allAmount = $allQty * $price;
-              $diffAmount = $allAmount - $amount;
-              $discPrcnt = $diffAmount > 0 ? $diffAmount / $allAmount : 0;
-
+            {             
               $ds[] = array(
-                'no' => $no,
-                'ItemCode' => $item->code,
-                'ItemName' => $item->name,
-                'Price' => number($price, 2),
-                'Qty' => $rs->stepQty,
-                'freeQty' => $rs->freeQty,
-                'avgPrice' => number(round($amount / $allQty, 2), 2),
-                'discPrcnt' => number(round($discPrcnt, 2) * 100, 2)
+                'no' => $no,                
+                'description' => $rs->name,
+                'Price' => number($rs->SellPrice, 2),
+                'Qty' => $rs->Qty,
+                'freeQty' => $rs->freeQty
               );
 
               $no++;
             }
           }
-          else
-          {
-            $ds[] = array('nodata' => 'ไม่พบ step ราคา');
-          }          
         }
         else
         {
-          if($spid > 0)
-          {
-            $step = $this->special_price_list_model->get_item_details($spid);                      
-            $no = 1;
-
-            if (! empty($step))
-            {
-              foreach($step as $rs)
-              {
-                $allQty = ($rs->Qty + $rs->freeQty);
-                $amount = $rs->Qty * $rs->sellPrice;
-                $allAmount = $allQty * $rs->sellPrice;
-                $diffAmount = $allAmount - $amount;
-                $discPrcnt = $diffAmount > 0 ? $diffAmount / $allAmount : 0;
-                
-                $ds[] = array(
-                  'no' => $no,
-                  'ItemCode' => $item->code,
-                  'ItemName' => $item->name,
-                  'description' => $item->name. " : ({$rs->name})",
-                  'Price' => number($rs->sellPrice, 2),
-                  'Qty' => $rs->Qty,
-                  'freeQty' => $rs->freeQty,
-                  'avgPrice' => number(round($amount / $allQty, 2), 2),
-                  'discPrcnt' => number(round($discPrcnt, 2) * 100, 2)
-                );    
-
-                $no++;            
-              }
-            }
-          }
-          else
-          {
-            $ds[] = array('nodata' => 'ไม่พบ step ราคา');
-          }        
-        }        
+          $ds[] = array('nodata' => 'ไม่พบ step ราคา');
+        }              
       }
       else
       {

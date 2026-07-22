@@ -624,3 +624,8 @@ function checkAll() {
     $('.chk').prop('checked', false);
   }
 }
+
+function getImportTemplate() {
+  const url = `${HOME}get_import_template`;
+  window.location.href = url;
+}

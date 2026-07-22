@@ -5,6 +5,18 @@ $warning_off = $WARNING_ORDER == 0 ? 'btn-primary' : '';
 <div class="tab-pane fade" id="order">
   <form id="orderForm">
     <div class="row">
+      <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"><span class="form-control left-label">Order expiration</span></div>
+      <div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-12">
+        <div class="input-group">
+          <input type="number" class="form-control input-sm text-center" name="ORDER_EXPIRATION" value="<?php echo $ORDER_EXPIRATION; ?>" />
+          <span class="input-group-addon">วัน</span>
+        </div>
+      </div>
+      <div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
+        <span class="help-block">ยกเลิกออเดอร์ที่ติดเครดิตลิมิตแล้วไม่ได้รับการดำเนินการภายในเวลาที่กำหนดโดยอัตโนมัติ</span>
+      </div>
+      <div class="divider-hidden"></div>
+
       <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"><span class="form-control left-label">Global Credit Limit</span></div>
       <div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-12">
         <input type="number" class="form-control input-sm text-right" name="GLOBAL_CREDIT_LINE" id="credit-limit" value="<?php echo $GLOBAL_CREDIT_LINE; ?>" />

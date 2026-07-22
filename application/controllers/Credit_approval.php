@@ -38,6 +38,8 @@ class Credit_approval extends PS_Controller
     $perpage = get_rows();
     $rows = empty($apv) ? 0 : $this->credit_approval_model->count_rows($filter);
     $filter['data'] = empty($apv) ? NULL : $this->credit_approval_model->get_list($filter, $perpage, $this->uri->segment($this->segment));
+    $filter['can_approve'] = empty($apv) ? FALSE : $apv->can_approve;
+    $filter['can_review'] = empty($apv) ? FALSE : $apv->can_review;
     $init  = pagination_config($this->home . '/index/', $rows, $perpage, $this->segment);
     $this->pagination->initialize($init);
     $this->load->view('credit_approval/credit_approval_list', $filter);
@@ -151,7 +153,9 @@ class Credit_approval extends PS_Controller
     {
       $this->load->model('payment_term_discount_model');
       $termName = $doc->term_id == -10 ? 'Customer Default' : (empty($doc->term_id) ? 'ไม่ระบุ' : $this->payment_term_discount_model->get_name($doc->term_id));
-
+      $apv = $this->credit_approver_model->get_active_by_user_id($this->_user->id);
+      $can_approve = empty($apv) ? FALSE : $apv->can_approve;
+      $can_review = empty($apv) ? FALSE : $apv->can_review;
       $ds = array(
         'orderCode' => $doc->code,
         'user' => $doc->uname,
@@ -168,7 +172,9 @@ class Credit_approval extends PS_Controller
         'remark' => $doc->Comments,
         'approval_status' => $doc->credit_approval,
         'is_overdue' => is_true($doc->is_over_due),
-        'can_approve' => $this->can_approve($this->_user->id, $doc->credit_diff),
+        'credit_review' => is_true($doc->credit_review),
+        'can_approve' => is_true($can_approve),
+        'can_review' => is_true($can_review),
         'items' => array(),
         'logs' => array(),
         'doc_total' => number($doc->DocTotal, 2),
@@ -290,6 +296,10 @@ class Credit_approval extends PS_Controller
 
       if (!empty($doc))
       {
+        $apv = $this->credit_approver_model->get_active_by_user_id($this->_user->id);
+        $can_approve = empty($apv) ? FALSE : $apv->can_approve;
+        $can_review = empty($apv) ? FALSE : $apv->can_review;
+
         $ds = array(
           'date' => thai_date($doc->date_add),
           'code' => $doc->code,          
@@ -302,7 +312,8 @@ class Credit_approval extends PS_Controller
           'doc_total' => number($doc->DocTotal, 2),
           'diff' => number($doc->credit_diff, 2),
           'overdue' => number($this->get_overdue_amount($doc->CardCode, $doc->CustCode), 2),
-          'can_approve' => $this->can_approve($this->_user->id, $doc->credit_diff),
+          'can_approve' => is_true($can_approve),
+          'can_review' => is_true($can_review),
           'status' => $doc->status,
           'has_document' => $doc->has_document,
           'files' => $doc->has_document == 1 ? $this->get_file_list($code) : NULL,

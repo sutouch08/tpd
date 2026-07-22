@@ -29,7 +29,7 @@ class Price_list_type_model extends CI_Model
       $this->db->where('active', 1);
     }
 
-    $rs = $this->db->get($this->tb);
+    $rs = $this->db->order_by('position', 'ASC')->order_by('name', 'ASC')->get($this->tb);
 
     if ($rs->num_rows() > 0)
     {
@@ -113,6 +113,7 @@ class Price_list_type_model extends CI_Model
     }
 
     $this->db      
+      ->order_by('position', 'ASC')
       ->order_by('name', 'ASC')
       ->limit($limit, $offset);
 

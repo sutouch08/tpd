@@ -45,10 +45,10 @@
         <tr>
           <th class="fix-width-80 text-center">#</th>
           <th class="fix-width-70 text-center">Status</th>
-          <th class="min-width-250">Description</th>
-          <th class="fix-width-100 text-center">Position</th>
+          <th class="fix-width-300">Description</th>
+          <th class="fix-width-60 text-center">Position</th>
           <th class="fix-width-150">Last Sync</th>
-          <th class="fix-width-150">Sync By</th>
+          <th class="min-width-150">Sync By</th>
         </tr>
       </thead>
       <tbody>
@@ -65,7 +65,7 @@
               </td>
               <td class="middle"><?php echo $rs->name; ?></td>
               <td class="middle text-center">
-                <input type="number" class="form-control input-xs text-center text-label" value="<?php echo $rs->position; ?>" onchange="updatePosition(<?php echo $rs->id; ?>, this)" />               
+                <input type="number" class="form-control input-xs text-center" value="<?php echo $rs->position; ?>" onchange="updatePosition(<?php echo $rs->id; ?>, this)" />               
               </td>
               <td class="middle"><?php echo thai_date($rs->date_upd, TRUE) ?></td>
               <td class="middle"><?php echo uname($rs->update_by); ?></td>

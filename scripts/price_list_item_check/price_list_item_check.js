@@ -132,7 +132,9 @@ function getData() {
       if (isJson(rs)) {
         let ds = JSON.parse(rs);
         if (ds.status === 'success') {
-          // handle success
+          let source = $('#step-template').html();
+          let output = $('#step-table');
+          render(source, ds.data, output);
         }
         else {
           showError(ds.message);
@@ -147,4 +149,9 @@ function getData() {
       showError(rs);
     }
   })
+}
+
+
+function clearData() {
+  window.location.href = HOME;
 }

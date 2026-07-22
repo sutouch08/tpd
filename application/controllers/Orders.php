@@ -1266,11 +1266,12 @@ class Orders extends PS_Controller
 				if($sc === TRUE && ! empty($file))
 				{
 					$this->load->library('upload');
-					$path = $this->config->item('upload_path') . 'order_po/';					
+					$path = $this->config->item('upload_path') . 'order_po/';
 
 					$config = array(
 						'upload_path' => $path,
-						'allowed_types' => 'jpg|jpeg|png|pdf',						
+						'allowed_types' => 'jpg|jpeg|png|pdf',
+						'file_name' => $code,			
 						'max_size' => 5120,
 						'overwrite' => TRUE
 					);

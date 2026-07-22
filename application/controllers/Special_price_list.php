@@ -970,6 +970,22 @@ class Special_price_list extends PS_Controller
 		echo $sc === TRUE ? 'success' : 'failed';
 	}
 
+	public function get_import_template()
+	{
+		$this->load->helper('download');
+		$file = 'templates/special_price_list_item_import_template.xlsx';
+
+		if (file_exists($file))
+		{
+			force_download($file, NULL);
+		}
+		else
+		{
+			$this->page_error();
+		}
+	}
+
+
 	public function clear_filter()
 	{
 		$filter = array(

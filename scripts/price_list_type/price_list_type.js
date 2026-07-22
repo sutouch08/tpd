@@ -190,6 +190,28 @@ function toggleActive(id, el) {
   });
 }
 
+function updatePosition(id, el) {
+  let position = parseInt(el.value);
+  $.ajax({
+    url: `${HOME}update_position`,
+    type: 'POST',
+    cache: false,
+    data: {
+      'id': id,
+      'position': position
+    },
+    success: function(rs) {
+      load_out();
+      if (rs.trim() != 'success') {
+        showError(rs);
+      }
+    },
+    error: function(rs) {
+      showError(rs);
+    }
+  });
+}
+
 $('#chk-all').change(function () {
   if ($(this).is(':checked')) {
     $('.chk').prop('checked', true);

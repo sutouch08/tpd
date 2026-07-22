@@ -93,7 +93,7 @@
 			</thead>
 			<tbody>
 				<?php if (!empty($data)) : ?>
-					<?php $no = $this->uri->segment($this->segment) + 1; ?>
+					<?php $no = $this->uri->segment($this->segment) + 1; ?>					
 					<?php foreach ($data as $rs) : ?>
 						<?php $capv = $rs->credit_approval; ?>
 						<?php $replyStatus = $rs->reply_status; ?>
@@ -104,7 +104,7 @@
 							<td class="middle">
 								<button type="button" class="btn btn-minier btn-info" title="Preview" onclick="preview('<?php echo $rs->code; ?>')"><i class="fa fa-eye"></i></button>
 								<button type="button" class="btn btn-minier btn-primary" title="Authorizer" onclick="showAuthorize('<?php echo $rs->code; ?>')"><i class="fa fa-user"></i></button>
-								<?php if ($capv == 'O' && empty($rs->credit_case_id)) : ?>
+								<?php if ($capv == 'O' && empty($rs->credit_case_id) && $can_review) : ?>
 									<button type="button" class="btn btn-minier btn-warning" title="Request Payment" onclick="addRequestPayment('<?php echo $rs->code; ?>')"><i class="fa fa-plus"></i></button>
 								<?php endif; ?>
 								<?php if ( ! empty($rs->credit_case_id)) : ?>

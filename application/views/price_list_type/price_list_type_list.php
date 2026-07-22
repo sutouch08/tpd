@@ -48,9 +48,10 @@
           <th class="fix-width-60"></th>
           <th class="fix-width-40 text-center">#</th>
           <th class="fix-width-70 text-center">Status</th>
-          <th class="min-width-250">Type name</th>          
+          <th class="fix-width-250">Type name</th>  
+          <th class="fix-width-60 text-center">Position</th>        
           <th class="fix-width-150">Last modified</th>
-          <th class="fix-width-150">Modified By</th>
+          <th class="min-width-150">Modified By</th>
         </tr>
       </thead>
       <tbody>
@@ -68,12 +69,15 @@
               </td>
               <td class="middle text-center no"><?php echo $no; ?></td>              
               <td class="middle text-center">
-                <label style="padding-top: 5px; margin-bottom: 0px; height: 30px;">
+                <label style="height:22px;">
                   <input class="ace ace-switch ace-switch-6" type="checkbox" value="1" onchange="toggleActive(<?php echo $rs->id; ?>, this)" <?php echo $rs->active ? 'checked' : ''; ?>>
                   <span class="lbl"></span>
                 </label>
               </td>
               <td class="middle"><?php echo $rs->name; ?></td>
+              <td class="middle text-center">
+                <input type="number" class="form-control input-xs text-center" value="<?php echo $rs->position; ?>" onchange="updatePosition(<?php echo $rs->id; ?>, this)" />                
+              </td>
               <td class="middle"><?php echo thai_date($rs->date_upd, TRUE) ?></td>
               <td class="middle"><?php echo empty($rs->update_by) ? uname($rs->create_by) : uname($rs->update_by); ?></td>
             </tr>

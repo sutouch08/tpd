@@ -143,6 +143,30 @@ class Price_list_type extends PS_Controller
 	}
 
 
+	public  function update_position()
+	{
+		$sc = TRUE;
+		$id = $this->input->post('id');
+		$position = $this->input->post('position');
+
+		if (!empty($id) && !empty($position))
+		{
+			if (! $this->price_list_type_model->update($id, array('position' => $position)))
+			{
+				$sc = FALSE;
+				set_error('Update failed');
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			set_error('required');
+		}
+
+		echo $sc === TRUE ? 'success' : 'failed';
+	}
+
+
 	public function delete()
 	{
 		$sc = TRUE;

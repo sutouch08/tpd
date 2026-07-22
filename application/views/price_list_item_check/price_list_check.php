@@ -14,7 +14,7 @@
     </select>
   </div>
   <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12 padding-5">
-    <label>Price List</label>
+    <label>Special Price List</label>
     <select class="form-control input-sm r" name="priceList" id="priceList" onchange="getItemTemplate()">
       <option value="">Select</option>
       <?php if (!empty($priceList)) : ?>
@@ -78,16 +78,14 @@
 
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-    <table class="table table-striped table-bordered tableNarrow border-1" style="min-width:950px;">
+    <table class="table table-striped table-bordered tableNarrow border-1" style="min-width:550px;">
       <thead>
         <tr>
           <th class="fix-width-50 middle text-center">#</th>
-          <th class="min-width-200 middle">Product</th>
+          <th class="min-width-200 middle">Description</th>
+          <th class="fix-width-100 middle text-center">Min. Qty</th>
           <th class="fix-width-100 middle text-center">Price</th>
-          <th class="fix-width-100 middle text-center">Qty</th>
-          <th class="fix-width-100 middle text-center">Free</th>
-          <th class="fix-width-100 middle text-center">Avg/Unit</th>
-          <th class="fix-width-130 middle text-center">Benefit in Each Step</th>
+          <th class="fix-width-100 middle text-center">Free</th>          
         </tr>
       </thead>
       <tbody id="step-table"> </tbody>
@@ -99,17 +97,15 @@
   {{#each this}}
     {{#if nodata}}
       <tr>
-        <td colspan="8" class="text-center">---{{nodata}} ----</td>
+        <td colspan="5" class="text-center">---{{nodata}} ----</td>
       </tr>
     {{else}}
       <tr>
         <td class="text-center">{{no}}</td>
-        <td class="">{{ItemName}}</td>
-        <td class="text-center">{{Price}}</td>
+        <td class="">{{description}}</td>
         <td class="text-center">{{Qty}}</td>
+        <td class="text-center">{{Price}}</td>
         <td class="text-center">{{freeQty}}</td>
-        <td class="text-center">{{avgPrice}}</td>
-        <td class="text-center">{{discPrcnt}} %</td>
       </tr>
     {{/if}}
   {{/each}}
@@ -122,6 +118,7 @@
 
 <script src="<?php echo base_url(); ?>scripts/price_list_item_check/price_list_item_check.js?v=<?php echo date('Ymd'); ?>"></script>
 <script>
+  $('#customer').select2();
   $('#item').select2();
 </script>
 

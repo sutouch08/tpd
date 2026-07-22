@@ -45,16 +45,21 @@ function preview(code) {
 
 					render(source, data, output);
 
-					if(data.can_approve) {
-						
-						$('#btn-reject').removeClass('hide');
-						
-						if(data.is_overdue && data.case_id == null) {
+					if(data.can_approve || data.can_review) {																	
+						if(data.can_review && data.is_overdue && data.case_id == null) {							
 							$('#btn-request').removeClass('hide');
+							$('#btn-reject').removeClass('hide');
 						}
-						else {
+
+						if(data.can_review && data.is_overdue && data.case_id != null && ! data.credit_review) {
+							$('#btn-accept').removeClass('hide');
+							$('#btn-reject').removeClass('hide');
+						}
+
+						if(data.can_approve && (! data.is_overdue || data.credit_review) ) {
 							$('#btn-approve').removeClass('hide');
-						}						
+							$('#btn-reject').removeClass('hide');
+						}
 					}
 
 					$('#preview-modal').modal('show');
@@ -440,7 +445,7 @@ function viewRequestPayment(code) {
 						render(source, data.logs, output);
 					}
 
-					if(data.can_approve && data.status == 'O') {
+					if(data.can_review && data.status == 'O') {
 						$('#btn-p-reject').removeClass('hide');
 						$('#btn-p-approve').removeClass('hide');
 					}

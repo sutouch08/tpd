@@ -15,6 +15,7 @@
 
       <div class="modal-footer">
         <button type="button" class="btn btn-sm btn-warning a-btn" id="btn-request" onclick="requestPayments()">Request Payments</button>
+        <button type="button" class="btn btn-sm btn-success a-btn" id="btn-accept" onclick="accept()">Accept</button>
         <button type="button" class="btn btn-sm btn-success a-btn" id="btn-approve" onclick="approve()">Approve</button>
         <button type="button" class="btn btn-sm btn-danger a-btn" id="btn-reject" onclick="reject()">Reject</button>
         <button type="button" class="btn btn-sm btn-default" onClick="dismiss('preview-modal')">Close</button>
@@ -332,34 +333,34 @@
 
 <script id="preview-files-template" type="text/x-handlebarsTemplate">
   {{#if this}}
-  <div class="divider"></div>
-  <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
-    <table class="table table-striped tableNarrow border-1">
-      <thead>
-        <tr>
-          <th class="fix-width-20 text-center">#</th>          
-          <th class="fix-width-60">Actions</th>
-          <th class="min-width-250">File Name</th>
-          <th class="fix-width-80 text-right">Size</th>
-          <th class="fix-width-130">Date</th>
-        </tr>
-      </thead>
-      <tbody id="file-table">
-        {{#each this}} 
+    <div class="divider"></div>
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 table-responsive">
+      <table class="table table-striped tableNarrow border-1">
+        <thead>
           <tr>
-            <td class="middle text-center no">{{no}}</td>              
-            <td class="middle">
-              <button type="button" class="btn btn-white btn-minier btn-info" title="View File" onclick="viewFile('{{orderCode}}', '{{name}}')"><i class="fa fa-eye"></i></button>
-              <button type="button" class="btn btn-white btn-minier btn-success" title="Download File" onclick="downloadFile('{{orderCode}}', '{{name}}')"><i class="fa fa-download"></i></button>
-            </td>
-            <td class="middle">{{name}}</td>
-            <td class="middle text-right">{{size}}</td>
-            <td class="middle">{{date_modify}}</td>
+            <th class="fix-width-20 text-center">#</th>
+            <th class="fix-width-60">Actions</th>
+            <th class="min-width-250">File Name</th>
+            <th class="fix-width-80 text-right">Size</th>
+            <th class="fix-width-130">Date</th>
           </tr>
-        {{/each}}        
-      </tbody>
-    </table>
-  </div>
+        </thead>
+        <tbody id="file-table">
+          {{#each this}}
+            <tr>
+              <td class="middle text-center no">{{no}}</td>
+              <td class="middle">
+                <button type="button" class="btn btn-white btn-minier btn-info" title="View File" onclick="viewFile('{{orderCode}}', '{{name}}')"><i class="fa fa-eye"></i></button>
+                <button type="button" class="btn btn-white btn-minier btn-success" title="Download File" onclick="downloadFile('{{orderCode}}', '{{name}}')"><i class="fa fa-download"></i></button>
+              </td>
+              <td class="middle">{{name}}</td>
+              <td class="middle text-right">{{size}}</td>
+              <td class="middle">{{date_modify}}</td>
+            </tr>
+          {{/each}}
+        </tbody>
+      </table>
+    </div>
   {{/if}}
 </script>
 
