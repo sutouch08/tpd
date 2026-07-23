@@ -18,9 +18,9 @@ class Sync_customer extends CI_Controller
     if (! empty($list))
     {
       foreach ($list as $rs)
-      {
+      {        
         $custType = substr($rs->CardCode, 3, 1);
-        $isRegular = $rs->CreditLine > 0 ? 1 : 0;
+        $isRegular = $rs->U_TPD_FirstCus === 'Y' ? 0 : 1;
 
         $arr = array(
           'id' => $rs->DocEntry,
@@ -42,8 +42,9 @@ class Sync_customer extends CI_Controller
           'U_SALE_PERSON' => $rs->U_SALE_PERSON,
           'U_TPD_BI_Department' => $rs->U_TPD_BI_Department,
           'vatRate' => empty($rs->Rate) ? 0.00 : $rs->Rate,
-          'custType' => $custType,
-          'isRegular' => $isRegular
+          'custType' => $custType, //-- Q, V
+          'isRegular' => $isRegular,
+          'registerDate' => $rs->registerDate
         );
 
         if (! $this->customer_model->is_exists_id($rs->DocEntry))

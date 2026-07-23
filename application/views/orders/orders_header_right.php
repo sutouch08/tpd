@@ -17,10 +17,18 @@
     <div class="form-group">
       <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sap-label">เลขที่ PO</label>
       <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-right-12">
+        <input type="text" id="PoNo" class="form-control input-sm e" value="" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="col-lg-6 col-md-6 col-sm-6 col-xs-6 sap-label">Attach file</label>
+      <div class="col-lg-6 col-md-6 col-sm-6 col-xs-6 padding-right-12">
         <div class="input-group">
-          <input type="text" id="PoNo" class="form-control input-sm e" value="" />
+          <input type="text" id="attached-file-name" class="form-control input-sm e" value="" readonly />
           <span class="input-group-btn">
-            <button type="button" class="btn btn-xs btn-info btn-45" title="Attach PO file" onclick="showImportModal()"><i class="fa fa-paperclip fa-flip-horizontal fa-lg"></i></button>
+            <button type="button" class="btn btn-white btn-xs btn-success btn-45" id="btn-add-file" style="height:30px;" title="Attach PO file" onclick="getFile()"><i class="fa fa-plus fa-lg"></i></button>
+            <button type="button" class="btn btn-white btn-xs btn-danger btn-45 hide" id="btn-clear-file" style="height:30px;" title="Clear attached file" onclick="clearImportFile()"><i class="fa fa-times fa-lg"></i></button>
           </span>
         </div>
       </div>

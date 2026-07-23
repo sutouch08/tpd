@@ -241,22 +241,20 @@
 					<?php $no = $this->uri->segment(3) + 1; ?>
 					<?php foreach ($data as $rs) : ?>
 						<?php $credit_issue = ($rs->credit_issue == 1 && $rs->credit_approval != 'A') ? 1 : 0; ?>
-						<tr class="<?php echo $credit_issue ? 'red' : ''; ?>" title="<?php echo $credit_issue ? 'Credit Issue' : ''; ?>">
+						<tr class="<?php echo ($rs->Status == -1 ? 'light-grey' : ($credit_issue ? 'red' : '')); ?>" title="<?php echo $credit_issue ? 'Credit Issue' : ''; ?>">
 							<td class="middle text-center fix-no no" scope="row"><?php echo $no; ?></td>
 							<td class="middle text-center fix-date" scope="row">
 								<?php echo thai_date($rs->date_add, TRUE, '/'); ?>
 							</td>
-							<td class="middle fix-code" scope="row">
-								<?php echo $rs->code; ?> <?php echo $credit_issue ? '<i class="fa fa-exclamation-triangle" title="Credit Issue"></i>' : ''; ?>
-							</td>
+							<td class="middle fix-code" scope="row"><?php echo $rs->code; ?></td>
 							<td class="middle fix-user" scope="row"><?php echo $rs->uname; ?></td>
 							<td class="middle text-center fix-cust" scope="row"><?php echo $rs->CardCode; ?></td>
 							<td class="middle"><?php echo $rs->CardName; ?></td>
 							<td class="middle">
 								<?php if($rs->has_file) : ?>
-									<span class="label label-info label-white middle width-100 pointer" style="text-align: left;" onclick="openFile('<?php echo $rs->file_name; ?>')">
+									<!-- <span class="label label-info label-white middle width-100 pointer" style="text-align: left;" onclick="openFile('<?php echo $rs->file_name; ?>')">
+									</span> -->
 										<i class="fa fa-paperclip"></i>&nbsp; <?php echo $rs->NumAtCard; ?>
-									</span>
 								<?php else : ?>
 									<?php echo $rs->NumAtCard; ?>
 								<?php endif; ?>									
@@ -326,8 +324,6 @@
 </div>
 
 
-
-<!--  Add New Address Modal  --------->
 <div class="modal fade" id="previewModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog" style="width:90%; min-width:400px; max-width:95vw; margin-left:auto; margin-right:auto;">
 		<div class="modal-content">
@@ -344,9 +340,9 @@
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-sm btn-success pull-left hide" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
-				<button type="button" class="btn btn-sm btn-danger pull-left hide" style="margin-left:25%;" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>
-				<button type="button" class="btn btn-sm btn-primary pull-left hide" id="btn-temp" onclick="sendToSAP()">Send To Temp</button>
+				<button type="button" class="btn btn-sm btn-success pull-left a-btn" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
+				<button type="button" class="btn btn-sm btn-danger pull-left a-btn" style="margin-left:25%;" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>
+				<button type="button" class="btn btn-sm btn-primary pull-left a-btn" id="btn-temp" onclick="sendToSAP()">Send To Temp</button>
 				<button type="button" class="btn btn-sm btn-danger pull-right" id="btn-close" onClick="dismiss('previewModal')">Close</button>
 			</div>
 		</div>
@@ -426,10 +422,12 @@
 		</table>
 	</div>
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px;">
-		{{#if creditIssue}}
-			<h4 class="red text-right hidden-xs">รอการอนุมัติเครดิต</h4>
-			<h4 class="red text-center visible-xs">รอการอนุมัติเครดิต</h4>
-		{{/if}}		
+		{{#unless isCancel}}
+			{{#if creditIssue}}
+				<h4 class="red text-right hidden-xs">รอการอนุมัติเครดิต</h4>
+				<h4 class="red text-center visible-xs">รอการอนุมัติเครดิต</h4>
+			{{/if}}
+		{{/unless}}
 	</div>
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px;">
 		<div class="form-horizontal">
@@ -471,6 +469,7 @@
 	</div>
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 		{{#if ApproveBy}} {{ApproveBy}} {{/if}}
+		{{#if isCancel}}<br/> Cancel By : {{cancel_by}} @ {{cancel_at}} {{/if}}
 	</div>
 </script>
 
@@ -559,7 +558,7 @@
 			<tr>
 				<td colspan="2">
 				{{#if del_btn}}
-					<button type="button" class="btn btn-sm btn-danger" onClick="cancleOrder()" ><i class="fa fa-times"></i> Cancel Order</button>
+					<button type="button" class="btn btn-sm btn-danger" onClick="cancelOrder()" ><i class="fa fa-times"></i> Cancel Order</button>
 					<button type="button" class="btn btn-sm btn-warning" onClick="removeTemp()" ><i class="fa fa-trash"></i> Delete Temp</button>
 				{{/if}}
 

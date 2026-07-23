@@ -1076,6 +1076,7 @@ class Orders extends PS_Controller
 					'Comments' => get_null($header->comments),
 					'BillDate' => $header->billOption == 'Y' ? 1 : 0,
 					'requireSQ' => $header->requireSQ == 'Y' ? 1 : 0,
+					'isExport' => $header->isExport == 'Y' ? 1 : 0,
 					'is_discount_sales' => $this->disSale ? $header->is_discount_sales : 0,
 					'date_add' => now(),
 					'user_id' => $this->_user->id,
@@ -1481,6 +1482,10 @@ class Orders extends PS_Controller
 					'promotionCode' => $doc->promotion_code,
 					'CanApprove' => $can_approve,
 					'creditIssue' => ($doc->credit_issue == 1 && $doc->credit_approval != 'A'),
+					'status' => $doc->Status,
+					'isCancel' => $doc->isCancel == 1 ? TRUE : FALSE,
+					'cancel_by' => $doc->cancel_by,
+					'cancel_at' => empty($doc->cancel_date) ? NULL : thai_date($doc->cancel_date, TRUE),
 					'items' => array(),
 					'subTotal' => NULL
 				);
@@ -1999,7 +2004,7 @@ class Orders extends PS_Controller
 	}
 
 
-	public function cancle_order()
+	public function cancel_order()
 	{
 		$sc = TRUE;
 		$code = $this->input->post('code');
@@ -2030,7 +2035,10 @@ class Orders extends PS_Controller
 					'DocNum' => NULL,
 					'Message' => NULL,
 					'sap_date' => NULL,
-					'temp_date' => NULL
+					'temp_date' => NULL,
+					'isCancel' => 1,
+					'cancel_by' => $this->_user->uname,
+					'cancel_date' => now()
 				);
 
 				$this->orders_model->update($code, $arr);

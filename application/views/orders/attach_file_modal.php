@@ -69,8 +69,11 @@
 
   function clearImportFile() {
     document.getElementById('uploadFile').value = '';
+    document.getElementById('attached-file-name').value = '';
     document.getElementById('import-file-info').style.display = 'none';
     document.getElementById('import-drop-zone').style.display = '';
+    $('#btn-add-file').removeClass('hide');
+    $('#btn-clear-file').addClass('hide');
   }
 
   function formatBytes(bytes) {
@@ -89,10 +92,14 @@
         this.value = '';
         return false;
       }
+
       document.getElementById('import-file-name').textContent = file.name;
+      document.getElementById('attached-file-name').value = file.name;
       document.getElementById('import-file-size').textContent = formatBytes(file.size);
       document.getElementById('import-file-info').style.display = 'flex';
       document.getElementById('import-drop-zone').style.display = 'none';
+      $('#btn-add-file').addClass('hide');
+      $('#btn-clear-file').removeClass('hide');
     }
   });
 

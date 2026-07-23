@@ -1,71 +1,5 @@
 var HOME = `${BASE_URL}orders/`;
 
-// function doApprove() {
-//   var code = $('#code').val();
-//   $.ajax({
-//     url:HOME + 'approve',
-//     type:'POST',
-//     cache:false,
-//     data:{
-//       'code' : code
-//     },
-//     success:function(rs) {
-//       var rs = $.trim(rs);
-//       if(rs === 'success') {
-//         swal({
-//           title:'Success',
-//           type:'success',
-//           timer:1000
-//         });
-
-//         setTimeout(function(){
-//           window.location.reload();
-//         }, 1200);
-//       }
-//       else {
-//         swal({
-//           title:'Error',
-//           text:rs,
-//           type:'error'
-//         })
-//       }
-//     }
-//   })
-// }
-
-// function doReject() {
-//   var code = $('#code').val();
-//   $.ajax({
-//     url:HOME + 'reject',
-//     type:'POST',
-//     cache:false,
-//     data:{
-//       'code' : code
-//     },
-//     success:function(rs) {
-//       var rs = $.trim(rs);
-//       if(rs === 'success') {
-//         swal({
-//           title:'Success',
-//           type:'success',
-//           timer:1000
-//         });
-
-//         setTimeout(function(){
-//           window.location.reload();
-//         }, 1200);
-//       }
-//       else {
-//         swal({
-//           title:'Error',
-//           text:rs,
-//           type:'error'
-//         })
-//       }
-//     }
-//   })
-// }
-
 function sendToSAP() {
   var code = $('#OrderCode').val();
   load_in();
@@ -130,6 +64,7 @@ function goDetail(code){
 }
 
 function preview(code, status) {
+  $('.a-btn').addClass('hide');
   load_in();
 
   $('#OrderCode').val(code);
@@ -149,24 +84,26 @@ function preview(code, status) {
         let data = $.parseJSON(rs);
         let output = $('#result');
 
-        if(data.Approved == 'P') {
-          if(data.CanApprove == true) {
-            $('#btn-approve').removeClass('hide');
-            $('#btn-reject').removeClass('hide');
+        if(data.status != -1) {
+          if(data.Approved == 'P') {
+            if(data.CanApprove == true) {
+              $('#btn-approve').removeClass('hide');
+              $('#btn-reject').removeClass('hide');
+            }
+            else {
+              $('#btn-approve').addClass('hide');
+              $('#btn-reject').addClass('hide');
+            }
+
+            $('#btn-temp').addClass('hide');
           }
           else {
             $('#btn-approve').addClass('hide');
             $('#btn-reject').addClass('hide');
-          }
 
-          $('#btn-temp').addClass('hide');
-        }
-        else {
-          $('#btn-approve').addClass('hide');
-          $('#btn-reject').addClass('hide');
-
-          if(data.Approved == 'A') {
-            $('#btn-temp').removeClass('hide');
+            if(data.Approved == 'A') {
+              $('#btn-temp').removeClass('hide');
+            }
           }
         }
 
@@ -485,7 +422,7 @@ function closeModal(name) {
   $('#'+name).modal('hide');
 }
 
-function cancleOrder() {
+function cancelOrder() {
   $('#tempModal').modal('hide');
 
   var code = $('#U_WEB_ORNO').val();
@@ -502,7 +439,7 @@ function cancleOrder() {
   }, function() {
       load_in();
       $.ajax({
-        url:`${HOME}cancle_order`,
+        url:`${HOME}cancel_order`,
         type:'POST',
         data:{
           'code' : code
