@@ -88,6 +88,7 @@ class Product_lot_check extends PS_Controller
             $ds[] = array(
               'no' => $no,
               'description' => $rs->ItemName,
+              'whsCode' => $rs->WhsCode,
               'lotNo' => $rs->BatchNum,
               'expDate' => thai_date($rs->ExpDate),
               'mfdDate' => thai_date($rs->PrdDate),

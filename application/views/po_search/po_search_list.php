@@ -13,30 +13,22 @@
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
   <div class="row">
     <div class="col-lg-1-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
-      <label>เลขที่ PO</label>
+      <label>Invoice No.</label>
+      <input type="text" class="form-control input-sm text-center search-box" name="inv_code" value="<?php echo $inv_code; ?>" placeholder="Invoice Number" />
+    </div>
+
+    <div class="col-lg-1-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
+      <label>PO No.</label>
       <input type="text" class="form-control input-sm text-center search-box" name="po" value="<?php echo $po; ?>" placeholder="PO Number" />
-    </div>
+    </div>    
 
     <div class="col-lg-1-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
-      <label>เลขที่ Web order</label>
-      <input type="text" class="form-control input-sm text-center search-box" name="code" value="<?php echo $code; ?>" placeholder="Web order" />
-    </div>
-
-    <div class="col-lg-1-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
-      <label>ลูกค้า</label>
+      <label>Customer</label>
       <input type="text" class="form-control input-sm text-center search-box" name="customer" value="<?php echo $customer; ?>" placeholder="Code OR Name" />
     </div>
 
-    <div class="col-lg-2-harf col-md-4-harf col-sm-4-harf col-xs-6 padding-5">
-      <label>User</label>
-      <select class="form-control input-sm filter" name="user_id" id="user-id">
-        <option value="all" <?php echo is_selected('all', $user_id); ?>>ทั้งหมด</option>
-        <?php echo select_user_id($user_id); ?>
-      </select>
-    </div>
-
     <div class="col-lg-2 col-md-3 col-sm-3 col-xs-6 padding-5">
-      <label>วันที่</label>
+      <label>Invoice Date</label>
       <div class="input-daterange input-group width-100">
         <input type="text" class="form-control input-sm width-50 from-date text-center" id="fromDate" name="fromDate" value="<?php echo $fromDate; ?>" placeholder="From" readonly />
         <input type="text" class="form-control input-sm width-50 to-date text-center" id="toDate" name="toDate" value="<?php echo $toDate; ?>" placeholder="To" readonly />
@@ -44,11 +36,11 @@
     </div>
 
     <div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
-      <label>ไฟล์แนบ</label>
-      <select class="form-control input-sm filter" name="has_file" >
-        <option value="all" <?php echo is_selected('all', $has_file); ?>>ทั้งหมด</option>
-        <option value="1" <?php echo is_selected('1', $has_file); ?>>มี</option>
-        <option value="0" <?php echo is_selected('0', $has_file); ?>>ไม่มี</option>
+      <label>Attachment</label>
+      <select class="form-control input-sm filter" name="has_file">
+        <option value="all" <?php echo is_selected('all', $has_file); ?>>All</option>
+        <option value="1" <?php echo is_selected('1', $has_file); ?>>Yes</option>
+        <option value="0" <?php echo is_selected('0', $has_file); ?>>No</option>
       </select>
     </div>
 
@@ -74,12 +66,12 @@
         <tr>
           <th class="fix-width-40 text-center">#</th>
           <th class="fix-width-100">Actions</th>
-          <th class="fix-width-150">Files</th>
-          <th class="fix-width-80">วันที่</th>
-          <th class="fix-width-100">WebOrder</th>
+          <th class="fix-width-40 text-center">Files</th>
+          <th class="fix-width-80">Invoice Date</th>
+          <th class="fix-width-100">Invoice No.</th>
           <th class="fix-width-200">PO No.</th>
+          <th class="min-width-200">Customer</th>
           <th class="fix-width-100">User</th>
-          <th class="min-width-200">ลูกค้า</th>          
         </tr>
       </thead>
       <tbody>
@@ -90,23 +82,23 @@
               <td class="middle text-center"><?php echo $no; ?></td>
               <td class="middle">
                 <?php if ($rs->has_file) : ?>
-                <button type="button" class="btn btn-minier btn-primary" title="Preview" onclick="openFile('<?php echo $rs->file_name; ?>')"><i class="fa fa-eye"></i></button>
-                <button type="button" class="btn btn-minier btn-success" title="Download" onclick="downloadFile('<?php echo $rs->file_name; ?>')"><i class="fa fa-download"></i></button>
-                <button type="button" class="btn btn-minier btn-info" title="แจ้งผู้แทน" onclick="printFile('<?php echo $rs->file_name; ?>')"><i class="fa fa-print"></i></button>
+                  <button type="button" class="btn btn-minier btn-primary" title="Preview" onclick="openFile('<?php echo $rs->file_name; ?>')"><i class="fa fa-eye"></i></button>
+                  <button type="button" class="btn btn-minier btn-success" title="Download" onclick="downloadFile('<?php echo $rs->file_name; ?>')"><i class="fa fa-download"></i></button>
+                  <button type="button" class="btn btn-minier btn-info" title="แจ้งผู้แทน" onclick="printFile('<?php echo $rs->file_name; ?>')"><i class="fa fa-print"></i></button>
                 <?php endif; ?>
               </td>
-              <td class="middle"><?php echo $rs->file_name; ?></td>
-              <td class="middle"><?php echo thai_date($rs->date_add, FALSE); ?></td>
-              <td class="middle"><?php echo $rs->code; ?></td>
-              <td class="middle"><?php echo $rs->NumAtCard; ?></td>
-              <td class="middle"><?php echo $rs->uname; ?></td>
+              <td class="middle text-center"><?php echo $rs->has_file ? 'Y' : 'N'; ?></td>
+              <td class="middle"><?php echo thai_date($rs->InvoiceDate, FALSE); ?></td>
+              <td class="middle"><?php echo $rs->InvoiceNo; ?></td>
+              <td class="middle"><?php echo $rs->poCode; ?></td>
               <td class="middle"><?php echo $rs->CardCode; ?> | <?php echo $rs->CardName; ?></td>
+              <td class="middle"><?php echo $rs->uname; ?></td>
             </tr>
             <?php $no++; ?>
           <?php endforeach; ?>
         <?php else : ?>
           <tr>
-            <td colspan="8" class="middle text-center">ไม่พบรายการ</td>
+            <td colspan="8" class="middle text-center">No records found</td>
           </tr>
         <?php endif; ?>
       </tbody>

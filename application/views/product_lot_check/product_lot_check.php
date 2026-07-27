@@ -38,11 +38,12 @@
 
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-    <table class="table table-striped table-bordered tableNarrow border-1" style="min-width:650px;">
+    <table class="table table-striped table-bordered tableNarrow border-1" style="min-width:750px;">
       <thead>
         <tr>
           <th class="fix-width-50 middle text-center">#</th>
           <th class="min-width-200 middle">Description</th>
+          <th class="fix-width-100 middle text-center">Whs. Code</th>
           <th class="fix-width-100 middle text-center">Lot No.</th>
           <th class="fix-width-100 middle text-center">Mfd. Date</th>
           <th class="fix-width-100 middle text-center">Exp. Date</th>
@@ -58,12 +59,13 @@
   {{#each this}}
     {{#if nodata}}
       <tr>
-        <td colspan="6" class="text-center">---{{nodata}} ----</td>
+        <td colspan="7" class="text-center">---{{nodata}} ----</td>
       </tr>
     {{else}}
       <tr>
         <td class="text-center">{{no}}</td>
         <td class="">{{description}}</td>
+        <td class="text-center">{{whsCode}}</td>
         <td class="text-center">{{lotNo}}</td>
         <td class="text-center">{{mfdDate}}</td>
         <td class="text-center">{{expDate}}</td>

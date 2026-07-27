@@ -16,11 +16,10 @@ class Po_search extends PS_Controller
 
   public function index()
   {    
-    $filter = array(      
-      'code' => get_filter('code', 'po_code', ''),
+    $filter = array(            
+      'inv_code' => get_filter('inv_code', 'po_inv_code', ''),
       'po' => get_filter('po', 'po_po', ''),
-      'customer' => get_filter('customer', 'po_customer', ''),
-      'user_id' => get_filter('user_id', 'po_user_id', 'all'),
+      'customer' => get_filter('customer', 'po_customer', ''),      
       'fromDate' => get_filter('fromDate', 'po_fromDate', ''),
       'toDate' => get_filter('toDate', 'po_toDate', ''),
       'has_file' => get_filter('has_file', 'po_has_file', 'all')
@@ -123,7 +122,7 @@ class Po_search extends PS_Controller
 
   public function clear_filter()
   {
-    $filter = array('po_code', 'po_po', 'po_customer', 'po_user_id', 'po_fromDate', 'po_toDate', 'po_has_file');
+    $filter = array('po_inv_code', 'po_po', 'po_customer', 'po_fromDate', 'po_toDate', 'po_has_file');
     clear_filter($filter);
   }
 } // end class 

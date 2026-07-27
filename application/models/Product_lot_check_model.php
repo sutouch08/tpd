@@ -8,12 +8,15 @@ class Product_lot_check_model extends CI_Model
 
   public function get_data($ItemCode, $limit = 0)
   {
+    $whsCode = getConfig('DEFAULT_WAREHOUSE');
+
     $this->ms
-    ->select('ItemCode, ItemName, BatchNum, ExpDate, PrdDate')
+    ->select('ItemCode, ItemName, BatchNum, ExpDate, PrdDate, WhsCode')
     ->select_sum('Quantity', 'qty')
+    ->where('WhsCode', $whsCode)
     ->where('ItemCode', $ItemCode)
     ->where('Quantity >', 0)
-    ->group_by('ItemCode, ItemName, BatchNum, ExpDate, PrdDate')
+    ->group_by('ItemCode, ItemName, BatchNum, ExpDate, PrdDate, WhsCode')
     ->order_by('BatchNum', 'ASC');
 
     if($limit > 0)
