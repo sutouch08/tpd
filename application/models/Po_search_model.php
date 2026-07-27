@@ -12,6 +12,8 @@ class Po_search_model extends CI_Model
   public function count_rows(array $ds = array())
   {
     $this->db    
+    ->where('NumAtCard IS NOT NULL', NULL, FALSE)
+    ->where('NumAtCard !=', '')
     ->where('InvoiceNo IS NOT NULL', NULL, FALSE)
     ->where('InvoiceNo !=', '');
 
@@ -23,6 +25,11 @@ class Po_search_model extends CI_Model
     if( ! empty($ds['po']))
     {
       $this->db->like('NumAtCard', $ds['po']);
+    }
+
+    if( ! empty($ds['web_code']))
+    {
+      $this->db->like('code', $ds['web_code']);
     }
 
     if( ! empty($ds['customer']))
@@ -55,7 +62,9 @@ class Po_search_model extends CI_Model
   public function get_list(array $ds = array(), $perpage = 20, $offset = 0)
   {
     $this->db
-    ->select('InvoiceNo, InvoiceDate, NumAtCard AS poCode, CardCode, CardName, user_id, uname, has_file, file_name, file_type')    
+    ->select('code AS webCode, InvoiceNo, InvoiceDate, NumAtCard AS poCode, CardCode, CardName, user_id, uname, has_file, file_name, file_type')
+    ->where('NumAtCard IS NOT NULL', NULL, FALSE)
+    ->where('NumAtCard !=', '')
     ->where('InvoiceNo IS NOT NULL', NULL, FALSE)
     ->where('InvoiceNo !=', '');
 
@@ -67,6 +76,11 @@ class Po_search_model extends CI_Model
     if( ! empty($ds['po']))
     {
       $this->db->like('NumAtCard', $ds['po']);
+    }
+
+    if( ! empty($ds['web_code']))
+    {
+      $this->db->like('code', $ds['web_code']);
     }
 
     if( ! empty($ds['customer']))
