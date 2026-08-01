@@ -32,6 +32,26 @@ function select_approver($user_id = NULL)
 }
 
 
+function select_approver_uname($uname = NULL)
+{
+  $sc = '';
+
+  $ci =& get_instance();
+  $ci->load->model('approver_model');
+  $approver = $ci->approver_model->get_all_active_approver();
+
+  if(!empty($approver))
+  {
+    foreach($approver as $rs)
+    {
+      $sc .= '<option value="'.$rs->uname.'" '.is_selected($uname, $rs->uname).'>'.$rs->uname.' | '.$rs->emp_name.'</option>';
+    }
+  }
+
+  return $sc;
+}
+
+
 
 function approver_name_list($ds)
 {

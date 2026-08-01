@@ -308,7 +308,8 @@ class Credit_approval extends PS_Controller
           'request_message' => $doc->message,
           'reply_by' => emp_name($doc->uname),
           'reply_message' => $doc->reply_message,
-          'request_date' => thai_date($doc->date_add, TRUE),
+          'request_date' => thai_date($doc->request_date, TRUE),
+          'reply_date' => empty($doc->reply_date) ? NULL : thai_date($doc->reply_date, TRUE),
           'doc_total' => number($doc->DocTotal, 2),
           'diff' => number($doc->credit_diff, 2),
           'overdue' => number($this->get_overdue_amount($doc->CardCode, $doc->CustCode), 2),
@@ -722,7 +723,7 @@ class Credit_approval extends PS_Controller
         {
           $arr = array(
             'credit_case_id' => $id,
-            'credit_case_date' => now(),
+            'request_date' => now(),
             'credit_case_status' => 'O'
           );
 
@@ -745,6 +746,7 @@ class Credit_approval extends PS_Controller
         $arr = array(
           'reply_status' => 'N',
           'message' => $message,
+          'request_date' => now(),
           'update_by' => $this->_user->id
         );
 

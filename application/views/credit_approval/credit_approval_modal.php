@@ -273,7 +273,7 @@
         <h4 class="modal-title-site" style="margin-bottom:0px;">Request Payment</h4>
       </div>
       <div class="modal-body">
-        <div class="row">
+        <div class="row" style="margin-left:0; margin-right:0;">
           <div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6">
             <label class="label-sm">Date</label>
             <input type="text" class="form-control input-sm text-center" id="preview-payment-date" readonly>
@@ -298,20 +298,30 @@
             <label class="label-sm">Overdue</label>
             <input type="text" class="form-control input-sm text-right" id="preview-payment-overdue" readonly>
           </div>
-          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+          <div class="divider"></div>
+
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
             <label class="label-sm">Request By</label>
             <input type="text" class="form-control input-sm" id="preview-payment-request-by" readonly>
           </div>
-          <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+          <div class="col-lg-2-harf col-md-2-harf col-sm-3 col-xs-6">
             <label class="label-sm">Request date</label>
-            <input type="text" class="form-control input-sm" id="preview-payment-request-date" readonly>
+            <input type="text" class="form-control input-sm text-center" id="preview-payment-request-date" readonly>
           </div>
-          <div class="divider-hidden"></div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <label class="label-sm">Request Message</label>
             <input type="text" class="form-control input-sm" id="preview-payment-request-message" readonly>
           </div>
           <div class="divider-hidden"></div>
+
+          <div class="col-lg-4 col-md-4 col-sm-4 col-xs-6">
+            <label class="label-sm">Reply By</label>
+            <input type="text" class="form-control input-sm" id="preview-payment-reply-by" readonly>
+          </div>
+          <div class="col-lg-2-harf col-md-2-harf col-sm-3 col-xs-6">
+            <label class="label-sm">Reply date</label>
+            <input type="text" class="form-control input-sm text-center" id="preview-payment-reply-date" readonly>
+          </div>
           <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
             <label class="label-sm">Reply Message</label>
             <input type="text" class="form-control input-sm" id="preview-payment-reply-message" readonly>

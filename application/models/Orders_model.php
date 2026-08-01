@@ -237,14 +237,14 @@ class Orders_model extends CI_Model
       $this->db->group_end();
     }
 
-    if( ! empty($ds['UserName']))
+    if (isset($ds['user_id']) && $ds['user_id'] !== 'all')
     {
-      $this->db->like('uname', $ds['UserName']);
+      $this->db->where('user_id', $ds['user_id']);
     }
 
-    if( ! empty($ds['Approver']))
+    if( isset($ds['Approver']) && $ds['Approver'] !== 'all')
     {
-      $this->db->like('Approver', $ds['Approver']);
+      $this->db->where('Approver', $ds['Approver']);
     }
 
     if( ! empty($ds['DocNum']))
@@ -290,6 +290,25 @@ class Orders_model extends CI_Model
           $this->db->where('Approved', $ds['Approved']);
         }
       }
+    }
+
+    if (isset($ds['CreditApproval']) && $ds['CreditApproval'] !== 'all')
+    {
+      $this->db->where('credit_issue', 1);
+      
+      if($ds['CreditApproval'] === 'P')
+      {
+        $this->db->where_in('credit_approval', ['O', 'P']);
+      }
+      else
+      {        
+        $this->db->where('credit_approval', $ds['CreditApproval']);        
+      }      
+    }
+
+    if (isset($ds['CreditApprover']) && $ds['CreditApprover'] !== 'all')
+    {
+      $this->db->where('credit_approver', $ds['CreditApprover']);
     }
 
     if($ds['Status'] !== 'all')
@@ -394,14 +413,14 @@ class Orders_model extends CI_Model
       $this->db->group_end();
     }
 
-    if( ! empty($ds['UserName']))
+    if( isset($ds['user_id']) && $ds['user_id'] !== 'all')
     {
-      $this->db->like('uname', $ds['UserName']);
-    }
+      $this->db->where('user_id', $ds['user_id']);
+    }    
 
-    if( ! empty($ds['Approver']))
+    if( isset($ds['Approver']) && $ds['Approver'] !== 'all')
     {
-      $this->db->like('Approver', $ds['Approver']);
+      $this->db->where('Approver', $ds['Approver']);
     }
 
     if( ! empty($ds['DocNum']))
@@ -447,6 +466,25 @@ class Orders_model extends CI_Model
           $this->db->where('Approved', $ds['Approved']);
         }
       }
+    }
+
+    if (isset($ds['CreditApproval']) && $ds['CreditApproval'] !== 'all')
+    {
+      $this->db->where('credit_issue', 1);
+
+      if ($ds['CreditApproval'] === 'P')
+      {
+        $this->db->where_in('credit_approval', ['O', 'P']);
+      }
+      else
+      {
+        $this->db->where('credit_approval', $ds['CreditApproval']);
+      }
+    }
+
+    if(isset($ds['CreditApprover']) && $ds['CreditApprover'] !== 'all')
+    {
+      $this->db->where('credit_approver', $ds['CreditApprover']);
     }
 
     if($ds['Status'] !== 'all')

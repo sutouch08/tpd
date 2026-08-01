@@ -23,7 +23,7 @@
 				<option value="all" <?php echo is_selected('all', $request_by); ?>>ทั้งหมด</option>
 				<?php echo select_credit_approver($request_by); ?>
 			</select>
-		</div>		
+		</div>
 
 		<div class="col-lg-1 col-md-1-harf col-sm-1-harf col-xs-3 padding-5">
 			<label class="search-label">สถานะ</label>
@@ -61,13 +61,14 @@
 <?php echo $this->pagination->create_links(); ?>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table table-striped tableNarrow border-1" style="min-width:960px;">
+		<table class="table table-striped tableNarrow border-1" style="min-width:1100px;">
 			<thead>
 				<tr>
 					<th class="fix-width-40 text-center">#</th>
 					<th class="fix-width-100">Actions</th>
 					<th class="fix-width-60">Status</th>
 					<th class="fix-width-130">Request date</th>
+					<th class="fix-width-130">Reply date</th>
 					<th class="fix-width-100">WebOrder</th>
 					<th class="fix-width-100">Request by</th>
 					<th class="min-width-250">Customer</th>
@@ -78,18 +79,19 @@
 			<tbody>
 				<?php if (!empty($data)) : ?>
 					<?php $no = $this->uri->segment($this->segment) + 1; ?>
-					<?php foreach ($data as $rs) : ?>			
-					<?php $color = $rs->reply_status == 'N' ? 'background-color:#ffdede;' : 'background-color:#f1f8e9;'; ?>									
+					<?php foreach ($data as $rs) : ?>
+						<?php $color = $rs->reply_status == 'N' ? 'background-color:#ffdede;' : 'background-color:#f1f8e9;'; ?>
 						<tr style="<?php echo $color; ?>">
 							<td class="middle text-center"><?php echo $no; ?></td>
 							<td class="middle">
 								<button type="button" class="btn btn-minier btn-info" title="View Detail" onclick="viewDetail('<?php echo $rs->code; ?>')"><i class="fa fa-eye"></i></button>
-								<button type="button" class="btn btn-minier btn-primary" title="Authorizer" onclick="showAuthorize('<?php echo $rs->code; ?>')"><i class="fa fa-user"></i></button>								
+								<button type="button" class="btn btn-minier btn-primary" title="Authorizer" onclick="showAuthorize('<?php echo $rs->code; ?>')"><i class="fa fa-user"></i></button>
 							</td>
 							<td class="middle">
 								<?php echo $rs->status == 'C' ? 'Closed' : ($rs->status == 'A' ? 'Accepted' : ($rs->status == 'R' ? 'Rejected' : 'Pending')); ?>
 							</td>
-							<td class="middle text-center"><?php echo thai_date($rs->date_add, TRUE); ?></td>
+							<td class="middle text-center"><?php echo thai_date($rs->request_date, TRUE); ?></td>
+							<td class="middle text-center"><?php echo empty($rs->reply_date) ? NULL : thai_date($rs->reply_date, TRUE); ?></td>
 							<td class="middle"><?php echo $rs->code; ?></td>
 							<td class="middle"><?php echo emp_name_by_id($rs->add_by); ?></td>
 							<td class="middle"><?php echo $rs->CardCode; ?> | <?php echo $rs->CardName; ?></td>
@@ -97,7 +99,7 @@
 								<input type="text" class="form-control input-xs text-right text-label" value="<?php echo number($rs->DocTotal, 2); ?>" readonly>
 							</td>
 							<td class="middle">
-								<input type="text" class="form-control input-xs text-right text-label" value="<?php echo number($rs->credit_diff, 2); ?>" readonly>
+								<input type="text" class="form-control input-xs text-right text-label" id="credit-diff-<?php echo $rs->code; ?>" value="<?php echo number($rs->credit_diff, 2); ?>" readonly>
 							</td>
 						</tr>
 						<?php $no++; ?>
@@ -163,9 +165,9 @@
 <script>
 	$('#user-id').select2();
 	$(document).ready(function() {
-	  setTimeout(function() {
-	    window.location.reload();
-	  }, 1000 * 60 * 5); //--- reload every 5 minutes
+		setTimeout(function() {
+			window.location.reload();
+		}, 1000 * 60 * 5); //--- reload every 5 minutes
 	});
 </script>
 

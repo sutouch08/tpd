@@ -285,14 +285,22 @@ class Request_payment_order extends PS_Controller
         'has_document' => empty($files) ? 0 : 1,
         'reply_status' => 'R',
         'reply_message' => $message,
-        'update_by' => $this->_user->id,
-        'date_upd' => now()
+        'reply_date' => now(),
+        'update_by' => $this->_user->id
       );
 
       if( ! $this->payment_request_model->update($code, $arr))
       {
         $sc = FALSE;
         $this->error = "update reply failed";
+      }
+      else 
+      {
+        $arr = array(
+          'reply_date' => now()
+        );
+
+        $this->orders_model->update($code, $arr);
       }
     }
     else
@@ -304,6 +312,33 @@ class Request_payment_order extends PS_Controller
     $this->_response($sc);
   }
 
+  public function get_approver()
+  {
+    $this->load->model('credit_approver_model');
+    $amount = $this->input->post('diff');
+    $apv = $this->credit_approver_model->get_active_by_amount($amount);
+    $list = [];
+
+    if (!empty($apv))
+    {
+      foreach ($apv as $rs)
+      {
+        $list[] = array(
+          'id' => $rs->user_id,
+          'uname' => $rs->uname,
+          'emp_name' => $rs->emp_name,
+          'amount' => number($rs->amount, 2)
+        );
+      }
+    }
+    else
+    {
+      $list[] = ['nodata' => 'No authorizer'];
+    }
+
+
+    echo json_encode($list);
+  }
 
   public function clear_filter()
   {

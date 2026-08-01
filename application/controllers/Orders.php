@@ -25,6 +25,8 @@ class Orders extends PS_Controller
 		$this->load->helper('sales_team_condition');
 		$this->load->helper('price_list');
 		$this->load->helper('special_price_list');
+		$this->load->helper('approve');
+		$this->load->helper('credit_approval');
 
 		$this->disSale = getConfig('USE_DISCSALE') == 1 ? TRUE : FALSE;
 	}
@@ -40,9 +42,11 @@ class Orders extends PS_Controller
 			'InvoiceNo' => get_filter('InvoiceNo', 'so_InvoiceNo', ''),
 			'PoNo' => get_filter('PoNo', 'so_PoNo', ''),
 			'CardCode' => get_filter('CardCode', 'so_CardCode', ''),
-			'UserName' => get_filter('UserName', 'so_UserName', ''),
-			'Approver' => get_filter('Approver', 'so_Approver', ''),
+			'user_id' => get_filter('user_id', 'so_user_id', 'all'),
+			'Approver' => get_filter('Approver', 'so_Approver', 'all'),
 			'Approved' => get_filter('Approved', 'so_Approved', 'all'),
+			'CreditApproval' => get_filter('CreditApproval', 'so_CreditApproval', 'all'),
+			'CreditApprover' => get_filter('CreditApprover', 'so_CreditApprover', 'all'),
 			'Status' => get_filter('Status', 'doc_status', 'all'),
 			'SO_Status' => get_filter('SO_Status', 'SO_Status', 'all'),
 			'DO_Status' => get_filter('DO_Status', 'DO_Status', 'all'),
@@ -2100,7 +2104,7 @@ class Orders extends PS_Controller
 			'so_InvoiceNo',
 			'so_PoNo',
 			'so_CardCode',
-			'so_UserName',
+			'so_user_id',
 			'so_Approver',
 			'so_Approved',
 			'doc_status',
@@ -2110,7 +2114,9 @@ class Orders extends PS_Controller
 			'so_fromDate',
 			'so_toDate',
 			'so_is_promotion',
-			'is_discount_sales'
+			'is_discount_sales',
+			'so_CreditApproval',
+			'so_CreditApprover',
 		);
 
 		clear_filter($filter);

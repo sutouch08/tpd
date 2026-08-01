@@ -18,7 +18,7 @@ function select_credit_approver($id = '')
   {
     foreach($list as $rs)
     {
-      $ds .= '<option value="'.$rs->user_id.'" '.is_selected($rs->user_id, $id).'>'.$rs->emp_name.'</option>';
+      $ds .= '<option value="'.$rs->user_id.'" '.is_selected($rs->user_id, $id).'>'.$rs->uname.' | '.$rs->emp_name.'</option>';
     }
   }
 

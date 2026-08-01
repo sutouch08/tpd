@@ -234,4 +234,25 @@ function emp_name_by_id($id)
   return NULL;
 }
 
+function users_array()
+{
+  $ci =& get_instance();
+  $users = $ci->user_model->get_all();
+  $arr = [];
+
+  if( ! empty($users))
+  {
+    foreach($users as $rs)
+    {
+      $arr[$rs->id] = array(
+        'id' => $rs->id,
+        'uname' => $rs->uname,
+        'name' => $rs->emp_name,
+      );
+    }
+  }
+
+  return $arr;
+}
+
  ?>

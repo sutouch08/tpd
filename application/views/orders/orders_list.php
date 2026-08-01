@@ -1,6 +1,12 @@
 <?php $this->load->view('include/header'); ?>
 
 <style>
+	.search-label {
+		font-size: 12px;
+		margin-bottom: 0px;
+		margin-top: 8px;
+	}
+
 	.table>tbody>tr>td {
 		padding: 5px !important;
 		font-size: 12px !important;
@@ -10,6 +16,11 @@
 		padding: 5px !important;
 		text-align: center;
 		font-size: 12px !important;
+	}
+
+	.table-bordered>thead>tr>th,
+	.table-bordered>tbody>tr>td {
+		border: 1px solid #bababa;
 	}
 
 	.form-group {
@@ -23,6 +34,10 @@
 	.label.btn-block {
 		padding: 3px 0px;
 		font-size: 12px;
+	}
+
+	.credit-issue {
+		background-color: #fdd9d9;
 	}
 
 	@media (min-width: 768px) {
@@ -54,9 +69,14 @@
 
 		td[scope=row] {
 			background-color: #ffffff;
+			/* border-top:solid 1px #dddddd; */
 			border: 0 !important;
-			outline: solid 1px #dddddd;
+			outline: solid 1px #bababa;
 			z-index: 2;
+		}
+
+		tr.credit-issue>td[scope=row] {
+			background-color: #fdd9d9;
 		}
 	}
 </style>
@@ -73,52 +93,50 @@
 		<?php endif; ?>
 	</div>
 </div><!-- End Row -->
-<hr class="padding-5" />
+<hr class="padding-5" style="margin-bottom:0px;" />
 <form id="searchForm" method="post" action="<?php echo current_url(); ?>">
 	<div class="row f-row">
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">เลขที่</label>
 			<input type="text" class="form-control input-sm text-center search-box" name="WebCode" value="<?php echo $WebCode; ?>" />
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">ลูกค้า</label>
 			<input type="text" class="form-control input-sm text-center search-box" name="CardCode" value="<?php echo $CardCode; ?>" placeholder="Code OR Name" />
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">SO No.</label>
 			<input type="text" class="form-control input-sm text-center search-box" name="DocNum" value="<?php echo $DocNum; ?>" />
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">DO No.</label>
 			<input type="text" class="form-control input-sm text-center search-box" name="DeliveryNo" value="<?php echo $DeliveryNo; ?>" />
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">Invoice No.</label>
 			<input type="text" class="form-control input-sm text-center search-box" name="InvoiceNo" value="<?php echo $InvoiceNo; ?>" />
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">เลขที่ PO</label>
 			<input type="text" class="form-control input-sm text-center search-box" name="PoNo" value="<?php echo $PoNo; ?>" />
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
 			<label class="search-label">User</label>
-			<input type="text" class="form-control input-sm text-center search-box" name="UserName" value="<?php echo $UserName; ?>" />
+			<select class="form-control input-sm filter" name="user_id" id="user-id">
+				<option value="all">ทั้งหมด</option>
+				<?php echo select_user_id($user_id); ?>
+			</select>
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-			<label class="search-label">ผู้อนุมัติ</label>
-			<input type="text" class="form-control input-sm text-center search-box" name="Approver" value="<?php echo $Approver; ?>" />
-		</div>
-
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
-			<label class="search-label">การอนุมัติ</label>
-			<select class="form-control input-sm" name="Approved" onchange="getSearch()">
+		<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">การอนุมัติ (PL)</label>
+			<select class="form-control input-sm filter" name="Approved">
 				<option value="all">ทั้งหมด</option>
 				<option value="P" <?php echo is_selected('P', $Approved); ?>>รออนุมัติ</option>
 				<option value="A" <?php echo is_selected('A', $Approved); ?>>อนุมัติ</option>
@@ -127,7 +145,33 @@
 			</select>
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
+			<label class="search-label">ผู้อนุมัติ (PL)</label>
+			<select class="form-control input-sm filter" name="Approver" id="approver">
+				<option value="all">ทั้งหมด</option>
+				<?php echo select_approver_uname($Approver); ?>
+			</select>
+		</div>
+
+		<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">การอนุมัติ (CR)</label>
+			<select class="form-control input-sm filter" name="CreditApproval">
+				<option value="all">ทั้งหมด</option>
+				<option value="P" <?php echo is_selected('P', $CreditApproval); ?>>รออนุมัติ</option>
+				<option value="A" <?php echo is_selected('A', $CreditApproval); ?>>อนุมัติ</option>
+				<option value="R" <?php echo is_selected('R', $CreditApproval); ?>>ไม่อนุมัติ</option>
+			</select>
+		</div>
+
+		<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
+			<label class="search-label">ผู้อนุมัติ (CR)</label>
+			<select class="form-control input-sm filter" name="CreditApprover" id="credit-approver">
+				<option value="all">ทั้งหมด</option>
+				<?php echo select_credit_approver($CreditApprover); ?>
+			</select>
+		</div>
+
+		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">Team condition</label>
 			<select class="form-control input-sm" name="con_id" onchange="getSearch()">
 				<option value="all">ทั้งหมด</option>
@@ -135,7 +179,7 @@
 			</select>
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
 			<label class="search-label">สถานะ</label>
 			<select class="form-control input-sm" name="Status" onchange="getSearch()">
 				<option value="all">ทั้งหมด</option>
@@ -147,7 +191,7 @@
 			</select>
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
 			<label class="search-label">SO Status</label>
 			<select class="form-control input-sm" name="SO_Status" onchange="getSearch()">
 				<option value="all">ทั้งหมด</option>
@@ -158,7 +202,7 @@
 			</select>
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
 			<label class="search-label">DO Status</label>
 			<select class="form-control input-sm" name="DO_Status" onchange="getSearch()">
 				<option value="all">ทั้งหมด</option>
@@ -168,7 +212,7 @@
 			</select>
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
 			<label class="search-label">Invoice Status</label>
 			<select class="form-control input-sm" name="INV_Status" onchange="getSearch()">
 				<option value="all">ทั้งหมด</option>
@@ -178,7 +222,7 @@
 			</select>
 		</div>
 
-		<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+		<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
 			<label class="search-label">Discount Sales</label>
 			<select class="form-control input-sm" name="is_discount_sales" onchange="getSearch()">
 				<option value="all">ทั้งหมด</option>
@@ -215,33 +259,38 @@
 		<table class="table table-bordered tableFixHead border-1" style="margin-left: -1px; margin-top: -1px; min-width:1730px;">
 			<thead>
 				<tr>
-					<th class="fix-width-40 text-center fix-no fix-header">#</th>
-					<th class="fix-width-130 fix-date fix-header">วันที่</th>
-					<th class="fix-width-100 fix-code fix-header">เลขที่ WebOrder</th>
-					<th class="fix-width-100 fix-user fix-header">User</th>
-					<th class="fix-width-90 text-center fix-cust fix-header">รหัสลูกค้า</th>
-					<th class="fix-width-250">ลูกค้า</th>
-					<th class="fix-width-120">เลขที่ PO</th>
-					<th class="fix-width-100 text-right">มูลค่า</th>
-					<th class="fix-width-70 text-center">Preview</th>
-					<th class="fix-width-70 text-center">สถานะ</th>
-					<th class="fix-width-80 text-center">ผู้มีสิทธิ์อนุมัติ</th>
-					<th class="fix-width-80 text-center">การอนุมัติ</th>
-					<th class="fix-width-100">ผู้อนุมัติ</th>
-					<th class="fix-width-80 text-center">เลขที่ SO (SAP)</th>
-					<th class="fix-width-80 text-center">SO Status</th>
-					<th class="fix-width-80 text-center">DO Status</th>
-					<th class="fix-width-80 text-center">Invoice Status</th>
-					<th class="fix-width-80 text-center">STC.</th>
+					<th class="fix-width-40 middle text-center fix-no fix-header">#</th>
+					<th class="fix-width-130 middle fix-date fix-header">วันที่</th>
+					<th class="fix-width-100 middle fix-code fix-header">เลขที่ WebOrder</th>
+					<th class="fix-width-100 middle fix-user fix-header">User</th>
+					<th class="fix-width-90 middle text-center fix-cust fix-header">รหัสลูกค้า</th>
+					<th class="fix-width-250 middle">ลูกค้า</th>
+					<th class="fix-width-120 middle">เลขที่ PO</th>
+					<th class="fix-width-100 middle text-right">มูลค่า</th>
+					<th class="fix-width-70 middle text-center">Preview</th>
+					<th class="fix-width-90 middle text-center">สถานะ</th>
+					<th class="fix-width-80 middle text-center">ผู้มีสิทธิ์อนุมัติ (PL)</th>
+					<th class="fix-width-80 middle text-center">การอนุมัติ (PL)</th>
+					<th class="fix-width-100 middle">ผู้อนุมัติ (PL)</th>
+					<th class="fix-width-80 middle text-center">ผู้มีสิทธิ์อนุมัติ (CR)</th>
+					<th class="fix-width-80 middle text-center">การอนุมัติ (CR)</th>
+					<th class="fix-width-100 middle">ผู้อนุมัติ (CR)</th>
+					<th class="fix-width-80 middle text-center">เลขที่ SO (SAP)</th>
+					<th class="fix-width-80 middle text-center">SO Status</th>
+					<th class="fix-width-80 middle text-center">DO Status</th>
+					<th class="fix-width-80 middle text-center">Invoice Status</th>
+					<th class="fix-width-80 middle text-center">STC.</th>
 				</tr>
 			</thead>
 			<tbody>
-
-				<?php if (!empty($data)) : ?>
+				<?php if (! empty($data)) : ?>
 					<?php $no = $this->uri->segment(3) + 1; ?>
+					<?php $users = users_array(); //--- user_helper 
+					?>
 					<?php foreach ($data as $rs) : ?>
 						<?php $credit_issue = ($rs->credit_issue == 1 && $rs->credit_approval != 'A') ? 1 : 0; ?>
-						<tr class="<?php echo ($rs->Status == -1 ? 'light-grey' : ($credit_issue ? 'red' : '')); ?>" title="<?php echo $credit_issue ? 'Credit Issue' : ''; ?>">
+						<?php $bgColor = $credit_issue ? 'credit-issue' : ''; ?>
+						<tr class="<?php echo $bgColor; ?>">
 							<td class="middle text-center fix-no no" scope="row"><?php echo $no; ?></td>
 							<td class="middle text-center fix-date" scope="row">
 								<?php echo thai_date($rs->date_add, TRUE, '/'); ?>
@@ -251,31 +300,36 @@
 							<td class="middle text-center fix-cust" scope="row"><?php echo $rs->CardCode; ?></td>
 							<td class="middle"><?php echo $rs->CardName; ?></td>
 							<td class="middle">
-								<?php if($rs->has_file) : ?>
+								<?php if ($rs->has_file) : ?>
 									<!-- <span class="label label-info label-white middle width-100 pointer" style="text-align: left;" onclick="openFile('<?php echo $rs->file_name; ?>')">
 									</span> -->
-										<i class="fa fa-paperclip"></i>&nbsp; <?php echo $rs->NumAtCard; ?>
+									<i class="fa fa-paperclip"></i>&nbsp; <?php echo $rs->NumAtCard; ?>
 								<?php else : ?>
 									<?php echo $rs->NumAtCard; ?>
-								<?php endif; ?>									
+								<?php endif; ?>
 							</td>
 							<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
 							<td class="middle text-center"><span class="btn btn-minier btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</span></td>
 							<td class="middle text-center">
 								<?php if ($rs->Status == 2) : ?>
-									<button type="button" class="btn btn-minier btn-success btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</button>
+									<a href="javascript:void(0)" class="green" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</a>
+									<!-- <button type="button" class="btn btn-minier btn-success btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</button> -->
 								<?php endif; ?>
 								<?php if ($rs->Status == 3) : ?>
-									<button type="button" class="btn btn-minier btn-danger btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Failed</button>
+									<a href="javascript:void(0)" class="red" onclick="viewDetail('<?php echo $rs->code; ?>')">Failed</a>
+									<!-- <button type="button" class="btn btn-minier btn-danger btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Failed</button> -->
 								<?php endif; ?>
 								<?php if ($rs->Status == 1) : ?>
-									<button type="button" class="btn btn-minier btn-warning btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</button>
+									<a href="javascript:void(0)" class="orange" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</a>
+									<!-- <button type="button" class="btn btn-minier btn-warning btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</button> -->
 								<?php endif; ?>
 								<?php if ($rs->Status == 0) : ?>
-									<span class="label label-md label-danger btn-block" style="font-size: 11px; padding-top: 3px;">Not Export</span>
+									<span class="text-center">Not Exported</span>
+									<!-- <span class="label label-md label-danger btn-block" style="font-size: 11px; padding-top: 3px;">Not Export</span> -->
 								<?php endif; ?>
 								<?php if ($rs->Status == -1) : ?>
-									<span class="label label-md label-danger btn-block" style="font-size: 11px; padding-top: 3px;">Canceled</span>
+									<span class="red text-center">Canceled</span>
+									<!-- <span class="label label-md label-danger btn-block" style="font-size: 11px; padding-top: 3px;">Canceled</span> -->
 								<?php endif; ?>
 							</td>
 							<td class="middle text-center">
@@ -286,19 +340,44 @@
 							<td class="middle text-center">
 								<?php if ($rs->must_approve == 1 && $rs->Approved == 'A') : ?>
 									<?php if ($rs->Approval_status === 'P') : ?>
-										<span class="label label-lg label-success btn-block">อนุมัติบางส่วน</span>
+										<span class="green">อนุมัติบางส่วน</span>
+										<!-- <span class="label label-lg label-success btn-block">อนุมัติบางส่วน</span> -->
 									<?php else : ?>
-										<span class="label label-lg label-success btn-block">อนุมัติ</span>
+										<span class="green">อนุมัติ</span>
+										<!-- <span class="label label-lg label-success btn-block">อนุมัติ</span> -->
 									<?php endif; ?>
 								<?php elseif ($rs->must_approve == 1 && $rs->Approved == 'P') : ?>
-									<span class="label label-lg label-warning btn-block">รออนุมัติ</span>
+									<span class="orange">รออนุมัติ</span>
+									<!-- <span class="label label-lg label-warning btn-block">รออนุมัติ</span> -->
 								<?php elseif ($rs->must_approve == 1 && $rs->Approved == 'R') : ?>
-									<span class="label label-lg label-danger btn-block">ไม่อนุมัติ</span>
+									<span class="red">ไม่อนุมัติ</span>
+									<!-- <span class="label label-lg label-danger btn-block">ไม่อนุมัติ</span> -->
 								<?php else : ?>
-									<span class="label label-lg label-success btn-block">อนุมัติ</span>
+									<span class="green">อนุมัติ</span>
+									<!-- <span class="label label-lg label-success btn-block">อนุมัติ</span> -->
 								<?php endif; ?>
 							</td>
 							<td class="middle"><?php echo $rs->Approver; ?></td>
+
+
+							<td class="middle text-center">
+								<?php if ($rs->credit_issue == 1) : ?>
+									<button class="btn btn-minier btn-primary" onclick="showCreditApprover('<?php echo $rs->code; ?>', '<?php echo $rs->credit_diff; ?>')">Authorizer</button>
+								<?php endif; ?>
+							</td>
+							<td class="middle text-center">
+								<?php if ($rs->credit_issue == 1 && $rs->credit_approval == 'A') : ?>
+									<span class="green">อนุมัติ</span>
+								<?php elseif ($rs->credit_issue == 1 && $rs->credit_approval == 'P') : ?>
+									<span class="orange">รออนุมัติ</span>
+								<?php elseif ($rs->credit_issue == 1 && $rs->credit_approval == 'R') : ?>
+									<span class="red">ไม่อนุมัติ</span>
+								<?php elseif ($rs->credit_issue == 1 && $rs->credit_approval == 'O') : ?>
+									<span class="orange">รออนุมัติ</span>
+								<?php endif; ?>
+							</td>
+							<td class="middle"><?php echo empty($rs->credit_approver) ? NULL : $users[$rs->credit_approver]['uname']; ?></td>
+
 							<td class="middle text-center"><?php echo $rs->DocNum; ?></td>
 							<td class="middle text-center">
 								<?php if ($rs->SO_Status == 'D') : ?>
@@ -580,6 +659,8 @@
 			window.location.reload();
 		}, 1000 * 60 * 5); //--- reload every 5 minutes
 	});
+
+	$('#user-id').select2();
 </script>
 
 <script src="<?php echo base_url(); ?>scripts/orders/orders.js?v=<?php echo date('YmdH'); ?>"></script>

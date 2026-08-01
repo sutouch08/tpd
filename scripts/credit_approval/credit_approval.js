@@ -427,6 +427,8 @@ function viewRequestPayment(code) {
 					$('#preview-payment-customer').val(data.customer);
 					$('#preview-payment-request-by').val(`${data.request_by}`);
 					$('#preview-payment-request-date').val(data.request_date);
+					$('#preview-payment-reply-by').val(`${data.reply_by}`);
+					$('#preview-payment-reply-date').val(data.reply_date);
 					$('#preview-payment-doc-total').val(data.doc_total);
 					$('#preview-payment-credit-diff').val(data.diff);
 					$('#preview-payment-overdue').val(data.overdue);
