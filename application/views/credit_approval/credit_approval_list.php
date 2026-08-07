@@ -7,6 +7,26 @@
 	.tableNarrow thead tr th {
 		font-size: 11px;
 	}
+
+	.request-text {
+		font-size: 12px;
+		line-height: 1.15;		
+		/* font-style: italic; */
+	}
+
+	.request-text > span {
+		font-weight: bold;
+		font-style: italic;
+		color:#505050;
+		background-color:#e1e1e1;
+		padding: 2px 5px;
+		border-radius: 3px;
+		font-size: 11px;
+	}
+
+	.log-text {
+		margin-bottom:3px;
+	}
 </style>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5">
@@ -103,14 +123,16 @@
 					<?php foreach ($data as $rs) : ?>
 						<?php $capv = $rs->credit_approval; ?>
 						<?php $replyStatus = $rs->reply_status; ?>
-						<?php $color = $rs->is_over_due && $capv == 'O' ? ((! empty($rs->credit_case_id) && $replyStatus == 'R') ? 'background-color:#ffa4a4;' : 'background-color:#ffdede;') : ''; ?>
-						<?php $text_color = ($rs->is_over_due && empty($rs->credit_case_id)) ? 'color:red;' : ''; ?>
+						<?php //- P = รอดำเนินการ //-- D = รอเอกสาร //-- O = รอตรวจสอบ //-- A = รออนุมัติ  ?>
+						<?php $status = $capv == 'O' ? ($replyStatus == 'R' ? $status = 'O' : ($replyStatus == 'N' ? $status = 'D' : 'P')) : 'A'; ?>
+						<?php $color = $status == 'P' ? 'background-color:#ffdede;' : ($status == 'D' ? 'background-color:#fbe9ff;' : ($status == 'O' ? 'background-color:#e9fdff;' : 'background-color:#f4ffe9;')); ?>						
+						<?php $text_color = ($rs->is_over_due) ? 'color:#bb1f1f;' : ''; ?>
 						<tr style="<?php echo $color; ?> <?php echo $text_color; ?>">
 							<td class="middle text-center"><?php echo $no; ?></td>
 							<td class="middle">
 								<button type="button" class="btn btn-minier btn-info" title="Preview" onclick="preview('<?php echo $rs->code; ?>')"><i class="fa fa-eye"></i></button>
 								<button type="button" class="btn btn-minier btn-primary" title="Authorizer" onclick="showAuthorize('<?php echo $rs->code; ?>')"><i class="fa fa-user"></i></button>
-								<?php if ($capv == 'O' && empty($rs->credit_case_id) && $can_review) : ?>
+								<?php if ($capv == 'O' && $rs->is_over_due && empty($rs->credit_case_id) && $can_review) : ?>
 									<button type="button" class="btn btn-minier btn-warning" title="Request Payment" onclick="addRequestPayment('<?php echo $rs->code; ?>')"><i class="fa fa-plus"></i></button>
 								<?php endif; ?>
 								<?php if (! empty($rs->credit_case_id)) : ?>
@@ -160,11 +182,11 @@
 
 <script>
 	$('#user-id').select2();
-	$(document).ready(function() {
-		setTimeout(function() {
-			window.location.reload();
-		}, 1000 * 60 * 5); //--- reload every 5 minutes
-	});
+	// $(document).ready(function() {
+	// 	setTimeout(function() {
+	// 		window.location.reload();
+	// 	}, 1000 * 60 * 5); //--- reload every 5 minutes
+	// });
 </script>
 
 <script src="<?php echo base_url(); ?>scripts/credit_approval/credit_approval.js?v=<?php echo date('YmdH'); ?>"></script>

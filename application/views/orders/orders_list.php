@@ -1,6 +1,33 @@
 <?php $this->load->view('include/header'); ?>
 
 <style>
+	h4.status-label {
+		width: 150px;
+		height: 50px;
+		float: right;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	h4.status-label.red {
+		background-color: #fdd9d9;
+		color: #a94442;
+		border: 1px solid #a94442;
+	}
+
+	h4.status-label.orange {
+		background-color: #fcf8e3;
+		color: #8a6d3b;
+		border: 1px solid #8a6d3b;
+	}
+
+	h4.status-label.green {
+		background-color: #dff0d8;
+		color: #3c763d;
+		border: 1px solid #3c763d;
+	}
+
 	.search-label {
 		font-size: 12px;
 		margin-bottom: 0px;
@@ -135,7 +162,7 @@
 		</div>
 
 		<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
-			<label class="search-label">การอนุมัติ (PL)</label>
+			<label class="search-label">การอนุมัติ</label>
 			<select class="form-control input-sm filter" name="Approved">
 				<option value="all">ทั้งหมด</option>
 				<option value="P" <?php echo is_selected('P', $Approved); ?>>รออนุมัติ</option>
@@ -146,7 +173,7 @@
 		</div>
 
 		<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
-			<label class="search-label">ผู้อนุมัติ (PL)</label>
+			<label class="search-label">ผู้อนุมัติ</label>
 			<select class="form-control input-sm filter" name="Approver" id="approver">
 				<option value="all">ทั้งหมด</option>
 				<?php echo select_approver_uname($Approver); ?>
@@ -154,23 +181,23 @@
 		</div>
 
 		<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
-			<label class="search-label">การอนุมัติ (CR)</label>
-			<select class="form-control input-sm filter" name="CreditApproval">
+			<label class="search-label">Credit Issue</label>
+			<select class="form-control input-sm filter" name="credit_issue">
 				<option value="all">ทั้งหมด</option>
-				<option value="P" <?php echo is_selected('P', $CreditApproval); ?>>รออนุมัติ</option>
-				<option value="A" <?php echo is_selected('A', $CreditApproval); ?>>อนุมัติ</option>
-				<option value="R" <?php echo is_selected('R', $CreditApproval); ?>>ไม่อนุมัติ</option>
+				<option value="1" <?php echo is_selected('1', $credit_issue); ?>>Yes</option>
+				<option value="0" <?php echo is_selected('0', $credit_issue); ?>>No</option>
 			</select>
 		</div>
 
-		<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6 padding-5">
-			<label class="search-label">ผู้อนุมัติ (CR)</label>
-			<select class="form-control input-sm filter" name="CreditApprover" id="credit-approver">
+		<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
+			<label class="search-label">Overdue</label>
+			<select class="form-control input-sm filter" name="is_over_due">
 				<option value="all">ทั้งหมด</option>
-				<?php echo select_credit_approver($CreditApprover); ?>
+				<option value="1" <?php echo is_selected('1', $is_over_due); ?>>Yes</option>
+				<option value="0" <?php echo is_selected('0', $is_over_due); ?>>No</option>
 			</select>
 		</div>
-
+		
 		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">Team condition</label>
 			<select class="form-control input-sm" name="con_id" onchange="getSearch()">
@@ -256,7 +283,7 @@
 <?php echo $this->pagination->create_links(); ?>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 border-1 table-responsive" id="item-div" style="overflow: auto; padding-left:0px; padding-right:0px; padding-bottom:5px; margin-left:5px; margin-right:5px;">
-		<table class="table table-bordered tableFixHead border-1" style="margin-left: -1px; margin-top: -1px; min-width:1730px;">
+		<table class="table table-bordered tableFixHead border-1" style="margin-left: -1px; margin-top: -1px; min-width:1870px;">
 			<thead>
 				<tr>
 					<th class="fix-width-40 middle text-center fix-no fix-header">#</th>
@@ -264,17 +291,16 @@
 					<th class="fix-width-100 middle fix-code fix-header">เลขที่ WebOrder</th>
 					<th class="fix-width-100 middle fix-user fix-header">User</th>
 					<th class="fix-width-90 middle text-center fix-cust fix-header">รหัสลูกค้า</th>
-					<th class="fix-width-250 middle">ลูกค้า</th>
+					<th class="min-width-250 middle">ลูกค้า</th>
 					<th class="fix-width-120 middle">เลขที่ PO</th>
 					<th class="fix-width-100 middle text-right">มูลค่า</th>
+					<th class="fix-width-60 middle text-center">Credit Issue</th>
+					<th class="fix-width-60 middle text-center">Overdue</th>
 					<th class="fix-width-70 middle text-center">Preview</th>
 					<th class="fix-width-90 middle text-center">สถานะ</th>
-					<th class="fix-width-80 middle text-center">ผู้มีสิทธิ์อนุมัติ (PL)</th>
-					<th class="fix-width-80 middle text-center">การอนุมัติ (PL)</th>
-					<th class="fix-width-100 middle">ผู้อนุมัติ (PL)</th>
-					<th class="fix-width-80 middle text-center">ผู้มีสิทธิ์อนุมัติ (CR)</th>
-					<th class="fix-width-80 middle text-center">การอนุมัติ (CR)</th>
-					<th class="fix-width-100 middle">ผู้อนุมัติ (CR)</th>
+					<th class="fix-width-80 middle text-center">ผู้มีสิทธิ์อนุมัติ</th>
+					<th class="fix-width-80 middle text-center">การอนุมัติ</th>
+					<th class="fix-width-100 middle">ผู้อนุมัติ</th>
 					<th class="fix-width-80 middle text-center">เลขที่ SO (SAP)</th>
 					<th class="fix-width-80 middle text-center">SO Status</th>
 					<th class="fix-width-80 middle text-center">DO Status</th>
@@ -288,9 +314,8 @@
 					<?php $users = users_array(); //--- user_helper 
 					?>
 					<?php foreach ($data as $rs) : ?>
-						<?php $credit_issue = ($rs->credit_issue == 1 && $rs->credit_approval != 'A') ? 1 : 0; ?>
-						<?php $bgColor = $credit_issue ? 'credit-issue' : ''; ?>
-						<tr class="<?php echo $bgColor; ?>">
+						<?php $credit_issue = ($rs->credit_issue == 1 && $rs->credit_approval != 'A') ? 1 : 0; ?>						
+						<tr>
 							<td class="middle text-center fix-no no" scope="row"><?php echo $no; ?></td>
 							<td class="middle text-center fix-date" scope="row">
 								<?php echo thai_date($rs->date_add, TRUE, '/'); ?>
@@ -309,6 +334,8 @@
 								<?php endif; ?>
 							</td>
 							<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
+							<td class="middle text-center"><?php echo $rs->credit_issue == 1 ? '<span class="red">Yes</span>' : 'No'; ?></td>
+							<td class="middle text-center"><?php echo $rs->is_over_due == 1 ? '<span class="red">Yes</span>' : 'No'; ?></td>
 							<td class="middle text-center"><span class="btn btn-minier btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</span></td>
 							<td class="middle text-center">
 								<?php if ($rs->Status == 2) : ?>
@@ -358,26 +385,6 @@
 								<?php endif; ?>
 							</td>
 							<td class="middle"><?php echo $rs->Approver; ?></td>
-
-
-							<td class="middle text-center">
-								<?php if ($rs->credit_issue == 1) : ?>
-									<button class="btn btn-minier btn-primary" onclick="showCreditApprover('<?php echo $rs->code; ?>', '<?php echo $rs->credit_diff; ?>')">Authorizer</button>
-								<?php endif; ?>
-							</td>
-							<td class="middle text-center">
-								<?php if ($rs->credit_issue == 1 && $rs->credit_approval == 'A') : ?>
-									<span class="green">อนุมัติ</span>
-								<?php elseif ($rs->credit_issue == 1 && $rs->credit_approval == 'P') : ?>
-									<span class="orange">รออนุมัติ</span>
-								<?php elseif ($rs->credit_issue == 1 && $rs->credit_approval == 'R') : ?>
-									<span class="red">ไม่อนุมัติ</span>
-								<?php elseif ($rs->credit_issue == 1 && $rs->credit_approval == 'O') : ?>
-									<span class="orange">รออนุมัติ</span>
-								<?php endif; ?>
-							</td>
-							<td class="middle"><?php echo empty($rs->credit_approver) ? NULL : $users[$rs->credit_approver]['uname']; ?></td>
-
 							<td class="middle text-center"><?php echo $rs->DocNum; ?></td>
 							<td class="middle text-center">
 								<?php if ($rs->SO_Status == 'D') : ?>
@@ -394,7 +401,7 @@
 					<?php endforeach; ?>
 				<?php else : ?>
 					<tr>
-						<td colspan="15" class="middle text-center">ไม่พบรายการ</td>
+						<td colspan="20" class="middle text-center">ไม่พบรายการ</td>
 					</tr>
 				<?php endif; ?>
 			</tbody>
@@ -502,10 +509,7 @@
 	</div>
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px;">
 		{{#unless isCancel}}
-			{{#if creditIssue}}
-				<h4 class="red text-right hidden-xs">รอการอนุมัติเครดิต</h4>
-				<h4 class="red text-center visible-xs">รอการอนุมัติเครดิต</h4>
-			{{/if}}
+				<h4 class="status-label {{approval_color}}">{{approval_status}}</h4>
 		{{/unless}}
 	</div>
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px;">

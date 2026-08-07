@@ -162,9 +162,9 @@
 			</div>
 
 			<div class="modal-footer">
-				<button type="button" class="btn btn-white btn-success btn-100 hide" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
-				<button type="button" class="btn btn-white btn-danger btn-100 hide" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>				
 				<button type="button" class="btn btn-white btn-default btn-100" id="btn-close" onClick="dismiss('previewModal')">Close</button>
+				<button type="button" class="btn btn-white btn-danger btn-100 a-btn" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>				
+				<button type="button" class="btn btn-white btn-success btn-100 a-btn" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
 			</div>
 		</div>
 	</div>
@@ -173,7 +173,7 @@
 <input type="hidden" id="OrderCode" value="">
 
 
-<script id="preview-template" type="text/x-handlebarsTemplate">
+<script id="preview-template" type="text/x-handlebars-template">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0">
 		<table class="table table-striped table-bordered tableNarrow border-1" style="margin-bottom:10px;">
 			<tbody>
@@ -260,7 +260,7 @@
 						<td class="middle text-right">{{amount}}</td>
 						<td class="middle"><input type="text" class="form-control input-xs padding-0 text-label" value="{{lineText}}" readonly></td>
 						<td class="middle text-right">{{openQty}}</td>						
-						<td class="middle"><input type="text" class="form-control input-xs padding-0 text-label reject-box" id="reject-item-{{id}}" value="" ></td>
+						<td class="middle"><input type="text" class="form-control input-xs padding-5 reject-box" id="reject-item-{{id}}" value="" ></td>
 					</tr>
 				{{/each}}
 			</tbody>
@@ -339,7 +339,7 @@
 	</div>
 </div>
 
-<script id="authorizer-template" type="text/x-handlebarsTemplate">
+<script id="authorizer-template" type="text/x-handlebars-template">
 	{{#each this}}
 		{{#if nodata}}
 			<tr>

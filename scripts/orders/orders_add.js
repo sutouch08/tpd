@@ -1448,6 +1448,42 @@ function getCreditBalanceDetails() {
 	}
 }
 
+function getCustomerInvoiceDetails() {
+	let code = $('#customer').val();
+
+	if(code != "") {
+		load_in();
+
+		$.ajax({
+			url:`${HOME}get_customer_invoice`,
+			type:'GET',
+			cache:false,
+			data:{
+				'CardCode' : code
+			},
+			success:function(rs) {
+				load_out();
+				
+				if(isJson(rs)) {
+					let ds = JSON.parse(rs);
+					let data = ds.data;
+
+					let source = $('#invoice-detail-template').html();
+					let output = $('#invoice-detail-table');
+					render(source, data, output);
+					$('#invoiceDetailModal').modal('show');
+				}
+				else {
+					showError(rs);
+				}				
+			},
+			error:function(rs) {				
+				showError(rs);
+			}
+		});
+	}
+}
+
 function changePriceListType() {
 	let pType = $('#price-list-type').val();
 	let customer = $('#customer').val();

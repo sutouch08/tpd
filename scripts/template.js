@@ -420,6 +420,19 @@ function showError(response) {
   }, 100);
 }
 
+function showWarning(message) {
+	load_out();
+
+	setTimeout(() => {
+		swal({
+			title:'Warning!',
+			text:(typeof message === 'object') ? message.responseText : message,
+			type:'warning',
+			html:true
+		})
+	}, 100);
+}
+
 
 function is_true(val) {
   if(typeof(val) === 'string') {

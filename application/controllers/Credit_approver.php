@@ -1,19 +1,19 @@
 <?php
-defined('BASEPATH') OR exit('No direct script access allowed');
+defined('BASEPATH') or exit('No direct script access allowed');
 
-class Credit_approver extends PS_Controller 
+class Credit_approver extends PS_Controller
 {
 	public $menu_code = 'CREDIT_APPROVER';
 	public $menu_group_code = 'ADMIN';
 	public $title = 'Credit Authorizer';
 	public $segment = 3;
 
-  public function __construct()
-  {
-    parent::__construct();
-    $this->home = base_url().'credit_approver';
+	public function __construct()
+	{
+		parent::__construct();
+		$this->home = base_url() . 'credit_approver';
 		$this->load->model('credit_approver_model');
-  }
+	}
 
 
 	public function index()
@@ -22,7 +22,7 @@ class Credit_approver extends PS_Controller
 
 		$filter = array(
 			'uname' => get_filter('uname', 'ap_uname', ''),
-			'emp_name' => get_filter('emp_name', 'ap_emp_name', ''),			
+			'emp_name' => get_filter('emp_name', 'ap_emp_name', ''),
 			'status' => get_filter('status', 'ap_status', 'all'),
 			'can_approve' => get_filter('can_approve', 'ap_can_approve', 'all'),
 			'can_review' => get_filter('can_review', 'ap_can_review', 'all')
@@ -31,8 +31,8 @@ class Credit_approver extends PS_Controller
 		//--- แสดงผลกี่รายการต่อหน้า
 		$perpage = get_rows();
 		$rows = $this->credit_approver_model->count_rows($filter);
-		$filter['data'] = $this->credit_approver_model->get_list($filter, $perpage, $this->uri->segment($this->segment));		
-		$init	= pagination_config($this->home.'/index/', $rows, $perpage, $this->segment);
+		$filter['data'] = $this->credit_approver_model->get_list($filter, $perpage, $this->uri->segment($this->segment));
+		$init	= pagination_config($this->home . '/index/', $rows, $perpage, $this->segment);
 		$this->pagination->initialize($init);
 		$this->load->view('credit_approver/approver_list', $filter);
 	}
@@ -42,7 +42,7 @@ class Credit_approver extends PS_Controller
 	{
 		$this->title = "Authorizer - Add";
 
-		if($this->pm->can_add)
+		if ($this->pm->can_add)
 		{
 			$this->load->view('credit_approver/approver_add');
 		}
@@ -57,35 +57,44 @@ class Credit_approver extends PS_Controller
 	{
 		$sc = TRUE;
 
-		if($this->pm->can_add)
+		if ($this->pm->can_add)
 		{
 			$ds = json_decode($this->input->post('data'));
 
-			if( ! empty($ds) && ! empty($ds->uname) && ! empty($ds->amount))
+			if (! empty($ds) && ! empty($ds->uname))
 			{
 				$user = $this->user_model->get_user_by_uname($ds->uname);
 
-				if( ! empty($user))
+				if (! empty($user))
 				{
 					//--- check exists approver
-					if( ! $this->credit_approver_model->is_exists($user->id))
+					if (! $this->credit_approver_model->is_exists($user->id))
 					{
-						$arr = array(
-							'user_id' => $user->id,
-							'uname' => $user->uname,
-							'emp_name' => $user->emp_name,
-							'amount' => $ds->amount,
-							'status' => $ds->status == 1 ? 1 : 0,
-							'can_approve' => $ds->can_approve == 1 ? 1 : 0,
-							'can_review' => $ds->can_review == 1 ? 1 : 0,
-							'date_add' => now(),
-							'add_by' => $this->_user->id
-						);
-
-						if( ! $this->credit_approver_model->add($arr))
+						if ($ds->amount <= 0 && $ds->can_approve == 1)
 						{
 							$sc = FALSE;
-							$this->error = "Failed to create approver";
+							$this->error = "Approve amount must be greater than 0";
+						}
+
+						if ($sc === TRUE)
+						{
+							$arr = array(
+								'user_id' => $user->id,
+								'uname' => $user->uname,
+								'emp_name' => $user->emp_name,
+								'amount' => $ds->amount,
+								'status' => $ds->status == 1 ? 1 : 0,
+								'can_approve' => $ds->can_approve == 1 ? 1 : 0,
+								'can_review' => $ds->can_review == 1 ? 1 : 0,
+								'date_add' => now(),
+								'add_by' => $this->_user->id
+							);
+
+							if (! $this->credit_approver_model->add($arr))
+							{
+								$sc = FALSE;
+								$this->error = "Failed to create approver";
+							}
 						}
 					}
 					else
@@ -120,11 +129,11 @@ class Credit_approver extends PS_Controller
 	{
 		$this->title = "Authorizer - Edit";
 
-		if($this->pm->can_edit)
+		if ($this->pm->can_edit)
 		{
 			$ap = $this->credit_approver_model->get($id);
 
-			if( ! empty($ap))
+			if (! empty($ap))
 			{
 				$ds['data'] = $ap;
 
@@ -146,25 +155,34 @@ class Credit_approver extends PS_Controller
 	{
 		$sc = TRUE;
 
-		if($this->pm->can_edit)
+		if ($this->pm->can_edit)
 		{
 			$ds = json_decode($this->input->post('data'));
 
-			if( ! empty($ds) && ! empty($ds->id) && ! empty($ds->amount))
+			if (! empty($ds) && ! empty($ds->id))
 			{
-				$arr = array(
-					'amount' => $ds->amount,
-					'status' => $ds->status == 1 ? 1 : 0,
-					'can_approve' => $ds->can_approve == 1 ? 1 : 0,
-					'can_review' => $ds->can_review == 1 ? 1 : 0,
-					'date_upd' => now(),
-					'update_by' => $this->_user->id
-				);
-
-				if(! $this->credit_approver_model->update($ds->id, $arr))
+				if ($ds->amount <= 0 && $ds->can_approve == 1)
 				{
 					$sc = FALSE;
-					$this->error = "Update failed";
+					$this->error = "Approve amount must be greater than 0";
+				}
+
+				if ($sc === TRUE)
+				{
+					$arr = array(
+						'amount' => $ds->amount,
+						'status' => $ds->status == 1 ? 1 : 0,
+						'can_approve' => $ds->can_approve == 1 ? 1 : 0,
+						'can_review' => $ds->can_review == 1 ? 1 : 0,
+						'date_upd' => now(),
+						'update_by' => $this->_user->id
+					);
+
+					if (! $this->credit_approver_model->update($ds->id, $arr))
+					{
+						$sc = FALSE;
+						$this->error = "Update failed";
+					}
 				}
 			}
 			else
@@ -187,20 +205,20 @@ class Credit_approver extends PS_Controller
 	{
 		$sc = TRUE;
 
-		if($this->pm->can_edit)
+		if ($this->pm->can_edit)
 		{
 			$id = $this->input->post('id');
 			$active = $this->input->post('active');
 
-			if( ! empty($id))
+			if (! empty($id))
 			{
 				$arr = array(
 					'status' => $active == 1 ? 1 : 0,
 					'date_upd' => now(),
-					'update_by' => $this->_user->id	
+					'update_by' => $this->_user->id
 				);
 
-				if( ! $this->credit_approver_model->update($id, $arr))
+				if (! $this->credit_approver_model->update($id, $arr))
 				{
 					$sc = FALSE;
 					$this->error = "Failed to update status";
@@ -226,23 +244,42 @@ class Credit_approver extends PS_Controller
 	{
 		$sc = TRUE;
 
-		if($this->pm->can_edit)
+		if ($this->pm->can_edit)
 		{
 			$id = $this->input->post('id');
 			$active = $this->input->post('can_approve');
 
-			if( ! empty($id))
+			if (! empty($id))
 			{
-				$arr = array(
-					'can_approve' => $active == 1 ? 1 : 0,
-					'date_upd' => now(),
-					'update_by' => $this->_user->id	
-				);
+				$ap = $this->credit_approver_model->get($id);
 
-				if( ! $this->credit_approver_model->update($id, $arr))
+				if (! empty($ap))
+				{
+					if ($ap->amount <= 0 && $active == 1)
+					{
+						$sc = FALSE;
+						$this->error = "Approve amount must be greater than 0";
+					}
+
+					if ($sc === TRUE)
+					{
+						$arr = array(
+							'can_approve' => $active == 1 ? 1 : 0,
+							'date_upd' => now(),
+							'update_by' => $this->_user->id
+						);
+
+						if (! $this->credit_approver_model->update($id, $arr))
+						{
+							$sc = FALSE;
+							$this->error = "Failed to update status";
+						}
+					}
+				}
+				else
 				{
 					$sc = FALSE;
-					$this->error = "Failed to update status";
+					$this->error = "Approver not found";
 				}
 			}
 			else
@@ -265,20 +302,20 @@ class Credit_approver extends PS_Controller
 	{
 		$sc = TRUE;
 
-		if($this->pm->can_edit)
+		if ($this->pm->can_edit)
 		{
 			$id = $this->input->post('id');
 			$active = $this->input->post('can_review');
 
-			if( ! empty($id))
+			if (! empty($id))
 			{
 				$arr = array(
 					'can_review' => $active == 1 ? 1 : 0,
 					'date_upd' => now(),
-					'update_by' => $this->_user->id	
+					'update_by' => $this->_user->id
 				);
 
-				if( ! $this->credit_approver_model->update($id, $arr))
+				if (! $this->credit_approver_model->update($id, $arr))
 				{
 					$sc = FALSE;
 					$this->error = "Failed to update status";
@@ -306,25 +343,25 @@ class Credit_approver extends PS_Controller
 
 		$id = $this->input->post('id');
 
-		if($this->pm->can_delete)
+		if ($this->pm->can_delete)
 		{
-			if( ! empty($id))
+			if (! empty($id))
 			{
 				$ap = $this->credit_approver_model->get($id);
 
-				if(empty($ap))
+				if (empty($ap))
 				{
 					$sc = FALSE;
 					$this->error = get_error_message('notfound');
 				}
 
-				if($sc === TRUE)
+				if ($sc === TRUE)
 				{
-					if( ! $this->credit_approver_model->delete($id))
+					if (! $this->credit_approver_model->delete($id))
 					{
 						$sc = FALSE;
 						$this->error = "Failed to delete approver";
-					}					
+					}
 				}
 			}
 			else
@@ -354,10 +391,6 @@ class Credit_approver extends PS_Controller
 			'ap_can_review'
 		);
 
-		return clear_filter($filter);		
+		return clear_filter($filter);
 	}
-
-}//--- end class
-
-
- ?>
+} //--- end class

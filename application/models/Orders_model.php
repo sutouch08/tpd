@@ -172,14 +172,24 @@ class Orders_model extends CI_Model
 
   public function update_detail($id, array $ds = array())
   {
-    if( ! empty($ds) && !empty($ds))
+    if( ! empty($id) && !empty($ds))
     {
       return $this->db->where('id', $id)->update($this->td, $ds);
     }
 
     return FALSE;
-  }
+  }  
 
+
+  public function update_details_by_batch(array $ds = array())
+  {
+    if( ! empty($ds))
+    {
+      return $this->db->update_batch($this->td, $ds, 'id');
+    }
+
+    return FALSE;
+  }
 
   public function approve_detail($id)
   {
@@ -201,7 +211,8 @@ class Orders_model extends CI_Model
 
   public function reject_details($code)
   {
-    return $this->db->set('status', 'R')->where('order_code', $code)->update($this->td);
+    $arr = array('status' => 'R');
+    return $this->db->where('order_code', $code)->update($this->td, $arr);
   }
 
 
@@ -292,23 +303,14 @@ class Orders_model extends CI_Model
       }
     }
 
-    if (isset($ds['CreditApproval']) && $ds['CreditApproval'] !== 'all')
+    if (isset($ds['credit_issue']) && $ds['credit_issue'] !== 'all')
     {
-      $this->db->where('credit_issue', 1);
-      
-      if($ds['CreditApproval'] === 'P')
-      {
-        $this->db->where_in('credit_approval', ['O', 'P']);
-      }
-      else
-      {        
-        $this->db->where('credit_approval', $ds['CreditApproval']);        
-      }      
+      $this->db->where('credit_issue', $ds['credit_issue']);
     }
 
-    if (isset($ds['CreditApprover']) && $ds['CreditApprover'] !== 'all')
+    if (isset($ds['is_over_due']) && $ds['is_over_due'] !== 'all')
     {
-      $this->db->where('credit_approver', $ds['CreditApprover']);
+      $this->db->where('is_over_due', $ds['is_over_due']);
     }
 
     if($ds['Status'] !== 'all')
@@ -468,24 +470,15 @@ class Orders_model extends CI_Model
       }
     }
 
-    if (isset($ds['CreditApproval']) && $ds['CreditApproval'] !== 'all')
+    if(isset($ds['credit_issue']) && $ds['credit_issue'] !== 'all')
     {
-      $this->db->where('credit_issue', 1);
-
-      if ($ds['CreditApproval'] === 'P')
-      {
-        $this->db->where_in('credit_approval', ['O', 'P']);
-      }
-      else
-      {
-        $this->db->where('credit_approval', $ds['CreditApproval']);
-      }
+      $this->db->where('credit_issue', $ds['credit_issue']);
     }
 
-    if(isset($ds['CreditApprover']) && $ds['CreditApprover'] !== 'all')
+    if(isset($ds['is_over_due']) && $ds['is_over_due'] !== 'all')
     {
-      $this->db->where('credit_approver', $ds['CreditApprover']);
-    }
+      $this->db->where('is_over_due', $ds['is_over_due']);
+    }    
 
     if($ds['Status'] !== 'all')
     {

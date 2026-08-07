@@ -11,7 +11,7 @@ class Customer_model extends CI_Model
 
   public function get($code)
   {
-    $rs = $this->ms->where('CardCode', $code)->get($this->tb);
+    $rs = $this->ms->where('CardCode', $code)->get('OCRD');
 
     if ($rs->num_rows() === 1)
     {

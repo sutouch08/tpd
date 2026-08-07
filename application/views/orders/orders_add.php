@@ -73,6 +73,27 @@
 	</div>
 </div>
 
+<div class="modal fade" id="invoiceDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="width:350px; max-width: 90vw;">
+		<div class="modal-content">
+			<div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title-site" id="modal-title" style="margin-bottom:0px;">Customer Invoices</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="invoice-detail-table">
+
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-md btn-default" onClick="dismiss('invoiceDetailModal')">Close</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <div class="modal fade" id="creditDetailModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog" style="width:350px; max-width: 90vw;">
 		<div class="modal-content">
@@ -94,7 +115,25 @@
 	</div>
 </div>
 
-<script id="credit-detail-template" type="text/x-handlebarsTemplate">
+<script id="invoice-detail-template" type="text/x-handlebars-template">
+	<h4 class="title-xs text-center" style="margin-top:0px; margin-bottom:10px;">{{CardCode}}</h4>
+	<table class="table table-bordered border-1" style="margin-bottom:0px;">
+		<tr>
+			<td class="width-50 middle">Create date</td>
+			<td class="middle text-right">{{CreateDate}}</td>
+		</tr>
+		<tr>
+			<td class="middle">Duration (days)</td>
+			<td class="middle text-right">{{Duration}}</td>
+		</tr>
+		<tr>
+			<td class="middle">Invoice count</td>
+			<td class="middle text-right">{{InvoiceCount}}</td>
+		</tr>		
+	</table>
+</script>
+
+<script id="credit-detail-template" type="text/x-handlebars-template">
 	<h4 class="title-xs text-center" style="margin-top:0px; margin-bottom:10px;">{{CardCode}}</h4>
 	<table class="table table-bordered border-1" style="margin-bottom:0px;">
 		<tr>
@@ -128,7 +167,7 @@
 </script>
 
 
-<script id="customer-template" type="text/x-handlebarsTemplate">
+<script id="customer-template" type="text/x-handlebars-template">
 	<option value="">Select Customer ({{this.count}})</option>
 		{{#each this.data}}
 			<option value="{{CardCode}}"
@@ -151,19 +190,19 @@
 		{{/each}}
 </script>
 
-<script id="ship-to-template" type="text/x-handlebarsTemplate">
+<script id="ship-to-template" type="text/x-handlebars-template">
 	{{#each this}}
 		<option value="{{code}}" data-default="{{is_default}}">{{code}}</option>
 	{{/each}}
 </script>
 
-<script id="bill-to-template" type="text/x-handlebarsTemplate">
+<script id="bill-to-template" type="text/x-handlebars-template">
 	{{#each this}}
 		<option value="{{code}}">{{code}}</option>
 	{{/each}}
 </script>
 
-<script id="preview-template" type="text/x-handlebarsTemplate">
+<script id="preview-template" type="text/x-handlebars-template">
 	<table class="table table-striped table-bordered tableNarrow border-1" style="margin-bottom:10px;">
 		<tr>
 			<td class="width-30">

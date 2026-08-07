@@ -46,10 +46,11 @@
       <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
         <input type="text" id="credit-balance" class="form-control input-sm text-center" value="" disabled />
       </div>
-      <div class="col-lg-1 col-md-1 col-sm-1 col-xs-3">
-        <button type="button" class="btn btn-xs btn-info btn-block" title="Check Credit Balance" onclick="getCreditBalanceDetails()"><i class="fa fa-eye"></i></button>
-      </div>
-      <label class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-left-15" id="customer-label"></label>
+      <div class="col-lg-2 col-md-2 col-sm-2-harf col-xs-3">
+        <button type="button" class="btn btn-white btn-xs btn-info" style="height:30px; width:30px;" title="Check Credit Balance" onclick="getCreditBalanceDetails()"><i class="fa fa-eye"></i></button>
+        <button type="button" class="btn btn-white btn-xs btn-purple" style="height:30px; width:30px;" title="Check Customer Invoices" onclick="getCustomerInvoiceDetails()"><i class="fa fa-file-text-o"></i></button>
+      </div>     
+      <div class="col-lg-4 col-md-4 col-sm-3-harf col-xs-3 padding-left-15" style="height:30px; padding-top:4px;" id="customer-label"></div>
     </div>
 
 

@@ -43,7 +43,7 @@ function add() {
     return false;
   }
 
-  if(h.amount <= 0) {
+  if(h.amount <= 0 && h.can_approve == 1) {
     $('#amount').hasError('Approve amount must be greater than 0');
     $('#amount').focus();
     return false;
@@ -96,7 +96,7 @@ function update() {
     'can_review' : $('input[name="can_review"]:checked').val()
   }
 
-  if(h.amount <= 0) {
+  if(h.amount <= 0 && h.can_approve == 1) {
     $('#amount').hasError("Approve amount must be greater than 0");
     $('#amount').focus();
     return false;
@@ -198,10 +198,12 @@ function toggleActive(id, el) {
     },
     success:function(rs) {     
       if(rs.trim() !== 'success') {
+        $(el).prop('checked', !active);
         showError(rs);
       }      
     },
-    error:function(rs) {      
+    error:function(rs) {     
+      $(el).prop('checked', !can_approve); 
       showError(rs);
     }
   });
@@ -221,10 +223,12 @@ function toggleCanApprove(id, el) {
     },
     success:function(rs) {
       if(rs.trim() !== 'success') {
+        $(el).prop('checked', !can_approve);
         showError(rs);
       }
     },
     error:function(rs) {
+      $(el).prop('checked', !can_approve);
       showError(rs);
     }
   });
@@ -244,10 +248,12 @@ function toggleCanReview(id, el) {
     },
     success:function(rs) {
       if(rs.trim() !== 'success') {
+        $(el).prop('checked', !can_review);
         showError(rs);
       }
     },
     error:function(rs) {
+      $(el).prop('checked', !can_review);
       showError(rs);
     }
   });

@@ -47,10 +47,7 @@ class Order_approval_model extends CI_Model
       ->where('status', 0)
       ->where('must_approve', 1)
       ->where('Approved', 'P')
-      ->group_start()
-      ->where('credit_issue', 0)
-      ->or_where('credit_approval', 'A')
-      ->group_end()
+      ->where('credit_issue', 0)     
       ->where_in('condition_id', $ds['conditions'])      
       ->where('DocTotal <=', $ds['max_amount']);
 
@@ -113,10 +110,7 @@ class Order_approval_model extends CI_Model
     ->where('status', 0)
     ->where('must_approve', 1)
     ->where('Approved', 'P')
-    ->group_start()
-    ->where('credit_issue', 0)
-    ->or_where('credit_approval', 'A')
-    ->group_end()
+    ->where('credit_issue', 0)    
     ->where_in('condition_id', $ds['conditions'])    
     ->where('DocTotal <=', $ds['max_amount']);
 

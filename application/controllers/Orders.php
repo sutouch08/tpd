@@ -45,8 +45,8 @@ class Orders extends PS_Controller
 			'user_id' => get_filter('user_id', 'so_user_id', 'all'),
 			'Approver' => get_filter('Approver', 'so_Approver', 'all'),
 			'Approved' => get_filter('Approved', 'so_Approved', 'all'),
-			'CreditApproval' => get_filter('CreditApproval', 'so_CreditApproval', 'all'),
-			'CreditApprover' => get_filter('CreditApprover', 'so_CreditApprover', 'all'),
+			'credit_issue' => get_filter('credit_issue', 'so_credit_issue', 'all'),
+			'is_over_due' => get_filter('is_over_due', 'so_is_over_due', 'all'),
 			'Status' => get_filter('Status', 'doc_status', 'all'),
 			'SO_Status' => get_filter('SO_Status', 'SO_Status', 'all'),
 			'DO_Status' => get_filter('DO_Status', 'DO_Status', 'all'),
@@ -83,6 +83,46 @@ class Orders extends PS_Controller
 			$this->pagination->initialize($init);
 			$this->load->view('orders/orders_list', $filter);
 		}
+	}
+
+	public function get_customer_invoice()
+	{
+		$this->load->model('report/customer_status_model');
+		$CardCode = $this->input->get('CardCode');
+		$ds = [
+			'CardCode' => '',
+			'CardName' => '',
+			'CreateDate' => '',
+			'Duration' => '',
+			'InvoiceCount' => 0
+		];
+
+		$bp = $this->customer_model->get($CardCode);
+
+		if( ! empty($bp))
+		{
+			$invoiceCount = $this->customer_status_model->count_customer_invoice($CardCode);
+			$today = date('Y-m-d');
+			$ds = [
+				'CardCode' => $bp->CardCode,
+				'CardName' => $bp->CardName,
+				'CreateDate' => thai_date($bp->CreateDate, FALSE),
+				'Duration' => number(date_diff(date_create($bp->CreateDate), date_create($today))->days),
+				'InvoiceCount' => number($invoiceCount)
+			];
+		}
+		else 
+		{
+			$sc = FALSE;
+			$this->error = "Customer not found";
+		}		
+
+		$arr = array(
+			'status' => ! empty($bp) ? 'success' : 'error',
+			'message' => ! empty($bp) ? 'success' : $this->error,
+			'data' => $ds,
+		);
+		echo json_encode($arr);
 	}
 
 
@@ -1455,9 +1495,7 @@ class Orders extends PS_Controller
 			{
 				$this->load->model('payment_term_discount_model');
 
-				$can_approve = ($doc->credit_issue == 1 && $doc->credit_approval != 'A') ? FALSE : $this->can_approve($doc);
-
-				$termName = $doc->term_id == -10 ? 'Customer Default' : (empty($doc->term_id) ? 'ไม่ระบุ' : $this->payment_term_discount_model->get_name($doc->term_id));
+				$can_approve = ($doc->credit_issue == 1 && $doc->credit_approval != 'A') ? FALSE : $this->can_approve($doc);				
 
 				$ds = array(
 					'orderCode' => $doc->code,
@@ -1477,8 +1515,8 @@ class Orders extends PS_Controller
 					'dueDate' => thai_date($doc->DocDueDate, FALSE),
 					'PoNo' => $doc->NumAtCard,
 					'fileName' => $doc->has_file ? '&nbsp;&nbsp; <span class="label label-info label-white pointer" onclick="openFile(\'' . $doc->file_name . '\')"><i class="fa fa-paperclip"></i>' . $doc->file_name . '</span>' : NULL,
-					'PriceList' => empty($doc->PriceList) ? "-" : ($doc->PriceList == -10 ? $this->special_price_list_model->get_name($doc->SpecialPriceList) : $this->orders_model->price_list_name($doc->PriceList)),
-					'termName' => $termName,
+					'PriceList' => order_price_list_name($doc->PriceList, $doc->SpecialPriceList),
+					'termName' => term_name($doc->term_id),
 					'billOption' => $doc->BillDate == 1 ? 'Y' : 'N',
 					'requiredSQ' => $doc->requireSQ == 1 ? 'Y' : 'N',
 					'remark' => $doc->Comments,
@@ -1490,18 +1528,28 @@ class Orders extends PS_Controller
 					'isCancel' => $doc->isCancel == 1 ? TRUE : FALSE,
 					'cancel_by' => $doc->cancel_by,
 					'cancel_at' => empty($doc->cancel_date) ? NULL : thai_date($doc->cancel_date, TRUE),
+					'approval_status' => NULL,
 					'items' => array(),
 					'subTotal' => NULL
 				);
 
-				if ($doc->Approved == 'A')
+				if($doc->Approved == 'P')
 				{
+					$ds['approval_status'] = $ds['creditIssue'] ? "รออนุมัติเครดิต" : "รออนุมัติ";
+					$ds['approval_color'] = $ds['creditIssue'] ? "red" : "orange";
+				}
+				else if($doc->Approved == 'A')
+				{
+					$ds['approval_status'] = "อนุมัติแล้ว";
+					$ds['approval_color'] = "green";
 					$ds['ApproveBy'] = "Approved by  {$doc->Approver}  @ " . thai_date($doc->ApproveDate, TRUE);
 				}
-				else if ($doc->Approved == 'R')
+				else if($doc->Approved == 'R')
 				{
+					$ds['approval_status'] = "ไม่อนุมัติ";
+					$ds['approval_color'] = "red";
 					$ds['ApproveBy'] = "Rejected By  {$doc->Approver}  @ " . thai_date($doc->ApproveDate, TRUE);
-				}
+				}							
 
 				if ($doc->promotion_id)
 				{
@@ -2115,8 +2163,8 @@ class Orders extends PS_Controller
 			'so_toDate',
 			'so_is_promotion',
 			'is_discount_sales',
-			'so_CreditApproval',
-			'so_CreditApprover',
+			'so_credit_issue',
+			'so_is_over_due'			
 		);
 
 		clear_filter($filter);

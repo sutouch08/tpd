@@ -92,4 +92,37 @@ function get_rejectbox($id, $status = 'P', $can_approve = FALSE, $no = "")
 }
 
 
+function term_name($id = '')
+{
+  $ci =& get_instance();
+  $ci->load->model('payment_term_discount_model');
+
+  $name = "ไม่ระบุ";
+
+  if( ! empty($id))
+  {
+    $name = $id == -10 ? "Customer default" : $ci->payment_term_discount_model->get_name($id);
+  }  
+
+  return $name;
+}
+
+
+function order_price_list_name($price_list_id = '', $special_price_id = '')
+{
+  $ci =& get_instance();
+  $ci->load->model('orders_model');
+  $ci->load->model('special_price_list_model');
+
+  if(empty($price_list_id))
+  {
+    return "-";
+  }
+  else
+  {
+    return $price_list_id == -10 ? $ci->special_price_list_model->get_name($special_price_id) : $ci->orders_model->price_list_name($price_list_id);
+  }
+}
+
+
  ?>

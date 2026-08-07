@@ -70,13 +70,13 @@ function limitText($str, $length)
 
 function is_selected($val, $select)
 {
-  return $val == $select ? 'selected' : '';
+  return strval($val) == strval($select) ? 'selected' : '';
 }
 
 
 function is_checked($val1, $val2)
 {
-  return $val1 == $val2 ? 'checked' : '';
+  return strval($val1) == strval($val2) ? 'checked' : '';
 }
 
 
@@ -324,6 +324,7 @@ function set_error($key, $name = "data")
 		'exists' => "'{$name}' already exists.",
 		'status' => "Invalid document status",
 		'notfound' => "Document number not found",
+		'not_found' => "Document number not found",
 		'transection' => "Unable to delete {$name} because transections exists or link to other module."
 	);
 

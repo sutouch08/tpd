@@ -2050,3 +2050,9 @@ input[type=checkbox].ace.ace-switch.ace-switch-6:checked + .lbl::before {
   border:solid 1px #d5d5d5;
   background:#ffffff none;	
 }
+
+.log-text {
+	font-size: 12px;
+	color: #808080;
+	font-style: italic;
+}

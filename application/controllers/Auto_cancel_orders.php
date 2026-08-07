@@ -10,81 +10,98 @@ class Auto_cancel_orders extends CI_Controller
   }
 
   public function index()
-  {   
-    $list = $this->get_cancel_list($this->limit);
-
-    if(!empty($list))
+  {
+    if(is_true(getConfig('ORDER_AUTO_CANCEL')))
     {
-      $orders = [];
+      $list = $this->get_cancel_list();
 
-      foreach($list as $rs)
-      {        
-        $orders[] = $rs->code;
-      }
-
-      if( ! empty($orders))
+      if (!empty($list))
       {
-        $arr = array(
-          'Status' => -1,
-          'DocNum' => NULL,
-          'Message' => NULL,
-          'sap_date' => NULL,
-          'temp_date' => NULL,
-          'isCancel' => 1,
-          'cancel_by' => 'system',
-          'cancel_date' => date('Y-m-d H:i:s')
+        $i = 1;
+        $j = 0;
+        $orders = [];
+
+        foreach ($list as $rs)
+        {
+          $orders[$j][] = $rs->code;
+          $i++;
+
+          if($i > $this->limit)
+          {
+            $i = 1;
+            $j++;
+          }
+        }
+
+        if (! empty($orders))
+        {
+          $arr = array(
+            'Status' => -1,
+            'DocNum' => NULL,
+            'Message' => NULL,
+            'sap_date' => NULL,
+            'temp_date' => NULL,
+            'isCancel' => 1,
+            'cancel_by' => 'system',
+            'cancel_date' => date('Y-m-d H:i:s')
+          );
+
+          foreach($orders as $order)
+          {
+            $cancelled = $this->db->where_in('code', $order)->update('orders', $arr);
+
+            if ($cancelled)
+            {
+              $log = array(
+                'orders_code' => json_encode($order),
+                'status' => 'success'
+              );
+
+              $this->db->insert('order_cancel_logs', $log);
+            }
+            else
+            {
+              $log = array(
+                'orders_code' => json_encode($order),
+                'status' => 'failed'
+              );
+
+              $this->db->insert('order_cancel_logs', $log);
+            }
+          }          
+        }
+      }
+      else
+      {
+        $log = array(
+          'orders_code' => NULL,
+          'status' => 'no orders to cancel'
         );
 
-        $cancelled = $this->db->where_in('code', $orders)->update('orders', $arr);
-
-        if($cancelled)
-        {
-          $log = array(
-            'orders_code' => json_encode($orders),
-            'status' => 'success'
-          );
-
-          $this->db->insert('order_cancel_logs', $log);
-        }
-        else 
-        {
-          $log = array(
-            'orders_code' => json_encode($orders),
-            'status' => 'failed'
-          );
-
-          $this->db->insert('order_cancel_logs', $log);
-        }        
-      }
-    }
-    else 
-    {
-      $log = array(
-        'orders_code' => NULL,
-        'status' => 'no orders to cancel'
-      );
-
-      $this->db->insert('order_cancel_logs', $log);
-    }
+        $this->db->insert('order_cancel_logs', $log);
+      }      
+    }    
   }
 
 
-  private function get_cancel_list($limit = 100)
+  private function get_cancel_list()
   {
-    $days = getConfig('ORDER_EXPIRATION');
-    $date = date('Y-m-d 00:00:00', strtotime("-{$days} days"));      
+    $days = intval(getConfig('ORDER_EXPIRATION'));
+    $date = date('Y-m-d 00:00:00', strtotime("-{$days} days"));    
 
-    $qr  = "SELECT o.code FROM orders AS o ";
-    $qr .= "LEFT JOIN payment_request_order AS r ON o.code = r.code ";
-    $qr .= "WHERE o.status = 0 ";
-    $qr .= "AND o.credit_issue = 1 ";
-    $qr .= "AND o.is_over_due = 1 ";
-    $qr .= "AND o.credit_case_id IS NOT NULL ";
-    $qr .= "AND ((o.credit_approval = 'R' OR r.status = 'R') OR (r.status = 'O' AND r.reply_status = 'N' AND r.date_upd < '{$date}')) ";
-    $qr .= "ORDER BY o.date_add ASC ";
-    $qr .= "LIMIT {$limit}";
-
-    $rs = $this->db->query($qr);
+    $rs = $this->db
+    ->select('code')
+    ->where('status', 0)
+    ->where('credit_issue', 1)
+    ->where('is_over_due', 1)
+    ->where('credit_case_id IS NOT NULL', NULL, FALSE)
+    ->where('request_date <', $date)
+    ->group_start()
+    ->where('credit_approval', 'R')
+    ->or_where('reply_date IS NULL', NULL, FALSE)
+    ->group_end()
+    ->order_by('date_add', 'ASC')
+    ->get('orders');    
 
     if ($rs->num_rows() > 0)
     {

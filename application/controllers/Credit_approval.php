@@ -16,6 +16,7 @@ class Credit_approval extends PS_Controller
     $this->load->model('customer_model');
     $this->load->model('orders_model');
     $this->load->helper('credit_approval');
+    $this->load->helper('orders');
   }
 
 
@@ -151,71 +152,102 @@ class Credit_approval extends PS_Controller
 
     if (!empty($doc))
     {
-      $this->load->model('payment_term_discount_model');
-      $termName = $doc->term_id == -10 ? 'Customer Default' : (empty($doc->term_id) ? 'ไม่ระบุ' : $this->payment_term_discount_model->get_name($doc->term_id));
+      $this->load->model('payment_term_discount_model');      
       $apv = $this->credit_approver_model->get_active_by_user_id($this->_user->id);
-      $can_approve = empty($apv) ? FALSE : $apv->can_approve;
-      $can_review = empty($apv) ? FALSE : $apv->can_review;
+      $can_approve = empty($apv) ? FALSE : is_true($apv->can_approve);
+      $can_review = empty($apv) ? FALSE : is_true($apv->can_review);
+      
       $ds = array(
         'orderCode' => $doc->code,
-        'user' => $doc->uname,
-        'emp_name' => emp_name($doc->uname),
+        'user' => $doc->uname,        
         'customerName' => $doc->CardCode . ' | ' . $doc->CardName,
-        'isRegular' => is_true($doc->isRegular),
+        'billToCode' => $doc->PayToCode,
+        'billToAddress' => $doc->Address,
+        'shipToCode' => $doc->ShipToCode,
+        'shipToAddress' => $doc->Address2,
+        'exShipTo' => $doc->Address3,
         'currency' => $doc->DocCur,
-        'currencyRate' => number($doc->DocRate, 4),
+        'currencyRate' => $doc->DocRate,
         'docDate' => thai_date($doc->DocDate, FALSE),
         'dueDate' => thai_date($doc->DocDueDate, FALSE),
-        'PoNo' => $doc->NumAtCard,
-        'PriceList' => empty($doc->PriceList) ? "-" : ($doc->PriceList == -10 ? $this->special_price_list_model->get_name($doc->SpecialPriceList) : $this->orders_model->price_list_name($doc->PriceList)),
-        'termName' => $termName,
+        'PoNo' => $doc->NumAtCard,        
+        'PriceList' => order_price_list_name($doc->PriceList, $doc->SpecialPriceList),
+        'termName' => term_name($doc->term_id),
+        'billOption' => $doc->BillDate == 1 ? 'Y' : 'N',
+        'requiredSQ' => $doc->requireSQ == 1 ? 'Y' : 'N',
         'remark' => $doc->Comments,
         'approval_status' => $doc->credit_approval,
         'is_overdue' => is_true($doc->is_over_due),
         'credit_review' => is_true($doc->credit_review),
-        'can_approve' => is_true($can_approve),
-        'can_review' => is_true($can_review),
+        'can_approve' => $can_approve,
+        'can_review' => $can_review,
         'items' => array(),
         'logs' => array(),
         'doc_total' => number($doc->DocTotal, 2),
         'credit_diff' => number($doc->credit_diff, 2),
         'case_id' => $doc->credit_case_id,
         'overdue_amount' => $doc->is_over_due ? number($this->get_overdue_amount($doc->CardCode, $doc->CustCode), 2) : 0,
-        'has_document' => 0
+        'has_document' => FALSE,
+        'promotionCode' => $doc->promotion_code,       
+        'subTotal' => NULL
       );
+
 
       if($doc->credit_case_id)
       {
         $this->load->model('payment_request_model');
         $req = $this->payment_request_model->get($doc->code);
-        $ds['has_document'] = empty($req) ? 0 : $req->has_document;
+        $ds['has_document'] = !empty($req) && $req->has_document ? TRUE : FALSE;
 
-        if($req->has_document ==1)
+        if($ds['has_document'])
         {          
           $ds['files'] = $this->get_file_list($doc->code);
-        }      
+        }
       }
       
       $details = $this->credit_approval_model->get_details($code);
+      $totalBefDi = 0;
 
       if (!empty($details))
       {
         $no = 1;
         foreach ($details as $rs)
         {
-          $ds['items'][] = array(
-            'no' => $no,
-            'itemName' => $rs->ItemName,
-            'qty' => number($rs->Qty, 2),
-            'free' => number($rs->freeQty, 2),
-            'uom' => $rs->UomCode,
-            'stdPrice' => number($rs->stdPrice, 2),
-            'sellPrice' => number($rs->SellPrice, 2),
-            'amount' => number($rs->LineTotal, 2)
-          );
+          $totalBefDi += $rs->LineTotal;
 
-          $no++;
+          if($rs->free_item == 0)
+          {
+            $open_qty = (!empty($doc->DocNum) ? $this->orders_model->get_open_qty($doc->code, $rs->ItemCode) : ($rs->freeQty + $rs->Qty));
+            $ds['items'][] = array(
+              'no' => $no,
+              'id' => $rs->id,
+              //'itemCode' => $rs->ItemCode,
+              'itemName' => $rs->ItemName,
+              'qty' => number($rs->Qty, 2),
+              'free' => number($rs->freeQty, 2),
+              'openQty' => number($open_qty, 2),
+              'uom' => $rs->UomCode,
+              'stdPrice' => number($rs->stdPrice, 2),
+              'sellPrice' => number($rs->SellPrice, 2),
+              'amount' => number($rs->LineTotal, 2),
+              'dis' => $rs->discount_sales == 1 ? '<i class="fa fa-check blue"></i>' : '',
+              'lineText' => $rs->LineText,
+              'checkbox' => get_checkbox($rs->id, $rs->status, $can_approve, $no), //--- orders_helper
+              'rejectbox' => ($rs->status == 'P' ? get_rejectbox($rs->id, $rs->status, $can_approve, $no) : $rs->reject_text)
+            );
+
+            $no++;
+          }
         }
+
+        $ds['subTotal'] = array(
+          'totalBefDi' => number($totalBefDi, 2),
+          'DiscPrcnt' => $doc->DiscPrcnt,
+          'DiscSum' => number($doc->DiscSum, 2),
+          'totalBefVat' => number($doc->DocTotal - $doc->VatSum, 2),
+          'totalVat' => number($doc->VatSum, 2),
+          'docTotal' => number($doc->DocTotal, 2)
+        );
       }
 
       $logs = $this->credit_approval_model->get_logs($code);
@@ -382,7 +414,7 @@ class Credit_approval extends PS_Controller
         set_error('Failed to update order');
       }
 
-      if($sc === TRUE)
+      if($sc === TRUE && ! empty($doc->credit_case_id))
       {
         $arr = array(
           'status' => 'A',
@@ -432,25 +464,50 @@ class Credit_approval extends PS_Controller
   {    
     $this->load->model('sales_team_condition_model');
     $sc = TRUE;
-    $code = $this->input->post('code');
-    $doc = $this->orders_model->get($code);
+    $code = NULL;
+    $doc = NULL;
+    $ds = json_decode($this->input->post('data'));
 
-    if (! empty($doc))
+    if(empty($ds))
     {
-      $con_id = $this->sales_team_condition_model->get_condition_id($doc->team_id, $doc->area_id);
+      $sc = FALSE;
+      set_error('Invalid data');
+    }
 
-      $mustApprove = (empty($doc->isDefaultShipTo) && $doc->isDefaultShipTo == 'N') ? TRUE : FALSE;
-      $mustApprove = $mustApprove == TRUE ? TRUE : (! empty($doc->Address3) ? TRUE : FALSE);
-      $mustApprove = $mustApprove === TRUE ? TRUE : $this->must_approve($con_id, $doc->DocTotal, $doc->priceEdit, $doc->PriceList);
+    if($sc === TRUE)
+    {
+      $code = $ds->code;
+      $doc = $this->orders_model->get($code);
+    }    
+
+    if (! empty($doc) && ! empty($ds->items))
+    {
+      $approval_status = 'F'; //-- F = final approval, P = pending approval
+      $this->db->trans_begin();
+
+      foreach($ds->items as $item)
+      {
+        if($item->status == 'A')
+        {
+          $this->orders_model->approve_detail($item->id);
+        }
+
+        if($item->status == 'R')
+        {
+          $this->orders_model->reject_detail($item->id, get_null($item->reject_text));
+          $approval_status = 'P';
+        }        
+      }
 
       $arr = array(
+        'Approved' => 'A',
+        'Approver' => $this->_user->uname,
+        'ApproveDate' => now(),
+        'Approval_status' => $approval_status,
         'credit_approval' => 'A',
         'credit_approver' => $this->_user->id,
-        'credit_case_status' => 'C',
-        'must_approve' => $mustApprove === TRUE ? 1 : 0
+        'credit_case_status' => 'C'
       );
-
-      $this->db->trans_begin();
 
       if (! $this->orders_model->update($code, $arr))
       {
@@ -485,33 +542,7 @@ class Credit_approval extends PS_Controller
         );
 
         $this->credit_approval_model->add_log($log);
-      }
-
-      if ($sc === TRUE)
-      {
-        if (! $mustApprove)
-        {
-          $arr = array(
-            'Approved' => 'A',
-            'Approver' => 'System',
-            'ApproveDate' => now()
-          );
-
-          if ($this->orders_model->update($code, $arr))
-          {
-            if (! $this->orders_model->approve_details($code))
-            {
-              $sc = FALSE;
-              set_error('Failed to approve order details');
-            }
-          }
-          else
-          {
-            $sc = FALSE;
-            set_error('Failed to update order approval status');
-          }
-        }
-      }
+      }      
 
       if ($sc === TRUE)
       {
@@ -522,7 +553,7 @@ class Credit_approval extends PS_Controller
         $this->db->trans_rollback();
       }
 
-      if ($sc === TRUE && ! $mustApprove)
+      if ($sc === TRUE)
       {
         $this->load->library('export');
         $this->export->export_order($code);
@@ -541,25 +572,72 @@ class Credit_approval extends PS_Controller
   public function do_reject()
   {    
     $sc = TRUE;
-    $code = $this->input->post('code');
-    $doc = $this->orders_model->get($code);
+    $code = NULL;
+    $doc = NULL;
+    $ds = json_decode($this->input->post('data'));
 
-    if (! empty($doc))
-    {      
+    if(empty($ds))
+    {
+      $sc = FALSE;
+      set_error('Invalid data');
+    }
+
+    if($sc === TRUE)
+    {
+      $code = $ds->code;
+      $doc = $this->orders_model->get($code);
+    }
+
+    if($sc === TRUE && ! empty($doc))
+    {
       $arr = array(
         'Approved' => 'R',
         'Approver' => $this->_user->uname,
         'ApproveDate' => now(),
+        'Approval_status' => 'R',
         'credit_approval' => 'R',
         'credit_approver' => $this->_user->id,
         'credit_case_status' => 'C'
-      );      
+      );
+
+      $this->db->trans_begin();
 
       if (! $this->orders_model->update($code, $arr))
       {
         $sc = FALSE;
         set_error('Failed to update order');
       }
+
+      if($sc === TRUE && ! empty($ds->items) && count($ds->items) > 0)
+      {
+        if(! $this->orders_model->reject_details($code))
+        {
+          $sc = FALSE;
+          set_error('Failed to reject order details');
+        }
+
+        if($sc === TRUE)
+        {
+          $batch = array();
+
+          foreach ($ds->items as $item)
+          {            
+            $batch[] = array(
+              'id' => $item->id,              
+              'reject_text' => get_null($item->reject_text)
+            );
+          }
+
+          if(! empty($batch))
+          {
+            if(! $this->orders_model->update_details_by_batch($batch))
+            {
+              $sc = FALSE;
+              set_error('Failed to update order details');
+            }
+          }
+        }              
+      }      
 
       if($sc === TRUE && ! empty($doc->credit_case_id) && $doc->credit_case_status != 'C')
       {
@@ -589,11 +667,20 @@ class Credit_approval extends PS_Controller
 
         $this->credit_approval_model->add_log($log);
       }
+
+      if($sc === TRUE)
+      {
+        $this->db->trans_commit();
+      }
+      else
+      {
+        $this->db->trans_rollback();
+      }
     }
     else
     {
       $sc = FALSE;
-      set_error('Order not found');
+      set_error('notfound');
     }
 
     $this->_response($sc);

@@ -36,12 +36,15 @@ function showAuthorize(code) {
 
 
 function preview(code, status) {
+  $('.a-btn').attr('disabled', 'disabled'); 
+  $('.a-btn').addClass('hide');
+  
   load_in();
 
   $('#OrderCode').val(code);
 
   $.ajax({
-    url: `${ORDER}get_detail`,
+    url: `${HOME}get_detail`,
     type: 'GET',
     cache: false,
     data: {
@@ -49,213 +52,172 @@ function preview(code, status) {
     },
     success: function (rs) {
       load_out();
-      if (isJson(rs)) {
 
+      if (isJson(rs)) {
         let source = $('#preview-template').html();
-        let data = $.parseJSON(rs);
+        let data = JSON.parse(rs);
         let output = $('#result');
 
-        if (data.Approved == 'P') {
-          if (data.CanApprove == true) {
-            $('#btn-approve').removeClass('hide');
-            $('#btn-reject').removeClass('hide');
-          }
-          else {
-            $('#btn-approve').addClass('hide');
-            $('#btn-reject').addClass('hide');
-          }
-
-          $('#btn-temp').addClass('hide');
-        }
-        else {
-          $('#btn-approve').addClass('hide');
-          $('#btn-reject').addClass('hide');
-
-          if (data.Approved == 'A') {
-            $('#btn-temp').removeClass('hide');
-          }
-        }
-
         render(source, data, output);
+
+        if (data.CanApprove == true) {         
+          $('.a-btn').removeClass('hide');
+        }              
 
         $('#previewModal').modal('show');
       }
       else {
-        swal({
-          title: "Error!",
-          text: rs,
-          type: 'error'
-        })
+        showError(rs);
       }
     }
-  })
+  });
 }
 
-function doApprove() {
-  let code = $('#OrderCode').val();
-  let check = 0;
-  let err = 0;
-  let items = [];
 
-  $('.check-item').each(function() {
-    let id = $(this).val();
-    if($(this).is(':checked')) {
-      let item = {"id" : id, "status" : "A"}
-      items.push(item);
-      $('#reject-item-'+ id).removeClass('has-error');
+function doApprove() {
+  clearErrorByClass('reject-box');
+
+  let ds = {
+    'code' : $('#OrderCode').val(),
+    'items' : []
+  }
+  
+  let check = 0;
+  let err = 0;  
+
+  $('.check-item').each(function() {    
+    if($(this).is(':checked')) {      
+      ds.items.push({"id" : $(this).val(), "status" : "A"});      
       check++;
     }
     else {
-      let reject_text = $('#reject-item-'+ id).val();
-      if(reject_text.length) {
-        let item = {"id" : id, "status" : "R", "reject_text" : reject_text }
-        items.push(item);
+      let id = $(this).val();
+      let reject_text = $('#reject-item-'+ id).val().trim();
+
+      if(reject_text.length) {        
+        items.push({"id" : id, "status" : "R", "reject_text" : reject_text });
       }
       else {
-        $('#reject-item-'+id).addClass('has-error');
+        $('#reject-item-'+id).hasError();
         err++;
       }
     }
   });
 
   if(err > 0) {
-    swal({
-      title:'Required',
-      text:'กรุณาระบุเหตุผลในการ Reject ทุกรายการที่ไม่อนุมัติ',
-      type:'warning'
-    });
-
+    showError('กรุณาระบุเหตุผลในการ Reject ทุกรายการที่ไม่อนุมัติ');
     return false;
   }
 
-  if(check > 0) {
-    $('#previewModal').modal('hide');
+  if(check == 0 && ds.items.length == 0) {
+    showError('กรุณาเลือกรายการที่ต้องการอนุมัติ');
+    return false;
+  }
 
-    load_in();
+  $('#previewModal').modal('hide');
 
-    $.ajax({
-      url: `${ORDER}do_approve`,
-      type:'POST',
-      cache:false,
-      data:{
-        'code' : code,
-        'items' : JSON.stringify(items)
-      },
-      success:function(rs) {
-        load_out();
-        var rs = $.trim(rs);
-        if(rs === 'success') {
-          swal({
-            title:"Success",
-            type:'success',
-            timer:1000
-          });
+  load_in();
 
-          setTimeout(function() {
-            window.location.reload();
-          }, 1200);
-        }
-        else {
-          swal({
-            title:"Error!",
-            text: rs,
-            type:'error'
-          });
-        }
+  $.ajax({
+    url: `${HOME}do_approve`,
+    type: 'POST',
+    cache: false,
+    data: {      
+      'data': JSON.stringify(ds)
+    },
+    success: function (rs) {
+      load_out();
+      
+      if (rs.trim() === 'success') {
+        swal({
+          title: "Success",
+          type: 'success',
+          timer: 1000
+        });
+
+        setTimeout(function () {
+          window.location.reload();
+        }, 1200);
       }
-    });
-  }
-  else {
-    return false;
-  }
+      else {
+        showError(rs);
+      }
+    }
+  });
 }
 
 
-
-
 function doReject() {
-
-  let code = $('#OrderCode').val();
+  clearErrorByClass('reject-box');
+  
+  let ds = {
+    'code' : $('#OrderCode').val(),
+    'items' : []
+  };
+  
   let check = 0;
   let err = 0;
-  let count = 0;
-  let items = [];
+  let count = 0;  
 
-  $('.check-item').each(function() {
+  $('.check-item').each(function() {    
     if($(this).is(':checked')) {
       let id = $(this).val();
       let reject_text = $("#reject-item-"+id).val();
       if(reject_text.length) {
-        items.push({"id" : id, "reject_text" : reject_text});
+        ds.items.push({"id" : id, "reject_text" : reject_text});
         $('#reject-item-'+id).removeClass('has-error');
       }
       else {
         $('#reject-item-'+id).addClass('has-error');
         err++;
       }
-
       check++;
     }
-
     count++;
   });
 
-
-  if(check == count) {
-    if(err > 0) {
-      swal({
-        title:'Required',
-        text:'กรุณาระบุเหตุผลในการ Reject ทุกรายการ',
-        type:'warning'
-      });
-
-      return false;
-    }
-
-    $('#previewModal').modal('hide');
-
-    load_in();
-
-    $.ajax({
-      url: `${ORDER}do_reject`,
-      type:'POST',
-      cache:false,
-      data:{
-        'code' : code,
-        'items' : JSON.stringify(items)
-      },
-      success:function(rs) {
-        load_out();
-        var rs = $.trim(rs);
-        if(rs === 'success') {
-          swal({
-            title:"Success",
-            type:'success',
-            timer:1000
-          });
-
-          setTimeout(function() {
-            window.location.reload();
-          }, 1200);
-        }
-        else {
-          swal({
-            title:"Error!",
-            text: rs,
-            type:'error'
-          });
-        }
-      }
-    });
-  }
-  else {
-    swal({
-      title:"",
-      text:"กรุณาเลือกรายการทั้งหมด",
-      type:"warning"
-    });
+  if(count > 0 && check != count) {
+    showWarning('กรุณาเลือกรายการทั้งหมด');
     return false;
   }
+
+  if(err > 0) {
+    showWarning('กรุณาระบุเหตุผลในการ Reject ทุกรายการ');
+    return false;
+  }
+
+  $('#previewModal').modal('hide');
+
+  load_in();
+
+  $.ajax({
+    url: `${HOME}do_reject`,
+    type: 'POST',
+    cache: false,
+    data: {
+      'data': JSON.stringify(ds)
+    },
+    success: function (rs) {
+      load_out();
+      if (rs.trim() === 'success') {
+        swal({
+          title: "Success",
+          type: 'success',
+          timer: 1000
+        });
+
+        setTimeout(function () {
+          window.location.reload();
+        }, 1200);
+      }
+      else {
+        showError(rs);
+      }
+    },
+    error: function(rs) {
+      showError(rs);
+    }
+  });  
 }
 
 
