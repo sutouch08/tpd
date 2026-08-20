@@ -163,7 +163,7 @@
 
 			<div class="modal-footer">
 				<button type="button" class="btn btn-white btn-default btn-100" id="btn-close" onClick="dismiss('previewModal')">Close</button>
-				<button type="button" class="btn btn-white btn-danger btn-100 a-btn" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>				
+				<button type="button" class="btn btn-white btn-danger btn-100 a-btn" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>
 				<button type="button" class="btn btn-white btn-success btn-100 a-btn" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
 			</div>
 		</div>
@@ -220,10 +220,14 @@
 					<td>{{billOption}}</td>
 				</tr>
 				<tr>
-					<td>Remark สำหรับสื่อสารกับ Admin</td>
-					<td>{{remark}}</td>
+					<td>Order Type</td>
+					<td>{{isExport}}</td>
 					<td>Promotion</td>
 					<td>{{promotionCode}} {{promotionName}}</td>
+				</tr>
+				<tr>
+					<td>Remark สำหรับสื่อสารกับ Admin</td>
+					<td colspan="3">{{remark}}</td>
 				</tr>
 			</tbody>
 		</table>
@@ -356,11 +360,11 @@
 
 <script>
 	$('#user-id').select2();
-	// $(document).ready(function() {
-	// 	setTimeout(function() {
-	// 		window.location.reload();
-	// 	}, 1000 * 60 * 5); //--- reload every 5 minutes
-	// });
+	$(document).ready(function() {
+		setTimeout(function() {
+			window.location.reload();
+		}, 1000 * 60 * 10); //--- reload every 10 minutes
+	});
 </script>
 
 <script src="<?php echo base_url(); ?>scripts/order_approval/order_approval.js?v=<?php echo date('Ymd'); ?>"></script>

@@ -197,7 +197,7 @@
 				<option value="0" <?php echo is_selected('0', $is_over_due); ?>>No</option>
 			</select>
 		</div>
-		
+
 		<div class="col-lg-1-harf col-md-2 col-sm-2 col-xs-6 padding-5">
 			<label class="search-label">Team condition</label>
 			<select class="form-control input-sm" name="con_id" onchange="getSearch()">
@@ -215,6 +215,15 @@
 				<option value="2" <?php echo is_selected('2', $Status); ?>>Success</option>
 				<option value="3" <?php echo is_selected('3', $Status); ?>>Error</option>
 				<option value="-1" <?php echo is_selected('-1', $Status); ?>>Cancelled</option>
+			</select>
+		</div>
+
+		<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+			<label class="search-label">Order Type</label>
+			<select class="form-control input-sm" name="is_export" onchange="getSearch()">
+				<option value="all">ทั้งหมด</option>
+				<option value="1" <?php echo is_selected('1', $is_export); ?>>Export</option>
+				<option value="0" <?php echo is_selected('0', $is_export); ?>>Local</option>
 			</select>
 		</div>
 
@@ -314,7 +323,7 @@
 					<?php $users = users_array(); //--- user_helper 
 					?>
 					<?php foreach ($data as $rs) : ?>
-						<?php $credit_issue = ($rs->credit_issue == 1 && $rs->credit_approval != 'A') ? 1 : 0; ?>						
+						<?php $credit_issue = ($rs->credit_issue == 1 && $rs->credit_approval != 'A') ? 1 : 0; ?>
 						<tr>
 							<td class="middle text-center fix-no no" scope="row"><?php echo $no; ?></td>
 							<td class="middle text-center fix-date" scope="row">
@@ -455,6 +464,7 @@
 			<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}  {{{fileName}}}</td></tr>
 			<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
 			<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
+			<tr><td class="th">Order Type</td><td>{{isExport}}</td></tr>
 			<tr><td class="th">Price List</td><td>{{PriceList}}</td></tr>
 			<tr><td class="th">Payment Terms</td><td>{{termName}}</td></tr>
 			<tr><td class="th">Remark สำหรับสื่อสารกับ Admin</td><td>{{remark}}</td></tr>

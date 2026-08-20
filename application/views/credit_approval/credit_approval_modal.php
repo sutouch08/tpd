@@ -115,7 +115,7 @@
 			</tbody>
 		</table>
 	</div>
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px; min-height:222px;">
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px; min-height:222px;">    
     {{#if has_document}}
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0" id="file-list">
       <table class="table table-striped tableNarrow border-1">
@@ -145,6 +145,8 @@
       </table>
     </div>
     {{/if}}
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 text-right">Credit Limit ที่กำหนด : &nbsp;&nbsp; {{credit_limit}}</div>    
+    <div class="divider-hidden"></div>
     <!-- logs -->
     <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0" style="position:absolute; bottom:0; left:0; right:0;">
       {{#each logs}} 
@@ -190,9 +192,9 @@
 			</div>
 
       <div class="form-group">
-        <label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ยอดเกินเครดิต</label>
+        <label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right red">ยอดเกินเครดิตทั้งหมด</label>
         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
-          <input type="text" class="form-control input-sm text-right" id="diff-amount" value="{{credit_diff}}" readonly>
+          <input type="text" class="form-control input-sm text-right red" id="diff-amount" value="{{credit_balance}}" readonly>
         </div>
       </div>
 		</div>
@@ -305,7 +307,7 @@
     </table>
   </div>
   <div class="divider" style="margin-top:5px;"></div>
-  <div class="col-lg-8 col-md-8 col-sm-6 col-xs-12 padding-0">
+  <div class="col-lg-8 col-md-8 col-sm-6 col-xs-12 padding-0">    
     {{#if has_document}}
       <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0" id="file-list">
       <table class="table table-striped tableNarrow border-1">
@@ -335,6 +337,7 @@
       </table>
     </div>
     {{/if}}
+    <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 text-right">Credit Limit ที่กำหนด : &nbsp;&nbsp; {{credit_limit}}</div>        
   </div>
   <div class="col-lg-4 col-md-4 col-sm-6 col-xs-12">
     <div class="form-horizontal">
@@ -345,9 +348,9 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="col-lg-7 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ยอดเกินเครดิต</label>
+        <label class="col-lg-7 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right red">ยอดเกินเครดิตทั้งหมด</label>
         <div class="col-lg-5 col-md-4 col-sm-4 col-xs-6 padding-5">
-          <input type="text" class="form-control input-sm text-right" id="diff-amount" value="{{credit_diff}}" readonly>
+          <input type="text" class="form-control input-sm text-right red" id="diff-amount" value="{{credit_balance}}" readonly>
         </div>
       </div>
       {{#if is_overdue}}

@@ -318,6 +318,11 @@ class Orders_model extends CI_Model
       $this->db->where('Status', $ds['Status']);
     }
 
+    if(isset($ds['is_export']) && $ds['is_export'] !== 'all')
+    {
+      $this->db->where('isExport', $ds['is_export']);
+    }
+
     if($ds['SO_Status'] != 'all')
     {
       if($ds['SO_Status'] == 'x')
@@ -483,6 +488,11 @@ class Orders_model extends CI_Model
     if($ds['Status'] !== 'all')
     {
       $this->db->where('Status', $ds['Status']);
+    }
+
+    if (isset($ds['is_export']) && $ds['is_export'] !== 'all')
+    {
+      $this->db->where('isExport', $ds['is_export']);
     }
 
     if(isset($ds['is_discount_sales']) && $ds['is_discount_sales'] != 'all')

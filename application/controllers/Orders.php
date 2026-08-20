@@ -53,7 +53,8 @@ class Orders extends PS_Controller
 			'INV_Status' => get_filter('INV_Status', 'INV_Status', 'all'),
 			'fromDate' => get_filter('fromDate', 'so_fromDate', ''),
 			'toDate' => get_filter('toDate', 'so_toDate', ''),
-			'is_discount_sales' => get_filter('is_discount_sales', 'is_discount_sales', 'all')
+			'is_discount_sales' => get_filter('is_discount_sales', 'is_discount_sales', 'all'),
+			'is_export' => get_filter('is_export', 'so_is_export', 'all')
 		);
 
 		if ($this->input->post('search'))
@@ -1519,6 +1520,7 @@ class Orders extends PS_Controller
 					'termName' => term_name($doc->term_id),
 					'billOption' => $doc->BillDate == 1 ? 'Y' : 'N',
 					'requiredSQ' => $doc->requireSQ == 1 ? 'Y' : 'N',
+					'isExport' => $doc->isExport == 1 ? 'Export' : 'Local',
 					'remark' => $doc->Comments,
 					'Approved' => $doc->Approved,
 					'promotionCode' => $doc->promotion_code,
@@ -2164,7 +2166,8 @@ class Orders extends PS_Controller
 			'so_is_promotion',
 			'is_discount_sales',
 			'so_credit_issue',
-			'so_is_over_due'			
+			'so_is_over_due',
+			'so_is_export'
 		);
 
 		clear_filter($filter);

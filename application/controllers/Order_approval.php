@@ -248,6 +248,7 @@ class Order_approval extends PS_Controller
           'termName' => term_name($doc->term_id),
           'billOption' => $doc->BillDate == 1 ? 'Y' : 'N',
           'requiredSQ' => $doc->requireSQ == 1 ? 'Y' : 'N',
+          'isExport' => $doc->isExport == 1 ? 'Export' : 'Local',
           'remark' => $doc->Comments,          
           'CanApprove' => $can_approve,
           'items' => [],

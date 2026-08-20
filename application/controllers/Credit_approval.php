@@ -143,6 +143,34 @@ class Credit_approval extends PS_Controller
     force_download($filename, $data);
   }
 
+  public function get_credit_data($CardCode)
+  {   
+    $res = array(      
+      'CreditLine' => 0.00,           
+      'CreditBalance' => 0.00
+    );
+    
+    $card = $this->customer_model->get_by_code($CardCode);
+
+    if (! empty($card))
+    {
+      $credit = empty($card->CustCode) ? $this->customer_model->get_credit_details($card->CardCode) : $this->customer_model->get_credit_details_by_hCode($card->CustCode);
+      $CreditLine = $card->isRegular == 1 ? floatval($credit->CreditLine) : floatval(getConfig('GLOBAL_CREDIT_LINE'));      
+
+      if (! empty($credit))
+      {
+        $orderUsed = $this->orders_model->get_credit_used_amount($card->CardCode, $card->CustCode);
+        $creditBalance = $CreditLine - ($credit->Balance + $credit->DNotesBal + $credit->OrdersBal + $orderUsed);
+
+        $res = array(          
+          'CreditLine' => $CreditLine,        
+          'CreditBalance' => $creditBalance
+        );
+      }
+    }
+
+    return (object) $res;
+  }
 
   public function get_order_detail()
   {
@@ -156,6 +184,7 @@ class Credit_approval extends PS_Controller
       $apv = $this->credit_approver_model->get_active_by_user_id($this->_user->id);
       $can_approve = empty($apv) ? FALSE : is_true($apv->can_approve);
       $can_review = empty($apv) ? FALSE : is_true($apv->can_review);
+      $credit = $this->get_credit_data($doc->CardCode);      
       
       $ds = array(
         'orderCode' => $doc->code,
@@ -175,6 +204,7 @@ class Credit_approval extends PS_Controller
         'termName' => term_name($doc->term_id),
         'billOption' => $doc->BillDate == 1 ? 'Y' : 'N',
         'requiredSQ' => $doc->requireSQ == 1 ? 'Y' : 'N',
+        'isExport' => $doc->isExport == 1 ? 'Export' : 'Local',
         'remark' => $doc->Comments,
         'approval_status' => $doc->credit_approval,
         'is_overdue' => is_true($doc->is_over_due),
@@ -185,6 +215,8 @@ class Credit_approval extends PS_Controller
         'logs' => array(),
         'doc_total' => number($doc->DocTotal, 2),
         'credit_diff' => number($doc->credit_diff, 2),
+        'credit_limit' => number($credit->CreditLine, 2),
+        'credit_balance' => number($credit->CreditBalance, 2),
         'case_id' => $doc->credit_case_id,
         'overdue_amount' => $doc->is_over_due ? number($this->get_overdue_amount($doc->CardCode, $doc->CustCode), 2) : 0,
         'has_document' => FALSE,

@@ -81,7 +81,8 @@ class Export
               'U_Approval' => $order->Approver,
 							'F_Web' => 'A',
 							'F_WebDate' => now(),
-              'U_TPD_HDiscSale' => $order->is_discount_sales == 1 ? 'Y' : NULL
+              'U_TPD_HDiscSale' => $order->is_discount_sales == 1 ? 'Y' : NULL,
+							'TPD_OrdType' => $order->isExport == 1 ? 'E' : 'L'
 						);
 
 						//--- start transection
