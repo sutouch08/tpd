@@ -13,14 +13,14 @@ class Setting extends PS_Controller{
 		$this->load->model('config_model');
 		$this->load->helper('warehouse');
   }
-
-
-
-  public function index()
+  
+  public function index($tab = 'company')
   {
 		$groups = array('Company', 'Document', 'SAP', 'System', 'Order');
 
-		$ds = array();
+    $ds = array(
+      'tab' => $tab
+    );
 
 		foreach($groups as $rs)
 		{
@@ -38,7 +38,6 @@ class Setting extends PS_Controller{
 		$ds['priceList'] = $this->user_model->get_all_price_list();
 
 		$this->load->view('setting/configs', $ds);
-
   }
 
 

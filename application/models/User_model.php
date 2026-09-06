@@ -85,6 +85,11 @@ class User_model extends CI_Model
       $this->db->like('uname', $ds['uname']);
     }
 
+    if (! empty($ds['email']))
+    {
+      $this->db->like('email', $ds['email']);
+    }
+
     if (! empty($ds['emp_id']) && $ds['emp_id'] != 'all')
     {
       $this->db->where('emp_id', $ds['emp_id']);
@@ -131,6 +136,11 @@ class User_model extends CI_Model
     if (! empty($ds['uname']))
     {
       $this->db->like('uname', $ds['uname']);
+    }
+
+    if( ! empty($ds['email']))
+    {
+      $this->db->like('email', $ds['email']);
     }
 
     if (! empty($ds['emp_id']) && $ds['emp_id'] != 'all')

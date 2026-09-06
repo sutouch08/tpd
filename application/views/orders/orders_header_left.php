@@ -101,6 +101,7 @@
   </div>
 
   <input type="hidden" id="is-regular" value="1" />
+  <input type="hidden" id="overdue" value="0" />
 </div>
 
 <script>

@@ -42,6 +42,14 @@
 	<div class="divider">	</div>
 
 	<div class="form-group">
+		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Email</label>
+		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
+			<input type="email" name="email" id="email" class="width-100 e" value="" maxlength="100" />
+		</div>
+		<div class="help-block col-xs-12 col-sm-reset inline red" id="email-error"></div>
+	</div>
+
+	<div class="form-group">
 		<label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 control-label no-padding-right">Employee</label>
 		<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12">
 			<select class="width-100 e" name="emp" id="emp">

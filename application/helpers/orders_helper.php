@@ -124,5 +124,42 @@ function order_price_list_name($price_list_id = '', $special_price_id = '')
   }
 }
 
+function order_step_flow($current = 1, $credit_issue = FALSE, $is_overdue = FALSE)
+{
+  $templates = array(
+    'normal' => array(
+      1 => ['title' => 'เปิดออเดอร์', 'class' => 'active'],
+      2 => ['title' => 'รอตรวจสอบ/ SM อนุมัติ', 'class' => ''],
+      3 => ['title' => 'อนุมัติ', 'class' => '']
+    ),
+    'credit_issue' => array(
+      1 => ['title' => 'เปิดออเดอร์', 'class' => 'active'],
+      2 => ['title' => 'fau ตรวจสอบ Credit. Limit', 'class' => ''],
+      3 => ['title' => 'SMU พิจารณาอนุมัติ', 'class' => ''],
+      4 => ['title' => 'อนุมัติ', 'class' => '']
+    ),
+    'over_due' => array(
+      1 => ['title' => 'เปิดออเดอร์', 'class' => 'active'],
+      2 => ['title' => 'fau ตรวจสอบ Credit. Limit', 'class' => ''],
+      3 => ['title' => 'รอผู้แทนแนบหลักฐานการชำระเงิน (ภายใน 7 วัน)', 'class' => ''],
+      4 => ['title' => 'fau ตรวจสอบหลักฐานการชำระเงิน', 'class' => ''],
+      5 => ['title' => 'SMU พิจารณาอนุมัติ', 'class' => ''],
+      6 => ['title' => 'อนุมัติ', 'class' => '']
+    )
+  );
+
+  $flow = $credit_issue ? ($is_overdue ? $templates['over_due'] : $templates['credit_issue']) : $templates['normal'];
+
+  $html = '<ul class="steps">';
+
+  foreach($flow as $step => $data)
+  {
+    $class = $step <= $current ? 'active' : $data['class'];
+    $html .= '<li data-step="'.$step.'" class="'.$class.'"><span class="step">'.$step.'</span><span class="title">'.$data['title'].'</span></li>';
+  }
+
+  $html .= '</ul>';
+  return $html;
+}
 
  ?>

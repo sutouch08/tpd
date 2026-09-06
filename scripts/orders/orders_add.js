@@ -48,11 +48,9 @@ function changeCustomerList() {
 	})
 }
 
-
 $('#customer').change(function() {
 	getItemTemplate();
 });
-
 
 function getCustomerData() {
 	let source = $('#price-list-source').val();
@@ -79,6 +77,7 @@ function getCreditData() {
 					let balance = addCommas(ds.data.CreditBalance.toFixed(2));
 					$('#credit-balance').val(balance);
 					$('#is-regular').val(ds.data.isRegular);
+					$('#overdue').val(ds.data.overdue);
 
 					if(ds.data.isRegular == 1) {
 						$('#customer-label').html('<span class="label label-success arrowed">ลูกค้าประจำ</span>');
@@ -133,7 +132,6 @@ function getAddress() {
 	getRate();
 }
 
-
 function get_sale_name_by_customer(code) {
 	if(code.length) {
 		$.ajax({
@@ -149,7 +147,6 @@ function get_sale_name_by_customer(code) {
 		})
 	}
 }
-
 
 function get_address_ship_to_code(code) {
 	$.ajax({
@@ -175,7 +172,6 @@ function get_address_ship_to_code(code) {
 		}
 	})
 }
-
 
 function get_address_ship_to() {
 	var code = $('#customer').val()
@@ -208,7 +204,6 @@ function get_address_ship_to() {
 	})
 }
 
-
 function get_address_bill_to_code(code) {
 	$.ajax({
 		url:HOME + 'get_address_bill_to_code',
@@ -233,7 +228,6 @@ function get_address_bill_to_code(code) {
 		}
 	})
 }
-
 
 function get_address_bill_to() {
 	var code = $('#customer').val();
@@ -265,7 +259,6 @@ function get_address_bill_to() {
 	})
 }
 
-
 function checkPriceList() {
 	let count = 0;
 
@@ -289,7 +282,6 @@ function checkPriceList() {
 	getItemTemplate();
 	getTermDropdown();
 }
-
 
 function getStepTemplate() {
 	let priceList = $('#priceList').val();
@@ -345,7 +337,6 @@ function getStepTemplate() {
 	})
 }
 
-
 function getTermDropdown() {
 	let priceList = $('#priceList').val();
 	let sp_id = parseDefault(parseInt($('#priceList option:selected').data('spid')), 0)
@@ -394,7 +385,6 @@ function getTermDropdown() {
 		}
 	})
 }
-
 
 function getItemTemplate() {
 	let custCode = $('#customer').val();
@@ -455,7 +445,6 @@ function getItemTemplate() {
 		}
 	})
 }
-
 
 function getItemData(no) {
 	let priceList = $('#priceList').val();
@@ -553,7 +542,6 @@ function getItemData(no) {
 	}
 }
 
-
 function updateSelectItem(no) {
 	let template = $('#item-template').html();
 	let ds = {"no" : no};
@@ -563,14 +551,12 @@ function updateSelectItem(no) {
 	$('#item-'+no).select2();
 }
 
-
 function updateSelectStep(no) {
 	let template = $('#step-template').html();
 	let ds = {"no" : no};
 	let target = $('#step-'+no);
 	render(template, ds, target);
 }
-
 
 function updateStepQty(no) {
 	let priceList = $('#priceList').val();
@@ -600,7 +586,6 @@ function updateStepQty(no) {
 	recalAmount(no);
 }
 
-
 function addRow() {
 	var no = $('#top-row').val();
 	no++;
@@ -617,7 +602,6 @@ function addRow() {
 	$('#item-'+no).select2();
 }
 
-
 function removeRow() {
 	$('.chk').each(function(){
 		if($(this).is(':checked')) {
@@ -628,7 +612,6 @@ function removeRow() {
 
 	recalTotal();
 }
-
 
 function remove_vat(amount, vat) {
 
@@ -642,7 +625,6 @@ function remove_vat(amount, vat) {
 	return amount;
 }
 
-
 function get_vat_amount(amount, vat) {
 	vat = parseDefault(parseFloat(vat), 0);
 	amount = parseDefault(parseFloat(amount), 0);
@@ -653,7 +635,6 @@ function get_vat_amount(amount, vat) {
 
 	return 0;
 }
-
 
 function recalVat() {
 	$('.item-code').each(function(){
@@ -686,8 +667,7 @@ function recalAmount(no) {
 		if(stepQty > qty) {
 			$('#qty-'+no).hasError();
 			$('#err-'+no).val(1);
-			showError('จำนวนต้องไม่น้อยกว่า จำนวนขั้นต่ำของ step ที่เลือก');
-			//$('#qty-'+no).val(stepQty);
+			showError('จำนวนต้องไม่น้อยกว่า จำนวนขั้นต่ำของ step ที่เลือก');			
 		}
 		else {
 			$('#qty-'+no).clearError();
@@ -696,7 +676,7 @@ function recalAmount(no) {
 	}
 	else {
 		let limitQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('limit')), 0);
-		let minQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('stepqty')), 1);
+		let minQty = parseDefault(parseFloat($('#step-'+no+' option:selected').data('stepqty')), 0);
 
 		if(qty < minQty) {
 			$('#qty-'+no).hasError();
@@ -730,7 +710,6 @@ function recalAmount(no) {
 	recalTotal();
 }
 
-
 function recalTotal() {
 	var totalBefDi = 0.00; //--- total befor discount exclude vat
 	var discPrcnt = parseDefault(parseFloat($('#discPrcnt').val()), 0); //--- discount percentage
@@ -763,8 +742,7 @@ function recalTotal() {
 	$('#docTotal').val(addCommas(docTotal.toFixed(2)));
 }
 
-
-function previewOrder() {
+async function previewOrder() {
 	clearErrorByClass('e');
 
 	let err = 0;
@@ -805,6 +783,7 @@ function previewOrder() {
 	let DiscPrcnt = parseDefaultFloat($('#discPrcnt').val(), 0);
 	let isRegular = parseDefaultInt($('#is-regular').val(), 0);
 	let creditBalance = parseDefaultFloat(removeCommas($('#credit-balance').val()), 0);
+	let overdue = parseDefaultInt($('#overdue').val(), 0);
 
 	const uploadFile = document.getElementById('uploadFile');
 	const file = uploadFile.files[0];
@@ -952,6 +931,7 @@ function previewOrder() {
 		return false;
 	}
 
+	const flow = await getOrderFlow(1, creditIssue, overdue);
 
 	let data = {
 		"orderCode" : $('#code').val(),
@@ -986,7 +966,8 @@ function previewOrder() {
 		"creditDiff" : creditDiff,
 		"creditIssue" : creditIssue,
 		"creditMessage" : creditMessage,
-		"isRegular" : isRegular
+		"isRegular" : isRegular,
+		"flow" : flow
 	}
 
 	if(shipToWarning == 1) {
@@ -1008,6 +989,7 @@ function previewOrder() {
 
 
 function checkApprove(data) {
+	console.log(data);
 	$.ajax({
 		url:HOME + 'check_approve',
 		type:'GET',
@@ -1048,6 +1030,32 @@ function checkApprove(data) {
 			}
 		}
 	})
+}
+
+async function getOrderFlow(currentStep, creditIssue, overdue) {
+	const url = `${HOME}get_order_flow`;
+	const data = {
+		currentStep: currentStep,		
+		creditIssue: creditIssue,
+		overdue: overdue
+	};
+
+	try {
+		const response = await fetch(url, {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json'
+			},
+			body: JSON.stringify(data)
+		});
+
+		const res = await response.text();
+		return res;
+	}
+	catch (error) {
+		console.error('Error fetching order flow:', error);
+		return null;
+	}
 }
 
 function warning(msg) {

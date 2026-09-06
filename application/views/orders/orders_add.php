@@ -302,39 +302,40 @@
 			</tbody>
 		</table>
 	</div>
-	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="margin-top:20px; padding-right:7px;">
+	<div class="col-lg-9 col-md-8 col-sm-8 col-xs-12 padding-0" id="flow">{{{flow}}}</div>
+	<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12" style="margin-top:20px; padding-right:7px;">
 		<div class="form-horizontal">
 			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">ราคาสินค้า</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ราคาสินค้า</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalBefDi}}" readonly>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">ส่วนลด [{{subTotal.DiscPrcnt}} %]</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ส่วนลด [{{subTotal.DiscPrcnt}} %]</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.DiscSum}}" readonly>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษีมูลค่าเพิ่ม</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษีมูลค่าเพิ่ม</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalBefVat}}" readonly>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalVat}}" readonly>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label class="col-lg-10 col-md-10 col-sm-9 col-xs-6 control-label no-padding-right">รวมเงินสุทธิ</label>
-				<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">รวมเงินสุทธิ</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.docTotal}}" readonly>
 				</div>
 			</div>

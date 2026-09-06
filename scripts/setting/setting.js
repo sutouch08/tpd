@@ -31,3 +31,9 @@ function toggleOption(el) {
 	$("input[name='" + name + "']").val(option);
 	console.log(name + ' : ' + $("input[name='" + name + "']").val());
 }
+
+function changeURL(tab) {
+	var url = HOME + 'index/' + tab;
+	var stObj = { stage: 'stage' };
+	window.history.pushState(stObj, 'setting', url);
+}

@@ -12,6 +12,7 @@ class Customer_status extends PS_Controller
     parent::__construct();
     $this->home = base_url().'report/customer_status';		
 		$this->load->model('report/customer_status_model');		
+		$this->load->helper('customer');
   }
 
 
@@ -21,11 +22,84 @@ class Customer_status extends PS_Controller
     $this->load->view('report/customer_status');
   }
 
+	public function send_request()
+	{
+		$sc = TRUE;
+
+		$CardCode = $this->input->post('customerCode');
+		$CardName = $this->input->post('customerName');		
+		$EstimatedSales = $this->input->post('estimatedSales');		
+		$BillingDate = $this->input->post('billingText');
+		$PaymentDate = $this->input->post('paymentText');
+		$CreateDate = $this->input->post('createDate');
+		$Duration = $this->input->post('duration');
+		$InvoiceCount = $this->input->post('invoiceCount');
+
+		$this->load->library('Mail');
+
+		$to = getConfig('RECEIVER_EMAIL');
+		$subject = "Customer Status Request";
+		$message = "<p>";
+		$message .= "Customer Code: {$CardCode} <br>";
+		$message .= "Customer Name: {$CardName} <br>";
+		$message .= "วันที่สร้าง (Create Date): {$CreateDate} <br>";
+		$message .= "ระยะเวลา (Duration): {$Duration} <br>";
+		$message .= "เปิดบิลแล้ว (Invoice Count): {$InvoiceCount} <br>";
+		$message .= "ประมาณการยอดขายต่อเดือน (Estimated Sales): {$EstimatedSales} <br>";
+		$message .= "เงื่อนไขการรับวางบิล: {$BillingDate} <br>";
+		$message .= "รอบการชำระเงิน: {$PaymentDate} <br>";
+		$message .= "<br>";
+		$message .= "----------------------------- <br>";
+		$message .= "<br>";
+		$message .= "ผู้ส่งคำขอ (Requester): " . $this->_user->emp_name . "<br>";
+		$message .= "</p>";
+
+		$attachments = [];
+		$cc = [];
+		if($this->_user->email)
+		{
+			$cc[] = $this->_user->email;
+		}
+
+		$result = $this->mail->send($to, $subject, $message, $attachments, $cc);
+
+		$arr = array(
+			'status' => $result ? 'success' : 'error',
+			'message' => $result ? 'Request sent!' : 'Failed to send request.'
+		);
+
+		echo json_encode($arr);	
+	}
+
+	public function sendmail()
+	{
+		$this->load->library('Mail');
+
+		$to = getConfig('RECEIVER_EMAIL');
+		$subject = "Test email with CC + attachment";
+		$message = "<h3>Hello</h3><p>This email contains CC and attachments.</p>";
+
+		$attachments = [
+			FCPATH . "uploads/file.pdf",
+			FCPATH . "uploads/image.jpg"
+		];
+
+		$cc = [
+			"manager@example.com",
+			"audit@example.com"
+		];		
+
+		$result = $this->mail->send($to, $subject, $message, $attachments, $cc);
+
+		echo $result ? "Email sent!" : "Failed to send email.";
+	}
+
 
 	public function get_report()
 	{		
-		$ds = [];
-		$list = $this->customer_status_model->get_customer_list();
+		$ds = [];		
+		$isAdmin = $this->isAdmin || $this->_SuperAdmin;
+		$list = $isAdmin ? $this->customer_status_model->get_all_user_customer_list() : $this->customer_status_model->get_user_customer_list($this->_user->area_id);		
 
 		if(!empty($list))
 		{
@@ -58,8 +132,6 @@ class Customer_status extends PS_Controller
 		echo json_encode($ds);
 
 	} //--- end function
-
-
 
 
 	public function do_export()
@@ -99,7 +171,8 @@ class Customer_status extends PS_Controller
 		$this->excel->getActiveSheet()->getStyle('A2:F2')->getAlignment()->setHorizontal('center');
 		$row++;
 
-		$list = $this->customer_status_model->get_customer_list();
+		$isAdmin = $this->isAdmin || $this->_SuperAdmin;
+		$list = $isAdmin ? $this->customer_status_model->get_all_user_customer_list() : $this->customer_status_model->get_user_customer_list($this->_user->area_id);
 
 		if( ! empty($list))
 		{

@@ -20,13 +20,62 @@ $('#toDate').datepicker({
 });
 
 
+// function viewDetail(code) {
+// 	let width = 1000;
+// 	let height = 600;
+// 	let left = (screen.width - width) / 2;
+// 	let top = (screen.height - height) / 2;
+// 	let target = `${HOME}view_detail/${code}?nomenu&nonavbar`;
+// 	window.open(target, "_blank", `width=${width}, height=${height}, left=${left}, top=${top}`);
+// }
+
 function viewDetail(code) {
-	let width = 1000;
-	let height = 600;
-	let left = (screen.width - width) / 2;
-	let top = (screen.height - height) / 2;
-	let target = `${HOME}view_detail/${code}?nomenu&nonavbar`;
-	window.open(target, "_blank", `width=${width}, height=${height}, left=${left}, top=${top}`);
+	load_in();
+
+	$.ajax({
+		url: `${HOME}get_detail`,
+		type: 'GET',
+		cache: false,
+		data: {
+			'code': code
+		},
+		success: function (rs) {
+			load_out();
+
+			if (isJson(rs)) {
+				let ds = JSON.parse(rs);
+				if(ds.status === 'success') {
+					let data = ds.data;
+					$('#payment-order-code').val(data.code);
+					$('#payment-customer').val(data.customer);
+					$('#payment-doc-total').val(data.doc_total);
+					$('#payment-credit-diff').val(data.diff);
+					$('#payment-overdue-total').val(data.overdue);
+					$('#payment-date').val(data.date);
+					$('#payment-user').val(data.request_by);
+					$('#reply-message').val('').attr('placeholder', 'Last reply: '+data.reply_message);
+					$('#payment-message').val(data.message);
+
+					let files = ds.data.files;					
+					let source = $('#file-template').html();
+					let output = $('#file-table');
+					render(source, files, output);
+
+					reIndex('fno');
+					$('#reply-modal').modal('show');
+				}
+				else {
+					showError(ds.message);
+				}
+			}
+			else {
+				showError(rs);
+			}
+		},
+		error: function (rs) {
+			showError(rs);
+		}
+	});
 }
 
 
@@ -88,7 +137,7 @@ function deleteFile(no, code, fileName) {
 
 					$(`#row-${no}`).remove();
 
-					reIndex();					
+					updateFileList(code);				
 				} 
 				else {
 					showError(ds.message);
@@ -107,6 +156,17 @@ function deleteFile(no, code, fileName) {
 function submitReply() {
 	let code = $('#payment-order-code').val().trim();
 	let message = $('#reply-message').val().trim();
+	let files = $('.attached-file').length;
+
+	if(files === 0) {
+		swal("กรุณาแนบไฟล์ก่อนส่งข้อความ");
+		return false;
+	}
+
+	if(message.length === 0) {
+		swal("กรุณากรอกข้อความก่อนส่ง");
+		return false;
+	}
 
 	$.ajax({
 		url: `${HOME}submit_reply`,
@@ -118,6 +178,11 @@ function submitReply() {
 		},
 		success: function (rs) {
 			if(rs.trim() === 'success') {
+				$('#reply-modal').modal('hide');
+				$('#reply-message').val('');
+				$('#file-table').html('');				
+				$('#uploadFile').val('');
+
 				swal({
 					title: "Success",
 					type: 'success',
@@ -133,8 +198,6 @@ function submitReply() {
 		}
 	})
 }
-
-
 
 function preview(code) {
 	load_in();
@@ -479,3 +542,88 @@ function viewRequestPayment(code) {
 	});
 }
 
+function getFile() {
+	$('#uploadFile').click();
+}
+
+const uploadFile = document.getElementById('uploadFile');
+
+uploadFile.addEventListener('change', function () {
+	const files = this.files;
+
+	if (files.length === 0) {
+		return;
+	}
+
+	if (files.length > 5) {
+		swal("เลือกไฟล์มากเกินไป", "สามารถนำเข้าได้สูงสุดครั้งละ 5 ไฟล์", "warning");
+		this.value = '';
+		return;
+	}
+
+	// ตรวจขนาดไฟล์แต่ละไฟล์
+	for (let i = 0; i < files.length; i++) {
+		if (files[i].size > 5000000) {
+			swal("ไฟล์ใหญ่เกินไป", "ไฟล์ต้องมีขนาดไม่เกิน 5 MB ต่อไฟล์", "error");
+			this.value = '';
+			return;
+		}
+	}
+
+	uploadfile();
+});
+
+async function uploadfile() {
+	const code = $('#payment-order-code').val().trim();
+	const files = uploadFile.files;
+
+	if (files.length === 0) {
+		swal("กรุณาเลือกไฟล์ก่อน", "", "warning");
+		return false;
+	}
+
+	const fd = new FormData();
+
+	for (let i = 0; i < files.length; i++) {
+		fd.append('uploadFile[]', files[i]);
+	}
+
+	load_in();
+
+	const url = `${HOME}upload_file/${code}`;
+	const xhr = new XMLHttpRequest();
+
+	xhr.addEventListener('load', function () {
+		load_out();		
+		const result = xhr.responseText;
+
+		if (isJson(result)) {
+			const res = JSON.parse(result);
+			if (res.status === 'success') {
+				updateFileList(code);
+			} else {
+				showError(res.message);
+			}
+		} else {
+			showError(result);
+		}
+	});
+
+	xhr.addEventListener('error', function () {
+		load_out();
+		swal("เกิดข้อผิดพลาด", "ไม่สามารถเชื่อมต่อเซิร์ฟเวอร์ได้", "error");
+	});
+
+	xhr.open('POST', url);
+	xhr.send(fd);
+}
+
+
+async function updateFileList(code) {
+	const url = `${HOME}get_file_list_json/${code}`;
+	const response = await fetch(url);
+	const data = await response.json();
+	const source = $('#file-template').html();
+	const output = $('#file-table');
+	render(source, data, output);
+}

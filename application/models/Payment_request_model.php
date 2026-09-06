@@ -81,6 +81,18 @@ class Payment_request_model extends CI_Model
     return NULL;
   }
 
+  public function get_reply_status_by_code($code)
+  {
+    $rs = $this->db->select('reply_status')->where('code', $code)->get($this->tb);
+
+    if($rs->num_rows() === 1)
+    {
+      return $rs->row()->reply_status;
+    }
+
+    return NULL;
+  }
+
   public function count_rows(array $ds = array())
   {
     if (! $this->_SuperAdmin && ! $this->isGM && ! $this->isAdmin)

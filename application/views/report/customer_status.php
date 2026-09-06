@@ -1,16 +1,31 @@
 <?php $this->load->view('include/header'); ?>
-<div class="row hidden-print h-row">
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-8 padding-5">
-		<h4 class="title"><?php echo $this->title; ?></h4>
+<style>
+	tr.headline>td {
+		font-size: 14px;
+		font-weight: bold;
+		padding-top: 10px;
+	}
+
+	tr.space>td {
+		padding-top: 10px;
+		padding-bottom: 10px;
+	}
+
+	tr>td:first-child {
+		padding-right: 10px;
+	}
+</style>
+<div class="row">
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5">
+		<h3 class="title"><?php echo $this->title; ?></h3>
 	</div>
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-4 padding-5">
-		<p class="pull-right top-p visible-lg">
-			<button type="button" class="btn btn-sm btn-success" onclick="getReport()"><i class="fa fa-bar-chart"></i> รายงาน</button>
-			<button type="button" class="btn btn-sm btn-primary" onclick="doExport()"><i class="fa fa-file-excel-o"></i> Export</button>
-		</p>
+	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5 text-right">
+		<button type="button" class="btn btn-white btn-success" onclick="getReport()"><i class="fa fa-bar-chart"></i> รายงาน</button>
+		<button type="button" class="btn btn-white btn-primary" onclick="doExport()"><i class="fa fa-file-excel-o"></i> Export</button>
+		<button type="button" class="btn btn-white btn-success" onclick="openRequestForm('1')"><i class="fa fa-send"></i> Request</button>
 	</div>
 </div><!-- End Row -->
-<hr />
+<hr>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive" id="result">
 		<div class="alert alert-info text-center">
@@ -26,8 +41,121 @@
 	<input type="hidden" name="token" id="token" value="">
 </form>
 
+<div class="modal fade" id="request-modal" tabindex="-1" role="dialog" data-backdrop="false" aria-labelledby="myModalLabel">
+	<div class="modal-dialog" style="width:700px; max-width:95vw;">
+		<div class="modal-content">
+			<div class="modal-header" id="request-header" style="border-bottom:solid 1px #e5e5e5; cursor: move;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title text-center" id="request-title" style="cursor: move;">คำขอเปลี่ยนเป็นลูกคาประจำ</h4>
+				<input type="hidden" id="customer-code" value="">
+				<input type="hidden" id="customer-name" value="">
+				<input type="hidden" id="customer-id" value="">
+			</div>
+			<div class="modal-body" style="max-width:94vw; min-height:300px; max-height:70vh; overflow:auto;">
+				<div class="row">
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<table class="width-100">
+							<tr>
+								<td colspan="7" class="font-size-18 text-center" style="padding-bottom:15px;" id="customer-title">CC0001 : บริษัท ตัวอย่าง จำกัด</td>
+							</tr>
+							<tr>
+								<td class="fix-width-100 text-right" style="padding-right:10px;">วันที่สร้าง</td>
+								<td class="fix-width-100"><input type="text" class="form-control input-sm text-label" id="create-date" value="2026-01-01" readonly></td>
+								<td class="fix-width-100 text-right" style="padding-right:10px;">เป็นลูกค้ามาแล้ว</td>
+								<td class="fix-width-100"><input type="text" class="form-control input-sm text-label" id="duration" value="356 วัน" readonly></td>
+								<td class="fix-width-100 text-right" style="padding-right:10px;">เปิดบิลแล้ว</td>
+								<td class="min-width-100"><input type="text" class="form-control input-sm text-label" id="invoice-count" value=" 14 ใบ" readonly></td>
+							</tr>
+						</table>
+					</div>
+					<div class="divider"></div>
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
+						<table class="width-100">
+							<tr class="headline">
+								<td class="fix-width-40 text-right">1</td>
+								<td colspan="3">ประมาณการยอดขายต่อเดือน</td>
+							</tr>
+							<tr class="space">
+								<td></td>
+								<td class="fix-width-200">
+									<label>
+										<input type="radio" class="ace" name="estimated-sales" value="1 - 30,000">
+										<span class="lbl">&nbsp;&nbsp; 1 - 30,000</span>
+									</label>
+								</td>
+								<td class="fix-width-200">
+									<label>
+										<input type="radio" class="ace" name="estimated-sales" value="30,001 - 50,000">
+										<span class="lbl">&nbsp;&nbsp; 30,001 - 50,000</span>
+									</label>
+								</td>
+								<td class="min-width-200">
+									<label>
+										<input type="radio" class="ace" name="estimated-sales" value="50,001 ขึ้นไป">
+										<span class="lbl">&nbsp;&nbsp; 50,001 ขึ้นไป</span>
+									</label>
+								</td>
+							</tr>
+							<tr>
+								<td colspan="4"><input type="text" class="width-100 text-label text-center" style="color:red !important;" id="sales-error" value="" readonly></td>
+							</tr>
+							<tr class="headline">
+								<td class="text-right">2</td>
+								<td colspan="3">ขั้นตอนการรับชำระเงินของลูกค้า</td>
+							</tr>
+							<tr class="space">
+								<td></td>
+								<td>2.1 &nbsp;&nbsp;เงื่อนไขการรับวางบิล</td>
+								<td>
+									<label>
+										<input type="radio" class="ace" name="payment-billing" value="1">
+										<span class="lbl">&nbsp;&nbsp; ไม่วางบิล</span>
+									</label>
+								</td>
+								<td>
+									<label>
+										<input type="radio" class="ace" name="payment-billing" value="2">
+										<span class="lbl">&nbsp;&nbsp; วางบิลทุกวันที่่
+											<input type="number" class="fix-width-50 input-xs text-center text-label"
+												style="margin-left:5px; margin-right:5px; border-bottom:solid 1px #333333 !important; border-bottom-style:dashed !important;"
+												id="billing-date" min="1" max="31">&nbsp;ของเดือน</span>
+									</label>
+								</td>
+							</tr>
+							<tr class="space">
+								<td></td>
+								<td>2.2 &nbsp;&nbsp;รอบการชำระเงิน</td>
+								<td>ทุกวันที่่ <input type="number" class="fix-width-50 input-xs text-center text-label"
+										style="margin-left:5px; margin-right:5px; border-bottom:solid 1px #333333 !important; border-bottom-style:dashed !important;"
+										id="payment-date" min="1" max="31">&nbsp;ของเดือน
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td colspan="4"><input type="text" class="width-100 text-label text-center" style="color:red !important;" id="billing-error" value="" readonly></td>
+							</tr>
+						</table>
+					</div>
+					<div class="divider-hidden"></div>
+					<div class="divider-hidden"></div>
+
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-left:50px;">
+						<p class="logs-text">หมายเหตุ: คำรองจะถูกส่งไปยังอีเมล์ผู้ดูแลระบบ [<b class="blue"><?php echo getConfig('SMTP_EMAIL'); ?></b>] 
+							และ CC ถึงคุณที่อีเมล์ของคุณ [<b class="purple"><?php echo $this->_user->email ? $this->_user->email : 'ไม่พบอีเมล์ของคุณ'; ?></b>] 
+						</p>						
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white btn-default" data-dismiss="modal">Cancel</button>
+				<button type="button" class="btn btn-white btn-success" onclick="submitRequest()"><i class="fa fa-send"></i> ส่งคำร้อง</button>
+			</div>
+		</div>
+	</div>
+</div>
+
 <script id="report-template" type="text/x-handlebarsTemplate">
-	<table class="table table-striped tableNarrow border-1" style="min-width:700px;">
+	<table class="table table-striped tableNarrow border-1" style="min-width:800px;">
 		<thead>
 			<tr>
 				<th class="fix-width-50 text-center">#</th>
@@ -36,29 +164,48 @@
 				<th class="fix-width-100">Create Date</th>
 				<th class="fix-width-100 text-center">Duration (days)</th>
 				<th class="fix-width-100 text-center">Invoice Count</th>
+				<th class="fix-width-100 text-center">Action</th>
 			</tr>
 		</thead>
 		<tbody>
 			{{#each this}}
 				{{#if nodata}}
 					<tr>
-						<td colspan="6" class="text-center">--- Not found ---</td>
+						<td colspan="7" class="text-center">--- Not found ---</td>
 					</tr>
 				{{else}}
-					<tr>
+					<tr id="row-{{id}}">
 						<td class="text-center no">{{no}}</td>
 						<td class="middle">{{CardCode}}</td>
 						<td class="middle">{{CardName}}</td>
 						<td class="middle">{{CreateDate}}</td>
 						<td class="middle text-center">{{Duration}}</td>
 						<td class="middle text-center">{{InvoiceCount}}</td>
+						<td class="middle text-center">
+							<button type="button" 
+							class="btn btn-xs btn-white btn-purple" 
+							id="btn-request-{{id}}"
+							data-id="{{id}}"
+							data-code="{{CardCode}}"
+							data-name="{{CardName}}"
+							data-create="{{CreateDate}}"
+							data-duration="{{Duration}}"
+							data-invoice="{{InvoiceCount}}"
+							onclick="openRequestForm('{{id}}')"><i class="fa fa-send"></i> ส่งคำร้อง</button>
+						</td>
 					</tr>
 				{{/if}}
 			{{/each}}
 		</tbody>
-	</table>	
+	</table>
 </script>
 
+<script>
+	$('#department').select2();
+	$('#area').select2();
+	$('#sales-team').select2();
+	$('#sales-person').select2();
+</script>
 
 <script src="<?php echo base_url(); ?>scripts/report/customer_status.js?v=<?php echo date('Ymd'); ?>"></script>
 <?php $this->load->view('include/footer'); ?>

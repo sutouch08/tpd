@@ -344,28 +344,23 @@
 							</td>
 							<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
 							<td class="middle text-center"><?php echo $rs->credit_issue == 1 ? '<span class="red">Yes</span>' : 'No'; ?></td>
-							<td class="middle text-center"><?php echo $rs->is_over_due == 1 ? '<span class="red">Yes</span>' : 'No'; ?></td>
+							<td class="middle text-center"><?php echo $rs->is_over_due == 1 ? '<span class="red">Yes</span>' : ''; ?></td>
 							<td class="middle text-center"><span class="btn btn-minier btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</span></td>
 							<td class="middle text-center">
 								<?php if ($rs->Status == 2) : ?>
 									<a href="javascript:void(0)" class="green" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</a>
-									<!-- <button type="button" class="btn btn-minier btn-success btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Success</button> -->
 								<?php endif; ?>
 								<?php if ($rs->Status == 3) : ?>
 									<a href="javascript:void(0)" class="red" onclick="viewDetail('<?php echo $rs->code; ?>')">Failed</a>
-									<!-- <button type="button" class="btn btn-minier btn-danger btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Failed</button> -->
 								<?php endif; ?>
 								<?php if ($rs->Status == 1) : ?>
 									<a href="javascript:void(0)" class="orange" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</a>
-									<!-- <button type="button" class="btn btn-minier btn-warning btn-block" onclick="viewDetail('<?php echo $rs->code; ?>')">Pending</button> -->
 								<?php endif; ?>
 								<?php if ($rs->Status == 0) : ?>
 									<span class="text-center">Not Exported</span>
-									<!-- <span class="label label-md label-danger btn-block" style="font-size: 11px; padding-top: 3px;">Not Export</span> -->
 								<?php endif; ?>
 								<?php if ($rs->Status == -1) : ?>
 									<span class="red text-center">Canceled</span>
-									<!-- <span class="label label-md label-danger btn-block" style="font-size: 11px; padding-top: 3px;">Canceled</span> -->
 								<?php endif; ?>
 							</td>
 							<td class="middle text-center">
@@ -446,7 +441,7 @@
 
 <input type="hidden" id="OrderCode" value="">
 
-<script id="preview-template" type="text/x-handlebarsTemplate">
+<script id="preview-template" type="text/x-handlebars-template">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0">
 		<table class="table table-striped table-bordered border-1" style="margin-bottom:10px;">
 			<tbody>
@@ -517,44 +512,53 @@
 			</tbody>
 		</table>
 	</div>
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px;">
-		{{#unless isCancel}}
-				<h4 class="status-label {{approval_color}}">{{approval_status}}</h4>
-		{{/unless}}
+	<div class="col-lg-9 col-md-8 col-sm-8 col-xs-12 text-center" style="padding-top:30px;">
+		{{{flow}}}
+					
+		{{#if isCancel}}
+			<div style="margin-top:20px; padding-right:7px; display:flex; justify-content:center; align-items:center;">				
+				<h4 class="status-label {{approval_color}}">{{approval_status}}</h4>			
+			</div>
+		{{/if}}
+		{{#if isReject}}
+			<div style="margin-top:20px; padding-right:7px; display:flex; justify-content:center; align-items:center;">				
+				<h4 class="status-label {{approval_color}}">{{approval_status}}</h4>			
+			</div>
+		{{/if}}
 	</div>
-	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12" style="margin-top:20px; padding-right:7px;">
+	<div class="col-lg-3 col-md-4 col-sm-4 col-xs-12" style="margin-top:20px; padding-right:7px;">
 		<div class="form-horizontal">
 			<div class="form-group">
-				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ราคาสินค้า</label>
-				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ราคาสินค้า</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalBefDi}}" readonly>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ส่วนลด [{{subTotal.DiscPrcnt}} %]</label>
-				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ส่วนลด [{{subTotal.DiscPrcnt}} %]</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.DiscSum}}" readonly>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษีมูลค่าเพิ่ม</label>
-				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ราคาสุทธิก่อนภาษีมูลค่าเพิ่ม</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalBefVat}}" readonly>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
-				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">ภาษีมูลค่าเพิ่ม</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.totalVat}}" readonly>
 				</div>
 			</div>
 
 			<div class="form-group">
-				<label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">รวมเงินสุทธิ</label>
-				<div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
+				<label class="col-lg-8 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right">รวมเงินสุทธิ</label>
+				<div class="col-lg-4 col-md-4 col-sm-4 col-xs-6 padding-5">
 					<input type="text" class="form-control input-sm text-right" value="{{subTotal.docTotal}}" readonly>
 				</div>
 			</div>

@@ -37,7 +37,7 @@
 	<div id="loader">
 		<div class="loader"></div>
 	</div>
-	<div id="loader-backdrop" style="position: fixed; width:100vw; height:100vh; background-color:white; opacity:0.3; display:none; z-index:9;"></div>
+	<div id="loader-backdrop"></div>
 	<!-- #section:basics/navbar.layout -->
 	<?php if (! isset($_GET['nonavbar'])) : ?>
 		<div id="navbar" class="navbar navbar-default">

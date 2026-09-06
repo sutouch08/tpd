@@ -1,4 +1,3 @@
-<div class="tab-pane fade" id="order">
   <form id="orderForm">
     <div class="row">
       <div class="col-lg-3 col-md-3 col-sm-3 col-xs-12"><span class="form-control left-label">Auto Cancel orders</span></div>
@@ -46,7 +45,7 @@
       </div>
       <div class="col-lg-9 col-lg-offset-3 col-md-9 col-md-offset-3 col-sm-9 col-sm-offset-3 col-xs-12">
         <span class="help-block">เมื่อเปิดใช้งาน ระบบจะแจ้งเตือนเมื่อมีการ Submit Order</span>
-      </div>      
+      </div>
       <div class="divider-hidden"></div>
 
 
@@ -69,4 +68,3 @@
 
     </div><!--/row-->
   </form>
-</div><!--/ tab pane -->

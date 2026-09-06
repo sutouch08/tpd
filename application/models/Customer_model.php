@@ -61,7 +61,7 @@ class Customer_model extends CI_Model
   {
     $this->ms
       ->select('c.DocEntry, c.CardCode, c.CardName, c.GroupCode, c.GroupNum')
-      ->select('c.ListNum, c.SlpCode, c.ECVatGroup, c.CreditLine, c.validFor')
+      ->select('c.ListNum, c.SlpCode, c.ECVatGroup, c.CreditLine, c.validFor, c.CreateDate, c.UpdateDate')
       ->select('c.Currency, c.U_TPD_DrugCon, c.U_TPD_RA_DrugType')
       ->select('c.U_TPD_BI_SalesTeam, c.U_TPD_BI_AreaName')
       ->select('c.U_SALE_PERSON, c.U_TPD_BI_Department, c.U_TPD_CUST_HCode')

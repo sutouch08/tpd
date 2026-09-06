@@ -21,6 +21,7 @@ class Users extends PS_Controller
 	{
 		$filter = array(
 			'uname' => get_filter('uname', 'username', ''),
+			'email' => get_filter('email', 'email', ''),
 			'emp_id' => get_filter('emp_id', 'emp_id', 'all'),
 			'sale_id' => get_filter('sale_id', 'sale_id', 'all'),
 			'user_group' => get_filter('user_group', 'user_group', 'all'),
@@ -137,6 +138,7 @@ class Users extends PS_Controller
 						'uid' => md5(uniqid()),
 						'emp_name' => $ds->emp_name,
 						'emp_id' => get_null($ds->emp_id),
+						'email' => get_null($ds->email),
 						'sale_id' => get_null($ds->sale_id),
 						'sale_name' => empty($ds->sale_id) ? NULL : $ds->sale_name,
 						'ugroup_id' => $ds->ugroup,
@@ -309,6 +311,7 @@ class Users extends PS_Controller
 						'uname' => $ds->uname,
 						'emp_name' => get_null($ds->emp_name),
 						'emp_id' => get_null($ds->emp_id),
+						'email' => get_null($ds->email),
 						'sale_id' => get_null($ds->sale_id),
 						'sale_name' => empty($ds->sale_id) ? NULL : $ds->sale_name,
 						'ugroup_id' => $ds->ugroup,
@@ -593,6 +596,7 @@ class Users extends PS_Controller
 	{
 		$filter = array(
 		'username',
+		'email',
 		'emp_id',
 		'sale_id',
 		'team_id',

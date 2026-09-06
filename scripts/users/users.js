@@ -81,6 +81,7 @@ function add() {
   clearErrorByClass('e');
   uname_error = 0;
   emp_error = 0;
+  email_error = 0;
   ugroup_error = 0;
   area_error = 0;
   team_error = 0;
@@ -89,6 +90,7 @@ function add() {
     'uname' : $('#uname').val().trim(),
     'emp_id' : $('#emp').val(),
     'emp_name' : $('#emp option:selected').text(),
+    'email' : $('#email').val().trim(),
     'sale_id' : $('#saleman').val(),
     'sale_name' : $('#saleman option:selected').text(),
     'pwd' : $('#pwd').val().trim(),
@@ -112,6 +114,11 @@ function add() {
     pwd_error = 1;
   }
 
+  if(h.email.length > 0 && !validateEmail(h.email)) {
+    $('#email').hasError('Invalid email address');
+    email_error = 1;
+  }
+
   if(h.emp_id == '') {
     $('#emp').hasError('Required');
     emp_error = 1;
@@ -132,7 +139,7 @@ function add() {
     team_error = 1;
   }
 
-  let error = uname_error + emp_error + pwd_error + ugroup_error + area_error + team_error;
+  let error = uname_error + emp_error + pwd_error + email_error + ugroup_error + area_error + team_error;
 
   if( error > 0) {
     return false;
@@ -194,6 +201,7 @@ async function update() {
   clearErrorByClass('e');
   uname_error = 0;
   emp_error = 0;
+  email_error = 0;
   ugroup_error = 0;
   area_error = 0;
   team_error = 0;
@@ -203,6 +211,7 @@ async function update() {
     'uname' : $('#uname').val().trim(),
     'emp_id' : $('#emp').val(),
     'emp_name' : $('#emp option:selected').text(),
+    'email' : $('#email').val().trim(),
     'sale_id' : $('#saleman').val(),
     'sale_name' : $('#saleman option:selected').text(),
     'ugroup' : $('#ugroup').val(),
@@ -225,6 +234,11 @@ async function update() {
     emp_error++;
   }
 
+  if(h.email.length > 0 && !validateEmail(h.email)) {
+    $('#email').hasError('Invalid email address');
+    email_error++;
+  }
+
   if(h.ugroup == '') {
     $('#ugroup').hasError('Required');
     ugroup_error++;
@@ -240,7 +254,7 @@ async function update() {
     team_error++;
   }
 
-  let error = uname_error + emp_error + ugroup_error + area_error + team_error;  
+  let error = uname_error + emp_error + email_error + ugroup_error + area_error + team_error;
 
   if( error > 0) {
     return false;

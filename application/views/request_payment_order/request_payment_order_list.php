@@ -114,7 +114,97 @@
 	</div>
 </div>
 
+<!---------- upload file ----------->
+<input type="file" class="hide" name="uploadFile[]" id="uploadFile" accept=".jpg,.jpeg,.png,.pdf" multiple />
 
+
+
+
+
+
+<div class="modal fade" id="reply-modal" tabindex="-1" role="dialog" aria-labelledby="importModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="width:1000px; max-width:90vw;">
+		<div class="modal-content">
+			<div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title" id="replyModalLabel">Request Payment Order</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row" style="margin:0px;">
+					<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-4">
+						<label class="label-sm">Web Order No</label>
+						<input type="text" class="form-control input-sm text-center" id="payment-order-code" value="" readonly>
+					</div>
+					<div class="col-lg-6 col-md-6 col-sm-4-harf col-xs-8">
+						<label class="label-sm">Customer</label>
+						<input type="text" class="form-control input-sm" id="payment-customer" value="" readonly>
+					</div>
+					<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6 padding-5">
+						<label class="label-sm">DocTotal</label>
+						<input type="text" class="form-control input-sm text-right" id="payment-doc-total" value="" readonly>
+					</div>
+					<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6">
+						<label class="label-sm">Credit Diff.</label>
+						<input type="text" class="form-control input-sm text-right" id="payment-credit-diff" value="" readonly>
+					</div>
+					<div class="col-lg-1-harf col-md-1-harf col-sm-1-harf col-xs-6">
+						<label class="label-sm">Overdue</label>
+						<input type="text" class="form-control input-sm text-right" id="payment-overdue-total" value="" readonly>
+					</div>
+					<div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
+						<label class="label-sm">Request by</label>
+						<input type="text" class="form-control input-sm" id="payment-user" value="" readonly>
+					</div>
+					<div class="col-lg-2 col-md-2 col-sm-3 col-xs-6">
+						<label class="label-sm">Request Date</label>
+						<input type="text" class="form-control input-sm text-center" id="payment-date" value="" readonly>
+					</div>
+					<div class="col-lg-7 col-md-7 col-sm-12 col-xs-12">
+						<label class="label-sm">Message</label>
+						<input type="text" class="form-control input-sm" id="payment-message" value="" readonly>
+					</div>
+					<div class="divider"></div>
+				</div>
+				<div class="row" style="margin:0px;">
+					<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-12">
+						<button type="button" class="btn btn-white btn-sm btn-primary btn-block" style="height: 30px;" onclick="getFile()"><i class="fa fa-plus"></i>&nbsp; Add File</button>
+					</div>
+					<div class="col-lg-10-harf col-md-10-harf col-sm-10 col-xs-12">
+						<div class="input-group">
+							<input type="text" class="form-control input-sm" id="reply-message" placeholder="Reply Message : " />
+							<span class="input-group-btn">
+								<button type="button" class="btn btn-white btn-sm btn-success" style="height: 30px;" onclick="submitReply()"><i class="fa fa-reply"></i>&nbsp; Reply</button>
+							</span>
+						</div>
+					</div>
+
+					<div class="divider" style="margin-top:5px;"></div>
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" id="file-list">
+						<table class="table table-striped tableNarrow border-1">
+							<thead>
+								<tr>
+									<th class="fix-width-40 text-center">#</th>
+									<th class="fix-width-80">Actions</th>
+									<th class="min-width-250">File Name</th>
+									<th class="fix-width-100 text-right">Size</th>
+									<th class="fix-width-130">Date</th>
+								</tr>
+							</thead>
+							<tbody id="file-table">
+
+							</tbody>
+						</table>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="modal-footer">
+
+			</div>
+		</div>
+	</div>
+</div>
 
 <div class="modal fade" id="authorizer-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog" style="max-width:400px;">
@@ -147,7 +237,32 @@
 	</div>
 </div>
 
-<script id="authorizer-template" type="text/x-handlebarsTemplate">
+<script id="file-template" type="text/x-handlebars-template">
+	{{#each this}}
+		{{#if nodata}}
+			<tr>
+				<td colspan="5" class="text-center"> ---- No File ----</td>
+			</tr>
+		{{else}}
+			<tr id="row-{{no}}">
+				<td class="middle text-center fno">{{no}}</td>
+				<td class="middle">
+					<button type="button" class="btn btn-white btn-minier btn-info" title="View File" onclick="viewFile('{{code}}', '{{name}}')"><i class="fa fa-eye"></i></button>
+					<button type="button" class="btn btn-white btn-minier btn-danger" title="Delete File" onclick="confirmDeleteFile('{{no}}', '{{code}}', '{{name}}')"><i class="fa fa-trash"></i></button>
+					<button type="button" class="btn btn-white btn-minier btn-success" title="Download File" onclick="downloadFile('{{code}}', '{{name}}')"><i class="fa fa-download"></i></button>
+				</td>
+				<td class="middle">
+					<input type="hidden" class="attached-file" value="{{name}}" />
+					{{name}}
+				</td>
+				<td class="middle text-right">{{size}}</td>
+				<td class="middle">{{date_modify}}</td>
+			</tr>
+		{{/if}}
+	{{/each}}
+</script>
+
+<script id="authorizer-template" type="text/x-handlebars-template">
 	{{#each this}}
 		{{#if nodata}}
 			<tr>

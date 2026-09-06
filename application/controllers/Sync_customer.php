@@ -35,6 +35,7 @@ class Sync_customer extends CI_Controller
           'CreditLine' => $rs->CreditLine,
           'validFor' => $rs->validFor,
           'Currency' => $rs->Currency,
+          'CreateDate' => $rs->CreateDate,
           'U_TPD_DrugCon' => $rs->U_TPD_DrugCon,
           'U_TPD_RA_DrugType' => $rs->U_TPD_RA_DrugType,
           'U_TPD_BI_SalesTeam' => $rs->U_TPD_BI_SalesTeam,

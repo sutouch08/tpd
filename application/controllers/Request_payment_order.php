@@ -64,6 +64,53 @@ class Request_payment_order extends PS_Controller
     }
   }
 
+  public function get_detail()
+  {
+    $code = $this->input->get('code');
+    $rs = $this->payment_request_model->get($code);
+    $ds = [];
+
+    if (!empty($rs))
+    {
+      $ds['code'] = $rs->code;
+      $ds['customer'] = $rs->CardCode . ' | ' . $rs->CardName;
+      $ds['doc_total'] = number($rs->DocTotal, 2);
+      $ds['diff'] = number($rs->credit_diff, 2);
+      $ds['overdue'] = number($this->orders_model->get_overdue_amount($rs->CardCode, $rs->CustCode), 2);
+      $ds['request_by'] = emp_name_by_id($rs->add_by);
+      $ds['date'] = thai_date($rs->date_add, TRUE);
+      $ds['message'] = $rs->message;
+      $ds['reply_message'] = $rs->reply_message;
+      
+      $files = $rs->has_document == 1 ? $this->get_file_list($code) : NULL;
+
+      if(!empty($files))
+      {
+        $no = 1;
+        foreach($files as $f)
+        {
+          $f->code = $code;
+          $f->no = $no;
+          $no++;
+        }
+      }
+      else 
+      {
+        $files = array(['nodata' => 'nodata']);
+      }
+
+      $ds['files'] = $files;      
+    }
+    
+    $arr = array(
+      'status' => empty($rs) ? 'error' : 'success',
+      'message' => empty($rs) ? 'Request not found' : NULL,
+      'data' => $ds
+    );
+
+    echo json_encode($arr);
+  }
+
 
   private function get_file_list($code)
   {
@@ -100,6 +147,28 @@ class Request_payment_order extends PS_Controller
     return $list;
   }
 
+
+  public function get_file_list_json($code)
+  {
+    $files = $this->get_file_list($code);
+
+    if (!empty($files))
+    {
+      $no = 1;
+      foreach ($files as $f)
+      {
+        $f->code = $code;
+        $f->no = $no;
+        $no++;
+      }
+    }
+    else
+    {
+      $files = array(['nodata' => 'nodata']);
+    }
+
+    echo json_encode($files);
+  }
 
   public function upload_file($code)
   {
@@ -255,7 +324,17 @@ class Request_payment_order extends PS_Controller
       {
         $sc = FALSE;
         $this->error = "Cannot delete file";
-      }      
+      }
+
+      if($sc === TRUE)
+      {
+        $files = $this->get_file_list($code);
+
+        if(empty($files))
+        {
+          $this->payment_request_model->update($code, array('has_document' => 0));
+        }
+      }  
     }
     else
     {

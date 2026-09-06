@@ -31,7 +31,6 @@ class Orders extends PS_Controller
 		$this->disSale = getConfig('USE_DISCSALE') == 1 ? TRUE : FALSE;
 	}
 
-
 	public function index()
 	{
 		$filter = array(
@@ -86,6 +85,19 @@ class Orders extends PS_Controller
 		}
 	}
 
+	public function get_order_flow()
+	{
+		$html = "";
+		$ds = json_decode(file_get_contents('php://input'));
+
+		if (! empty($ds))
+		{
+			$html = order_step_flow($ds->currentStep, $ds->creditIssue, $ds->overdue);
+		}
+
+		echo $html;
+	}
+
 	public function get_customer_invoice()
 	{
 		$this->load->model('report/customer_status_model');
@@ -100,7 +112,7 @@ class Orders extends PS_Controller
 
 		$bp = $this->customer_model->get($CardCode);
 
-		if( ! empty($bp))
+		if (! empty($bp))
 		{
 			$invoiceCount = $this->customer_status_model->count_customer_invoice($CardCode);
 			$today = date('Y-m-d');
@@ -112,11 +124,11 @@ class Orders extends PS_Controller
 				'InvoiceCount' => number($invoiceCount)
 			];
 		}
-		else 
+		else
 		{
 			$sc = FALSE;
 			$this->error = "Customer not found";
-		}		
+		}
 
 		$arr = array(
 			'status' => ! empty($bp) ? 'success' : 'error',
@@ -125,7 +137,6 @@ class Orders extends PS_Controller
 		);
 		echo json_encode($arr);
 	}
-
 
 	public function get_credit_data()
 	{
@@ -137,7 +148,8 @@ class Orders extends PS_Controller
 			'Balance' => 0.00,
 			'DNotesBal' => 0.00,
 			'OrdersBal' => 0.00,
-			'CreditBalance' => 0.00
+			'CreditBalance' => 0.00,
+			'overdue' => 0
 		);
 
 		$CardCode = $this->input->get('CardCode');
@@ -147,7 +159,7 @@ class Orders extends PS_Controller
 		{
 			$credit = empty($card->CustCode) ? $this->customer_model->get_credit_details($card->CardCode) : $this->customer_model->get_credit_details_by_hCode($card->CustCode);
 			$CreditLine = $card->isRegular == 1 ? floatval($credit->CreditLine) : floatval(getConfig('GLOBAL_CREDIT_LINE'));
-			//$CreditLine = $CreditLine <= 0 ? floatval(getConfig('GLOBAL_CREDIT_LINE')) : $CreditLine;
+			$overdue = $this->orders_model->is_over_due($card->CardCode, $card->CustCode) ? 1 : 0;
 
 			if (! empty($credit))
 			{
@@ -155,14 +167,15 @@ class Orders extends PS_Controller
 				$creditBalance = $CreditLine - ($credit->Balance + $credit->DNotesBal + $credit->OrdersBal + $orderUsed);
 
 				$res = array(
-					'CardCode' => empty($card->CustCode) ? $card->CardCode : $card->CardCode.' ('.$card->CustCode.')',
+					'CardCode' => empty($card->CustCode) ? $card->CardCode : $card->CardCode . ' (' . $card->CustCode . ')',
 					'isRegular' => $card->isRegular,
 					'CreditLine' => $CreditLine,
 					'Balance' => $credit->Balance,
 					'DNotesBal' => $credit->DNotesBal,
 					'OrdersBal' => $credit->OrdersBal,
 					'OrderUsed' => $orderUsed,
-					'CreditBalance' => $creditBalance
+					'CreditBalance' => $creditBalance,
+					'overdue' => $overdue
 				);
 			}
 		}
@@ -187,19 +200,19 @@ class Orders extends PS_Controller
 		$CardCode = $this->input->get('CardCode');
 		$card = $this->customer_model->get_by_code($CardCode);
 
-		if( ! empty($card))
+		if (! empty($card))
 		{
 			$credit = empty($card->CustCode) ? $this->customer_model->get_credit_details($card->CardCode) : $this->customer_model->get_credit_details_by_hCode($card->CustCode);
 			$CreditLine = $card->isRegular == 1 ? floatval($credit->CreditLine) : floatval(getConfig('GLOBAL_CREDIT_LINE'));
 			//$CreditLine = $CreditLine <= 0 ? floatval(getConfig('GLOBAL_CREDIT_LINE')) : $CreditLine;
 
-			if( ! empty($credit))
+			if (! empty($credit))
 			{
 				$orderUsed = $this->orders_model->get_credit_used_amount($card->CardCode, $card->CustCode);
-				$creditBalance = $CreditLine - ($credit->Balance + $credit->DNotesBal + $credit->OrdersBal + $orderUsed);				
-			}			
+				$creditBalance = $CreditLine - ($credit->Balance + $credit->DNotesBal + $credit->OrdersBal + $orderUsed);
+			}
 		}
-		
+
 		echo $creditBalance;
 	}
 
@@ -223,9 +236,9 @@ class Orders extends PS_Controller
 					'name' => $pl->name
 				);
 			}
-		}		
+		}
 
-		if(! empty($cardCode))
+		if (! empty($cardCode))
 		{
 			$groupIds = [0];
 			$customerGroups = $this->customer_group_model->get_by_customer($cardCode);
@@ -238,11 +251,11 @@ class Orders extends PS_Controller
 				}
 			}
 
-			if($type === 'all')
+			if ($type === 'all')
 			{
 				$tp = $this->price_list_type_model->get_all();
 
-				if( ! empty($tp))
+				if (! empty($tp))
 				{
 					foreach ($tp as $t)
 					{
@@ -262,15 +275,15 @@ class Orders extends PS_Controller
 					}
 				}
 			}
-			else 						
+			else
 			{
 				$tp = $this->price_list_type_model->get($type);
 
-				if( ! empty($tp))
+				if (! empty($tp))
 				{
 					$tpd = $this->special_price_list_model->get_active_customer_list_by_type($tp->id, $groupIds);
 
-					if( ! empty($tpd))
+					if (! empty($tpd))
 					{
 						foreach ($tpd as $sp)
 						{
@@ -314,7 +327,6 @@ class Orders extends PS_Controller
 		echo json_encode($arr);
 	}
 
-
 	public function add_new()
 	{
 		$this->title = "Order Add";
@@ -323,7 +335,7 @@ class Orders extends PS_Controller
 		{
 			$this->load->helper('currency');
 
-			$ds['code'] = NULL; //$this->get_new_code();
+			$ds['code'] = NULL; 
 
 			if ($this->isAdmin)
 			{
@@ -350,30 +362,7 @@ class Orders extends PS_Controller
 				}
 			}
 
-			// $type = $this->price_list_type_model->get_all();
-
-			// if (! empty($type))
-			// {
-			// 	foreach ($type as $tp)
-			// 	{
-			// 		$tpd = $this->special_price_list_model->get_active_by_type($tp->id);
-
-			// 		if (! empty($tpd))
-			// 		{
-			// 			foreach ($tpd as $sp)
-			// 			{
-			// 				$PL[$tp->name][] = (object) array(
-			// 					'id' => 'x',
-			// 					'spid' => $sp->id,
-			// 					'name' => $sp->name
-			// 				);
-			// 			}
-			// 		}
-			// 	}
-			// }
-
 			$ds['priceList'] = $PL;
-			//$ds['specialPriceList'] = $this->special_price_list_model->get_all_active();
 			$this->load->view('orders/orders_add', $ds);
 		}
 		else
@@ -382,11 +371,9 @@ class Orders extends PS_Controller
 		}
 	}
 
-
 	public function get_currency_rate($code)
 	{
 		$date = date('Y-m-d 00:00:00');
-		//$date = "2021-10-31 00:00:00";
 		$rate = $this->orders_model->get_currency_rate($code, $date);
 
 		if (! empty($rate))
@@ -398,7 +385,6 @@ class Orders extends PS_Controller
 			echo "notfound";
 		}
 	}
-
 
 	public function get_user_customer_list($type = 'V')
 	{
@@ -446,7 +432,6 @@ class Orders extends PS_Controller
 		}
 	}
 
-
 	public function get_address_ship_to_code()
 	{
 		$code = trim($this->input->get('CardCode'));
@@ -486,7 +471,6 @@ class Orders extends PS_Controller
 
 		echo json_encode($ds);
 	}
-
 
 	public function get_address_ship_to()
 	{
@@ -529,7 +513,6 @@ class Orders extends PS_Controller
 		}
 	}
 
-
 	public function get_address_bill_to_code()
 	{
 		$code = trim($this->input->get('CardCode'));
@@ -563,7 +546,6 @@ class Orders extends PS_Controller
 
 		echo json_encode($ds);
 	}
-
 
 	public function get_address_bill_to()
 	{
@@ -605,7 +587,6 @@ class Orders extends PS_Controller
 			echo json_encode($arr);
 		}
 	}
-
 
 	public function get_item_code_and_name($priceList, $sp_id = 0, $isControl = 'N')
 	{
@@ -731,7 +712,6 @@ class Orders extends PS_Controller
 		}
 	}
 
-
 	public function get_step_template()
 	{
 		$sc = TRUE;
@@ -784,7 +764,6 @@ class Orders extends PS_Controller
 
 		echo json_encode($arr);
 	}
-
 
 	public function get_item_template()
 	{
@@ -882,7 +861,6 @@ class Orders extends PS_Controller
 		echo json_encode($arr);
 	}
 
-
 	public function get_payment_term()
 	{
 		$sc = TRUE;
@@ -917,7 +895,6 @@ class Orders extends PS_Controller
 
 		echo json_encode($arr);
 	}
-
 
 	function get_item_data()
 	{
@@ -1057,7 +1034,6 @@ class Orders extends PS_Controller
 		echo $sc === TRUE ? json_encode($arr) : $this->error;
 	}
 
-
 	public function add()
 	{
 		$sc = TRUE;
@@ -1081,7 +1057,7 @@ class Orders extends PS_Controller
 				$credit_diff = $header->creditDiff;
 				$is_over_due = 0;
 
-				if($credit_issue == 1)
+				if ($credit_issue == 1)
 				{
 					$is_over_due = $this->orders_model->is_over_due($header->CardCode, $header->CustCode) ? 1 : 0;
 				}
@@ -1261,7 +1237,7 @@ class Orders extends PS_Controller
 					//---- check order approval exception by rule
 					if ($mustApprove === FALSE && ! $this->must_approve($con_id, $header->docTotal, $priceEdit, $header->PriceList))
 					{
-						if( ! $header->creditIssue == 1)
+						if (! $header->creditIssue == 1)
 						{
 							$arr = array(
 								"must_approve" => 0,
@@ -1276,9 +1252,9 @@ class Orders extends PS_Controller
 
 							$this->doExport($code);
 						}
-						else 
+						else
 						{
-							$arr = array(								
+							$arr = array(
 								'priceEdit' => $priceEdit === TRUE ? 1 : 0
 							);
 
@@ -1309,7 +1285,7 @@ class Orders extends PS_Controller
 					$this->db->trans_rollback();
 				}
 
-				if($sc === TRUE && ! empty($file))
+				if ($sc === TRUE && ! empty($file))
 				{
 					$this->load->library('upload');
 					$path = $this->config->item('upload_path') . 'order_po/';
@@ -1317,21 +1293,21 @@ class Orders extends PS_Controller
 					$config = array(
 						'upload_path' => $path,
 						'allowed_types' => 'jpg|jpeg|png|pdf',
-						'file_name' => $code,			
+						'file_name' => $code,
 						'max_size' => 5120,
 						'overwrite' => TRUE
 					);
 
 					$this->upload->initialize($config);
 
-					if( ! $this->upload->do_upload('uploadFile'))
+					if (! $this->upload->do_upload('uploadFile'))
 					{
 						$sc = FALSE;
 						$up = 0;
 						$this->error = "Create order success but upload file failed : " . $this->upload->display_errors();
 					}
-					else 
-					{						
+					else
+					{
 						$arr = array(
 							'has_file' => 1,
 							'file_name' => $this->upload->data('file_name'),
@@ -1361,10 +1337,9 @@ class Orders extends PS_Controller
 			'code' => $sc === TRUE ? $code : NULL,
 			'upload' => $up
 		);
-		
+
 		echo json_encode($arr);
 	}
-
 
 	public function get_group_id($customer)
 	{
@@ -1391,25 +1366,6 @@ class Orders extends PS_Controller
 
 		return $group_id;
 	}
-
-
-	public function test($amount)
-	{
-		$this->load->model('approve_rule_model');
-		$team_id = 1;
-		$priceEdit = FALSE;
-		$sc = $this->approve_rule_model->get_exception_rule($team_id, $amount, $priceEdit);
-
-		if (! empty($sc))
-		{
-			print_r($sc);
-		}
-		else
-		{
-			echo "Must Approve";
-		}
-	}
-
 
 	public function must_approve($con_id, $docTotal, $priceEdit = FALSE, $priceList = NULL)
 	{
@@ -1451,7 +1407,6 @@ class Orders extends PS_Controller
 		return TRUE;
 	}
 
-
 	public function check_approve()
 	{
 		$message = "pass";
@@ -1481,6 +1436,86 @@ class Orders extends PS_Controller
 		echo $message;
 	}
 
+	public function get_current_state($doc)
+	{
+		/*
+		# กรณีไม่ติดเครดิต
+		------------------------------------------
+		2 => ตรวจสอบเงื่อนไข => status = 0, credit_issue = 0, Approved = P
+		3 => อนุมัติ => status IN(1, 2, 3) AND credit_issue = 0, Approved IN(A, S)
+
+		# กรณีติดเครดิต แต่ไม่เกินกำหนด
+		------------------------------------------
+		2 => ตรวจสอบเครดิต => status = 0, credit_issue = 1, is_over_due = 0, credit_approval = O
+		3 => พิจารณาเครดิต => status = 0, credit_issue = 1, is_over_due = 0, credit_approval = P
+		4 => อนุมัติ => status = IN(1,2,3), credit_issue = 1, is_over_due = 0, credit_approval = A
+
+		# กรณีติดเครดิต และเกินกำหนด
+		------------------------------------------
+		2 => ตรวจสอบเครดิต => status = 0, credit_issue = 1, is_over_due = 1, credit_approval = O, reply_status IS NULL
+		3 => ขอหลักฐานการชำระเงิน => status = 0, credit_issue = 1, is_over_due = 1, credit_approval = O, reply_status = N
+		4 => ตรวจสอบหลักฐานการชำระเงิน => status = 0, credit_issue = 1, is_over_due = 1, credit_approval = O, reply_status = R
+		5 => พิจารณาเครดิต => status = 0, credit_issue = 1, is_over_due = 1, credit_approval = P
+		6 => อนุมัติ => status IN(1,2,3), credit_issue = 1, is_over_due = 1, credit_approval = A
+		*/
+
+		$current_state = 2;
+
+		if ($doc->Status == 0)
+		{
+			if (empty($doc->credit_issue) && $doc->Approved == 'P')
+			{
+				return 2; //--- waiting for approve
+			}
+
+			if(empty($doc->credit_issue) && ($doc->Approved == 'A' OR $doc->Approved == 'S'))
+			{
+				return 3; //--- Approved
+			}
+			
+			if ($doc->credit_issue == 1 && $doc->is_over_due == 0)
+			{
+				if($doc->Approved == 'A' OR $doc->Approved == 'S')
+				{
+					return 4; //--- Approved
+				}
+				
+				return $doc->credit_approval == 'P' ? 3 : ($doc->credit_approval == 'A' ? 4 : 2); //--- waiting for approve or approved
+			}
+
+			if ($doc->credit_issue == 1 && $doc->is_over_due == 1 && $doc->credit_approval == 'O')
+			{
+				$this->load->model('payment_request_model');
+				$reply_status = $this->payment_request_model->get_reply_status_by_code($doc->code);
+				return $reply_status == 'N' ? 3 : ($reply_status == 'R' ? 4 : 2); //--- waiting for approve or approved
+			}
+
+			if ($doc->credit_issue == 1 && $doc->is_over_due == 1 && $doc->credit_approval == 'P')
+			{
+				return 5; //--- waiting for approve
+			}
+		}
+
+		if ($doc->Status == 1 OR $doc->Status == 2 OR $doc->Status == 3)
+		{
+			if (empty($doc->credit_issue) && ($doc->Approved == 'A' OR $doc->Approved == 'S'))
+			{
+				return 3; //--- Approved
+			}
+
+			if ($doc->credit_issue == 1 && $doc->is_over_due == 0)
+			{
+				return $doc->credit_approval == 'A' ? 4 : 3; //--- waiting for approve or approved
+			}
+
+			if($doc->credit_issue == 1 && $doc->is_over_due == 1)
+			{
+				return $doc->credit_approval == 'A' ? 6 : 5; //--- Approved
+			}
+		}
+
+		return $current_state;
+	}
 
 	public function get_detail()
 	{
@@ -1496,7 +1531,9 @@ class Orders extends PS_Controller
 			{
 				$this->load->model('payment_term_discount_model');
 
-				$can_approve = ($doc->credit_issue == 1 && $doc->credit_approval != 'A') ? FALSE : $this->can_approve($doc);				
+				$can_approve = ($doc->credit_issue == 1 && $doc->credit_approval != 'A') ? FALSE : $this->can_approve($doc);
+				$current_state = $this->get_current_state($doc);
+				$flow = ($doc->Status < 0 OR $doc->Approved == 'R') ? '' :  order_step_flow($current_state, is_true($doc->credit_issue), is_true($doc->is_over_due));
 
 				$ds = array(
 					'orderCode' => $doc->code,
@@ -1528,30 +1565,28 @@ class Orders extends PS_Controller
 					'creditIssue' => ($doc->credit_issue == 1 && $doc->credit_approval != 'A'),
 					'status' => $doc->Status,
 					'isCancel' => $doc->isCancel == 1 ? TRUE : FALSE,
+					'isReject' => $doc->isCancel == 0 && $doc->Approved == 'R' ? TRUE : FALSE,
 					'cancel_by' => $doc->cancel_by,
 					'cancel_at' => empty($doc->cancel_date) ? NULL : thai_date($doc->cancel_date, TRUE),
 					'approval_status' => NULL,
 					'items' => array(),
-					'subTotal' => NULL
+					'subTotal' => NULL,
+					'flow' => $flow
 				);
 
-				if($doc->Approved == 'P')
+				if($doc->isCancel == 1)
 				{
-					$ds['approval_status'] = $ds['creditIssue'] ? "รออนุมัติเครดิต" : "รออนุมัติ";
-					$ds['approval_color'] = $ds['creditIssue'] ? "red" : "orange";
-				}
-				else if($doc->Approved == 'A')
-				{
-					$ds['approval_status'] = "อนุมัติแล้ว";
-					$ds['approval_color'] = "green";
-					$ds['ApproveBy'] = "Approved by  {$doc->Approver}  @ " . thai_date($doc->ApproveDate, TRUE);
-				}
-				else if($doc->Approved == 'R')
+					$ds['approval_status'] = "ยกเลิกแล้ว";
+					$ds['approval_color'] = "red";
+					$ds['ApproveBy'] = "Cancelled by  {$doc->cancel_by}  @ " . thai_date($doc->cancel_date, TRUE);
+				}				
+				
+				if ($doc->isCancel == 0 && $doc->Approved == 'R')
 				{
 					$ds['approval_status'] = "ไม่อนุมัติ";
 					$ds['approval_color'] = "red";
 					$ds['ApproveBy'] = "Rejected By  {$doc->Approver}  @ " . thai_date($doc->ApproveDate, TRUE);
-				}							
+				}				
 
 				if ($doc->promotion_id)
 				{
@@ -1560,7 +1595,6 @@ class Orders extends PS_Controller
 
 					$ds['promotionName'] = $pro->name;
 				}
-
 
 				$details = $this->orders_model->get_details($code);
 				$totalBefDi = 0;
@@ -1659,7 +1693,6 @@ class Orders extends PS_Controller
 		echo $sc === TRUE ? json_encode($ds) : $this->error;
 	}
 
-
 	public function can_approve($order)
 	{
 		if ($this->isGM)
@@ -1683,7 +1716,6 @@ class Orders extends PS_Controller
 
 		return FALSE;
 	}
-
 
 	public function do_approve()
 	{
@@ -1766,7 +1798,6 @@ class Orders extends PS_Controller
 		$this->_response($sc);
 	}
 
-
 	public function do_reject()
 	{
 		$sc = TRUE;
@@ -1835,7 +1866,6 @@ class Orders extends PS_Controller
 
 		$this->_response($sc);
 	}
-
 
 	public function get_authorizer()
 	{
@@ -1907,7 +1937,6 @@ class Orders extends PS_Controller
 		echo $sc === TRUE ? json_encode($ds) : $this->error;
 	}
 
-
 	public function get_sale_name_by_customer()
 	{
 		$cardCode = trim($this->input->get('CardCode'));
@@ -1919,7 +1948,6 @@ class Orders extends PS_Controller
 			echo $saleName;
 		}
 	}
-
 
 	public function get_new_code($date = NULL)
 	{
@@ -1943,7 +1971,6 @@ class Orders extends PS_Controller
 		return $new_code;
 	}
 
-
 	public function doExport($code)
 	{
 		$sc = TRUE;
@@ -1958,7 +1985,6 @@ class Orders extends PS_Controller
 
 		return $sc;
 	}
-
 
 	public function get_temp_data()
 	{
@@ -2014,7 +2040,6 @@ class Orders extends PS_Controller
 		}
 	}
 
-
 	public function remove_temp()
 	{
 		$sc = TRUE;
@@ -2056,7 +2081,6 @@ class Orders extends PS_Controller
 
 		$this->_response($sc);
 	}
-
 
 	public function cancel_order()
 	{
@@ -2103,7 +2127,6 @@ class Orders extends PS_Controller
 		$this->_response($sc);
 	}
 
-
 	public function sendToSAP()
 	{
 		$sc = TRUE;
@@ -2122,7 +2145,6 @@ class Orders extends PS_Controller
 
 		$this->_response($sc);
 	}
-
 
 	public function open_file($filename)
 	{

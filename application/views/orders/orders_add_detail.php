@@ -1,6 +1,6 @@
 <style>
-  .tableFixHead tr > td {
-    padding:3px !important;
+  .tableFixHead tr>td {
+    padding: 3px !important;
   }
 
   .highlight {
@@ -9,23 +9,15 @@
     color: red;
   }
 
-  /* tr.control input {
-    color:red !important;
-  }
-
-  tr.control select {
-    color:red !important;
-  } */
-
   span.clear {
-    padding:6px 12px;
+    padding: 6px 12px;
     font-size: 14px;
     font-weight: normal;
     line-height: 1;
-    color:#555555;
+    color: #555555;
     text-align: center;
     background-color: #eeeeee;
-    border:solid 1px #cccccc;
+    border: solid 1px #cccccc;
   }
 
   @media (min-width: 768px) {
@@ -36,17 +28,17 @@
     }
 
     .fix-item {
-      left:39px;
+      left: 39px;
       position: sticky;
     }
 
     .fix-clear {
-      left:289px;
+      left: 289px;
       position: sticky;
     }
 
     .fix-step {
-      left:329px;
+      left: 329px;
       position: sticky;
     }
 
@@ -62,14 +54,62 @@
 <?php $width += $this->disSale ? 80 : 0; ?>
 <?php $width += $this->isAdmin ? 100 : 0; ?>
 
+<div class="row hide">
+  <div class="col-lg-5 col-md-6 col-sm-6 col-xs-12 padding-5">
+    <ul class="steps">
+      <li data-step="1" class="active">
+        <span class="step">1</span>
+        <span class="title">สร้างออเดอร์</span>
+      </li>
+      <li data-step="2" class="active">
+        <span class="step">2</span>
+        <span class="title">ตรวจสอบเงื่อนไข</span>
+      </li>
+      <li data-step="3">
+        <span class="step">3</span>
+        <span class="title">อนุมัติ</span>
+      </li>
+    </ul>
+  </div>
+  <div class="col-lg-7 col-md-6 col-sm-6 col-xs-12 padding-5">
+    <ul class="steps">
+      <li data-step="1" class="active">
+        <span class="step">1</span>
+        <span class="title">สร้างออเดอร์</span>
+      </li>
+      <li data-step="2" class="active">
+        <span class="step">2</span>
+        <span class="title">ตรวจสอบเครดิต</span>
+      </li>
+      <li data-step="3" class="active">
+        <span class="step">3</span>
+        <span class="title">ขอหลักฐานการชำระเงิน</span>
+      </li>
+      <li data-step="4">
+        <span class="step">4</span>
+        <span class="title">ตรวจสอบหลักฐานการชำระเงิน</span>
+      </li>
+      <li data-step="5">
+        <span class="step">5</span>
+        <span class="title">พิจารณาเครดิต</span>
+      </li>
+      <li data-step="6">
+        <span class="step">6</span>
+        <span class="title">อนุมัติ</span>
+      </li>
+    </ul>
+  </div>
+  <div class="divider-hidden"></div>
+  <div class="divider-hidden"></div>
+</div>
+
 <div class="row">
   <div class="col-sm-12 col-xs-12 padding-5">
     <button type="button" class="btn btn-sm btn-info" onclick="addRow()">Add Row</button>
     <button type="button" class="btn btn-sm btn-warning" onclick="removeRow()">Delete Row</button>
   </div>
-  <div class="divider-hidden">
+  <div class="divider-hidden"></div>
 
-  </div>
   <div class="col-sm-12 col-xs-12 padding-5 border-1 table-responsive" style="max-height:400px; padding-left:0px; padding-right:0px; padding-bottom:5px; margin-left:5px; margin-right:5px;">
     <table class="table table-bordered tableFixHead" style="margin-left: -1px; margin-top: -1px; width:<?php echo $width; ?>px; min-width:100% !important;">
       <thead>
@@ -90,14 +130,14 @@
           <th class="fix-width-80 middle text-center <?php echo $hide; ?>">Discount Sales</th>
           <th class="fix-width-100 middle text-center">มูลค่า</th>
           <th class="fix-width-100 middle text-center">หมายเหตุ</th>
-          <?php if($this->isAdmin) : ?>
+          <?php if ($this->isAdmin) : ?>
             <th class="fix-width-100 middle text-center">Free text</th>
           <?php endif; ?>
         </tr>
       </thead>
       <tbody id="details-template">
         <tr id="row-1">
-          <td class="middle text-center fix-no" scope="row"><input type="checkbox" class="ace chk" id="chk-1" value="1"/><span class="lbl"></span></td>
+          <td class="middle text-center fix-no" scope="row"><input type="checkbox" class="ace chk" id="chk-1" value="1" /><span class="lbl"></span></td>
           <td class="middle fix-item" scope="row">
             <input type="hidden" class="item-code" id="itemCode-1" data-no="1">
             <input type="hidden" class="item-vat-code" id="itemVatCode-1" data-no="1">
@@ -120,20 +160,21 @@
           </td>
           <td class="middle hide"><input type="text" class="form-control input-sm text-center is-control" id="control-1" data-no="1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-right" id="instock-1" value="" disabled /></td>
-          <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-1" value="" disabled/></td>
-          <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-1" value="" disabled/></td>
-          <td class="middle"><input type="number" class="form-control input-sm text-right input-qty e" id="qty-1" data-no="1" value="" onchange="recalAmount(1)" disabled/></td>
-          <td class="middle"><input type="number" class="form-control input-sm text-right e" id="free-1" value="" disabled/></td>
+          <td class="middle"><input type="text" class="form-control input-sm text-right" id="commit-1" value="" disabled /></td>
+          <td class="middle"><input type="text" class="form-control input-sm text-right" id="available-1" value="" disabled /></td>
+          <td class="middle"><input type="number" class="form-control input-sm text-right input-qty e" id="qty-1" data-no="1" value="" onchange="recalAmount(1)" disabled /></td>
+          <td class="middle"><input type="number" class="form-control input-sm text-right e" id="free-1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm text-center" id="uom-1" value="" disabled /></td>
           <td class="middle">
-            <input type="number" class="form-control input-sm text-right e" id="stdPrice-1" value="" disabled/>
+            <input type="number" class="form-control input-sm text-right e" id="stdPrice-1" value="" disabled />
             <input type="hidden" id="vatAmount-1" value="0.00">
           </td>
-          <td class="middle"><input type="number" class="form-control input-sm text-right e" id="price-1" value="" onkeyup="recalAmount(1)"/></td>
-          <td class="middle text-center <?php echo $hide; ?>"><label><input type="checkbox" class="ace dis" id="dis-1" value="1" /><span class="lbl"></span></lable></td>
-          <td class="middle"><input type="number" class="form-control input-sm text-right" id="amount-1" value="" disabled/></td>
+          <td class="middle"><input type="number" class="form-control input-sm text-right e" id="price-1" value="" onkeyup="recalAmount(1)" /></td>
+          <td class="middle text-center <?php echo $hide; ?>"><label><input type="checkbox" class="ace dis" id="dis-1" value="1" /><span class="lbl"></span></lable>
+          </td>
+          <td class="middle"><input type="number" class="form-control input-sm text-right" id="amount-1" value="" disabled /></td>
           <td class="middle"><input type="text" class="form-control input-sm" id="remark-1" maxlength="100" value="" /></td>
-          <?php if($this->isAdmin) : ?>
+          <?php if ($this->isAdmin) : ?>
             <td class="middle"><input type="text" class="form-control input-sm" id="freeTxt-1" maxlength="100" value="" /></td>
           <?php endif; ?>
         </tr>
@@ -145,7 +186,7 @@
   </div>
 </div>
 <input type="hidden" id="top-row" value="1">
-<hr class="padding-5 margin-top-15 margin-bottom-15"/>
+<hr class="padding-5 margin-top-15 margin-bottom-15" />
 
 <script id="row-template" type="text/x-handlebarsTemplate">
   <tr id="row-{{no}}">
@@ -184,7 +225,7 @@
     <td class="middle text-center <?php echo $hide; ?>"><label><input type="checkbox" class="ace dis" id="dis-{{no}}" value="1" /><span class="lbl"></span></lable></td>
     <td class="middle"><input type="number" class="form-control input-sm text-right" id="amount-{{no}}" value="" disabled/></td>
     <td class="middle"><input type="text" class="form-control input-sm" id="remark-{{no}}" maxlength="100" value="" /></td>
-    <?php if($this->isAdmin) : ?>
+    <?php if ($this->isAdmin) : ?>
       <td class="middle"><input type="text" class="form-control input-sm" id="freeTxt-{{no}}" maxlength="100" value="" /></td>
     <?php endif; ?>
   </tr>
