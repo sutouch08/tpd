@@ -22,7 +22,7 @@
 	<div class="col-lg-6 col-md-6 col-sm-6 col-xs-12 padding-5 text-right">
 		<button type="button" class="btn btn-white btn-success" onclick="getReport()"><i class="fa fa-bar-chart"></i> รายงาน</button>
 		<button type="button" class="btn btn-white btn-primary" onclick="doExport()"><i class="fa fa-file-excel-o"></i> Export</button>
-		<button type="button" class="btn btn-white btn-success" onclick="openRequestForm('1')"><i class="fa fa-send"></i> Request</button>
+		<button type="button" class="btn btn-white btn-success hide" onclick="openRequestForm('1')"><i class="fa fa-send"></i> Request</button>
 	</div>
 </div><!-- End Row -->
 <hr>
