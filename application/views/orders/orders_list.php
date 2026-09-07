@@ -63,6 +63,11 @@
 		font-size: 12px;
 	}
 
+	.sap-label {
+		padding-top: 7px;
+		border-bottom: 1px solid #ddd;
+	}
+
 	.credit-issue {
 		background-color: #fdd9d9;
 	}
@@ -428,7 +433,6 @@
 					</div>
 				</div>
 			</div>
-
 			<div class="modal-footer">
 				<button type="button" class="btn btn-sm btn-success pull-left a-btn" id="btn-approve" onclick="doApprove()" disabled>อนุมัติ</button>
 				<button type="button" class="btn btn-sm btn-danger pull-left a-btn" style="margin-left:25%;" id="btn-reject" onclick="doReject()" disabled>ไม่อนุมัติ</button>
@@ -440,6 +444,7 @@
 </div>
 
 <input type="hidden" id="OrderCode" value="">
+<input type="file" class="hide" name="uploadFile" id="uploadFile" accept=".jpg,.jpeg,.png,.pdf">
 
 <script id="preview-template" type="text/x-handlebars-template">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-0">
@@ -456,7 +461,7 @@
 			<tr><td class="th">วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
 			<tr><td class="th">Promotion</th><td>{{promotionCode}}  |   {{promotionName}}</td></tr>
 			<tr><td class="th">SO No.</td><td>{{SONO}}</td></tr>
-			<tr><td class="th">เลขที่ PO</td><td>{{PoNo}}  {{{fileName}}}</td></tr>
+			<tr><td class="th middle">เลขที่ PO <button type="button" class="btn btn-minier btn-success pull-right" title="Attached file and edit PO" onclick="showPoModal('{{orderCode}}')"><i class="fa fa-plus"></i></button></td><td class="middle">{{PoNo}}  {{{fileName}}}</td></tr>
 			<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
 			<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
 			<tr><td class="th">Order Type</td><td>{{isExport}}</td></tr>
@@ -570,7 +575,38 @@
 	</div>
 </script>
 
-
+<div class="modal fade" id="po-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog" style="max-width:400px;">
+		<div class="modal-content">
+			<div class="modal-header" style="border-bottom:solid 1px #e5e5e5;">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title-site text-center" id="po-modal-title" style="margin-bottom:0px;">Add PO To Order</h4>
+			</div>
+			<div class="modal-body">
+				<div class="row">
+					<label class="col-lg-4 col-md-4 col-sm-4 col-xs-12 sap-label">เลขที่ PO</label>
+					<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+						<input type="text" class="form-control input-sm" id="po-number" name="po-number" />
+					</div>
+					<div class="divider-hidden"></div>
+					<label class="col-lg-4 col-md-4 col-sm-4 col-xs-12 sap-label">Attach file</label>
+					<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
+						<div class="input-group">
+							<input type="text" class="form-control input-sm" id="attached-file-name" value="" readonly />
+							<span class="input-group-btn">
+								<button class="btn btn-white btn-xs btn-success btn-45" style="height:30px;" title="Attach PO file" type="button" onclick="getFile()"><i class="fa fa-paperclip fa-lg"></i></button>
+							</span>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="modal-footer">
+				<button type="button" class="btn btn-white btn-default btn-100" onClick="dismiss('po-modal')">Cancel</button>
+				<button type="button" class="btn btn-white btn-success btn-100" onClick="addPo()">Save</button>
+			</div>
+		</div>
+	</div>
+</div>
 
 
 <div class="modal fade" id="authorizer-modal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
@@ -675,10 +711,101 @@
 	$(document).ready(function() {
 		setTimeout(function() {
 			window.location.reload();
-		}, 1000 * 60 * 5); //--- reload every 5 minutes
+		}, 1000 * 60 * 10); //--- reload every 10 minutes
 	});
 
 	$('#user-id').select2();
+
+	function showPoModal(orderCode) {
+		$('#OrderCode').val(orderCode);
+		$('#po-modal-title').text(`Attache PO file for : ${orderCode}`);
+		$('#po-number').val('');
+		$('#uploadFile').val('');
+		$('#previewModal').modal('hide');
+		$('#po-modal').modal('show');
+	}
+
+	function getFile() {
+		$('#uploadFile').click();
+	}
+
+	const uploadFile = document.getElementById('uploadFile');
+
+	uploadFile.addEventListener('change', function() {
+		if (this.files.length > 0) {
+			const file = this.files[0];
+			if (file.size > 5000000) {
+				swal("ขนาดไฟล์ใหญ่เกินไป", "ไฟล์แนบต้องมีขนาดไม่เกิน 5 MB", "error");
+				this.value = '';
+				return false;
+			}
+
+			document.getElementById('attached-file-name').value = file.name;
+		}
+	});
+
+	function addPo() {
+		const orderCode = document.getElementById('OrderCode').value;
+		const poCode = document.getElementById('po-number').value;
+		const uploadFile = document.getElementById('uploadFile');
+		const file = uploadFile.files[0];
+
+		if(poCode === '') {
+			swal("กรุณากรอกเลขที่ PO", "", "warning");
+			return false;
+		}
+
+		if(!file) {
+			swal("กรุณาเลือกไฟล์แนบ", "", "warning");
+			return false;
+		}
+
+		const fd = new FormData();
+
+		fd.append('orderCode', orderCode);
+		fd.append('poCode', poCode);
+		fd.append('uploadFile', file);
+
+		$('#po-modal').modal('hide');
+
+		load_in();
+
+		$.ajax({
+			url: `${HOME}add_po`,
+			type: 'POST',
+			data: fd,
+			processData: false,
+			contentType: false,
+			success: function(rs) {
+				load_out();
+
+				if (isJson(rs)) {
+					var ds = JSON.parse(rs);
+
+					if (ds.status == 'success') {
+						swal({
+							title: 'Success',
+							type: 'success',
+							timer: 1000
+						});
+
+						setTimeout(() => {
+							window.location.reload();
+						}, 1100);
+					} 
+					else {
+						showError(ds.message);
+					}
+				} 
+				else {
+					showError(rs);
+				}
+			},
+			error: function(rs) {
+				showError(rs);
+			}
+		});
+	}
 </script>
 
 <script src="<?php echo base_url(); ?>scripts/orders/orders.js?v=<?php echo date('YmdH'); ?>"></script>

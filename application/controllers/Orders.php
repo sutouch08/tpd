@@ -1034,6 +1034,63 @@ class Orders extends PS_Controller
 		echo $sc === TRUE ? json_encode($arr) : $this->error;
 	}
 
+	public function add_po()
+	{
+		$sc = TRUE;
+		$orderCode = $this->input->post('orderCode');
+		$poCode = $this->input->post('poCode');
+		$file = isset($_FILES['uploadFile']) ? $_FILES['uploadFile'] : NULL;		
+		if (! empty($orderCode))
+		{			
+			if (! empty($file))
+			{
+				$this->load->library('upload');
+				$path = $this->config->item('upload_path') . 'order_po/';
+
+				$config = array(
+					'upload_path' => $path,
+					'allowed_types' => 'jpg|jpeg|png|pdf',
+					'file_name' => $orderCode,
+					'max_size' => 5120,
+					'overwrite' => TRUE
+				);
+
+				$this->upload->initialize($config);
+
+				if (! $this->upload->do_upload('uploadFile'))
+				{
+					$sc = FALSE;					
+					$this->error = "Create order success but upload file failed : " . $this->upload->display_errors();
+				}
+				else
+				{
+					$arr = array(
+						'NumAtCard' => $poCode,
+						'has_file' => 1,
+						'file_name' => $this->upload->data('file_name'),
+						'file_type' => $this->upload->data('file_ext'),
+						'file_size' => $this->upload->data('file_size')
+					);
+
+					$this->orders_model->update($orderCode, $arr);
+				}
+			}
+		}
+		else
+		{
+			$sc = FALSE;
+			$this->error = "Missing required parameter : Header";
+		}
+
+		$arr = array(
+			'status' => $sc === TRUE ? 'success' : 'error',
+			'message' => $sc === TRUE ? 'Success' : $this->error
+		);
+
+		echo json_encode($arr);
+	}
+
+
 	public function add()
 	{
 		$sc = TRUE;
