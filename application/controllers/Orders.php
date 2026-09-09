@@ -1551,6 +1551,11 @@ class Orders extends PS_Controller
 			{
 				return 5; //--- waiting for approve
 			}
+
+			if ($doc->credit_issue == 1 && $doc->is_over_due == 1 && $doc->credit_approval == 'A')
+			{
+				return 6; //--- Approved
+			}
 		}
 
 		if ($doc->Status == 1 OR $doc->Status == 2 OR $doc->Status == 3)
