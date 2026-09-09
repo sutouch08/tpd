@@ -908,7 +908,7 @@ async function previewOrder() {
 
 	creditBalanceNumber = addCommas((creditBalance - docTotal).toFixed(2));
 	creditDiffNumber = creditDiff > 0 ? addCommas(creditDiff.toFixed(2)) : 0;
-	creditMessage = creditIssue == 1 ? `<span class="red">เครดิตคงเหลือไม่เพียงพอ ขาด ${creditDiffNumber}</span>` : `<span class="green">เครดิตคงเหลือ ${creditBalanceNumber}</span>`;
+	creditMessage = creditIssue == 1 ? `<span class="red">เครดิตคงเหลือเกิน ${creditDiffNumber} บาท</span>` : `<span class="green">เครดิตคงเหลือ ${creditBalanceNumber} บาท</span>`;
 
 	let subTotal = {
 		"totalBefDi" : addCommas(totalBefDi.toFixed(2)),
