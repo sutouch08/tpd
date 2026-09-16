@@ -41,6 +41,15 @@ class Credit_approval extends PS_Controller
     $filter['data'] = empty($apv) ? NULL : $this->credit_approval_model->get_list($filter, $perpage, $this->uri->segment($this->segment));
     $filter['can_approve'] = empty($apv) ? FALSE : $apv->can_approve;
     $filter['can_review'] = empty($apv) ? FALSE : $apv->can_review;
+
+    if(!empty($filter['data']))
+    {
+      foreach($filter['data'] as $rs)
+      {
+        $rs->creditBalance = $this->get_credit_balance($rs->CardCode);
+      }
+    }
+
     $init  = pagination_config($this->home . '/index/', $rows, $perpage, $this->segment);
     $this->pagination->initialize($init);
     $this->load->view('credit_approval/credit_approval_list', $filter);
@@ -141,6 +150,12 @@ class Credit_approval extends PS_Controller
 
     // สั่งดาวน์โหลด
     force_download($filename, $data);
+  }
+
+  public function get_credit_balance($CardCode)
+  {
+    $credit = $this->get_credit_data($CardCode);
+    return $credit->CreditBalance;
   }
 
   public function get_credit_data($CardCode)
@@ -375,7 +390,7 @@ class Credit_approval extends PS_Controller
           'request_date' => thai_date($doc->request_date, TRUE),
           'reply_date' => empty($doc->reply_date) ? NULL : thai_date($doc->reply_date, TRUE),
           'doc_total' => number($doc->DocTotal, 2),
-          'diff' => number($doc->credit_diff, 2),
+          'credit_balance' => number($this->get_credit_balance($doc->CardCode), 2),
           'overdue' => number($this->get_overdue_amount($doc->CardCode, $doc->CustCode), 2),
           'can_approve' => is_true($can_approve),
           'can_review' => is_true($can_review),

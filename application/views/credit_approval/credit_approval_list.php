@@ -16,11 +16,11 @@
 
 	.request-text > span {
 		font-weight: bold;
-		font-style: italic;
+		/* font-style: italic; */
 		color:#505050;
-		background-color:#e1e1e1;
+		/* background-color:#e1e1e1; */
 		padding: 2px 5px;
-		border-radius: 3px;
+		/* border-radius: 3px; */
 		font-size: 11px;
 	}
 
@@ -99,7 +99,7 @@
 <?php echo $this->pagination->create_links(); ?>
 <div class="row">
 	<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5 table-responsive">
-		<table class="table tableNarrow border-1" style="min-width:1270px;">
+		<table class="table tableNarrow border-1" style="min-width:1280px;">
 			<thead>
 				<tr>
 					<th class="fix-width-40 text-center">#</th>
@@ -112,7 +112,7 @@
 					<th class="fix-width-100">User</th>
 					<th class="min-width-250">Customer</th>
 					<th class="fix-width-80 text-right">Doc total</th>
-					<th class="fix-width-80 text-center">Credit diff</th>
+					<th class="fix-width-90 text-center">Credit Limit</th>
 					<th class="fix-width-130">Request Date</th>
 					<th class="fix-width-130">Reply Date</th>
 				</tr>
@@ -160,7 +160,7 @@
 							<td class="middle"><?php echo $rs->uname; ?></td>
 							<td class="middle"><?php echo $rs->CardCode; ?> | <?php echo $rs->CardName; ?></td>
 							<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
-							<td class="middle text-right" id="credit-diff-<?php echo $rs->code; ?>"><?php echo number($rs->credit_diff, 2); ?></td>
+							<td class="middle text-right"><?php echo number($rs->creditBalance, 2); ?></td>
 							<td class="middle"><?php echo empty($rs->request_date) ? NULL : thai_date($rs->request_date, TRUE); ?></td>
 							<td class="middle"><?php echo empty($rs->reply_date) ? NULL : thai_date($rs->reply_date, TRUE); ?></td>
 						</tr>

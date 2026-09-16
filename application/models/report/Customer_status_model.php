@@ -14,8 +14,7 @@ class Customer_status_model extends CI_Model
 
     $rs = $this->db
     ->select('id, CardCode, CardName, CreateDate')
-    ->where('CardType', 'C')
-    //->where('U_TPD_FirstCus', 'Y')
+    ->where('CardType', 'C')    
     ->where('isRegular', 0)
     ->where('CreateDate <=', $date)
     ->get('customer');
@@ -39,8 +38,7 @@ class Customer_status_model extends CI_Model
     $date = date('Y-m-d', strtotime("-3 month"));
     $rs = $this->db
       ->select('id, CardCode, CardName, CreateDate')
-      ->where('CardType', 'C')
-      //->where('U_TPD_FirstCus', 'Y')
+      ->where('CardType', 'C')      
       ->where('isRegular', 0)
       ->where('CreateDate <=', $date)
       ->where('U_TPD_BI_AreaName', $area_id)
@@ -60,8 +58,7 @@ class Customer_status_model extends CI_Model
     $date = date('Y-m-d', strtotime("-3 month"));
     $rs = $this->db
       ->select('id, CardCode, CardName, CreateDate')
-      ->where('CardType', 'C')
-      //->where('U_TPD_FirstCus', 'Y')
+      ->where('CardType', 'C')      
       ->where('isRegular', 0)
       ->where('CreateDate <=', $date)
       ->get('customer');

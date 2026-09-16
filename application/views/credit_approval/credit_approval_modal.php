@@ -192,7 +192,7 @@
 			</div>
 
       <div class="form-group">
-        <label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right red">ยอดเกินเครดิตทั้งหมด</label>
+        <label class="col-lg-9 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right red">Credit Limit คงเหลือ</label>
         <div class="col-lg-3 col-md-4 col-sm-4 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right red" id="diff-amount" value="{{credit_balance}}" readonly>
         </div>
@@ -348,7 +348,7 @@
         </div>
       </div>
       <div class="form-group">
-        <label class="col-lg-7 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right red">ยอดเกินเครดิตทั้งหมด</label>
+        <label class="col-lg-7 col-md-8 col-sm-8 col-xs-6 control-label no-padding-right red">Credit Limit คงเหลือ</label>
         <div class="col-lg-5 col-md-4 col-sm-4 col-xs-6 padding-5">
           <input type="text" class="form-control input-sm text-right red" id="diff-amount" value="{{credit_balance}}" readonly>
         </div>
@@ -502,7 +502,7 @@
     </p>
     <p class="request-text">
       <span>Doc Total:</span>&nbsp; {{doc_total}}&nbsp;&nbsp;&nbsp;
-      <span>Credit Diff:</span>&nbsp; {{diff}}&nbsp;&nbsp;&nbsp;
+      <span>Credit Limit Balance:</span>&nbsp; {{credit_balance}}&nbsp;&nbsp;&nbsp;
       <span>Overdue:</span>&nbsp; {{overdue}}
     </p>
     <div class="divider"></div>

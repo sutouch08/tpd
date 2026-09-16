@@ -349,7 +349,7 @@
 							</td>
 							<td class="middle text-right"><?php echo number($rs->DocTotal, 2); ?></td>
 							<td class="middle text-center"><?php echo $rs->credit_issue == 1 ? '<span class="red">Yes</span>' : 'No'; ?></td>
-							<td class="middle text-center"><?php echo $rs->is_over_due == 1 ? '<span class="red">Yes</span>' : ''; ?></td>
+							<td class="middle text-center"><?php echo $rs->credit_issue == 1 ? ($rs->is_over_due == 1 ? '<span class="red">Yes</span>' : 'No') : ''; ?></td>
 							<td class="middle text-center"><span class="btn btn-minier btn-primary btn-block" onclick="preview('<?php echo $rs->code; ?>')">Preview</span></td>
 							<td class="middle text-center">
 								<?php if ($rs->Status == 2) : ?>

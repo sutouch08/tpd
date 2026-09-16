@@ -54,55 +54,6 @@
 <?php $width += $this->disSale ? 80 : 0; ?>
 <?php $width += $this->isAdmin ? 100 : 0; ?>
 
-<div class="row hide">
-  <div class="col-lg-5 col-md-6 col-sm-6 col-xs-12 padding-5">
-    <ul class="steps">
-      <li data-step="1" class="active">
-        <span class="step">1</span>
-        <span class="title">สร้างออเดอร์</span>
-      </li>
-      <li data-step="2" class="active">
-        <span class="step">2</span>
-        <span class="title">ตรวจสอบเงื่อนไข</span>
-      </li>
-      <li data-step="3">
-        <span class="step">3</span>
-        <span class="title">อนุมัติ</span>
-      </li>
-    </ul>
-  </div>
-  <div class="col-lg-7 col-md-6 col-sm-6 col-xs-12 padding-5">
-    <ul class="steps">
-      <li data-step="1" class="active">
-        <span class="step">1</span>
-        <span class="title">สร้างออเดอร์</span>
-      </li>
-      <li data-step="2" class="active">
-        <span class="step">2</span>
-        <span class="title">ตรวจสอบเครดิต</span>
-      </li>
-      <li data-step="3" class="active">
-        <span class="step">3</span>
-        <span class="title">ขอหลักฐานการชำระเงิน</span>
-      </li>
-      <li data-step="4">
-        <span class="step">4</span>
-        <span class="title">ตรวจสอบหลักฐานการชำระเงิน</span>
-      </li>
-      <li data-step="5">
-        <span class="step">5</span>
-        <span class="title">พิจารณาเครดิต</span>
-      </li>
-      <li data-step="6">
-        <span class="step">6</span>
-        <span class="title">อนุมัติ</span>
-      </li>
-    </ul>
-  </div>
-  <div class="divider-hidden"></div>
-  <div class="divider-hidden"></div>
-</div>
-
 <div class="row">
   <div class="col-sm-12 col-xs-12 padding-5">
     <button type="button" class="btn btn-sm btn-info" onclick="addRow()">Add Row</button>

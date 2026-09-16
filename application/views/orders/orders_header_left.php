@@ -42,7 +42,7 @@
     </div>
 
     <div class="form-group">
-      <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 sap-label">เครดิตคงเหลือ</label>
+      <label class="col-lg-3 col-md-3 col-sm-3 col-xs-12 sap-label">Credit Limit คงเหลือ</label>
       <div class="col-lg-3 col-md-3 col-sm-3 col-xs-6">
         <input type="text" id="credit-balance" class="form-control input-sm text-center" value="" disabled />
       </div>

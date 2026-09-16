@@ -58,13 +58,14 @@ function openRequestForm(id) {
 
 
 function submitRequest() {
-  $('#sales-error').val('');
+  $('#payment-error').val('');
   $('#billing-error').val('');
+
   const req = {
     'customerCode': $('#customer-code').val(),
     'customerName': $('#customer-name').val(),
     'customerId': $('#customer-id').val(),
-    'estimatedSales': $('input[name="estimated-sales"]:checked').val(),
+    'paymentMethod': $('input[name="payment-method"]:checked').val(),
     'paymentBilling': $('input[name="payment-billing"]:checked').val(),
     'billingDate': $('#billing-date').val(),
     'billingText': '',
@@ -75,8 +76,8 @@ function submitRequest() {
     'invoiceCount': $('#invoice-count').val()
   };
 
-  if(!req.estimatedSales) {
-    $('#sales-error').val('กรุณาเลือกประมาณการยอดขายต่อเดือน');
+  if(!req.paymentMethod) {
+    $('#payment-error').val('กรุณาเลือกวิธีการชำระเงิน');
     return;
   }
 
@@ -96,14 +97,14 @@ function submitRequest() {
   }
 
   if(req.paymentBilling == '2' && req.billingDate) {
-    req.billingText = `วางบิลทุกวันที่ ${req.billingDate} ของเดือน`;
+    req.billingText = `วางบิลทุกวัน ${req.billingDate} ของเดือน`;
   }
   else {
     req.billingText = `ไม่วางบิล`;
   }
 
   if(req.paymentDate) {
-    req.paymentText = `ชำระเงินทุกวันที่ ${req.paymentDate} ของเดือน`;
+    req.paymentText = `ชำระเงินทุกวัน ${req.paymentDate} ของเดือน`;
   }
 
   // If all validations pass, you can proceed to send the request

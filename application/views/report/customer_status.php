@@ -42,16 +42,16 @@
 </form>
 
 <div class="modal fade" id="request-modal" tabindex="-1" role="dialog" data-backdrop="false" aria-labelledby="myModalLabel">
-	<div class="modal-dialog" style="width:700px; max-width:95vw;">
+	<div class="modal-dialog" style="width:750px; max-width:95vw;">
 		<div class="modal-content">
 			<div class="modal-header" id="request-header" style="border-bottom:solid 1px #e5e5e5; cursor: move;">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-				<h4 class="modal-title text-center" id="request-title" style="cursor: move;">คำขอเปลี่ยนเป็นลูกคาประจำ</h4>
+				<h4 class="modal-title text-center" id="request-title" style="cursor: move;">คำขอเปลี่ยนเป็นลูกค้าประจำ</h4>
 				<input type="hidden" id="customer-code" value="">
 				<input type="hidden" id="customer-name" value="">
 				<input type="hidden" id="customer-id" value="">
 			</div>
-			<div class="modal-body" style="max-width:94vw; min-height:300px; max-height:70vh; overflow:auto;">
+			<div class="modal-body" style="max-width:94vw; min-height:300px;">
 				<div class="row">
 					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12">
 						<table class="width-100">
@@ -73,63 +73,91 @@
 						<table class="width-100">
 							<tr class="headline">
 								<td class="fix-width-40 text-right">1</td>
-								<td colspan="3">ประมาณการยอดขายต่อเดือน</td>
+								<td colspan="3">วิธีการชำระเงิน</td>
 							</tr>
 							<tr class="space">
 								<td></td>
-								<td class="fix-width-200">
-									<label>
-										<input type="radio" class="ace" name="estimated-sales" value="1 - 30,000">
-										<span class="lbl">&nbsp;&nbsp; 1 - 30,000</span>
-									</label>
-								</td>
-								<td class="fix-width-200">
-									<label>
-										<input type="radio" class="ace" name="estimated-sales" value="30,001 - 50,000">
-										<span class="lbl">&nbsp;&nbsp; 30,001 - 50,000</span>
-									</label>
-								</td>
-								<td class="min-width-200">
-									<label>
-										<input type="radio" class="ace" name="estimated-sales" value="50,001 ขึ้นไป">
-										<span class="lbl">&nbsp;&nbsp; 50,001 ขึ้นไป</span>
-									</label>
+								<td colspan="3">
+									<div class="row">
+										<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
+											<label>
+												<input type="radio" class="ace" name="payment-method" value="เช็ค">
+												<span class="lbl">&nbsp;&nbsp; เช็ค</span>
+											</label>
+										</div>
+										<div class="col-lg-2 col-md-2 col-sm-2 col-xs-6 padding-5">
+											<label>
+												<input type="radio" class="ace" name="payment-method" value="เงินโอน">
+												<span class="lbl">&nbsp;&nbsp; เงินโอน</span>
+											</label>
+										</div>
+										<div class="col-lg-3-harf col-md-3-harf col-sm-3-harf col-xs-6 padding-5">
+											<label>
+												<input type="radio" class="ace" name="payment-method" value="โอนผ่านระบบ GFMIS">
+												<span class="lbl">&nbsp;&nbsp; โอนผ่านระบบ GFMIS</span>
+											</label>
+										</div>
+										<div class="col-lg-2-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
+											<label>
+												<input type="radio" class="ace" name="payment-method" value="สแกน QR">
+												<span class="lbl">&nbsp;&nbsp; สแกน QR</span>
+											</label>
+										</div>
+										<div class="col-lg-1-harf col-md-1-harf col-sm-2 col-xs-6 padding-5">
+											<label>
+												<input type="radio" class="ace" name="payment-method" value="อื่นๆ">
+												<span class="lbl">&nbsp;&nbsp; อื่นๆ</span>
+											</label>
+										</div>
+									</div>
 								</td>
 							</tr>
 							<tr>
-								<td colspan="4"><input type="text" class="width-100 text-label text-center" style="color:red !important;" id="sales-error" value="" readonly></td>
+								<td colspan="4"><input type="text" class="width-100 text-label text-center" style="color:red !important;" id="payment-error" value="" readonly></td>
 							</tr>
 							<tr class="headline">
 								<td class="text-right">2</td>
 								<td colspan="3">ขั้นตอนการรับชำระเงินของลูกค้า</td>
 							</tr>
 							<tr class="space">
-								<td></td>
-								<td>2.1 &nbsp;&nbsp;เงื่อนไขการรับวางบิล</td>
-								<td>
-									<label>
-										<input type="radio" class="ace" name="payment-billing" value="1">
-										<span class="lbl">&nbsp;&nbsp; ไม่วางบิล</span>
-									</label>
-								</td>
-								<td>
-									<label>
-										<input type="radio" class="ace" name="payment-billing" value="2">
-										<span class="lbl">&nbsp;&nbsp; วางบิลทุกวันที่่
-											<input type="number" class="fix-width-50 input-xs text-center text-label"
-												style="margin-left:5px; margin-right:5px; border-bottom:solid 1px #333333 !important; border-bottom-style:dashed !important;"
-												id="billing-date" min="1" max="31">&nbsp;ของเดือน</span>
-									</label>
+								<td></td>								
+								<td colspan="3">
+									<div class="row">
+										<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6 padding-5">
+											2.1 &nbsp;&nbsp;เงื่อนไขการรับวางบิล
+										</div>
+										<div class="col-lg-2 col-md-4 col-sm-4 col-xs-4 padding-5">
+											<label>
+												<input type="radio" class="ace" name="payment-billing" value="1">
+												<span class="lbl">&nbsp;&nbsp; ไม่วางบิล</span>
+											</label>
+										</div>
+										<div class="col-lg-7 col-md-8 col-sm-8 col-xs-8 padding-5">
+											<label>
+												<input type="radio" class="ace" name="payment-billing" value="2">
+												<span class="lbl">&nbsp;&nbsp; วางบิลทุก
+													<input type="text" class="fix-width-120 input-xs text-center text-label"
+														style="margin-left:5px; margin-right:5px; border-bottom:solid 1px #333333 !important; border-bottom-style:dashed !important;"
+														id="billing-date" min="1" max="31">&nbsp;ของเดือน</span>
+											</label>
+										</div>
+									</div>
 								</td>
 							</tr>
 							<tr class="space">
-								<td></td>
-								<td>2.2 &nbsp;&nbsp;รอบการชำระเงิน</td>
-								<td>ทุกวันที่่ <input type="number" class="fix-width-50 input-xs text-center text-label"
-										style="margin-left:5px; margin-right:5px; border-bottom:solid 1px #333333 !important; border-bottom-style:dashed !important;"
-										id="payment-date" min="1" max="31">&nbsp;ของเดือน
+								<td></td>								
+								<td colspan="3">
+									<div class="row">
+										<div class="col-lg-3 col-md-3 col-sm-4 col-xs-6 padding-5">
+											2.2 &nbsp;&nbsp;รอบการชำระเงิน
+										</div>
+										<div class="col-lg-9 col-md-9 col-sm-8 col-xs-6 padding-5">
+											ทุก <input type="text" class="fix-width-150 input-xs text-center text-label"
+												style="margin-left:5px; margin-right:5px; border-bottom:solid 1px #333333 !important; border-bottom-style:dashed !important;"
+												id="payment-date" min="1" max="31">&nbsp;ของเดือน
+										</div>
+									</div>								
 								</td>
-								<td></td>
 							</tr>
 							<tr>
 								<td colspan="4"><input type="text" class="width-100 text-label text-center" style="color:red !important;" id="billing-error" value="" readonly></td>
@@ -139,10 +167,10 @@
 					<div class="divider-hidden"></div>
 					<div class="divider-hidden"></div>
 
-					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-left:50px;">
-						<p class="logs-text">หมายเหตุ: คำรองจะถูกส่งไปยังอีเมล์ผู้ดูแลระบบ [<b class="blue"><?php echo getConfig('SMTP_EMAIL'); ?></b>] 
-							และ CC ถึงคุณที่อีเมล์ของคุณ [<b class="purple"><?php echo $this->_user->email ? $this->_user->email : 'ไม่พบอีเมล์ของคุณ'; ?></b>] 
-						</p>						
+					<div class="col-lg-12 col-md-12 col-sm-12 col-xs-12" style="padding-left:30px;">
+						<p class="logs-text">หมายเหตุ: คำรองจะถูกส่งไปยังอีเมล์ผู้ดูแลระบบ [<b class="blue"><?php echo getConfig('SMTP_EMAIL'); ?></b>]
+							และ CC ถึงคุณที่อีเมล์ของคุณ [<b class="purple"><?php echo $this->_user->email ? $this->_user->email : 'ไม่พบอีเมล์ของคุณ'; ?></b>]
+						</p>
 					</div>
 				</div>
 			</div>

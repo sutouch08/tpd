@@ -23,12 +23,10 @@ class Customer_status extends PS_Controller
   }
 
 	public function send_request()
-	{
-		$sc = TRUE;
-
+	{		
 		$CardCode = $this->input->post('customerCode');
 		$CardName = $this->input->post('customerName');		
-		$EstimatedSales = $this->input->post('estimatedSales');		
+		$paymentMethod = $this->input->post('paymentMethod');		
 		$BillingDate = $this->input->post('billingText');
 		$PaymentDate = $this->input->post('paymentText');
 		$CreateDate = $this->input->post('createDate');
@@ -45,7 +43,7 @@ class Customer_status extends PS_Controller
 		$message .= "วันที่สร้าง (Create Date): {$CreateDate} <br>";
 		$message .= "ระยะเวลา (Duration): {$Duration} <br>";
 		$message .= "เปิดบิลแล้ว (Invoice Count): {$InvoiceCount} <br>";
-		$message .= "ประมาณการยอดขายต่อเดือน (Estimated Sales): {$EstimatedSales} <br>";
+		$message .= "วิธีการชำระเงิน (Payment Method): {$paymentMethod} <br>";
 		$message .= "เงื่อนไขการรับวางบิล: {$BillingDate} <br>";
 		$message .= "รอบการชำระเงิน: {$PaymentDate} <br>";
 		$message .= "<br>";
@@ -113,6 +111,7 @@ class Customer_status extends PS_Controller
 				{
 					$ds[] = (object) array(
 						'no' => $no,
+						'id' => $rs->id,
 						'CardCode' => $rs->CardCode,
 						'CardName' => $rs->CardName,
 						'CreateDate' => thai_date($rs->CreateDate, FALSE),
