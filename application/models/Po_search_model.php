@@ -106,7 +106,7 @@ class Po_search_model extends CI_Model
       $this->db->where('InvoiceDate <=', to_date($ds['toDate']));
     }
 
-    $this->db->order_by('InvoiceDate', 'DESC');
+    $this->db->order_by('InvoiceNo', 'DESC');
     $this->db->limit($perpage, $offset);
     $rs = $this->db->get($this->tb);
     if($rs->num_rows() > 0)
