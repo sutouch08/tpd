@@ -16,8 +16,8 @@ class Po_search extends PS_Controller
 
   public function index()
   {    
-    $filter = array(          
-      'web_code' => get_filter('web_code', 'po_web_code', ''),
+    $filter = array(                
+      'so_code' => get_filter('so_code', 'po_so_code', ''),
       'inv_code' => get_filter('inv_code', 'po_inv_code', ''),
       'po' => get_filter('po', 'po_po', ''),
       'customer' => get_filter('customer', 'po_customer', ''),      

@@ -27,9 +27,9 @@ class Po_search_model extends CI_Model
       $this->db->like('NumAtCard', $ds['po']);
     }
 
-    if( ! empty($ds['web_code']))
+    if( ! empty($ds['so_code']))
     {
-      $this->db->like('code', $ds['web_code']);
+      $this->db->like('DocNum', $ds['so_code']);
     }
 
     if( ! empty($ds['customer']))
@@ -62,7 +62,7 @@ class Po_search_model extends CI_Model
   public function get_list(array $ds = array(), $perpage = 20, $offset = 0)
   {
     $this->db
-    ->select('code AS webCode, InvoiceNo, InvoiceDate, NumAtCard AS poCode, CardCode, CardName, user_id, uname, has_file, file_name, file_type')
+    ->select('code AS webCode, DocNum AS soCode, InvoiceNo, InvoiceDate, NumAtCard AS poCode, CardCode, CardName, user_id, uname, has_file, file_name, file_type')
     ->where('NumAtCard IS NOT NULL', NULL, FALSE)
     ->where('NumAtCard !=', '')
     ->where('InvoiceNo IS NOT NULL', NULL, FALSE)
@@ -78,9 +78,9 @@ class Po_search_model extends CI_Model
       $this->db->like('NumAtCard', $ds['po']);
     }
 
-    if( ! empty($ds['web_code']))
+    if( ! empty($ds['so_code']))
     {
-      $this->db->like('code', $ds['web_code']);
+      $this->db->like('DocNum', $ds['so_code']);
     }
 
     if( ! empty($ds['customer']))

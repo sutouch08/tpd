@@ -4,9 +4,15 @@
     margin-bottom: 5px;
   }
 </style>
+
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5">
-    <h4 class="title"><?php echo $this->title; ?></h4>
+    <h4 class="title text-center">
+      <span class="pull-left">
+        <?php echo $this->title; ?>
+      </span>
+      <span class="font-size-20 red" style="padding-left:10px; padding-right:10px;">ข้อมูลใช้สำหรับประกอบการขายเท่านั้น บริษัทขอสงวนสิทธิ์ในการเลือก Lot.</span>
+    </h4>
   </div>
 </div><!-- End Row -->
 <hr class="padding-5" />
@@ -22,8 +28,8 @@
       <input type="text" class="form-control input-sm text-center search-box" name="po" value="<?php echo $po; ?>" placeholder="PO Number" />
     </div>
     <div class="col-lg-1-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
-      <label>Web No.</label>
-      <input type="text" class="form-control input-sm text-center search-box" name="web_code" value="<?php echo $web_code; ?>" placeholder="Web Order No." />
+      <label>SO No.</label>
+      <input type="text" class="form-control input-sm text-center search-box" name="so_code" value="<?php echo $so_code; ?>" placeholder="SO No." />
     </div>
 
     <div class="col-lg-1-harf col-md-2-harf col-sm-2-harf col-xs-6 padding-5">
@@ -70,10 +76,10 @@
         <tr>
           <th class="fix-width-40 text-center">#</th>
           <th class="fix-width-40 text-center">Files</th>
+          <th class="fix-width-100">SO No.</th>
           <th class="fix-width-80">Invoice Date</th>
           <th class="fix-width-100">Invoice No.</th>
           <th class="fix-width-150">PO No.</th>
-          <th class="fix-width-200">Web No.</th>
           <th class="min-width-200">Customer</th>
           <th class="fix-width-100">User</th>
           <th class="fix-width-100">Actions</th>
@@ -86,10 +92,10 @@
             <tr>
               <td class="middle text-center"><?php echo $no; ?></td>
               <td class="middle text-center"><?php echo $rs->has_file ? 'Y' : 'N'; ?></td>
+              <td class="middle"><?php echo $rs->DocNum; ?></td>
               <td class="middle"><?php echo thai_date($rs->InvoiceDate, FALSE); ?></td>
               <td class="middle"><?php echo $rs->InvoiceNo; ?></td>
               <td class="middle"><?php echo $rs->poCode; ?></td>
-              <td class="middle"><?php echo $rs->webCode; ?></td>
               <td class="middle"><?php echo $rs->CardCode; ?> | <?php echo $rs->CardName; ?></td>
               <td class="middle"><?php echo $rs->uname; ?></td>
               <td class="middle">

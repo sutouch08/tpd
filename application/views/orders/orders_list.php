@@ -589,7 +589,7 @@
 						<input type="text" class="form-control input-sm" id="po-number" name="po-number" />
 					</div>
 					<div class="divider-hidden"></div>
-					<label class="col-lg-4 col-md-4 col-sm-4 col-xs-12 sap-label">Attach file</label>
+					<label class="col-lg-4 col-md-4 col-sm-4 col-xs-12 sap-label">แนบ PO</label>
 					<div class="col-lg-8 col-md-8 col-sm-8 col-xs-12">
 						<div class="input-group">
 							<input type="text" class="form-control input-sm" id="attached-file-name" value="" readonly />
