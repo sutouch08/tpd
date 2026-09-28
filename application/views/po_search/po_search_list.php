@@ -92,7 +92,7 @@
             <tr>
               <td class="middle text-center"><?php echo $no; ?></td>
               <td class="middle text-center"><?php echo $rs->has_file ? 'Y' : 'N'; ?></td>
-              <td class="middle"><?php echo $rs->DocNum; ?></td>
+              <td class="middle"><?php echo $rs->soCode; ?></td>
               <td class="middle"><?php echo thai_date($rs->InvoiceDate, FALSE); ?></td>
               <td class="middle"><?php echo $rs->InvoiceNo; ?></td>
               <td class="middle"><?php echo $rs->poCode; ?></td>
