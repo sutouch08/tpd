@@ -461,7 +461,7 @@
 			<tr><td class="th">วันที่จัดส่ง</td><td>{{dueDate}}</td></tr>
 			<tr><td class="th">Promotion</th><td>{{promotionCode}}  |   {{promotionName}}</td></tr>
 			<tr><td class="th">SO No.</td><td>{{SONO}}</td></tr>
-			<tr><td class="th middle">เลขที่ PO <button type="button" class="btn btn-minier btn-success pull-right" title="Attached file and edit PO" onclick="showPoModal('{{orderCode}}')"><i class="fa fa-plus"></i></button></td><td class="middle">{{PoNo}}  {{{fileName}}}</td></tr>
+			<tr><td class="th middle">เลขที่ PO <button type="button" class="btn btn-minier btn-success pull-right" title="Attached file and edit PO" onclick="showPoModal('{{orderCode}}', '{{PoNo}}', '{{status}}')"><i class="fa fa-plus"></i></button></td><td class="middle">{{PoNo}}  {{{fileName}}}</td></tr>
 			<tr><td class="th">บิลลงวันที่</td><td>{{billOption}}</td></tr>
 			<tr><td class="th">ต้องการใบเสนอราคา</td><td>{{requiredSQ}}</td></tr>
 			<tr><td class="th">Order Type</td><td>{{isExport}}</td></tr>
@@ -716,10 +716,15 @@
 
 	$('#user-id').select2();
 
-	function showPoModal(orderCode) {
+	function showPoModal(orderCode, poNo = '', status = '0') {
 		$('#OrderCode').val(orderCode);
 		$('#po-modal-title').text(`Attache PO file for : ${orderCode}`);
-		$('#po-number').val('');
+		$('#po-number').val(poNo).removeAttr('disabled');
+
+		if(status == '1' && poNo !== '') {
+			$('#po-number').attr('disabled', 'disabled');
+		}
+
 		$('#uploadFile').val('');
 		$('#previewModal').modal('hide');
 		$('#po-modal').modal('show');

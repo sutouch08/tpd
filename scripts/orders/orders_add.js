@@ -1,3 +1,6 @@
+$('input[type="number"]').on('wheel', function(e) {
+	e.preventDefault();
+});
 
 //----  get new customer list
 function changeCustomerList() {
