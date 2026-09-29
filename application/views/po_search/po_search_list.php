@@ -7,12 +7,7 @@
 
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5">
-    <h4 class="title text-center">
-      <span class="pull-left">
-        <?php echo $this->title; ?>
-      </span>
-      <span class="font-size-20 red" style="padding-left:10px; padding-right:10px;">ข้อมูลใช้สำหรับประกอบการขายเท่านั้น บริษัทขอสงวนสิทธิ์ในการเลือก Lot.</span>
-    </h4>
+    <h4 class="title"><?php echo $this->title; ?></h4>
   </div>
 </div><!-- End Row -->
 <hr class="padding-5" />

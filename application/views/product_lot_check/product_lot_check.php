@@ -1,11 +1,16 @@
 <?php $this->load->view('include/header'); ?>
 <div class="row">
   <div class="col-lg-12 col-md-12 col-sm-12 col-xs-12 padding-5">
-    <h4 class="title"><?php echo $this->title; ?></h4>
+    <h4 class="title text-center">
+      <span class="pull-left">
+        <?php echo $this->title; ?>
+      </span>
+      <span class="font-size-20 red" style="padding-left:10px; padding-right:10px;">ข้อมูลใช้สำหรับประกอบการขายเท่านั้น บริษัทขอสงวนสิทธิ์ในการเลือก Lot.</span>
+    </h4>
   </div>
 </div><!-- End Row -->
 <hr class="padding-5" />
-<div class="row">  
+<div class="row">
   <div class="col-lg-2 col-md-3 col-sm-3 col-xs-12 padding-5">
     <label>Price List</label>
     <select class="form-control input-sm r" name="priceList" id="priceList" onchange="getItemTemplate()">
@@ -16,7 +21,7 @@
         <?php endforeach; ?>
       <?php endif; ?>
     </select>
-  </div>  
+  </div>
 
   <div class="col-lg-5 col-md-5 col-sm-5 col-xs-12 padding-5">
     <label>Items</label>
@@ -47,7 +52,7 @@
           <th class="fix-width-100 middle text-center">Lot No.</th>
           <th class="fix-width-100 middle text-center">Mfd. Date</th>
           <th class="fix-width-100 middle text-center">Exp. Date</th>
-          <th class="fix-width-100 middle text-center">Qty.</th>          
+          <th class="fix-width-100 middle text-center">Qty.</th>
         </tr>
       </thead>
       <tbody id="item-table"> </tbody>
