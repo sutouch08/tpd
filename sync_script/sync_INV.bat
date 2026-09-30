@@ -1,2 +1,2 @@
-cd C:\xampp\htdocs\tpd\
+cd C:\Apache24\htdocs\tpd\
 php index.php sync_data syncInvCode
