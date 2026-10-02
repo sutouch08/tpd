@@ -15,11 +15,7 @@
     <label>Price List</label>
     <select class="form-control input-sm r" name="priceList" id="priceList" onchange="getItemTemplate()">
       <option value="">Select Price List</option>
-      <?php if (!empty($priceList)) : ?>
-        <?php foreach ($priceList as $pl) : ?>
-          <option value="<?php echo $pl->id; ?>"><?php echo $pl->name; ?></option>
-        <?php endforeach; ?>
-      <?php endif; ?>
+      <?php echo $priceList; ?>
     </select>
   </div>
 

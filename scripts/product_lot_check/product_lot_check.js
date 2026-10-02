@@ -5,8 +5,10 @@ function resetItemList() {
   $('#item').select2();
 }
 
-function getItemTemplate() {      
-  let priceList = $('#priceList').val();
+function getItemTemplate() {
+  let pl = $('#priceList');
+  let priceList = pl.val();
+  let spid = pl.find(':selected').data('spid');
   
   if(priceList === '') {
     resetItemList();
@@ -20,7 +22,8 @@ function getItemTemplate() {
     type: "POST",
     cache: false,
     data: {
-      'priceList': priceList      
+      'priceList': priceList,
+      'spid': spid
     },
     success: function (rs) {
       load_out();
@@ -29,7 +32,6 @@ function getItemTemplate() {
         let ds = JSON.parse(rs);
         if (ds.status === 'success') {
           $('#item').html(ds.template);
-
           $('#item').select2();
         }
         else {
@@ -48,8 +50,8 @@ function getItemTemplate() {
 }
 
 function getData() {
-  clearErrorByClass('r');  
-  let priceList = $('#priceList').val();
+  clearErrorByClass('r');    
+  let priceList = $('#priceList').val();  
   let item = $('#item').val();  
 
   if(priceList === '') {
@@ -68,8 +70,7 @@ function getData() {
     url: `${HOME}get_data`,
     type: "POST",
     cache: false,
-    data: {
-      'priceList': priceList,
+    data: {      
       'item': item
     },
     success: function (rs) {
