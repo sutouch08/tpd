@@ -1044,8 +1044,8 @@ class Orders extends PS_Controller
 		{			
 			if (! empty($file))
 			{
-				$this->load->library('upload');
-				$path = $this->config->item('upload_path') . 'order_po/';
+				$this->load->library('upload');				
+				$path = $this->config->item('user_files_path') . 'order_po/';
 
 				$config = array(
 					'upload_path' => $path,
@@ -1344,8 +1344,8 @@ class Orders extends PS_Controller
 
 				if ($sc === TRUE && ! empty($file))
 				{
-					$this->load->library('upload');
-					$path = $this->config->item('upload_path') . 'order_po/';
+					$this->load->library('upload');					
+					$path = $this->config->item('user_files_path') . 'order_po/';
 
 					$config = array(
 						'upload_path' => $path,
@@ -2209,8 +2209,8 @@ class Orders extends PS_Controller
 	}
 
 	public function open_file($filename)
-	{
-		$path = $this->config->item('upload_path') . 'order_po/' . $filename;
+	{		
+		$path = $this->config->item('user_files_path') . 'order_po/' . $filename;
 
 		if (!file_exists($path))
 		{

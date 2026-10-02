@@ -57,8 +57,9 @@ class Credit_approval extends PS_Controller
 
   private function get_file_list($code)
   {
-    $list = array();
-    $file_path = $this->config->item('upload_path') . 'request_payment/' . $code . '/';
+    $list = array();    
+    $file_path = $this->config->item('user_files_path') . 'request_payment/' . $code . '/';
+    
 
     if (is_dir($file_path))
     {
@@ -96,8 +97,8 @@ class Credit_approval extends PS_Controller
   }
 
   public function open_file($code, $filename)
-  {
-    $path = $this->config->item('upload_path') . 'request_payment/' . $code . '/' . $filename;
+  {    
+    $path = $this->config->item('user_files_path') . 'request_payment/' . $code . '/' . $filename;
 
     if (!file_exists($path))
     {
@@ -122,8 +123,8 @@ class Credit_approval extends PS_Controller
     // ป้องกันการโจมตีด้วย ../
     $filename = basename($filename);
 
-    // โฟลเดอร์เก็บไฟล์
-    $path = $this->config->item('upload_path') . 'request_payment/' . $code . '/' . $filename;
+    // โฟลเดอร์เก็บไฟล์    
+    $path = $this->config->item('user_files_path') . 'request_payment/' . $code . '/' . $filename;
 
     $allowed = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'xlsx', 'xls', 'zip', 'txt'];
 
