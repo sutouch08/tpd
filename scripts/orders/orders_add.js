@@ -1,6 +1,10 @@
-$('input[type="number"]').on('wheel', function(e) {
-	e.preventDefault();
-});
+window.addEventListener('load', inputInit);
+
+function inputInit() {
+	$('input[type="number"]').on('wheel', function (e) {
+		e.preventDefault();
+	});
+}
 
 //----  get new customer list
 function changeCustomerList() {
@@ -603,6 +607,8 @@ function addRow() {
 	render(sc, data, opt);
 	updateSelectStep(no);
 	$('#item-'+no).select2();
+
+	inputInit();
 }
 
 function removeRow() {

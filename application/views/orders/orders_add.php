@@ -343,11 +343,9 @@
 	</div>
 </script>
 
-<script src="<?php echo base_url(); ?>scripts/orders/orders.js?v=<?php echo date('YmdH'); ?>"></script>
-<script src="<?php echo base_url(); ?>scripts/orders/orders_add.js?v=<?php echo date('YmdH'); ?>"></script>
-<script src="<?php echo base_url(); ?>scripts/address.js"></script>
-
-
+<script src="<?php echo base_url(); ?>scripts/orders/orders.js?v=1<?php echo date('YmdH'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/orders/orders_add.js?v=1<?php echo date('YmdH'); ?>"></script>
+<script src="<?php echo base_url(); ?>scripts/address.js?v=1<?php echo date('YmdH'); ?>"></script>
 
 
 <?php $this->load->view('include/footer'); ?>
