@@ -44,7 +44,7 @@ class Po_search extends PS_Controller
 
   public function open_file($filename)
   {
-    $path = $this->config->item('upload_path') . 'order_po/' . $filename;
+    $path = $this->config->item('user_files_path') . 'order_po/' . $filename;
 
     if (!file_exists($path))
     {
@@ -69,7 +69,7 @@ class Po_search extends PS_Controller
     $filename = basename($filename);
 
     // โฟลเดอร์เก็บไฟล์
-    $path = $this->config->item('upload_path') . 'order_po/' . $filename;
+    $path = $this->config->item('user_files_path') . 'order_po/' . $filename;
 
     $allowed = ['pdf', 'jpg', 'jpeg', 'png', 'gif', 'xlsx', 'xls', 'zip', 'txt'];
 
@@ -101,7 +101,7 @@ class Po_search extends PS_Controller
 
   public function print_file($filename)
   {        
-    $path = $this->config->item('upload_path') . 'order_po/' . $filename;
+    $path = $this->config->item('user_files_path') . 'order_po/' . $filename;
 
     if (!file_exists($path))
     {
