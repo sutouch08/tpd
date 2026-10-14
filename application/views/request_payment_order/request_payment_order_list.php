@@ -99,7 +99,7 @@
 								<input type="text" class="form-control input-xs text-right text-label" value="<?php echo number($rs->DocTotal, 2); ?>" readonly>
 							</td>
 							<td class="middle">
-								<input type="text" class="form-control input-xs text-right text-label" id="credit-diff-<?php echo $rs->code; ?>" value="<?php echo number($rs->credit_diff, 2); ?>" readonly>
+								<input type="text" class="form-control input-xs text-right text-label" id="credit-diff-<?php echo $rs->code; ?>" value="- <?php echo number($rs->credit_diff, 2); ?>" readonly>
 							</td>
 						</tr>
 						<?php $no++; ?>

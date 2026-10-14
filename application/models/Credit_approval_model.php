@@ -144,8 +144,61 @@ class Credit_approval_model extends CI_Model
     $this->db      
       ->from('orders AS o')
       ->join('payment_request_order AS r', 'o.code = r.code', 'left')
-      ->where('o.credit_issue', 1)
-      ->where_not_in('o.credit_approval', ['A', 'R']);
+      ->where('o.status >=', 0)
+      ->where('o.credit_issue', 1);
+
+    if (isset($ds['status']))
+    {
+      // Credit_approval && credit_case_id && reply_status
+      // O = รอดำเนินการ, N = รอเอกสาร, R = รอตรวจสอบ, P = รออนุมัติ
+      if ($ds['status'] == 'all')
+      {
+        $this->db->where_not_in('o.credit_approval', ['A', 'R']);
+      }
+      else if ($ds['status'] == 'AA')
+      {
+        $this->db->where_in('o.credit_approval', ['A', 'R']);
+      }
+      else if ($ds['status'] == 'AR')
+      {
+        $this->db->where('o.credit_approval', 'R');
+      }
+      else if ($ds['status'] == 'AP')
+      {
+        $this->db->where('o.credit_approval', 'A');
+      }
+      else if ($ds['status'] == 'O')
+      {
+        $this->db
+          ->group_start()
+          ->where('o.credit_approval', 'O')
+          ->where('o.credit_case_id IS NULL', NULL, FALSE)
+          ->where('r.reply_status IS NULL', NULL, FALSE)
+          ->group_end();
+      }
+      else if ($ds['status'] == 'N')
+      {
+        $this->db
+          ->group_start()
+          ->where('o.credit_approval', 'O')
+          ->where('o.credit_case_id IS NOT NULL', NULL, FALSE)
+          ->where('r.reply_status', 'N')
+          ->group_end();
+      }
+      else if ($ds['status'] == 'R')
+      {
+        $this->db
+          ->group_start()
+          ->where('o.credit_approval', 'O')
+          ->where('o.credit_case_id IS NOT NULL', NULL, FALSE)
+          ->where('r.reply_status', 'R')
+          ->group_end();
+      }
+      else if ($ds['status'] == 'P')
+      {
+        $this->db->where('o.credit_approval', 'P');
+      }
+    }
 
     if (! empty($ds['WebCode']))
     {
@@ -175,45 +228,7 @@ class Credit_approval_model extends CI_Model
     {
       $this->db->where('o.credit_approval', $ds['credit_approval']);
     }
-
-    if(isset($ds['status']) && $ds['status'] != 'all')
-    {
-      // Credit_approval && credit_case_id && reply_status
-      // O = รอดำเนินการ, N = รอเอกสาร, R = รอตรวจสอบ, P = รออนุมัติ
-
-      if($ds['status'] == 'O')
-      {
-        $this->db
-        ->group_start()
-        ->where('o.credit_approval', 'O')
-        ->where('o.credit_case_id IS NULL', NULL, FALSE)
-        ->where('r.reply_status IS NULL', NULL, FALSE)
-        ->group_end();
-      }
-      else if($ds['status'] == 'N')
-      {
-        $this->db
-        ->group_start()
-        ->where('o.credit_approval', 'O')
-        ->where('o.credit_case_id IS NOT NULL', NULL, FALSE)
-        ->where('r.reply_status', 'N')
-        ->group_end();
-      }
-      else if($ds['status'] == 'R')
-      {
-        $this->db
-        ->group_start()
-        ->where('o.credit_approval', 'O')
-        ->where('o.credit_case_id IS NOT NULL', NULL, FALSE)
-        ->where('r.reply_status', 'R')
-        ->group_end();
-      }
-      else if($ds['status'] == 'P')
-      {
-        $this->db->where('o.credit_approval', 'P');        
-      }      
-    }
-
+    
     if ($ds['is_overdue'] !== 'all')
     {
       $this->db->where('o.is_over_due', $ds['is_overdue']);
@@ -229,8 +244,62 @@ class Credit_approval_model extends CI_Model
     ->select('o.*, r.has_document, r.reply_status')
     ->from('orders AS o')
     ->join('payment_request_order AS r', 'o.code = r.code', 'left')
-    ->where('o.credit_issue', 1)
-    ->where_not_in('o.credit_approval', ['A', 'R']);
+    ->where('o.status >=', 0)
+    ->where('o.credit_issue', 1);
+    //->where_not_in('o.credit_approval', ['A', 'R']);
+
+    if (isset($ds['status']))
+    {
+      // Credit_approval && credit_case_id && reply_status
+      // O = รอดำเนินการ, N = รอเอกสาร, R = รอตรวจสอบ, P = รออนุมัติ
+      if($ds['status'] == 'all')
+      {
+        $this->db->where_not_in('o.credit_approval', ['A', 'R']);
+      }
+      else if ($ds['status'] == 'AA')
+      {
+        $this->db->where_in('o.credit_approval', ['A', 'R']);
+      }
+      else if ($ds['status'] == 'AR')
+      {
+        $this->db->where('o.credit_approval', 'R');
+      }
+      else if ($ds['status'] == 'AP')
+      {
+        $this->db->where('o.credit_approval', 'A');
+      }
+      else if ($ds['status'] == 'O')
+      {
+        $this->db
+          ->group_start()
+          ->where('o.credit_approval', 'O')
+          ->where('o.credit_case_id IS NULL', NULL, FALSE)
+          ->where('r.reply_status IS NULL', NULL, FALSE)
+          ->group_end();
+      }
+      else if ($ds['status'] == 'N')
+      {
+        $this->db
+          ->group_start()
+          ->where('o.credit_approval', 'O')
+          ->where('o.credit_case_id IS NOT NULL', NULL, FALSE)
+          ->where('r.reply_status', 'N')
+          ->group_end();
+      }
+      else if ($ds['status'] == 'R')
+      {
+        $this->db
+          ->group_start()
+          ->where('o.credit_approval', 'O')
+          ->where('o.credit_case_id IS NOT NULL', NULL, FALSE)
+          ->where('r.reply_status', 'R')
+          ->group_end();
+      }
+      else if ($ds['status'] == 'P')
+      {
+        $this->db->where('o.credit_approval', 'P');
+      }      
+    }
 
     if( ! empty($ds['WebCode']))
     {
@@ -264,45 +333,7 @@ class Credit_approval_model extends CI_Model
     if($ds['is_overdue'] !== 'all')
     {
       $this->db->where('o.is_over_due', $ds['is_overdue']);
-    }
-
-    if (isset($ds['status']) && $ds['status'] != 'all')
-    {
-      // Credit_approval && credit_case_id && reply_status
-      // O = รอดำเนินการ, N = รอเอกสาร, R = รอตรวจสอบ, P = รออนุมัติ
-
-      if ($ds['status'] == 'O')
-      {
-        $this->db
-          ->group_start()
-          ->where('o.credit_approval', 'O')
-          ->where('o.credit_case_id IS NULL', NULL, FALSE)
-          ->where('r.reply_status IS NULL', NULL, FALSE)
-          ->group_end();
-      }
-      else if ($ds['status'] == 'N')
-      {
-        $this->db
-          ->group_start()
-          ->where('o.credit_approval', 'O')
-          ->where('o.credit_case_id IS NOT NULL', NULL, FALSE)
-          ->where('r.reply_status', 'N')
-          ->group_end();
-      }
-      else if ($ds['status'] == 'R')
-      {
-        $this->db
-          ->group_start()
-          ->where('o.credit_approval', 'O')
-          ->where('o.credit_case_id IS NOT NULL', NULL, FALSE)
-          ->where('r.reply_status', 'R')
-          ->group_end();
-      }
-      else if ($ds['status'] == 'P')
-      {
-        $this->db->where('o.credit_approval', 'P');
-      }
-    }
+    }    
 
     $this->db->order_by('o.code', 'DESC')->limit($perpage, $offset);
 
