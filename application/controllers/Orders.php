@@ -1294,7 +1294,7 @@ class Orders extends PS_Controller
 					//---- check order approval exception by rule
 					if ($mustApprove === FALSE && ! $this->must_approve($con_id, $header->docTotal, $priceEdit, $header->PriceList))
 					{
-						if (! $header->creditIssue == 1)
+						if (! $credit_issue)
 						{
 							$arr = array(
 								"must_approve" => 0,
