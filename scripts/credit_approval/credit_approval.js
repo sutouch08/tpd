@@ -44,17 +44,17 @@ function preview(code) {
 					let output = $('#result');
 					let modal = $('#preview-modal');
 
-					if (data.can_review && data.is_overdue && data.case_id == null) {
+					if (data.can_review && data.is_overdue && data.case_id == null && data.approval_status != 'A') {
 						$('#btn-request').removeClass('hide');
 						$('#btn-reject').removeClass('hide');
 					}
 
-					if (data.can_review && ((data.is_overdue && data.case_id != null) || (!data.is_overdue && data.case_id == null)) && !data.credit_review) {
+					if (data.can_review && ((data.is_overdue && data.case_id != null) || (!data.is_overdue && data.case_id == null)) && !data.credit_review && data.approval_status != 'A') {
 						$('#btn-accept').removeClass('hide');
 						$('#btn-reject').removeClass('hide');
 					}
 
-					if (data.can_approve && data.credit_review) {
+					if (data.can_approve && data.credit_review && data.approval_status != 'A') {
 						$('#btn-ap-approve').removeClass('hide');
 						$('#btn-ap-reject').removeClass('hide');
 						modal = $('#approve-modal');

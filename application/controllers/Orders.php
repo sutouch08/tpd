@@ -1114,7 +1114,10 @@ class Orders extends PS_Controller
 				$credit_diff = $header->creditDiff;
 				$is_over_due = 0;
 
-				if ($credit_issue == 1)
+				$mustApprove = (isset($header->isDefaultShipTo) && $header->isDefaultShipTo == 'N') ? TRUE : FALSE;
+				$mustApprove = $mustApprove == TRUE ? TRUE : (empty($header->exShipTo) ? FALSE : TRUE);
+
+				if ($credit_issue)
 				{
 					$is_over_due = $this->orders_model->is_over_due($header->CardCode, $header->CustCode) ? 1 : 0;
 				}
@@ -1163,7 +1166,7 @@ class Orders extends PS_Controller
 					'team_id' => $team_id,
 					'term_id' => $header->term,
 					'credit_issue' => $credit_issue,
-					'credit_approval' => $is_over_due == 1 ? 'O' : 'P',
+					//'credit_approval' => $is_over_due == 1 ? 'O' : 'P',
 					'credit_diff' => $credit_diff,
 					'is_over_due' => $is_over_due,
 					'isRegular' => $header->isRegular
@@ -1288,43 +1291,60 @@ class Orders extends PS_Controller
 						}
 					} //--- end foreach details
 
-					$mustApprove = (isset($header->isDefaultShipTo) && $header->isDefaultShipTo == 'N') ? TRUE : FALSE;
-					$mustApprove = $mustApprove == TRUE ? TRUE : (empty($header->exShipTo) ? FALSE : TRUE);
-
-					//---- check order approval exception by rule
-					if ($mustApprove === FALSE && ! $this->must_approve($con_id, $header->docTotal, $priceEdit, $header->PriceList))
+					if($sc === TRUE)
 					{
-						if (! $credit_issue)
+						$mustApprove = $mustApprove == TRUE ? TRUE : $this->must_approve($con_id, $header->docTotal, $priceEdit, $header->PriceList);
+
+						//---- check order approval exception by rule
+						if ($mustApprove === FALSE)
 						{
-							$arr = array(
-								"must_approve" => 0,
-								'priceEdit' => $priceEdit === TRUE ? 1 : 0,
-								'Approved' => 'A',
-								'Approver' => 'System',
-								'ApproveDate' => now()
-							);
+							if (! $credit_issue)
+							{
+								$arr = array(
+									"must_approve" => 0,
+									'priceEdit' => $priceEdit === TRUE ? 1 : 0,
+									'Approved' => 'A',
+									'Approver' => 'System',
+									'ApproveDate' => now()
+								);
 
-							$this->orders_model->update($code, $arr);
-							$this->orders_model->approve_details($code);
+								if( ! $this->orders_model->update($code, $arr))
+								{
+									$sc = FALSE;
+									$this->error = "Update Order failed : {{$code}}";
+								}
 
-							$this->doExport($code);
+								if($sc === TRUE && ! $this->orders_model->approve_details($code))
+								{
+									$sc = FALSE;
+									$this->error = "Approve Order details failed : {{$code}}";
+								}								
+							}
+							else
+							{
+								$arr = array(
+									'priceEdit' => $priceEdit === TRUE ? 1 : 0
+								);
+
+								if( ! $this->orders_model->update($code, $arr))
+								{
+									$sc = FALSE;
+									$this->error = "Update Order failed : {{$code}}";
+								}
+							}
 						}
 						else
 						{
 							$arr = array(
-								'priceEdit' => $priceEdit === TRUE ? 1 : 0
+								"priceEdit" => $priceEdit === TRUE ? 1 : 0
 							);
 
-							$this->orders_model->update($code, $arr);
+							if( ! $this->orders_model->update($code, $arr))
+							{
+								$sc = FALSE;
+								$this->error = "Update Order failed : {{$code}}";
+							}
 						}
-					}
-					else
-					{
-						$arr = array(
-							"priceEdit" => $priceEdit === TRUE ? 1 : 0
-						);
-
-						$this->orders_model->update($code, $arr);
 					}
 				}
 				else
@@ -1336,6 +1356,11 @@ class Orders extends PS_Controller
 				if ($sc === TRUE)
 				{
 					$this->db->trans_commit();
+
+					if($sc === TRUE && $mustApprove === FALSE && ! $credit_issue)
+					{
+						$this->doExport($code);
+					}
 				}
 				else
 				{
